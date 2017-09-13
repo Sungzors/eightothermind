@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.Toolbar
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"
+    android:background="?attr/colorPrimary"
+    tools:ignore="MissingPrefix">
+    <!--android:background="?attr/colorPrimary"-->
+
+    <!--Profile Picture View-->
+    <ImageView
+        android:contentDescription="@string/contacts_button"
+        android:id="@+id/left_action"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginStart="24dp"
+        android:textColor="@color/white"/>
+
+    <!--Toolbar title-->
+    <TextView
+        android:id="@+id/toolbar_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        android:textAlignment="center"
+        android:text="Title"/>
+
+
+</android.support.v7.widget.Toolbar>

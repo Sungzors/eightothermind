@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">8Chat_Android</string>
+    <string name="contacts_button">Contacts Button</string>
 </resources>
