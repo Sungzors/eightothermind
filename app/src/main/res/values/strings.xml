@@ -4,4 +4,8 @@
     <string name="welcome_to">Welcome to</string>
     <string name="s_8">8</string>
     <string name="infinite_possibilities">Infinite Possibilities</string>
+    <string name="create_your_account">Create Your Account</string>
+    <string name="alredyhesaccutn">Already have an account?</string>
+    <string name="sign_in">Sign In</string>
+    <string name="logo_of_8">logo of 8</string>
 </resources>
