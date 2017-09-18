@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">8Chat_Android</string>
     <string name="contacts_button">Contacts Button</string>
+    <string name="welcome_to">Welcome to</string>
+    <string name="s_8">8</string>
+    <string name="infinite_possibilities">Infinite Possibilities</string>
 </resources>
