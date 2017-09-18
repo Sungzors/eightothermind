@@ -1,5 +1,7 @@
 package com.phdlabs.sungwon.a8chat_android.api.rest;
 
+import com.phdlabs.sungwon.a8chat_android.api.utility.HttpManager;
+
 /**
  * Created by SungWon on 9/18/2017.
  */
