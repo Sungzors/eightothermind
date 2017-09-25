@@ -8,4 +8,7 @@
     <string name="alredyhesaccutn">Already have an account?</string>
     <string name="sign_in">Sign In</string>
     <string name="logo_of_8">logo of 8</string>
+    <string name="please_enter_your_phone_number">PLEASE ENTER YOUR PHONE NUMBER</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="send_confirm_code">Send Confirmation Code</string>
 </resources>

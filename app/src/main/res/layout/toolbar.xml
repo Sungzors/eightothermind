@@ -8,7 +8,6 @@
     android:layout_height="?attr/actionBarSize"
     android:background="?attr/colorPrimary"
     tools:ignore="MissingPrefix">
-    <!--android:background="?attr/colorPrimary"-->
 
     <!--Profile Picture View-->
     <ImageView

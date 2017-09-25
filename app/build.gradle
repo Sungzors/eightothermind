@@ -46,4 +46,6 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     compile 'uk.co.chrisjenx:calligraphy:2.3.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.hbb20:ccp:1.7.4'
+//    compile 'com.github.glomadrian:codeinput:1.1@aar'
 }
