@@ -1,5 +1,6 @@
 package com.phdlabs.sungwon.a8chat_android.structure.login
 
+import android.telephony.PhoneNumberFormattingTextWatcher
 import android.widget.Toast
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.api.data.LoginData
@@ -32,6 +33,7 @@ class RegisterActivity : CoreActivity(){
         if (intent.getStringExtra(Constants.LOGIN_KEY) != "register"){
             isRegister = false
         }
+        ar_phone.addTextChangedListener(PhoneNumberFormattingTextWatcher())
         setOnClickers()
     }
 
