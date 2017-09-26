@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardElevation="3dp"
+            app:contentPadding="0dp"
+            app:cardCornerRadius="3dp"
+            android:layout_margin="30dp">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="3dp"
+                    android:background="@drawable/tab_top_of_card"/>
+                <com.github.glomadrian.codeinputlib.CodeInput
+                    android:id="@+id/ac_code_input"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:codes="6"
+                    app:hint_text="ENTER CONFIRMATION CODE"
+                    android:layout_margin="10dp"/>
+            </RelativeLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <TextView
+            android:id="@+id/ac_textview_resend_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/resend_code"
+            android:textColor="@color/colorPrimary"
+            android:textSize="14sp"/>
+
+        <Button
+            android:id="@+id/ac_button_create_profile"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="15dp"
+            android:text="@string/create_profile"
+            android:textColor="@color/white"/>
+
+        <TextView
+            android:id="@+id/ac_textview_instruction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="14sp"/>
+
+    </LinearLayout>
+
+    <include layout="@layout/progress_view"/>
+
+</FrameLayout>

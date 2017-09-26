@@ -11,4 +11,6 @@
     <string name="please_enter_your_phone_number">PLEASE ENTER YOUR PHONE NUMBER</string>
     <string name="phone_number">Phone Number</string>
     <string name="send_confirm_code">Send Confirmation Code</string>
+    <string name="resend_code"><u>Resend Code</u></string>
+    <string name="create_profile">Create Profile</string>
 </resources>
