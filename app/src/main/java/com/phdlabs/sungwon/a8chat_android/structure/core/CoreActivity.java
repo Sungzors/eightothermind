@@ -28,9 +28,13 @@ import java.util.List;
 /**
  * Created by SungWon on 9/11/2017.
  * Base class for all Activities
+ *
+ * All kotlin activities must import kotlinx.android.synthetic.main.activity_{name}.* in order to use the ids as the object
+ *
+ * Any Activity/Fragment implementing controller should override onStart etc and call Controller's start etc
  */
 
-public abstract class CoreActivity extends AppCompatActivity {
+public abstract class CoreActivity extends AppCompatActivity{
     /*Properties*/
     //Back button listeners
     private List<OnBackPressListener> mOnBackPressListeners = new ArrayList<>();
@@ -45,6 +49,7 @@ public abstract class CoreActivity extends AppCompatActivity {
     @LayoutRes
     protected abstract int layoutId();
 
+    //Return 0 for activity with no container
     @IdRes
     protected abstract int contentContainerId();
 
