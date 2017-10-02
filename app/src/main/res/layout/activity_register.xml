@@ -85,10 +85,11 @@
         <Button
             android:id="@+id/ar_confirm_button"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:layout_marginStart="30dp"
             android:layout_marginEnd="30dp"
-            android:text="@string/send_confirm_code"/>
+            android:text="@string/send_confirm_code"
+            android:textColor="@color/white"/>
 
     </LinearLayout>
 

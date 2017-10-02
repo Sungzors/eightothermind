@@ -5,7 +5,7 @@ import org.greenrobot.eventbus.EventBus
 /**
  * Created by SungWon on 9/22/2017.
  */
-class EventBusManager(){
+class EventBusManager{
 
     companion object {
         fun instance(): EventBusManager = EventBusManager()

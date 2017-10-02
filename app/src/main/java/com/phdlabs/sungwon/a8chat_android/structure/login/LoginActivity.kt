@@ -22,11 +22,16 @@ class LoginActivity : CoreActivity() {
         super.onStart()
         al_login_button.setOnClickListener({
             val intent = Intent(this, RegisterActivity::class.java)
-            intent.putExtra(Constants.LOGIN_KEY, "register")
-            startActivity(Intent(this, RegisterActivity::class.java))
+            intent.putExtra(Constants.IntentKeys.LOGIN_KEY, "register")
+            startActivity(intent)
         })
         al_signin_button.setOnClickListener({
             Toast.makeText(this, "shitclicked!", Toast.LENGTH_SHORT).show()
+        })
+        al_signin_button.setOnClickListener({
+            val intent = Intent(this, RegisterActivity::class.java)
+            intent.putExtra(Constants.IntentKeys.LOGIN_KEY, "login")
+            startActivity(intent)
         })
     }
 }
