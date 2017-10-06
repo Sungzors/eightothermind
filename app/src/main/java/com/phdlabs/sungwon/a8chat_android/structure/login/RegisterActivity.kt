@@ -60,7 +60,10 @@ class RegisterActivity : CoreActivity(){
     private fun setOnClickers(){
         ar_confirm_button.setOnClickListener({
             showProgress()
-            val call = Rest.getInstance().caller.login(LoginData(ar_ccp.selectedCountryCodeWithPlus, ar_phone.text.toString()))
+            val x = ar_ccp.selectedCountryCodeWithPlus
+            var phone = ar_phone.text.toString()
+            phone = phone.replace("[^0-9]".toRegex(),"")
+            val call = Rest.getInstance().caller.login(LoginData(ar_ccp.selectedCountryCodeWithPlus, phone))
             call.enqueue(object: Callback8<UserDataResponse, LoginEvent>(mDataEventBus){
                 override fun onSuccess(data: UserDataResponse?) {
                     Preferences(context).putPreference(Constants.PrefKeys.USER_ID, data!!.user.id)

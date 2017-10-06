@@ -2,12 +2,15 @@ package com.phdlabs.sungwon.a8chat_android.api.rest;
 
 import com.phdlabs.sungwon.a8chat_android.api.data.LoginData;
 import com.phdlabs.sungwon.a8chat_android.api.data.VerifyData;
+import com.phdlabs.sungwon.a8chat_android.api.response.MediaResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.ResendResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.TokenResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.UserDataResponse;
 
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
 
 /**
@@ -27,4 +30,7 @@ public interface Caller {
 
     @POST("/auth/resend")
     Call<ResendResponse> resend(@Body LoginData loginData);
+
+    @POST("/media")
+    Call<MediaResponse> userPicPost(@Header(TOKEN) String token, @Body RequestBody data);
 }

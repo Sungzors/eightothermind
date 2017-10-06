@@ -82,6 +82,9 @@ class ConfirmActivity: CoreActivity(){
     private fun setupClickers(){
         ac_button_create_profile.setOnClickListener({
             showProgress()
+            mCountryCode
+            mPhone
+            val x = ac_code_input.code.joinToString("")
             val call = mCaller.verify(VerifyData(mCountryCode, mPhone, ac_code_input.code.joinToString("")))
             call.enqueue(object: Callback8<TokenResponse, ConfirmEvent>(mDataEventBus){
                 override fun onSuccess(data: TokenResponse?) {

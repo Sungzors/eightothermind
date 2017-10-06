@@ -237,6 +237,10 @@ public abstract class CoreActivity extends AppCompatActivity{
         boolean onBackPressed();
     }
 
+    public void close() {
+        finishAffinity();
+    }
+
     /*View*/
     @SuppressWarnings("unchecked")
     public <V extends View> V findById(@IdRes int id) {

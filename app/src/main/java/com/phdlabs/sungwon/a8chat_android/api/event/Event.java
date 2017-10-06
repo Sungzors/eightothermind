@@ -68,5 +68,6 @@ public abstract class Event {
 
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
+        isSuccess = false;
     }
 }
