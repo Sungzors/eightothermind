@@ -5,10 +5,13 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.widget.Toast
 import com.phdlabs.sungwon.a8chat_android.api.event.MediaEvent
+import com.phdlabs.sungwon.a8chat_android.api.event.UserPatchEvent
 import com.phdlabs.sungwon.a8chat_android.api.response.MediaResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.UserDataResponse
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
 import com.phdlabs.sungwon.a8chat_android.api.utility.Callback8
 import com.phdlabs.sungwon.a8chat_android.db.EventBusManager
+import com.phdlabs.sungwon.a8chat_android.db.UserManager
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.utility.*
 import com.squareup.picasso.Picasso
@@ -43,14 +46,27 @@ class ProfileAController(val mView: ProfileContract.View): ProfileContract.Contr
         CameraControl.instance.startImagePicker(mView.getActivity)
     }
 
+    override fun postProfile() {
+        mView.showProgress()
+        val pref = Preferences(mView.getContext()!!)
+        val call = Rest.getInstance().caller.updateUser(pref.getPreferenceString(Constants.PrefKeys.TOKEN_KEY), UserManager.instance().user!!.id, mView.getUserData)
+        call.enqueue(object : Callback8<UserDataResponse, UserPatchEvent>(EventBusManager.instance().mDataEventBus) {
+            override fun onSuccess(data: UserDataResponse?) {
+                mView.hideProgress()
+                EventBusManager.instance().mDataEventBus.post(UserPatchEvent())
+                Toast.makeText(mView.getContext(), "Profile Picture Updated", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
     override fun onPictureResult(requestCode: Int, resultCode: Int, data: Intent?) {
         CameraControl.Companion.instance.getImageAsync(mView.getActivity, requestCode, resultCode, data,
-                Procedure<CameraControl.ImageResult> { result ->
+                Procedure { result ->
                     if (result.getFile() != null){
                         circlePicture(result!!.getFile()!!.absolutePath)
                     }
                 },
-                Procedure<CameraControl.ImageResult> { result ->
+                Procedure { result ->
                     mView.showProgress()
                     if (result.getFile() != null) {
                         val bos = ByteArrayOutputStream()

@@ -3,6 +3,7 @@ package com.phdlabs.sungwon.a8chat_android.structure.profile
 import android.content.Intent
 import android.net.Uri
 import android.widget.ImageView
+import com.phdlabs.sungwon.a8chat_android.api.data.UserData
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseController
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseView
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
@@ -14,6 +15,8 @@ interface ProfileContract {
 
     interface View: BaseView<Controller>{
         val getProfileImageView: ImageView?
+
+        val getUserData: UserData
 
         val getActivity: ProfileActivity
     }
