@@ -1,5 +1,6 @@
 package com.phdlabs.sungwon.a8chat_android.structure.login
 
+import android.content.Intent
 import android.widget.Toast
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.api.data.LoginData
@@ -13,6 +14,7 @@ import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
 import com.phdlabs.sungwon.a8chat_android.api.utility.Callback8
 import com.phdlabs.sungwon.a8chat_android.db.EventBusManager
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
+import com.phdlabs.sungwon.a8chat_android.structure.profile.ProfileActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.Preferences
 import kotlinx.android.synthetic.main.activity_confirm.*
@@ -57,7 +59,7 @@ class ConfirmActivity: CoreActivity(){
     public fun onEventUIThread(event: ConfirmEvent){
         if(event.isSuccess){
             hideProgress()
-            //TODO: send to profilemaker
+            startActivity(Intent(this, ProfileActivity::class.java))
         } else {
             hideProgress()
             Toast.makeText(this, event.errorMessage, Toast.LENGTH_SHORT).show()
@@ -82,14 +84,15 @@ class ConfirmActivity: CoreActivity(){
     private fun setupClickers(){
         ac_button_create_profile.setOnClickListener({
             showProgress()
-            mCountryCode
-            mPhone
-            val x = ac_code_input.code.joinToString("")
-            val call = mCaller.verify(VerifyData(mCountryCode, mPhone, ac_code_input.code.joinToString("")))
+            var phone = mPhone
+            phone = phone.replace("[^0-9]".toRegex(),"")
+            val call = mCaller.verify(VerifyData(mCountryCode, phone, ac_code_input.code.joinToString("")))
             call.enqueue(object: Callback8<TokenResponse, ConfirmEvent>(mDataEventBus){
                 override fun onSuccess(data: TokenResponse?) {
-                    Preferences(context).putPreference(Constants.PrefKeys.TOKEN_KEY, data?.token)
+                    Preferences(context).putPreference(Constants.PrefKeys.TOKEN_KEY, "Bearer " + data?.token)
                     mDataEventBus.post(ConfirmEvent())
+                    hideProgress()
+                    Toast.makeText(context, "Confirmed " + data?.token, Toast.LENGTH_SHORT).show()
                 }
             })
         })

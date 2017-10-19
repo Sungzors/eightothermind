@@ -4,6 +4,7 @@ import android.content.Intent
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.structure.login.LoginActivity
+import com.phdlabs.sungwon.a8chat_android.structure.main.MainActivity
 import com.phdlabs.sungwon.a8chat_android.structure.profile.ProfileActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.Preferences
@@ -38,6 +39,9 @@ class DebugActivity: CoreActivity(){
         })
         ad_profile_button.setOnClickListener({
             startActivity(Intent(this, ProfileActivity::class.java))
+        })
+        ad_main_button.setOnClickListener({
+            startActivity(Intent(this, MainActivity::class.java))
         })
         ad_chat_button.setOnClickListener({
             //TODO: build chat

@@ -21,4 +21,9 @@
     <string name="what_languages_do_you_speak">WHAT LANGUAGES DO YOU SPEAK?</string>
     <string name="starto">Get Started</string>
     <string name="english">English</string>
+    <string name="channels">Channels</string>
+    <string name="events">Events</string>
+    <string name="channels_i_follow">Channels I follow</string>
+    <string name="my_channels">My Channels</string>
+    <string name="type_something">Type Something...</string>
 </resources>

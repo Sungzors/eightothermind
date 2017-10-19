@@ -50,8 +50,10 @@ class ProfileActivity: CoreActivity(), ProfileContract.View {
     override val getUserData: UserData
         get() = UserData(ap_first_name.text.toString(), ap_last_name.text.toString(), ap_language_spinner.text.toString())
 
+    override fun nullChecker(): Boolean = (ap_first_name.text.toString() == "" || ap_last_name.text.toString() == "")
+
     private fun setClickers(){
-        profilePic!!.setOnClickListener({
+        ap_profile_pic.setOnClickListener({
             controller.showPicture(this)
         })
         ap_submit_button.setOnClickListener({

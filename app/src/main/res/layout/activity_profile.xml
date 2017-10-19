@@ -54,11 +54,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/ap_your_name_fix"
-                    android:layout_marginStart="25dp"
-                    android:layout_marginEnd="25dp"
+                    android:layout_marginStart="23dp"
+                    android:layout_marginEnd="23dp"
                     android:hint="@string/first_name"
-                    android:paddingStart="0dp"
-                    android:paddingEnd="0dp"
+                    android:maxLines="1"
+                    android:inputType="textCapSentences"
                     android:imeOptions="actionNext"/>
 
                 <EditText
@@ -66,11 +66,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/ap_first_name"
-                    android:layout_marginStart="25dp"
-                    android:layout_marginEnd="25dp"
+                    android:layout_marginStart="23dp"
+                    android:layout_marginEnd="23dp"
                     android:hint="@string/last_name"
-                    android:paddingStart="0dp"
-                    android:paddingEnd="0dp"
+                    android:maxLines="1"
+                    android:inputType="textCapSentences"
                     android:imeOptions="actionNext"/>
 
                 <TextView
@@ -93,6 +93,7 @@
                     android:paddingStart="0dp"
                     android:paddingEnd="0dp"
                     android:layout_marginBottom="20dp"
+                    android:enabled="false"
                     android:text="@string/english"/>
 
             </RelativeLayout>

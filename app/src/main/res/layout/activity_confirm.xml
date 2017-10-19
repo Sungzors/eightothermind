@@ -22,7 +22,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="3dp"
                     android:background="@drawable/tab_top_of_card"/>
-                <com.github.glomadrian.codeinputlib.CodeInput
+                <com.phdlabs.sungwon.a8chat_android.utility.CustomCodeInput
                     android:id="@+id/ac_code_input"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

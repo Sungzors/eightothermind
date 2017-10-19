@@ -11,13 +11,14 @@ import com.phdlabs.sungwon.a8chat_android.api.response.UserDataResponse
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
 import com.phdlabs.sungwon.a8chat_android.api.utility.Callback8
 import com.phdlabs.sungwon.a8chat_android.db.EventBusManager
-import com.phdlabs.sungwon.a8chat_android.db.UserManager
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.utility.*
 import com.squareup.picasso.Picasso
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import retrofit2.Call
+import retrofit2.Response
 import java.io.ByteArrayOutputStream
 
 
@@ -25,6 +26,8 @@ import java.io.ByteArrayOutputStream
  * Created by SungWon on 10/2/2017.
  */
 class ProfileAController(val mView: ProfileContract.View): ProfileContract.Controller{
+
+    //connects to ProfileActivity
 
     init {
         mView.controller = this
@@ -47,14 +50,30 @@ class ProfileAController(val mView: ProfileContract.View): ProfileContract.Contr
     }
 
     override fun postProfile() {
+        if(mView.nullChecker()){
+            Toast.makeText(mView.getContext(), "Please enter a first and last name", Toast.LENGTH_SHORT).show()
+        }
         mView.showProgress()
         val pref = Preferences(mView.getContext()!!)
-        val call = Rest.getInstance().caller.updateUser(pref.getPreferenceString(Constants.PrefKeys.TOKEN_KEY), UserManager.instance().user!!.id, mView.getUserData)
+//        val v = pref.getPreferenceString(Constants.PrefKeys.TOKEN_KEY)
+//        val w = UserManager.instance().user!!.id
+//        val x = mView.getUserData
+        val call = Rest.getInstance().caller.updateUser(pref.getPreferenceString(Constants.PrefKeys.TOKEN_KEY), pref.getPreferenceInt(Constants.PrefKeys.USER_ID), mView.getUserData)
         call.enqueue(object : Callback8<UserDataResponse, UserPatchEvent>(EventBusManager.instance().mDataEventBus) {
             override fun onSuccess(data: UserDataResponse?) {
                 mView.hideProgress()
                 EventBusManager.instance().mDataEventBus.post(UserPatchEvent())
-                Toast.makeText(mView.getContext(), "Profile Picture Updated", Toast.LENGTH_SHORT).show()
+                Toast.makeText(mView.getContext(), "Profile Updated", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onResponse(call: Call<UserDataResponse>?, response: Response<UserDataResponse>?) {
+                mView.hideProgress()
+                super.onResponse(call, response)
+            }
+
+            override fun onError(response: Response<UserDataResponse>?) {
+                mView.hideProgress()
+                super.onError(response)
             }
         })
     }

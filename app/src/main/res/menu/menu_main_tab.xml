@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/mmt_home"
+        android:title="@null"
+        android:icon="@android:drawable/ic_menu_agenda"/>
+
+    <item
+        android:id="@+id/mmt_camera"
+        android:title="@null"
+        android:icon="@android:drawable/ic_menu_camera"/>
+
+    <item
+        android:id="@+id/mmt_profile"
+        android:title="@null"
+        android:icon="@android:drawable/ic_dialog_info"/>
+</menu>

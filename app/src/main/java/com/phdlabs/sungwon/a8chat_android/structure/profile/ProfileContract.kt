@@ -19,6 +19,9 @@ interface ProfileContract {
         val getUserData: UserData
 
         val getActivity: ProfileActivity
+
+        /* true if either first or last name is null*/
+        fun nullChecker() : Boolean
     }
 
     interface Controller: BaseController{
