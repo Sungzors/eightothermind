@@ -11,6 +11,7 @@ import com.phdlabs.sungwon.a8chat_android.api.response.UserDataResponse;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
@@ -27,6 +28,9 @@ public interface Caller {
 
     @POST("/users")
     Call<UserDataResponse> login(@Body LoginData loginData);
+
+    @GET("/users/{userid}")
+    Call<UserDataResponse> getUser(@Header(TOKEN) String token, @Path("userid") int userid);
 
     @PATCH("/users/{userid}")
     Call<UserDataResponse> updateUser(@Header(TOKEN) String token, @Path("userid") int userid, @Body UserData userData);

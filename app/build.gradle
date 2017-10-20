@@ -48,4 +48,5 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.hbb20:ccp:1.7.4'
     compile 'com.github.glomadrian:CodeInput:1.1@aar'
+    compile 'com.github.nkzawa:socket.io-client:0.3.0'
 }
