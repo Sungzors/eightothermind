@@ -36,6 +36,9 @@
         <activity
             android:name=".structure.main.MainActivity"
             android:screenOrientation="portrait"/>
+        <activity
+            android:name=".structure.chat.ChatActivity"
+            android:screenOrientation="portrait"/>
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.example.android.8chat_android.fileprovider"

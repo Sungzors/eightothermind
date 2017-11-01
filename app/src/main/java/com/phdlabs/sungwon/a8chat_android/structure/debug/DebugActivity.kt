@@ -8,6 +8,7 @@ import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
 import com.phdlabs.sungwon.a8chat_android.api.utility.Callback8
 import com.phdlabs.sungwon.a8chat_android.db.EventBusManager
 import com.phdlabs.sungwon.a8chat_android.db.UserManager
+import com.phdlabs.sungwon.a8chat_android.structure.chat.ChatActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.structure.login.LoginActivity
 import com.phdlabs.sungwon.a8chat_android.structure.main.MainActivity
@@ -70,7 +71,7 @@ class DebugActivity: CoreActivity(){
             startActivity(Intent(this, MainActivity::class.java))
         })
         ad_chat_button.setOnClickListener({
-            //TODO: build chat
+            startActivity(Intent(this, ChatActivity::class.java))
         })
         ad_sandbox_button.setOnClickListener({
             //TODO: build sandbox

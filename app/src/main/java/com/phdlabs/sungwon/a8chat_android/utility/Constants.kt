@@ -15,4 +15,15 @@ object Constants{
         const val USER_ID = "user_id"
         const val TOKEN_KEY = "token"
     }
+
+    object SocketKeys{
+        const val CONNECT = "connect"
+        const val UPDATE_ROOM = "update-room"
+        const val UPDATE_CHAT_STRING = "update-chat-string"
+        const val UPDATE_CHAT_MEDIA = "update-chat-media"
+        const val UPDATE_CHAT_LOCATION = "update-chat-location"
+        const val UPDATE_CHAT_CHANNEL = "update-chat-channel"
+        const val UPDATE_CHAT_CONTACT = "update-chat-contact"
+        const val ON_ERROR = "on-error"
+    }
 }
