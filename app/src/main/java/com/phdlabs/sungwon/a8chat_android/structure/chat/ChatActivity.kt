@@ -1,11 +1,13 @@
 package com.phdlabs.sungwon.a8chat_android.structure.chat
 
+import android.content.Context
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.LinearLayout
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
+import android.widget.RelativeLayout
 import android.widget.TextView
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.model.Message
@@ -15,7 +17,6 @@ import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseRecyclerAdapter
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseViewHolder
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.ViewMap
 import kotlinx.android.synthetic.main.activity_chat.*
-import kotlinx.android.synthetic.main.card_view_chat.*
 import java.text.SimpleDateFormat
 
 /**
@@ -32,9 +33,11 @@ class ChatActivity: CoreActivity(), ChatContract.View{
 
     override fun onStart() {
         super.onStart()
+        showProgress()
         ChatController(this)
         controller.start()
         controller.createPrivateChatRoom()
+        setupClickers()
         setupRecycler()
     }
 
@@ -58,6 +61,30 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         controller.destroy()
     }
 
+    private fun setupClickers() {
+        ac_emitting_button_of_green_arrow.setOnClickListener({
+            controller.sendMessage()
+        })
+        ac_conjuring_conduit_of_messages.setOnClickListener({
+            val layoutManager = ac_floating_cascade_of_parchments.layoutManager as LinearLayoutManager
+            layoutManager.scrollToPositionWithOffset(controller.getMessages().size -1, 0)
+            ac_conjuring_conduit_of_messages.isFocusableInTouchMode = true
+
+            ac_conjuring_conduit_of_messages.post({
+                ac_conjuring_conduit_of_messages.requestFocus()
+                val imm = this.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.showSoftInput(ac_conjuring_conduit_of_messages, InputMethodManager.SHOW_IMPLICIT)
+            })
+        })
+        ac_conjuring_conduit_of_messages.setOnFocusChangeListener({ view, b ->
+            if (!b){
+                ac_conjuring_conduit_of_messages.isFocusableInTouchMode = false
+                val imm = this.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.hideSoftInputFromWindow(ac_conjuring_conduit_of_messages.windowToken, 0)
+            }
+        })
+    }
+
     fun setupRecycler(){
         mAdapter = object: BaseRecyclerAdapter<Message, BaseViewHolder>(){
             override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: Message?, position: Int, type: Int) {
@@ -68,6 +95,7 @@ class ChatActivity: CoreActivity(), ChatContract.View{
                     Message.TYPE_FILE -> bindFileViewHolder(viewHolder, data)
                     Message.TYPE_MEDIA -> bindMediaViewHolder(viewHolder, data)
                     Message.TYPE_MONEY -> bindMoneyViewHolder(viewHolder, data)
+                    Message.TYPE_CHANNEL -> bindChannelViewHolder(viewHolder, data)
                 }
             }
 
@@ -79,46 +107,89 @@ class ChatActivity: CoreActivity(), ChatContract.View{
                 }
             }
         }
-        mAdapter.setItems(controller.getMessages)
-        ac_floating_cascade_of_parchments.layoutManager = LinearLayoutManager(this)
+        mAdapter.setItems(controller.getMessages())
+        val layoutManager = LinearLayoutManager(this)
+        layoutManager.stackFromEnd = true
+        ac_floating_cascade_of_parchments.layoutManager = layoutManager
         ac_floating_cascade_of_parchments.adapter = mAdapter
     }
 
     private fun bindMessageViewHolder(viewHolder: BaseViewHolder?, message: Message?){
-        if(message!!.userId!!.toInt() == controller.getUserId){
-            cvc_message_date.visibility = TextView.GONE
-            cvc_message_bubble.background = ContextCompat.getDrawable(this, R.drawable.chatbubble_left)
-            val params = cvc_message_bubble.layoutParams as LinearLayout.LayoutParams
+        val date = viewHolder!!.get<TextView>(R.id.cvc_message_date)
+        val bubble = viewHolder.get<TextView>(R.id.cvc_message)
+        bubble.text = message!!.message
+        if(message.userId!!.toInt() != controller.getUserId){
+            date.visibility = TextView.GONE
+            bubble.background = ContextCompat.getDrawable(this, R.drawable.chatbubble_left)
+            val params = bubble.layoutParams as RelativeLayout.LayoutParams
+            params.setMargins(45, 5, 55, 5)
             params.marginStart = 45
             params.marginEnd = 55
-            params.gravity = Gravity.START
-            cvc_message_bubble.layoutParams = params
-            if(viewHolder!!.adapterPosition == 0){
-                cvc_message_date.visibility = TextView.VISIBLE
+            params.addRule(RelativeLayout.ALIGN_PARENT_START)
+            bubble.layoutParams = params
+            bubble.textAlignment = TextView.TEXT_ALIGNMENT_TEXT_START
+            val x = viewHolder.adapterPosition
+            if(viewHolder.adapterPosition == 0){
+                date.visibility = TextView.VISIBLE
                 val formatter = SimpleDateFormat("EEE - h:mm aaa")
-                cvc_message_date.text = formatter.format(message.createdAt)
+                date.text = formatter.format(message.createdAt)
                 message.timeDisplayed = true
+                controller.setMessageObject(viewHolder.adapterPosition, message)
+            } else if (message.timeDisplayed) {
+                date.visibility = TextView.VISIBLE
+                val formatter = SimpleDateFormat("EEE - h:mm aaa")
+                date.text = formatter.format(message.createdAt)
             } else if (lastTimeDisplayed(viewHolder.adapterPosition)) {
-                cvc_message_date.visibility = TextView.VISIBLE
+                date.visibility = TextView.VISIBLE
                 val formatter = SimpleDateFormat("EEE - h:mm aaa")
-                cvc_message_date.text = formatter.format(message.createdAt)
+                date.text = formatter.format(message.createdAt)
                 message.timeDisplayed = true
+                controller.setMessageObject(viewHolder.adapterPosition, message)
             }
         } else {
-            cvc_message_bubble.background = ContextCompat.getDrawable(this, R.drawable.chatbubble_right)
-            val params = cvc_message_bubble.layoutParams as LinearLayout.LayoutParams
+            date.visibility = TextView.GONE
+            bubble.background = ContextCompat.getDrawable(this, R.drawable.chatbubble_right)
+            val params = bubble.layoutParams as RelativeLayout.LayoutParams
+            params.setMargins(55, 5, 30, 5)
             params.marginStart = 55
-            params.marginEnd = 15
-            params.gravity = Gravity.END
-            cvc_message_bubble.layoutParams = params
-            cvm_message.textAlignment = TextView.TEXT_ALIGNMENT_TEXT_END
+            params.marginEnd = 30
+            params.addRule(RelativeLayout.ALIGN_PARENT_END)
+            bubble.layoutParams = params
+            bubble.textAlignment = TextView.TEXT_ALIGNMENT_TEXT_END
+            val x = viewHolder.adapterPosition
+            if(viewHolder.adapterPosition == 0){
+                date.visibility = TextView.VISIBLE
+                val formatter = SimpleDateFormat("EEE - h:mm aaa")
+                date.text = formatter.format(message.createdAt)
+                message.timeDisplayed = true
+                controller.setMessageObject(viewHolder.adapterPosition, message)
+            } else if (message.timeDisplayed) {
+                date.visibility = TextView.VISIBLE
+                val formatter = SimpleDateFormat("EEE - h:mm aaa")
+                date.text = formatter.format(message.createdAt)
+            } else if (lastTimeDisplayed(viewHolder.adapterPosition)) {
+                date.visibility = TextView.VISIBLE
+                val formatter = SimpleDateFormat("EEE - h:mm aaa")
+                date.text = formatter.format(message.createdAt)
+                message.timeDisplayed = true
+                controller.setMessageObject(viewHolder.adapterPosition, message)
+            }
         }
     }
 
+    //can move to controllerlrldf
     private fun lastTimeDisplayed(position: Int): Boolean{
-        for (i in position - 1 downTo 0){
-            if(mAdapter.selectedItems[i].timeDisplayed){
-                return (mAdapter.selectedItems[i].createdAt!!.time.minus(mAdapter.selectedItems[position].createdAt!!.time)>= 20*60*1000)
+        if (position == 0){
+            return true
+        }
+        for (i in position-1 downTo 0){
+            i
+            val x = mAdapter.getItem(i).timeDisplayed
+            if(controller.getMessages()[i].timeDisplayed){
+//                val a = mAdapter.getItem(i)
+//                val b = mAdapter.getItem(position)
+                val c = controller.getMessages()[position].createdAt!!.time.minus(controller.getMessages()[i].createdAt!!.time)
+                return (controller.getMessages()[position].createdAt!!.time.minus(controller.getMessages()[i].createdAt!!.time)>= 20*60*1000)
             }
         }
         return true
@@ -157,7 +228,16 @@ class ChatActivity: CoreActivity(), ChatContract.View{
     override val getChatParticipant: Int
         get() = 2 //TODO: grab id from Intent
 
+    override val getMessageET: String
+        get() = ac_conjuring_conduit_of_messages.text.toString()
+
+    override val getMessageETObject: EditText
+        get() = ac_conjuring_conduit_of_messages
+
     override fun updateRecycler() {
+        mAdapter.clear()
+//        val m = controller.getMessages()
+        mAdapter.setItems(controller.getMessages())
         mAdapter.notifyDataSetChanged()
     }
 }

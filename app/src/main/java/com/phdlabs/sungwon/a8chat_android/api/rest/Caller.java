@@ -1,13 +1,12 @@
 package com.phdlabs.sungwon.a8chat_android.api.rest;
 
-import android.support.annotation.Nullable;
-
-import com.phdlabs.sungwon.a8chat_android.api.data.GetMessageData;
 import com.phdlabs.sungwon.a8chat_android.api.data.LoginData;
 import com.phdlabs.sungwon.a8chat_android.api.data.PrivateChatCreateData;
 import com.phdlabs.sungwon.a8chat_android.api.data.PrivateChatPatchData;
+import com.phdlabs.sungwon.a8chat_android.api.data.SendMessageStringData;
 import com.phdlabs.sungwon.a8chat_android.api.data.UserData;
 import com.phdlabs.sungwon.a8chat_android.api.data.VerifyData;
+import com.phdlabs.sungwon.a8chat_android.api.response.ErrorResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.MediaResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.ResendResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.RoomHistoryResponse;
@@ -67,5 +66,10 @@ public interface Caller {
     Call<RoomResponse> hidePrivateChatRoom(@Header(TOKEN) String token, @Path("roomId") int roomId, @Body PrivateChatPatchData body);
 
     @GET("/privateChats/{roomId}/user/{userId}/messages")
-    Call<RoomHistoryResponse> getMessageHistory(@Header(TOKEN) String token, @Path("roomId") int roomId, @Path("userId") int userId, @Nullable @Body GetMessageData data);
+    Call<RoomHistoryResponse> getMessageHistory(@Header(TOKEN) String token, @Path("roomId") int roomId, @Path("userId") int userId);
+
+    @POST("/messages/string")
+    Call<ErrorResponse> sendMessageString(@Header(TOKEN)String token, @Body SendMessageStringData data);
+
+
 }

@@ -4,7 +4,12 @@ import android.util.Log
 import com.github.nkzawa.emitter.Emitter
 import com.github.nkzawa.socketio.client.Socket
 import com.phdlabs.sungwon.a8chat_android.api.data.PrivateChatCreateData
+import com.phdlabs.sungwon.a8chat_android.api.data.SendMessageStringData
+import com.phdlabs.sungwon.a8chat_android.api.event.MessageSentEvent
 import com.phdlabs.sungwon.a8chat_android.api.event.PrivateChatCreateEvent
+import com.phdlabs.sungwon.a8chat_android.api.event.RoomHistoryEvent
+import com.phdlabs.sungwon.a8chat_android.api.response.ErrorResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.RoomHistoryResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.RoomResponse
 import com.phdlabs.sungwon.a8chat_android.api.rest.Caller
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
@@ -19,6 +24,9 @@ import com.phdlabs.sungwon.a8chat_android.utility.Preferences
 import org.greenrobot.eventbus.EventBus
 import org.json.JSONException
 import org.json.JSONObject
+import retrofit2.Response
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 /**
@@ -39,7 +47,7 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
     private lateinit var mCaller: Caller
     private lateinit var mEventBus: EventBus
 
-    private var isConnected: Boolean = true
+    private var isConnected: Boolean = false
 
     init {
         mView.controller = this
@@ -50,7 +58,7 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
     override fun start() {
         mCaller = Rest.getInstance().caller
         mEventBus = EventBusManager.instance().mDataEventBus
-        mSocket.connect()
+
         // TODO: requires dynamic room name
         mRoomName = "testRoom1"
         mRoomType = "privateChat"
@@ -62,7 +70,9 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
         mSocket.on(Constants.SocketKeys.UPDATE_CHAT_CONTACT, onNewMessage)
         mSocket.on(Constants.SocketKeys.UPDATE_CHAT_LOCATION, onNewMessage)
         mSocket.on(Constants.SocketKeys.UPDATE_CHAT_MEDIA, onNewMessage)
-        mSocket.on(Constants.SocketKeys.ON_ERROR, onNewMessage)
+        mSocket.on(Constants.SocketKeys.ON_ERROR, onError)
+        mSocket.connect()
+
     }
 
     override fun resume() {
@@ -78,10 +88,15 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
         mSocket.disconnect()
     }
 
+    override fun setMessageObject(position: Int, message: Message) {
+        mMessages.set(position, message)
+    }
+
     override fun createPrivateChatRoom() {
         val call = mCaller.createPrivateChatRoom(
                 Preferences(mView.getContext()!!).getPreferenceString(Constants.PrefKeys.TOKEN_KEY),
-                PrivateChatCreateData(mutableListOf(UserManager.instance().user!!.id, mView.getChatParticipant)))
+                PrivateChatCreateData(mutableListOf(UserManager.instance.user!!.id, mView.getChatParticipant))
+        )
         call.enqueue(object: Callback8<RoomResponse, PrivateChatCreateEvent>(mEventBus){
             override fun onSuccess(data: RoomResponse?) {
                 mEventBus.post(PrivateChatCreateEvent())
@@ -90,18 +105,62 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
         })
     }
 
-    override val getMessages: MutableList<Message>
-        get() = mMessages
+    override fun retrieveChatHistory() {
+        val call = mCaller.getMessageHistory(
+                Preferences(mView.getContext()!!).getPreferenceString(Constants.PrefKeys.TOKEN_KEY),
+                mRoomId,
+                UserManager.instance.user!!.id
+        )
+        call.enqueue(object: Callback8<RoomHistoryResponse, RoomHistoryEvent>(mEventBus){
+            override fun onSuccess(data: RoomHistoryResponse?) {
+                if(data!!.messages!!.read != null){
+                    for(item in data.messages!!.read!!){
+                        mMessages.add(item)
+                    }
+                    mMessages.reverse()
+                    mView.updateRecycler()
+                } else {
+                    for(item in data.messages!!.unread!!){
+                        mMessages.add(item)
+                    }
+                    mMessages.reverse()
+                    mView.updateRecycler()
+                }
+                mView.hideProgress()
+            }
+
+            override fun onError(response: Response<RoomHistoryResponse>?) {
+                super.onError(response)
+                Log.e(TAG, response!!.message())
+            }
+        })
+    }
+
+    override fun sendMessage() {
+        val call = mCaller.sendMessageString(
+                Preferences(mView.getContext()!!).getPreferenceString(Constants.PrefKeys.TOKEN_KEY),
+                SendMessageStringData(UserManager.instance.user!!.id.toString(), mView.getMessageET, mRoomId.toString())
+        )
+        call.enqueue(object : Callback8<ErrorResponse, MessageSentEvent>(mEventBus){
+            override fun onSuccess(data: ErrorResponse?) {
+                mEventBus.post(MessageSentEvent())
+                mView.getMessageETObject.setText("")
+            }
+        })
+    }
+
+    override fun getMessages(): MutableList<Message> = mMessages
 
     override val getUserId: Int
-        get() = UserManager.instance().user!!.id
+        get() = UserManager.instance.user!!.id
 
     //listeners
     private val onConnect = Emitter.Listener{ args ->
         mView.getActivity.runOnUiThread({
+            val a = isConnected
             if (!isConnected) {
                 Log.d(TAG, "Socket Connected")
-                mSocket.emit("check-rooms-user-participates", UserManager.instance().user!!.id, mRoomType)
+                mSocket.emit("connect-rooms", UserManager.instance.user!!.id, mRoomType)
                 isConnected = true
             }
         })
@@ -119,6 +178,7 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
             } catch (e: JSONException){
                 Log.e(TAG, e.message)
             }
+            retrieveChatHistory()
             if(userAdded != null){
 
             }
@@ -163,7 +223,27 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
             val builder = Message.Builder(type, userId!!, roomId!!)
             when (type){
                 Message.TYPE_STRING -> {
-                    mMessages.add(builder.message(message!!).build())
+                    val message = builder.message(message!!).build()
+                    var userAvatar : String? = null
+                    var createdAt : Date? = null
+                    var updatedAt : Date? = null
+                    var original_message_id : String? = null
+                    try {
+                        userAvatar = data.getString("userAvatar")
+                        val createdAtString = data.getString("createdAt")
+                        val df = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+                        createdAt = df.parse(createdAtString)
+                        val updatedAtString = data.getString("updatedAt")
+                        updatedAt = df.parse(updatedAtString)
+                        original_message_id = data.getString("original_message_id")
+                        message.userAvatar = userAvatar
+                        message.createdAt = createdAt
+                        message.updatedAt = updatedAt
+                        message.original_message_id = original_message_id
+                    } catch (e: JSONException){
+                        Log.e(TAG, e.message)
+                    }
+                    mMessages.add(message)
                     mView.updateRecycler()
                 }
                 Message.TYPE_CHANNEL -> {
@@ -254,8 +334,14 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
                 }
 
             }
-            //TODO: update adapter
         })
+    }
+
+    private val onError = Emitter.Listener { args ->
+        mView.getActivity.runOnUiThread {
+            val message = args[0] as JSONObject
+            Log.e(TAG, message.getString("message"))
+        }
     }
 
 

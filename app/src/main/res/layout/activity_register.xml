@@ -44,7 +44,8 @@
                     android:layout_marginTop="5dp"
                     app:countryPreference="US"
                     app:defaultNameCode="US"
-                    app:showFullName="true"/>
+                    app:showFullName="true"
+                    app:contentColor="@color/colorAccent"/>
 
                 <View
                     android:id="@+id/ar_divider1"
@@ -85,11 +86,13 @@
         <Button
             android:id="@+id/ar_confirm_button"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="50dp"
             android:layout_marginStart="30dp"
             android:layout_marginEnd="30dp"
+            android:background="@drawable/gradient_eightchatblue"
             android:text="@string/send_confirm_code"
-            android:textColor="@color/white"/>
+            android:textColor="@color/white"
+            android:textSize="16sp"/>
 
     </LinearLayout>
 

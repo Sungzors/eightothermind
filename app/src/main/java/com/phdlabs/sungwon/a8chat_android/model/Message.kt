@@ -14,15 +14,16 @@ class Message private constructor(){
     var language: String? = null
     var userAvatar: String? = null
     var createdAt: Date? = null
+    var updatedAt: Date? = null
     var fileNames: Array<String>? = null
     var subRoom_id: String? = null
     var original_message_id: String? = null
     val mediaArray = mutableListOf<MediaDetailNest>()
     var channelInfo: Channel? = null
     var contactInfo: User? = null
-    var locationInfo: String? = null
+    var locationInfo: LocationInfoNest? = null
 
-    @Transient
+//    @Transient
     var timeDisplayed: Boolean = false
 
     companion object {

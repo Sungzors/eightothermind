@@ -2,7 +2,8 @@ package com.phdlabs.sungwon.a8chat_android.structure.login
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
+import android.text.SpannableString
+import android.text.style.UnderlineSpan
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
@@ -26,12 +27,17 @@ class LoginActivity : CoreActivity() {
             startActivity(intent)
         })
         al_signin_button.setOnClickListener({
-            Toast.makeText(this, "shitclicked!", Toast.LENGTH_SHORT).show()
-        })
-        al_signin_button.setOnClickListener({
             val intent = Intent(this, RegisterActivity::class.java)
             intent.putExtra(Constants.IntentKeys.LOGIN_KEY, "login")
             startActivity(intent)
         })
+        setupUI()
     }
+
+    private fun setupUI(){
+        val content = SpannableString(getString(R.string.sign_in))
+        content.setSpan(UnderlineSpan(), 0, content.length, 0)
+        al_signin_button.text = content
+    }
+
 }

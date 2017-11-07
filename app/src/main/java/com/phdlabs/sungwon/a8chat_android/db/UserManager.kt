@@ -7,10 +7,12 @@ import com.phdlabs.sungwon.a8chat_android.model.User
  */
 class UserManager{
 
-    //should contain calls involving user
+    //should contain calls involving users
 
-    companion object {
-        fun instance(): UserManager = UserManager()
+    companion object{
+        val instance: UserManager = UserManager()
+
+
     }
 
     var user: User? = null

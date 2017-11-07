@@ -67,7 +67,7 @@ class RegisterActivity : CoreActivity(){
             call.enqueue(object: Callback8<UserDataResponse, LoginEvent>(mDataEventBus){
                 override fun onSuccess(data: UserDataResponse?) {
                     Preferences(context).putPreference(Constants.PrefKeys.USER_ID, data!!.user.id)
-                    UserManager().user = data.user
+                    UserManager.instance.user = data.user
                     mDataEventBus.post(LoginEvent())
                 }
             })

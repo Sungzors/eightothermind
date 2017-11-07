@@ -1,5 +1,6 @@
 package com.phdlabs.sungwon.a8chat_android.structure.chat
 
+import android.widget.EditText
 import com.phdlabs.sungwon.a8chat_android.model.Message
 import com.phdlabs.sungwon.a8chat_android.structure.application.Application
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseController
@@ -13,6 +14,8 @@ interface ChatContract {
         val get8Application : Application
         val getActivity : ChatActivity
         val getChatParticipant : Int
+        val getMessageET : String
+        val getMessageETObject : EditText
 
         fun updateRecycler()
     }
@@ -20,9 +23,15 @@ interface ChatContract {
     interface Controller: BaseController{
         fun destroy()
 
-        val getMessages : MutableList<Message>
+        fun getMessages() : MutableList<Message>
         val getUserId : Int
 
+        fun setMessageObject(position: Int, message: Message)
+
         fun createPrivateChatRoom()
+
+        fun retrieveChatHistory()
+
+        fun sendMessage()
     }
 }

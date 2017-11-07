@@ -37,7 +37,7 @@ class DebugActivity: CoreActivity(){
         ad_token.text = "Token: " + token?.length
         ad_user_id.text = "User ID: " + userID
 
-        if(UserManager.instance().user == null){
+        if(UserManager.instance.user == null){
             if (token?.length!=0){
                 ad_loading_text.text = "Loading User..."
                 val call = Rest.getInstance().caller.getUser(token, userID!!)
@@ -45,7 +45,7 @@ class DebugActivity: CoreActivity(){
                     override fun onSuccess(data: UserDataResponse?) {
                         ad_loading_text.text = "User Loaded"
                         EventBusManager.instance().mDataEventBus.post(UserGetEvent())
-                        UserManager.instance().user = data!!.user
+                        UserManager.instance.user = data!!.user
                     }
 
                     override fun onError(response: Response<UserDataResponse>?) {

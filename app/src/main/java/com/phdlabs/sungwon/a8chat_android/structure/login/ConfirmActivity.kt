@@ -1,6 +1,8 @@
 package com.phdlabs.sungwon.a8chat_android.structure.login
 
 import android.content.Intent
+import android.text.SpannableString
+import android.text.style.UnderlineSpan
 import android.widget.Toast
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.api.data.LoginData
@@ -79,6 +81,9 @@ class ConfirmActivity: CoreActivity(){
 
     private fun setupUI(){
         ac_textview_instruction.text = String.format(getString(R.string.send_1, mPhone))
+        val content = SpannableString(getString(R.string.resend_code))
+        content.setSpan(UnderlineSpan(), 0, content.length, 0)
+        ac_textview_resend_code.text = content
     }
 
     private fun setupClickers(){

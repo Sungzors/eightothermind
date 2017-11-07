@@ -28,8 +28,8 @@
                     android:layout_height="wrap_content"
                     app:codes="6"
                     app:hint_text="@string/enter_confirmation_code"
-                    app:underline_color="@color/colorPrimary"
-                    app:underline_selected_color="@color/colorPrimary"
+                    app:underline_color="@color/colorAccent"
+                    app:underline_selected_color="@color/colorAccent"
                     app:text_color="@color/colorAccent"
                     app:hint_color="@color/colorAccent"
                     android:layout_margin="10dp"
@@ -43,20 +43,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="@string/resend_code"
             android:textColor="@color/colorPrimary"
             android:textSize="14sp"/>
 
         <Button
             android:id="@+id/ac_button_create_profile"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="50dp"
             android:layout_marginStart="30dp"
             android:layout_marginEnd="30dp"
             android:layout_marginTop="15dp"
             android:layout_marginBottom="15dp"
+            android:background="@drawable/gradient_eightchatblue"
             android:text="@string/create_profile"
-            android:textColor="@color/white"/>
+            android:textColor="@color/white"
+            android:textSize="16sp"/>
 
         <TextView
             android:id="@+id/ac_textview_instruction"
