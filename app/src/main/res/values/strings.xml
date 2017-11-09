@@ -26,4 +26,9 @@
     <string name="channels_i_follow">Channels I follow</string>
     <string name="my_channels">My Channels</string>
     <string name="type_something">Type Something...</string>
+    <!--Camera Control-->
+    <string name="pick_image_intent_text">Choose an image</string>
+    <string name="profile_image">Profile Image</string>
+    <string name="profile_image_circle">Profile image circle</string>
+    <!--Camera Control-->
 </resources>

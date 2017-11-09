@@ -1,8 +1,8 @@
 package com.phdlabs.sungwon.a8chat_android.structure.profile
 
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
-import android.net.Uri
 import android.widget.Toast
 import com.phdlabs.sungwon.a8chat_android.api.event.MediaEvent
 import com.phdlabs.sungwon.a8chat_android.api.event.UserPatchEvent
@@ -13,7 +13,7 @@ import com.phdlabs.sungwon.a8chat_android.api.utility.Callback8
 import com.phdlabs.sungwon.a8chat_android.db.EventBusManager
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.utility.*
-import com.squareup.picasso.Picasso
+import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -25,7 +25,7 @@ import java.io.ByteArrayOutputStream
 /**
  * Created by SungWon on 10/2/2017.
  */
-class ProfileAController(val mView: ProfileContract.View): ProfileContract.Controller{
+class ProfileAController(val mView: ProfileContract.View) : ProfileContract.Controller {
 
     //connects to ProfileActivity
 
@@ -46,11 +46,14 @@ class ProfileAController(val mView: ProfileContract.View): ProfileContract.Contr
     }
 
     override fun showPicture(activity: CoreActivity) {
-        CameraControl.instance.startImagePicker(mView.getActivity)
+        CameraControl.instance.pickImage(mView.getActivity,
+                "Choose a profile picture",
+                CameraControl.instance.requestCode(),
+                false)
     }
 
     override fun postProfile() {
-        if(mView.nullChecker()){
+        if (mView.nullChecker()) {
             Toast.makeText(mView.getContext(), "Please enter a first and last name", Toast.LENGTH_SHORT).show()
         }
         mView.showProgress()
@@ -79,51 +82,37 @@ class ProfileAController(val mView: ProfileContract.View): ProfileContract.Contr
     }
 
     override fun onPictureResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        CameraControl.Companion.instance.getImageAsync(mView.getActivity, requestCode, resultCode, data,
-                Procedure { result ->
-                    if (result.getFile() != null){
-                        circlePicture(result!!.getFile()!!.absolutePath)
-                    }
-                },
-                Procedure { result ->
-                    mView.showProgress()
-                    if (result.getFile() != null) {
-                        val bos = ByteArrayOutputStream()
-                        result!!.getBitmap()!!.compress(Bitmap.CompressFormat.PNG, 0, bos)
-                        val bitmapdata = bos.toByteArray()
-//                        val bs = ByteArrayInputStream(bitmapdata)
-//                        val buff = ByteArray(8000)
-//                        var bytesRead = 0
-//                        val bos2 = ByteArrayOutputStream()
-//                        try {
-//                            while (bs.read(buff) != -1){
-//
-//                                bos2.write(buff, 0, bytesRead)
-//                            }
-//                        } catch(e: IOException){
-//                            e.printStackTrace()
-//                        }
-                        val pref = Preferences(mView.getContext()!!)
-                        val formBody = MultipartBody.Builder().setType(MultipartBody.FORM)
-                                .addFormDataPart("user_id", pref.getPreferenceInt(Constants.PrefKeys.USER_ID, -1).toString())
-                                .addFormDataPart("file", "8chat" + System.currentTimeMillis(), RequestBody.create(MediaType.parse("image/png"), bitmapdata))
-                                .build()
-                        val call = Rest.getInstance().caller.userPicPost(pref.getPreferenceString(Constants.PrefKeys.TOKEN_KEY), formBody)
-                        call.enqueue(object : Callback8<MediaResponse, MediaEvent>(EventBusManager.instance().mDataEventBus) {
-                            override fun onSuccess(data: MediaResponse?) {
-                                mView.hideProgress()
-                                Toast.makeText(mView.getContext(), "Profile Picture Updated", Toast.LENGTH_SHORT).show()
-                            }
-                        })
+
+        //Change image if available
+        if (resultCode != Activity.RESULT_CANCELED) {
+            mView.showProgress()
+            //Set image in UI
+            val imageUrl = CameraControl.instance.getImagePathFromResult(mView.getActivity, requestCode, resultCode, data)
+            imageUrl.let {
+                mView.setProfileImageView(it!!)
+            }
+            //Upload Image
+            val imageBitmap = CameraControl.instance.getImageFromResult(mView.getActivity, requestCode, resultCode, data)
+            imageBitmap.let {
+                val bos = ByteArrayOutputStream()
+                it!!.compress(Bitmap.CompressFormat.PNG, 0, bos)
+                val bitmapData = bos.toByteArray()
+                val pref = Preferences(mView.getContext()!!)
+                val formBody = MultipartBody.Builder().setType(MultipartBody.FORM)
+                        .addFormDataPart("user_id", pref.getPreferenceInt(Constants.PrefKeys.USER_ID, -1).toString())
+                        .addFormDataPart("file", "8chat" + System.currentTimeMillis(), RequestBody.create(MediaType.parse("image/png"), bitmapData))
+                        .build()
+                val call = Rest.getInstance().caller.userPicPost(pref.getPreferenceString(Constants.PrefKeys.TOKEN_KEY), formBody)
+                call.enqueue(object : Callback8<MediaResponse, MediaEvent>(EventBusManager.instance().mDataEventBus) {
+                    override fun onSuccess(data: MediaResponse?) {
+                        mView.hideProgress()
+                        Toast.makeText(mView.getContext(), "Profile Picture Updated", Toast.LENGTH_SHORT).show()
                     }
                 })
+
+            }
+            mView.hideProgress()
+        }
     }
 
-    override fun circlePicture(pictureUrl: String) {
-        Picasso.with(mView.getContext()).load(pictureUrl).transform(CircleTransform()).into(mView.getProfileImageView)
-    }
-
-    override fun circlePicture(pictureUrl: Uri) {
-        Picasso.with(mView.getContext()).load(pictureUrl).transform(CircleTransform()).into(mView.getProfileImageView)
-    }
 }
