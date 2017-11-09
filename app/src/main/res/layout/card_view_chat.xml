@@ -27,12 +27,12 @@
         android:paddingStart="30dp"
         android:paddingBottom="15dp"
         android:paddingEnd="30dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginStart="45dp"
-        android:layout_marginEnd="55dp"
-        android:layout_marginBottom="5dp"
         android:textSize="14sp"
         android:text="test"/>
+    <!--android:layout_marginTop="5dp"-->
+    <!--android:layout_marginStart="45dp"-->
+    <!--android:layout_marginEnd="55dp"-->
+    <!--android:layout_marginBottom="5dp"-->
 
     <ImageView
         android:id="@+id/cvm_profile_pic"

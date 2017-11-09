@@ -17,6 +17,9 @@ interface ChatContract {
         val getMessageET : String
         val getMessageETObject : EditText
 
+        fun lastTimeDisplayed(position : Int) : Boolean
+        fun lastTimeDisplayed(message: Message) : Boolean
+
         fun updateRecycler()
     }
 

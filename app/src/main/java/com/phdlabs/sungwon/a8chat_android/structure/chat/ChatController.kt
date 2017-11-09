@@ -82,6 +82,7 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
     }
 
     override fun stop() {
+        mMessages.clear()
     }
 
     override fun destroy() {
@@ -113,19 +114,26 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
         )
         call.enqueue(object: Callback8<RoomHistoryResponse, RoomHistoryEvent>(mEventBus){
             override fun onSuccess(data: RoomHistoryResponse?) {
-                if(data!!.messages!!.read != null){
-                    for(item in data.messages!!.read!!){
+
+                //TODO: need to add read first then unread always, but check for unread null instead.
+                for(item in data!!.messages!!.unread!!){
+                    if(item.roomId == mRoomId.toString()){
                         mMessages.add(item)
                     }
-                    mMessages.reverse()
-                    mView.updateRecycler()
-                } else {
-                    for(item in data.messages!!.unread!!){
-                        mMessages.add(item)
-                    }
-                    mMessages.reverse()
-                    mView.updateRecycler()
                 }
+                for(item in data.messages!!.read!!){
+                    if(item.roomId == mRoomId.toString()){
+                        mMessages.add(item)
+                    }
+                }
+                mMessages.reverse()
+                var i = 0
+                for(item in mMessages){
+                    item.timeDisplayed = mView.lastTimeDisplayed(i)
+                    setMessageObject(i, item)
+                    i++
+                }
+                mView.updateRecycler()
                 mView.hideProgress()
             }
 
@@ -210,6 +218,10 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
             var type : String? = null
             try {
                 message = data.getString("message")
+            } catch (e:JSONException){
+                Log.e(TAG, e.message)
+            }
+            try {
                 roomId = data.getString("roomId")
                 userId = data.getString("userId")
                 type = data.getString("type")
@@ -226,23 +238,24 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
                     val message = builder.message(message!!).build()
                     var userAvatar : String? = null
                     var createdAt : Date? = null
-                    var updatedAt : Date? = null
+//                    var updatedAt : Date? = null
                     var original_message_id : String? = null
                     try {
                         userAvatar = data.getString("userAvatar")
                         val createdAtString = data.getString("createdAt")
                         val df = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
                         createdAt = df.parse(createdAtString)
-                        val updatedAtString = data.getString("updatedAt")
-                        updatedAt = df.parse(updatedAtString)
+//                        val updatedAtString = data.getString("updatedAt")
+//                        updatedAt = df.parse(updatedAtString)
                         original_message_id = data.getString("original_message_id")
                         message.userAvatar = userAvatar
                         message.createdAt = createdAt
-                        message.updatedAt = updatedAt
+//                        message.updatedAt = updatedAt
                         message.original_message_id = original_message_id
                     } catch (e: JSONException){
                         Log.e(TAG, e.message)
                     }
+                    message.timeDisplayed = mView.lastTimeDisplayed(message)
                     mMessages.add(message)
                     mView.updateRecycler()
                 }
@@ -330,6 +343,31 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
                         return@runOnUiThread
                     }
                     mMessages.add(builder.message(message).contact(contact).build())
+                    mView.updateRecycler()
+                }
+                Message.TYPE_LOCATION -> {
+                    val message = builder.message(message!!).build()
+                    var userAvatar : String? = null
+                    var createdAt : Date? = null
+//                    var updatedAt : Date? = null
+                    var original_message_id : String? = null
+                    try {
+                        userAvatar = data.getString("userAvatar")
+                        val createdAtString = data.getString("createdAt")
+                        val df = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+                        createdAt = df.parse(createdAtString)
+//                        val updatedAtString = data.getString("updatedAt")
+//                        updatedAt = df.parse(updatedAtString)
+                        original_message_id = data.getString("original_message_id")
+                        message.userAvatar = userAvatar
+                        message.createdAt = createdAt
+//                        message.updatedAt = updatedAt
+                        message.original_message_id = original_message_id
+                    } catch (e: JSONException){
+                        Log.e(TAG, e.message)
+                    }
+                    message.timeDisplayed = mView.lastTimeDisplayed(message)
+                    mMessages.add(message)
                     mView.updateRecycler()
                 }
 

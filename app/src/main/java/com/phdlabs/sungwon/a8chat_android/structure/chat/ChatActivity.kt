@@ -114,11 +114,43 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         ac_floating_cascade_of_parchments.adapter = mAdapter
     }
 
+    //can move to controllerlrldf
+    override fun lastTimeDisplayed(position: Int): Boolean{
+        if (position == 0){
+            return true
+        }
+        for (i in position-1 downTo 0){
+//            i
+//            val x = controller.getMessages()[i].timeDisplayed
+            if(controller.getMessages()[i].timeDisplayed){
+//                val a = mAdapter.getItem(i)
+//                val b = mAdapter.getItem(position)
+//                val c = controller.getMessages()[position].createdAt!!.time.minus(controller.getMessages()[i].createdAt!!.time)
+                return (controller.getMessages()[position].createdAt!!.time.minus(controller.getMessages()[i].createdAt!!.time)>= 20*60*1000)
+            }
+        }
+        return true
+    }
+
+    override fun lastTimeDisplayed(message: Message): Boolean{
+        if (controller.getMessages().size == 0){
+            return true
+        }
+        for (i in controller.getMessages().size -1 downTo 0){
+            if(controller.getMessages()[i].timeDisplayed){
+//                val a = mAdapter.getItem(i)
+//                val b = mAdapter.getItem(position)
+//                val c = controller.getMessages()[position].createdAt!!.time.minus(controller.getMessages()[i].createdAt!!.time)
+                return (message.createdAt!!.time.minus(controller.getMessages()[i].createdAt!!.time)>= 20*60*1000)
+            }
+        }
+        return true
+    }
+
     private fun bindMessageViewHolder(viewHolder: BaseViewHolder?, message: Message?){
         val date = viewHolder!!.get<TextView>(R.id.cvc_message_date)
         val bubble = viewHolder.get<TextView>(R.id.cvc_message)
-        bubble.text = message!!.message
-        if(message.userId!!.toInt() != controller.getUserId){
+        if(message!!.userId!!.toInt() != controller.getUserId){
             date.visibility = TextView.GONE
             bubble.background = ContextCompat.getDrawable(this, R.drawable.chatbubble_left)
             val params = bubble.layoutParams as RelativeLayout.LayoutParams
@@ -128,23 +160,12 @@ class ChatActivity: CoreActivity(), ChatContract.View{
             params.addRule(RelativeLayout.ALIGN_PARENT_START)
             bubble.layoutParams = params
             bubble.textAlignment = TextView.TEXT_ALIGNMENT_TEXT_START
+            bubble.text = message.message
             val x = viewHolder.adapterPosition
             if(viewHolder.adapterPosition == 0){
                 date.visibility = TextView.VISIBLE
                 val formatter = SimpleDateFormat("EEE - h:mm aaa")
                 date.text = formatter.format(message.createdAt)
-                message.timeDisplayed = true
-                controller.setMessageObject(viewHolder.adapterPosition, message)
-            } else if (message.timeDisplayed) {
-                date.visibility = TextView.VISIBLE
-                val formatter = SimpleDateFormat("EEE - h:mm aaa")
-                date.text = formatter.format(message.createdAt)
-            } else if (lastTimeDisplayed(viewHolder.adapterPosition)) {
-                date.visibility = TextView.VISIBLE
-                val formatter = SimpleDateFormat("EEE - h:mm aaa")
-                date.text = formatter.format(message.createdAt)
-                message.timeDisplayed = true
-                controller.setMessageObject(viewHolder.adapterPosition, message)
             }
         } else {
             date.visibility = TextView.GONE
@@ -156,43 +177,14 @@ class ChatActivity: CoreActivity(), ChatContract.View{
             params.addRule(RelativeLayout.ALIGN_PARENT_END)
             bubble.layoutParams = params
             bubble.textAlignment = TextView.TEXT_ALIGNMENT_TEXT_END
+            bubble.text = message.message
             val x = viewHolder.adapterPosition
-            if(viewHolder.adapterPosition == 0){
+            if(message.timeDisplayed){
                 date.visibility = TextView.VISIBLE
                 val formatter = SimpleDateFormat("EEE - h:mm aaa")
                 date.text = formatter.format(message.createdAt)
-                message.timeDisplayed = true
-                controller.setMessageObject(viewHolder.adapterPosition, message)
-            } else if (message.timeDisplayed) {
-                date.visibility = TextView.VISIBLE
-                val formatter = SimpleDateFormat("EEE - h:mm aaa")
-                date.text = formatter.format(message.createdAt)
-            } else if (lastTimeDisplayed(viewHolder.adapterPosition)) {
-                date.visibility = TextView.VISIBLE
-                val formatter = SimpleDateFormat("EEE - h:mm aaa")
-                date.text = formatter.format(message.createdAt)
-                message.timeDisplayed = true
-                controller.setMessageObject(viewHolder.adapterPosition, message)
             }
         }
-    }
-
-    //can move to controllerlrldf
-    private fun lastTimeDisplayed(position: Int): Boolean{
-        if (position == 0){
-            return true
-        }
-        for (i in position-1 downTo 0){
-            i
-            val x = mAdapter.getItem(i).timeDisplayed
-            if(controller.getMessages()[i].timeDisplayed){
-//                val a = mAdapter.getItem(i)
-//                val b = mAdapter.getItem(position)
-                val c = controller.getMessages()[position].createdAt!!.time.minus(controller.getMessages()[i].createdAt!!.time)
-                return (controller.getMessages()[position].createdAt!!.time.minus(controller.getMessages()[i].createdAt!!.time)>= 20*60*1000)
-            }
-        }
-        return true
     }
 
     private fun bindContactViewHolder(viewHolder: BaseViewHolder?, message: Message?){
@@ -200,7 +192,43 @@ class ChatActivity: CoreActivity(), ChatContract.View{
     }
 
     private fun bindLocationViewHolder(viewHolder: BaseViewHolder?, message: Message?){
-
+        val date = viewHolder!!.get<TextView>(R.id.cvc_message_date)
+        val bubble = viewHolder.get<TextView>(R.id.cvc_message)
+        if(message!!.userId!!.toInt() != controller.getUserId){
+            date.visibility = TextView.GONE
+            bubble.background = ContextCompat.getDrawable(this, R.drawable.chatbubble_left)
+            val params = bubble.layoutParams as RelativeLayout.LayoutParams
+            params.setMargins(45, 5, 55, 5)
+            params.marginStart = 45
+            params.marginEnd = 55
+            params.addRule(RelativeLayout.ALIGN_PARENT_START)
+            bubble.layoutParams = params
+            bubble.textAlignment = TextView.TEXT_ALIGNMENT_TEXT_START
+            bubble.text = message.locationInfo!!.streetAddress
+            val x = viewHolder.adapterPosition
+            if(viewHolder.adapterPosition == 0){
+                date.visibility = TextView.VISIBLE
+                val formatter = SimpleDateFormat("EEE - h:mm aaa")
+                date.text = formatter.format(message.createdAt)
+            }
+        } else {
+            date.visibility = TextView.GONE
+            bubble.background = ContextCompat.getDrawable(this, R.drawable.chatbubble_right)
+            val params = bubble.layoutParams as RelativeLayout.LayoutParams
+            params.setMargins(55, 5, 30, 5)
+            params.marginStart = 55
+            params.marginEnd = 30
+            params.addRule(RelativeLayout.ALIGN_PARENT_END)
+            bubble.layoutParams = params
+            bubble.textAlignment = TextView.TEXT_ALIGNMENT_TEXT_END
+            bubble.text = message.locationInfo!!.streetAddress
+            val x = viewHolder.adapterPosition
+            if(message.timeDisplayed){
+                date.visibility = TextView.VISIBLE
+                val formatter = SimpleDateFormat("EEE - h:mm aaa")
+                date.text = formatter.format(message.createdAt)
+            }
+        }
     }
 
     private fun bindFileViewHolder(viewHolder: BaseViewHolder?, message: Message?){
@@ -226,7 +254,7 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         get() = this
 
     override val getChatParticipant: Int
-        get() = 2 //TODO: grab id from Intent
+        get() = 6 //TODO: grab id from Intent
 
     override val getMessageET: String
         get() = ac_conjuring_conduit_of_messages.text.toString()
@@ -236,8 +264,12 @@ class ChatActivity: CoreActivity(), ChatContract.View{
 
     override fun updateRecycler() {
         mAdapter.clear()
-//        val m = controller.getMessages()
+        val m = controller.getMessages()
         mAdapter.setItems(controller.getMessages())
         mAdapter.notifyDataSetChanged()
+        if(controller.getMessages().size>1){
+            ac_floating_cascade_of_parchments.smoothScrollToPosition(controller.getMessages().size-1)
+        }
+
     }
 }
