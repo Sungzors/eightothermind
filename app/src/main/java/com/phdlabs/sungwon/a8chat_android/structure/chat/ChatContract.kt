@@ -21,6 +21,7 @@ interface ChatContract {
         fun lastTimeDisplayed(message: Message) : Boolean
 
         fun updateRecycler()
+        fun updateRecycler(position: Int)
     }
 
     interface Controller: BaseController{
@@ -36,5 +37,7 @@ interface ChatContract {
         fun retrieveChatHistory()
 
         fun sendMessage()
+
+        fun sendLocation()
     }
 }

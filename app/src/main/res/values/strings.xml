@@ -26,4 +26,10 @@
     <string name="channels_i_follow">Channels I follow</string>
     <string name="my_channels">My Channels</string>
     <string name="type_something">Type Something...</string>
+    <string name="share_media">Share Media</string>
+    <string name="share_contact">Share Contact</string>
+    <string name="share_location">Share Location</string>
+    <string name="share_file">Share File</string>
+    <string name="share_chennal">Share Channel</string>
+    <string name="share_money">Share Money</string>
 </resources>

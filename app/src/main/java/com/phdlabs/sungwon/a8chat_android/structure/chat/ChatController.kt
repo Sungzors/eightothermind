@@ -4,7 +4,9 @@ import android.util.Log
 import com.github.nkzawa.emitter.Emitter
 import com.github.nkzawa.socketio.client.Socket
 import com.phdlabs.sungwon.a8chat_android.api.data.PrivateChatCreateData
+import com.phdlabs.sungwon.a8chat_android.api.data.SendMessageGeneralData
 import com.phdlabs.sungwon.a8chat_android.api.data.SendMessageStringData
+import com.phdlabs.sungwon.a8chat_android.api.event.MessageLocationSentEvent
 import com.phdlabs.sungwon.a8chat_android.api.event.MessageSentEvent
 import com.phdlabs.sungwon.a8chat_android.api.event.PrivateChatCreateEvent
 import com.phdlabs.sungwon.a8chat_android.api.event.RoomHistoryEvent
@@ -49,6 +51,9 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
 
     private var isConnected: Boolean = false
 
+
+//    private lateinit var mFusedLocationClient: FusedLocationProviderClient
+
     init {
         mView.controller = this
         mSocket = mView.get8Application.getSocket()
@@ -73,9 +78,17 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
         mSocket.on(Constants.SocketKeys.ON_ERROR, onError)
         mSocket.connect()
 
+
+//        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(mView.getContext()!!)
     }
 
     override fun resume() {
+        if(mSocket == null){
+            start()
+        }
+        if(mMessages == null){
+            retrieveChatHistory()
+        }
     }
 
     override fun pause() {
@@ -140,6 +153,7 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
             override fun onError(response: Response<RoomHistoryResponse>?) {
                 super.onError(response)
                 Log.e(TAG, response!!.message())
+                mView.hideProgress()
             }
         })
     }
@@ -153,6 +167,26 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
             override fun onSuccess(data: ErrorResponse?) {
                 mEventBus.post(MessageSentEvent())
                 mView.getMessageETObject.setText("")
+            }
+        })
+    }
+
+    override fun sendLocation() {
+//        if (ActivityCompat.checkSelfPermission(mView.getContext()!!, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mView.getContext()!!, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            return
+//        }
+//        mFusedLocationClient.lastLocation.addOnSuccessListener({ drawer_location ->
+//            if(drawer_location != null){
+//
+//            }
+//        })
+        val call = mCaller.sendMessageLocation(
+                Preferences(mView.getContext()!!).getPreferenceString(Constants.PrefKeys.TOKEN_KEY),
+                SendMessageGeneralData(UserManager.instance.user!!.id.toString(), mRoomId.toString())
+        )
+        call.enqueue(object : Callback8<ErrorResponse, MessageLocationSentEvent>(mEventBus){
+            override fun onSuccess(data: ErrorResponse?) {
+                mEventBus.post(MessageLocationSentEvent())
             }
         })
     }
@@ -257,7 +291,7 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
                     }
                     message.timeDisplayed = mView.lastTimeDisplayed(message)
                     mMessages.add(message)
-                    mView.updateRecycler()
+                    mView.updateRecycler(mMessages.size)
                 }
                 Message.TYPE_CHANNEL -> {
                     val channelInfo : JSONObject
@@ -293,7 +327,7 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
                         return@runOnUiThread
                     }
                     mMessages.add(builder.message(message).channel(channel).build())
-                    mView.updateRecycler()
+                    mView.updateRecycler(mMessages.size)
                 }
                 Message.TYPE_CONTACT ->{
                     val contactInfo : JSONObject
@@ -343,7 +377,7 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
                         return@runOnUiThread
                     }
                     mMessages.add(builder.message(message).contact(contact).build())
-                    mView.updateRecycler()
+                    mView.updateRecycler(mMessages.size)
                 }
                 Message.TYPE_LOCATION -> {
                     val message = builder.message(message!!).build()
@@ -368,7 +402,7 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
                     }
                     message.timeDisplayed = mView.lastTimeDisplayed(message)
                     mMessages.add(message)
-                    mView.updateRecycler()
+                    mView.updateRecycler(mMessages.size)
                 }
 
             }

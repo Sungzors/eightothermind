@@ -9,6 +9,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.RelativeLayout
 import android.widget.TextView
+import android.widget.Toast
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.model.Message
 import com.phdlabs.sungwon.a8chat_android.structure.application.Application
@@ -16,6 +17,7 @@ import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseRecyclerAdapter
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseViewHolder
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.ViewMap
+import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import kotlinx.android.synthetic.main.activity_chat.*
 import java.text.SimpleDateFormat
 
@@ -37,8 +39,10 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         ChatController(this)
         controller.start()
         controller.createPrivateChatRoom()
+        setupDrawer()
         setupClickers()
         setupRecycler()
+
     }
 
     override fun onResume() {
@@ -59,6 +63,12 @@ class ChatActivity: CoreActivity(), ChatContract.View{
     override fun onDestroy() {
         super.onDestroy()
         controller.destroy()
+    }
+
+    private fun setupDrawer() {
+        ac_the_daddy_drawer.panelState = SlidingUpPanelLayout.PanelState.HIDDEN
+        ac_the_daddy_drawer.isClipPanel = false
+        ac_the_daddy_drawer.coveredFadeColor = ContextCompat.getColor(this, R.color.transparent)
     }
 
     private fun setupClickers() {
@@ -83,6 +93,31 @@ class ChatActivity: CoreActivity(), ChatContract.View{
                 imm.hideSoftInputFromWindow(ac_conjuring_conduit_of_messages.windowToken, 0)
             }
         })
+        ac_drawer_summoner.setOnClickListener {
+            if(ac_the_daddy_drawer.panelState == SlidingUpPanelLayout.PanelState.HIDDEN){
+                ac_the_daddy_drawer.panelState = SlidingUpPanelLayout.PanelState.EXPANDED
+            } else {
+                ac_the_daddy_drawer.panelState = SlidingUpPanelLayout.PanelState.HIDDEN
+            }
+        }
+        ac_drawer_channel.setOnClickListener {
+            Toast.makeText(this, "thaiwerhiwer", Toast.LENGTH_SHORT).show()
+        }
+        ac_drawer_contact.setOnClickListener {
+
+        }
+        ac_drawer_file.setOnClickListener {
+
+        }
+        ac_drawer_location.setOnClickListener {
+
+        }
+        ac_drawer_media.setOnClickListener {
+
+        }
+        ac_drawer_money.setOnClickListener {
+
+        }
     }
 
     fun setupRecycler(){
@@ -97,6 +132,10 @@ class ChatActivity: CoreActivity(), ChatContract.View{
                     Message.TYPE_MONEY -> bindMoneyViewHolder(viewHolder, data)
                     Message.TYPE_CHANNEL -> bindChannelViewHolder(viewHolder, data)
                 }
+            }
+
+            override fun getItemType(t: Message?): Int {
+                return super.getItemType(t)
             }
 
             override fun viewHolder(inflater: LayoutInflater?, parent: ViewGroup?, type: Int): BaseViewHolder {
@@ -254,7 +293,7 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         get() = this
 
     override val getChatParticipant: Int
-        get() = 6 //TODO: grab id from Intent
+        get() = 2 //TODO: grab id from Intent
 
     override val getMessageET: String
         get() = ac_conjuring_conduit_of_messages.text.toString()
@@ -271,5 +310,15 @@ class ChatActivity: CoreActivity(), ChatContract.View{
             ac_floating_cascade_of_parchments.smoothScrollToPosition(controller.getMessages().size-1)
         }
 
+    }
+
+    override fun updateRecycler(position: Int) {
+        mAdapter.clear()
+        val m = controller.getMessages()
+        mAdapter.setItems(controller.getMessages())
+        mAdapter.notifyItemInserted(position)
+        if(controller.getMessages().size>1){
+            ac_floating_cascade_of_parchments.smoothScrollToPosition(controller.getMessages().size-1)
+        }
     }
 }
