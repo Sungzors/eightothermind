@@ -3,6 +3,7 @@ package com.phdlabs.sungwon.a8chat_android.api.rest;
 import com.phdlabs.sungwon.a8chat_android.api.data.LoginData;
 import com.phdlabs.sungwon.a8chat_android.api.data.PrivateChatCreateData;
 import com.phdlabs.sungwon.a8chat_android.api.data.PrivateChatPatchData;
+import com.phdlabs.sungwon.a8chat_android.api.data.SendMessageGeneralData;
 import com.phdlabs.sungwon.a8chat_android.api.data.SendMessageStringData;
 import com.phdlabs.sungwon.a8chat_android.api.data.UserData;
 import com.phdlabs.sungwon.a8chat_android.api.data.VerifyData;
@@ -50,7 +51,7 @@ public interface Caller {
     @POST("/auth/resend")
     Call<ResendResponse> resend(@Body LoginData loginData);
 
-    @POST("/media")
+    @POST("/drawer_media")
     Call<MediaResponse> userPicPost(@Header(TOKEN) String token, @Body RequestBody data);
 
     @POST("/privateChats")
@@ -70,6 +71,9 @@ public interface Caller {
 
     @POST("/messages/string")
     Call<ErrorResponse> sendMessageString(@Header(TOKEN)String token, @Body SendMessageStringData data);
+
+    @POST("/messages/share/drawer_location")
+    Call<ErrorResponse> sendMessageLocation(@Header(TOKEN)String token, @Body SendMessageGeneralData data);
 
 
 }

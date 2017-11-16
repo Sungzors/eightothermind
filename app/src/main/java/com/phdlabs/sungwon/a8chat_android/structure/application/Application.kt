@@ -30,5 +30,7 @@ class Application : Application() {
 
     }
 
+
+
     fun getSocket(): Socket = mSocket
 }

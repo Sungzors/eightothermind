@@ -4,6 +4,7 @@ buildscript {
     ext.kotlin_version = '1.1.51'
     repositories {
         jcenter()
+        google()
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -20,6 +21,7 @@ allprojects {
         maven {
             url "http://dl.bintray.com/glomadrian/maven"
         }
+        google()
     }
 }
 
@@ -28,5 +30,5 @@ task clean(type: Delete) {
 }
 
 ext{
-    supportLibVersion="25.3.1"
+    supportLibVersion="26.1.0"
 }

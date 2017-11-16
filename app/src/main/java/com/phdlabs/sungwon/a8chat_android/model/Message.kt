@@ -28,9 +28,9 @@ class Message private constructor(){
 
     companion object {
         val TYPE_STRING = "string"
-        val TYPE_MEDIA = "media"
-        val TYPE_CONTACT = "contact"
-        val TYPE_LOCATION = "location"
+        val TYPE_MEDIA = "drawer_media"
+        val TYPE_CONTACT = "drawer_contact"
+        val TYPE_LOCATION = "drawer_location"
         val TYPE_FILE = "file"
         val TYPE_CHANNEL = "channel"
         val TYPE_MONEY = "money"
