@@ -20,10 +20,10 @@ object Constants{
         const val CONNECT = "connect"
         const val UPDATE_ROOM = "update-room"
         const val UPDATE_CHAT_STRING = "update-chat-string"
-        const val UPDATE_CHAT_MEDIA = "update-chat-media"
-        const val UPDATE_CHAT_LOCATION = "update-chat-location"
+        const val UPDATE_CHAT_MEDIA = "update-chat-drawer_media"
+        const val UPDATE_CHAT_LOCATION = "update-chat-drawer_location"
         const val UPDATE_CHAT_CHANNEL = "update-chat-channel"
-        const val UPDATE_CHAT_CONTACT = "update-chat-contact"
+        const val UPDATE_CHAT_CONTACT = "update-chat-drawer_contact"
         const val ON_ERROR = "on-error"
     }
 }

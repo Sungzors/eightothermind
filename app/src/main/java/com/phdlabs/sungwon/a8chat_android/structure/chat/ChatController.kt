@@ -4,7 +4,9 @@ import android.util.Log
 import com.github.nkzawa.emitter.Emitter
 import com.github.nkzawa.socketio.client.Socket
 import com.phdlabs.sungwon.a8chat_android.api.data.PrivateChatCreateData
+import com.phdlabs.sungwon.a8chat_android.api.data.SendMessageGeneralData
 import com.phdlabs.sungwon.a8chat_android.api.data.SendMessageStringData
+import com.phdlabs.sungwon.a8chat_android.api.event.MessageLocationSentEvent
 import com.phdlabs.sungwon.a8chat_android.api.event.MessageSentEvent
 import com.phdlabs.sungwon.a8chat_android.api.event.PrivateChatCreateEvent
 import com.phdlabs.sungwon.a8chat_android.api.event.RoomHistoryEvent
@@ -49,6 +51,9 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
 
     private var isConnected: Boolean = false
 
+
+//    private lateinit var mFusedLocationClient: FusedLocationProviderClient
+
     init {
         mView.controller = this
         mSocket = mView.get8Application.getSocket()
@@ -73,15 +78,21 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
         mSocket.on(Constants.SocketKeys.ON_ERROR, onError)
         mSocket.connect()
 
+
+//        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(mView.getContext()!!)
     }
 
     override fun resume() {
+        if(mMessages == null){
+            retrieveChatHistory()
+        }
     }
 
     override fun pause() {
     }
 
     override fun stop() {
+        mMessages.clear()
     }
 
     override fun destroy() {
@@ -113,25 +124,33 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
         )
         call.enqueue(object: Callback8<RoomHistoryResponse, RoomHistoryEvent>(mEventBus){
             override fun onSuccess(data: RoomHistoryResponse?) {
-                if(data!!.messages!!.read != null){
-                    for(item in data.messages!!.read!!){
+
+                //TODO: need to add read first then unread always, but check for unread null instead.
+                for(item in data!!.messages!!.unread!!){
+                    if(item.roomId == mRoomId.toString()){
                         mMessages.add(item)
                     }
-                    mMessages.reverse()
-                    mView.updateRecycler()
-                } else {
-                    for(item in data.messages!!.unread!!){
-                        mMessages.add(item)
-                    }
-                    mMessages.reverse()
-                    mView.updateRecycler()
                 }
+                for(item in data.messages!!.read!!){
+                    if(item.roomId == mRoomId.toString()){
+                        mMessages.add(item)
+                    }
+                }
+                mMessages.reverse()
+                var i = 0
+                for(item in mMessages){
+                    item.timeDisplayed = mView.lastTimeDisplayed(i)
+                    setMessageObject(i, item)
+                    i++
+                }
+                mView.updateRecycler()
                 mView.hideProgress()
             }
 
             override fun onError(response: Response<RoomHistoryResponse>?) {
                 super.onError(response)
                 Log.e(TAG, response!!.message())
+                mView.hideProgress()
             }
         })
     }
@@ -145,6 +164,26 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
             override fun onSuccess(data: ErrorResponse?) {
                 mEventBus.post(MessageSentEvent())
                 mView.getMessageETObject.setText("")
+            }
+        })
+    }
+
+    override fun sendLocation() {
+//        if (ActivityCompat.checkSelfPermission(mView.getContext()!!, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mView.getContext()!!, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            return
+//        }
+//        mFusedLocationClient.lastLocation.addOnSuccessListener({ drawer_location ->
+//            if(drawer_location != null){
+//
+//            }
+//        })
+        val call = mCaller.sendMessageLocation(
+                Preferences(mView.getContext()!!).getPreferenceString(Constants.PrefKeys.TOKEN_KEY),
+                SendMessageGeneralData(UserManager.instance.user!!.id.toString(), mRoomId.toString())
+        )
+        call.enqueue(object : Callback8<ErrorResponse, MessageLocationSentEvent>(mEventBus){
+            override fun onSuccess(data: ErrorResponse?) {
+                mEventBus.post(MessageLocationSentEvent())
             }
         })
     }
@@ -210,6 +249,10 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
             var type : String? = null
             try {
                 message = data.getString("message")
+            } catch (e:JSONException){
+                Log.e(TAG, e.message)
+            }
+            try {
                 roomId = data.getString("roomId")
                 userId = data.getString("userId")
                 type = data.getString("type")
@@ -226,25 +269,26 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
                     val message = builder.message(message!!).build()
                     var userAvatar : String? = null
                     var createdAt : Date? = null
-                    var updatedAt : Date? = null
+//                    var updatedAt : Date? = null
                     var original_message_id : String? = null
                     try {
                         userAvatar = data.getString("userAvatar")
                         val createdAtString = data.getString("createdAt")
                         val df = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
                         createdAt = df.parse(createdAtString)
-                        val updatedAtString = data.getString("updatedAt")
-                        updatedAt = df.parse(updatedAtString)
+//                        val updatedAtString = data.getString("updatedAt")
+//                        updatedAt = df.parse(updatedAtString)
                         original_message_id = data.getString("original_message_id")
                         message.userAvatar = userAvatar
                         message.createdAt = createdAt
-                        message.updatedAt = updatedAt
+//                        message.updatedAt = updatedAt
                         message.original_message_id = original_message_id
                     } catch (e: JSONException){
                         Log.e(TAG, e.message)
                     }
+                    message.timeDisplayed = mView.lastTimeDisplayed(message)
                     mMessages.add(message)
-                    mView.updateRecycler()
+                    mView.updateRecycler(mMessages.size)
                 }
                 Message.TYPE_CHANNEL -> {
                     val channelInfo : JSONObject
@@ -280,7 +324,7 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
                         return@runOnUiThread
                     }
                     mMessages.add(builder.message(message).channel(channel).build())
-                    mView.updateRecycler()
+                    mView.updateRecycler(mMessages.size)
                 }
                 Message.TYPE_CONTACT ->{
                     val contactInfo : JSONObject
@@ -330,7 +374,32 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
                         return@runOnUiThread
                     }
                     mMessages.add(builder.message(message).contact(contact).build())
-                    mView.updateRecycler()
+                    mView.updateRecycler(mMessages.size)
+                }
+                Message.TYPE_LOCATION -> {
+                    val message = builder.message(message!!).build()
+                    var userAvatar : String? = null
+                    var createdAt : Date? = null
+//                    var updatedAt : Date? = null
+                    var original_message_id : String? = null
+                    try {
+                        userAvatar = data.getString("userAvatar")
+                        val createdAtString = data.getString("createdAt")
+                        val df = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+                        createdAt = df.parse(createdAtString)
+//                        val updatedAtString = data.getString("updatedAt")
+//                        updatedAt = df.parse(updatedAtString)
+                        original_message_id = data.getString("original_message_id")
+                        message.userAvatar = userAvatar
+                        message.createdAt = createdAt
+//                        message.updatedAt = updatedAt
+                        message.original_message_id = original_message_id
+                    } catch (e: JSONException){
+                        Log.e(TAG, e.message)
+                    }
+                    message.timeDisplayed = mView.lastTimeDisplayed(message)
+                    mMessages.add(message)
+                    mView.updateRecycler(mMessages.size)
                 }
 
             }
