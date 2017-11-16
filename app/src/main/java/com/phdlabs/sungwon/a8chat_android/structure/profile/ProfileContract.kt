@@ -14,11 +14,15 @@ import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 interface ProfileContract {
 
     interface View: BaseView<Controller>{
+
+        fun setProfileImageView(pictureUrl: String)
+
         val getProfileImageView: ImageView?
 
         val getUserData: UserData
 
         val getActivity: ProfileActivity
+
 
         /* true if either first or last name is null*/
         fun nullChecker() : Boolean
@@ -31,7 +35,5 @@ interface ProfileContract {
 
         fun postProfile()
 
-        fun circlePicture(pictureUrl: String)
-        fun circlePicture(pictureUrl: Uri)
     }
 }

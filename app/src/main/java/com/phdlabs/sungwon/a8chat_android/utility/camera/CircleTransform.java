@@ -1,4 +1,4 @@
-package com.phdlabs.sungwon.a8chat_android.utility;
+package com.phdlabs.sungwon.a8chat_android.utility.camera;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;

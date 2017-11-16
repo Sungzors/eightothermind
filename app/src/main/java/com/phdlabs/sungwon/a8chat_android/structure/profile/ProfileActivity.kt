@@ -5,6 +5,8 @@ import android.widget.ImageView
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.api.data.UserData
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
+import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_profile.*
 
 /**
@@ -12,7 +14,7 @@ import kotlinx.android.synthetic.main.activity_profile.*
  */
 class ProfileActivity: CoreActivity(), ProfileContract.View {
 
-    var profilePic: ImageView? = null
+    private var profilePic: ImageView? = null
 
     override fun layoutId() = R.layout.activity_profile
 
@@ -45,7 +47,7 @@ class ProfileActivity: CoreActivity(), ProfileContract.View {
 
     override val getActivity = this
 
-    override val getProfileImageView = profilePic
+    override val getProfileImageView  = profilePic
 
     override val getUserData: UserData
         get() = UserData(ap_first_name.text.toString(), ap_last_name.text.toString(), arrayOf(ap_language_spinner.text.toString().toLowerCase()))
@@ -62,7 +64,13 @@ class ProfileActivity: CoreActivity(), ProfileContract.View {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        controller.onPictureResult(requestCode, resultCode, data)
         super.onActivityResult(requestCode, resultCode, data)
+        controller.onPictureResult(requestCode, resultCode, data)
+
+    }
+
+    override fun setProfileImageView(pictureUrl: String) { //UI
+        Picasso.with(context).load("file://"+pictureUrl).transform(CircleTransform()).into(profilePic)
+
     }
 }

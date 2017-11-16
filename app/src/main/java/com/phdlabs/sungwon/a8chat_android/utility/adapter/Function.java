@@ -1,4 +1,4 @@
-package com.phdlabs.sungwon.a8chat_android.utility;
+package com.phdlabs.sungwon.a8chat_android.utility.adapter;
 
 /**
  * Created by SungWon on 10/9/2017.

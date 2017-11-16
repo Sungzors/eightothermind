@@ -15,8 +15,6 @@ import android.widget.Checkable;
 import android.widget.Filter;
 import android.widget.Filterable;
 
-import com.phdlabs.sungwon.a8chat_android.utility.Function;
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
