@@ -7,10 +7,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import com.phdlabs.sungwon.a8chat_android.R
+import com.phdlabs.sungwon.a8chat_android.db.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.Message
 import com.phdlabs.sungwon.a8chat_android.structure.application.Application
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
@@ -66,8 +66,8 @@ class ChatActivity: CoreActivity(), ChatContract.View{
     }
 
     private fun setupDrawer() {
-        ac_the_daddy_drawer.panelState = SlidingUpPanelLayout.PanelState.HIDDEN
         ac_the_daddy_drawer.isClipPanel = false
+        ac_the_daddy_drawer.panelHeight = 150
         ac_the_daddy_drawer.coveredFadeColor = ContextCompat.getColor(this, R.color.transparent)
     }
 
@@ -94,10 +94,10 @@ class ChatActivity: CoreActivity(), ChatContract.View{
             }
         })
         ac_drawer_summoner.setOnClickListener {
-            if(ac_the_daddy_drawer.panelState == SlidingUpPanelLayout.PanelState.HIDDEN){
+            if(ac_the_daddy_drawer.panelState == SlidingUpPanelLayout.PanelState.COLLAPSED){
                 ac_the_daddy_drawer.panelState = SlidingUpPanelLayout.PanelState.EXPANDED
             } else {
-                ac_the_daddy_drawer.panelState = SlidingUpPanelLayout.PanelState.HIDDEN
+                ac_the_daddy_drawer.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED
             }
         }
         ac_drawer_channel.setOnClickListener {
@@ -135,15 +135,28 @@ class ChatActivity: CoreActivity(), ChatContract.View{
             }
 
             override fun getItemType(t: Message?): Int {
-                return super.getItemType(t)
+                if (t!!.userId == UserManager.instance.user!!.id.toString()){
+                    return 0
+                } else {
+                    return 1
+                }
             }
 
             override fun viewHolder(inflater: LayoutInflater?, parent: ViewGroup?, type: Int): BaseViewHolder {
-                return object : BaseViewHolder(R.layout.card_view_chat, inflater!!, parent){
-                    override fun addClicks(views: ViewMap?) {
-                        super.addClicks(views)
+                if(type == 0){
+                    return object : BaseViewHolder(R.layout.card_view_chat_right, inflater!!, parent){
+                        override fun addClicks(views: ViewMap?) {
+                            super.addClicks(views)
+                        }
+                    }
+                } else {
+                    return object : BaseViewHolder(R.layout.card_view_chat, inflater!!, parent){
+                        override fun addClicks(views: ViewMap?) {
+                            super.addClicks(views)
+                        }
                     }
                 }
+
             }
         }
         mAdapter.setItems(controller.getMessages())
@@ -189,41 +202,48 @@ class ChatActivity: CoreActivity(), ChatContract.View{
     private fun bindMessageViewHolder(viewHolder: BaseViewHolder?, message: Message?){
         val date = viewHolder!!.get<TextView>(R.id.cvc_message_date)
         val bubble = viewHolder.get<TextView>(R.id.cvc_message)
-        if(message!!.userId!!.toInt() != controller.getUserId){
-            date.visibility = TextView.GONE
-            bubble.background = ContextCompat.getDrawable(this, R.drawable.chatbubble_left)
-            val params = bubble.layoutParams as RelativeLayout.LayoutParams
-            params.setMargins(45, 5, 55, 5)
-            params.marginStart = 45
-            params.marginEnd = 55
-            params.addRule(RelativeLayout.ALIGN_PARENT_START)
-            bubble.layoutParams = params
-            bubble.textAlignment = TextView.TEXT_ALIGNMENT_TEXT_START
-            bubble.text = message.message
-            val x = viewHolder.adapterPosition
-            if(viewHolder.adapterPosition == 0){
-                date.visibility = TextView.VISIBLE
-                val formatter = SimpleDateFormat("EEE - h:mm aaa")
-                date.text = formatter.format(message.createdAt)
-            }
-        } else {
-            date.visibility = TextView.GONE
-            bubble.background = ContextCompat.getDrawable(this, R.drawable.chatbubble_right)
-            val params = bubble.layoutParams as RelativeLayout.LayoutParams
-            params.setMargins(55, 5, 30, 5)
-            params.marginStart = 55
-            params.marginEnd = 30
-            params.addRule(RelativeLayout.ALIGN_PARENT_END)
-            bubble.layoutParams = params
-            bubble.textAlignment = TextView.TEXT_ALIGNMENT_TEXT_END
-            bubble.text = message.message
-            val x = viewHolder.adapterPosition
-            if(message.timeDisplayed){
-                date.visibility = TextView.VISIBLE
-                val formatter = SimpleDateFormat("EEE - h:mm aaa")
-                date.text = formatter.format(message.createdAt)
-            }
+        date.visibility = TextView.GONE
+        bubble.text = message!!.message
+        if(message.timeDisplayed){
+            date.visibility = TextView.VISIBLE
+            val formatter = SimpleDateFormat("EEE - h:mm aaa")
+            date.text = formatter.format(message.createdAt)
         }
+//        if(message!!.userId!!.toInt() != controller.getUserId){
+//            date.visibility = TextView.GONE
+//            bubble.background = ContextCompat.getDrawable(this, R.drawable.chatbubble_left)
+//            val params = bubble.layoutParams as RelativeLayout.LayoutParams
+//            params.setMargins(45, 5, 55, 5)
+//            params.marginStart = 45
+//            params.marginEnd = 55
+//            params.addRule(RelativeLayout.ALIGN_PARENT_START)
+//            bubble.layoutParams = params
+//            bubble.textAlignment = TextView.TEXT_ALIGNMENT_TEXT_START
+//            bubble.text = message.message
+//            val x = viewHolder.adapterPosition
+//            if(viewHolder.adapterPosition == 0){
+//                date.visibility = TextView.VISIBLE
+//                val formatter = SimpleDateFormat("EEE - h:mm aaa")
+//                date.text = formatter.format(message.createdAt)
+//            }
+//        } else {
+//            date.visibility = TextView.GONE
+//            bubble.background = ContextCompat.getDrawable(this, R.drawable.chatbubble_right)
+//            val params = bubble.layoutParams as RelativeLayout.LayoutParams
+//            params.setMargins(55, 5, 30, 5)
+//            params.marginStart = 55
+//            params.marginEnd = 30
+//            params.addRule(RelativeLayout.ALIGN_PARENT_END)
+//            bubble.layoutParams = params
+//            bubble.textAlignment = TextView.TEXT_ALIGNMENT_TEXT_END
+//            bubble.text = message.message
+//            val x = viewHolder.adapterPosition
+//            if(message.timeDisplayed){
+//                date.visibility = TextView.VISIBLE
+//                val formatter = SimpleDateFormat("EEE - h:mm aaa")
+//                date.text = formatter.format(message.createdAt)
+//            }
+//        }
     }
 
     private fun bindContactViewHolder(viewHolder: BaseViewHolder?, message: Message?){
@@ -233,41 +253,48 @@ class ChatActivity: CoreActivity(), ChatContract.View{
     private fun bindLocationViewHolder(viewHolder: BaseViewHolder?, message: Message?){
         val date = viewHolder!!.get<TextView>(R.id.cvc_message_date)
         val bubble = viewHolder.get<TextView>(R.id.cvc_message)
-        if(message!!.userId!!.toInt() != controller.getUserId){
-            date.visibility = TextView.GONE
-            bubble.background = ContextCompat.getDrawable(this, R.drawable.chatbubble_left)
-            val params = bubble.layoutParams as RelativeLayout.LayoutParams
-            params.setMargins(45, 5, 55, 5)
-            params.marginStart = 45
-            params.marginEnd = 55
-            params.addRule(RelativeLayout.ALIGN_PARENT_START)
-            bubble.layoutParams = params
-            bubble.textAlignment = TextView.TEXT_ALIGNMENT_TEXT_START
-            bubble.text = message.locationInfo!!.streetAddress
-            val x = viewHolder.adapterPosition
-            if(viewHolder.adapterPosition == 0){
-                date.visibility = TextView.VISIBLE
-                val formatter = SimpleDateFormat("EEE - h:mm aaa")
-                date.text = formatter.format(message.createdAt)
-            }
-        } else {
-            date.visibility = TextView.GONE
-            bubble.background = ContextCompat.getDrawable(this, R.drawable.chatbubble_right)
-            val params = bubble.layoutParams as RelativeLayout.LayoutParams
-            params.setMargins(55, 5, 30, 5)
-            params.marginStart = 55
-            params.marginEnd = 30
-            params.addRule(RelativeLayout.ALIGN_PARENT_END)
-            bubble.layoutParams = params
-            bubble.textAlignment = TextView.TEXT_ALIGNMENT_TEXT_END
-            bubble.text = message.locationInfo!!.streetAddress
-            val x = viewHolder.adapterPosition
-            if(message.timeDisplayed){
-                date.visibility = TextView.VISIBLE
-                val formatter = SimpleDateFormat("EEE - h:mm aaa")
-                date.text = formatter.format(message.createdAt)
-            }
+        date.visibility = TextView.GONE
+        bubble.text = message!!.locationInfo!!.streetAddress
+        if(message.timeDisplayed){
+            date.visibility = TextView.VISIBLE
+            val formatter = SimpleDateFormat("EEE - h:mm aaa")
+            date.text = formatter.format(message.createdAt)
         }
+//        if(message!!.userId!!.toInt() != controller.getUserId){
+//            date.visibility = TextView.GONE
+//            bubble.background = ContextCompat.getDrawable(this, R.drawable.chatbubble_left)
+//            val params = bubble.layoutParams as RelativeLayout.LayoutParams
+//            params.setMargins(45, 5, 55, 5)
+//            params.marginStart = 45
+//            params.marginEnd = 55
+//            params.addRule(RelativeLayout.ALIGN_PARENT_START)
+//            bubble.layoutParams = params
+//            bubble.textAlignment = TextView.TEXT_ALIGNMENT_TEXT_START
+//            bubble.text = message.locationInfo!!.streetAddress
+//            val x = viewHolder.adapterPosition
+//            if(viewHolder.adapterPosition == 0){
+//                date.visibility = TextView.VISIBLE
+//                val formatter = SimpleDateFormat("EEE - h:mm aaa")
+//                date.text = formatter.format(message.createdAt)
+//            }
+//        } else {
+//            date.visibility = TextView.GONE
+//            bubble.background = ContextCompat.getDrawable(this, R.drawable.chatbubble_right)
+//            val params = bubble.layoutParams as RelativeLayout.LayoutParams
+//            params.setMargins(55, 5, 30, 5)
+//            params.marginStart = 55
+//            params.marginEnd = 30
+//            params.addRule(RelativeLayout.ALIGN_PARENT_END)
+//            bubble.layoutParams = params
+//            bubble.textAlignment = TextView.TEXT_ALIGNMENT_TEXT_END
+//            bubble.text = message.locationInfo!!.streetAddress
+//            val x = viewHolder.adapterPosition
+//            if(message.timeDisplayed){
+//                date.visibility = TextView.VISIBLE
+//                val formatter = SimpleDateFormat("EEE - h:mm aaa")
+//                date.text = formatter.format(message.createdAt)
+//            }
+//        }
     }
 
     private fun bindFileViewHolder(viewHolder: BaseViewHolder?, message: Message?){

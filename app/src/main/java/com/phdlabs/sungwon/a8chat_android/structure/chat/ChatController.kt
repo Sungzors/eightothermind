@@ -83,9 +83,6 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
     }
 
     override fun resume() {
-        if(mSocket == null){
-            start()
-        }
         if(mMessages == null){
             retrieveChatHistory()
         }
