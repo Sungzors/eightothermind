@@ -6,9 +6,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.db.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.Message
@@ -18,6 +16,7 @@ import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseRecyclerAdapter
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseViewHolder
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.ViewMap
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_chat.*
 import java.text.SimpleDateFormat
 
@@ -110,7 +109,7 @@ class ChatActivity: CoreActivity(), ChatContract.View{
 
         }
         ac_drawer_location.setOnClickListener {
-
+            controller.sendLocation()
         }
         ac_drawer_media.setOnClickListener {
 
@@ -178,7 +177,7 @@ class ChatActivity: CoreActivity(), ChatContract.View{
 //                val a = mAdapter.getItem(i)
 //                val b = mAdapter.getItem(position)
 //                val c = controller.getMessages()[position].createdAt!!.time.minus(controller.getMessages()[i].createdAt!!.time)
-                return (controller.getMessages()[position].createdAt!!.time.minus(controller.getMessages()[i].createdAt!!.time)>= 20*60*1000)
+                return (controller.getMessages()[position].createdAt!!.time.minus(controller.getMessages()[i].createdAt!!.time) >= 5 * 86400000)
             }
         }
         return true
@@ -193,7 +192,7 @@ class ChatActivity: CoreActivity(), ChatContract.View{
 //                val a = mAdapter.getItem(i)
 //                val b = mAdapter.getItem(position)
 //                val c = controller.getMessages()[position].createdAt!!.time.minus(controller.getMessages()[i].createdAt!!.time)
-                return (message.createdAt!!.time.minus(controller.getMessages()[i].createdAt!!.time)>= 20*60*1000)
+                return (message.createdAt!!.time.minus(controller.getMessages()[i].createdAt!!.time)>= 5 * 86400000 /*1000*60*60*24*/)
             }
         }
         return true
@@ -201,9 +200,24 @@ class ChatActivity: CoreActivity(), ChatContract.View{
 
     private fun bindMessageViewHolder(viewHolder: BaseViewHolder?, message: Message?){
         val date = viewHolder!!.get<TextView>(R.id.cvc_message_date)
-        val bubble = viewHolder.get<TextView>(R.id.cvc_message)
+        val messagetv = viewHolder.get<TextView>(R.id.cvc_message)
+        val profPic = viewHolder.get<ImageView>(R.id.cvc_profile_pic)
+        val messagePic = viewHolder.get<ImageView>(R.id.cvc_message_pic_small)
+        val picContainer1 = viewHolder.get<LinearLayout>(R.id.cvc_message_pic_container_1)
+        val picContainer2 = viewHolder.get<LinearLayout>(R.id.cvc_message_pic_container_2)
+        val moneyButtonAccept = viewHolder.get<Button>(R.id.cvc_message_button_money_accept)
+        val moneyButtonDecline = viewHolder.get<Button>(R.id.cvc_message_button_money_decline)
         date.visibility = TextView.GONE
-        bubble.text = message!!.message
+        messagePic.visibility = ImageView.GONE
+        picContainer1.visibility = LinearLayout.GONE
+        picContainer2.visibility = LinearLayout.GONE
+        moneyButtonAccept.visibility = Button.GONE
+        moneyButtonDecline.visibility = Button.GONE
+        if(message!!.userId!!.toInt() != controller.getUserId){
+            Picasso.with(this).load(message.userAvatar).into(profPic)
+        }
+        messagetv.setTextColor(ContextCompat.getColor(this, R.color.black))
+        messagetv.text = message.message
         if(message.timeDisplayed){
             date.visibility = TextView.VISIBLE
             val formatter = SimpleDateFormat("EEE - h:mm aaa")
@@ -247,14 +261,53 @@ class ChatActivity: CoreActivity(), ChatContract.View{
     }
 
     private fun bindContactViewHolder(viewHolder: BaseViewHolder?, message: Message?){
-
+        val date = viewHolder!!.get<TextView>(R.id.cvc_message_date)
+        val messagetv = viewHolder.get<TextView>(R.id.cvc_message)
+        val profPic = viewHolder.get<ImageView>(R.id.cvc_profile_pic)
+        val messagePic = viewHolder.get<ImageView>(R.id.cvc_message_pic_small)
+        val picContainer1 = viewHolder.get<LinearLayout>(R.id.cvc_message_pic_container_1)
+        val picContainer2 = viewHolder.get<LinearLayout>(R.id.cvc_message_pic_container_2)
+        val moneyButtonAccept = viewHolder.get<Button>(R.id.cvc_message_button_money_accept)
+        val moneyButtonDecline = viewHolder.get<Button>(R.id.cvc_message_button_money_decline)
+        date.visibility = TextView.GONE
+        messagePic.visibility = ImageView.VISIBLE
+        picContainer1.visibility = LinearLayout.GONE
+        picContainer2.visibility = LinearLayout.GONE
+        moneyButtonAccept.visibility = Button.GONE
+        moneyButtonDecline.visibility = Button.GONE
+        messagetv.text = message!!.contactInfo!!.first_name + message.contactInfo!!.last_name
+        messagetv.setTextColor(ContextCompat.getColor(this, R.color.confirmText))
+        Picasso.with(this).load(message.contactInfo!!.avatar).into(profPic)
+        if(message.userId!!.toInt() != controller.getUserId){
+            Picasso.with(this).load(message.userAvatar).into(profPic)
+        }
+        if(message.timeDisplayed){
+            date.visibility = TextView.VISIBLE
+            val formatter = SimpleDateFormat("EEE - h:mm aaa")
+            date.text = formatter.format(message.createdAt)
+        }
     }
 
     private fun bindLocationViewHolder(viewHolder: BaseViewHolder?, message: Message?){
         val date = viewHolder!!.get<TextView>(R.id.cvc_message_date)
-        val bubble = viewHolder.get<TextView>(R.id.cvc_message)
+        val messagetv = viewHolder.get<TextView>(R.id.cvc_message)
+        val profPic = viewHolder.get<ImageView>(R.id.cvc_profile_pic)
+        val messagePic = viewHolder.get<ImageView>(R.id.cvc_message_pic_small)
+        val picContainer1 = viewHolder.get<LinearLayout>(R.id.cvc_message_pic_container_1)
+        val picContainer2 = viewHolder.get<LinearLayout>(R.id.cvc_message_pic_container_2)
+        val moneyButtonAccept = viewHolder.get<Button>(R.id.cvc_message_button_money_accept)
+        val moneyButtonDecline = viewHolder.get<Button>(R.id.cvc_message_button_money_decline)
         date.visibility = TextView.GONE
-        bubble.text = message!!.locationInfo!!.streetAddress
+        messagePic.visibility = ImageView.GONE
+        picContainer1.visibility = LinearLayout.GONE
+        picContainer2.visibility = LinearLayout.GONE
+        moneyButtonAccept.visibility = Button.GONE
+        moneyButtonDecline.visibility = Button.GONE
+        messagetv.text = message!!.locationInfo!!.streetAddress
+        messagetv.setTextColor(ContextCompat.getColor(this, R.color.confirmText))
+        if(message.userId!!.toInt() != controller.getUserId){
+            Picasso.with(this).load(message.userAvatar).into(profPic)
+        }
         if(message.timeDisplayed){
             date.visibility = TextView.VISIBLE
             val formatter = SimpleDateFormat("EEE - h:mm aaa")
@@ -298,19 +351,120 @@ class ChatActivity: CoreActivity(), ChatContract.View{
     }
 
     private fun bindFileViewHolder(viewHolder: BaseViewHolder?, message: Message?){
-
+        val date = viewHolder!!.get<TextView>(R.id.cvc_message_date)
+        val messagetv = viewHolder.get<TextView>(R.id.cvc_message)
+        val profPic = viewHolder.get<ImageView>(R.id.cvc_profile_pic)
+        val messagePic = viewHolder.get<ImageView>(R.id.cvc_message_pic_small)
+        val picContainer1 = viewHolder.get<LinearLayout>(R.id.cvc_message_pic_container_1)
+        val picContainer2 = viewHolder.get<LinearLayout>(R.id.cvc_message_pic_container_2)
+        val moneyButtonAccept = viewHolder.get<Button>(R.id.cvc_message_button_money_accept)
+        val moneyButtonDecline = viewHolder.get<Button>(R.id.cvc_message_button_money_decline)
+        date.visibility = TextView.GONE
+        messagePic.visibility = ImageView.VISIBLE
+        picContainer1.visibility = LinearLayout.GONE
+        picContainer2.visibility = LinearLayout.GONE
+        moneyButtonAccept.visibility = Button.GONE
+        moneyButtonDecline.visibility = Button.GONE
+        messagetv.text = message!!.fileNames!![0]
+        messagetv.setTextColor(ContextCompat.getColor(this, R.color.confirmText))
+        Picasso.with(this).load(R.drawable.ic_attachment_file).into(messagePic)
+        messagetv.setOnClickListener({
+            Toast.makeText(this, "this needs to dl", Toast.LENGTH_SHORT).show()
+        })
+        if(message.userId!!.toInt() != controller.getUserId){
+            Picasso.with(this).load(message.userAvatar).into(profPic)
+        }
+        if(message.timeDisplayed){
+            date.visibility = TextView.VISIBLE
+            val formatter = SimpleDateFormat("EEE - h:mm aaa")
+            date.text = formatter.format(message.createdAt)
+        }
     }
 
     private fun bindMediaViewHolder(viewHolder: BaseViewHolder?, message: Message?){
-
+        val date = viewHolder!!.get<TextView>(R.id.cvc_message_date)
+        val messagetv = viewHolder.get<TextView>(R.id.cvc_message)
+        val profPic = viewHolder.get<ImageView>(R.id.cvc_profile_pic)
+        val messagePic = viewHolder.get<ImageView>(R.id.cvc_message_pic_small)
+        val picContainer1 = viewHolder.get<LinearLayout>(R.id.cvc_message_pic_container_1)
+        val picContainer2 = viewHolder.get<LinearLayout>(R.id.cvc_message_pic_container_2)
+        val moneyButtonAccept = viewHolder.get<Button>(R.id.cvc_message_button_money_accept)
+        val moneyButtonDecline = viewHolder.get<Button>(R.id.cvc_message_button_money_decline)
+        date.visibility = TextView.GONE
+        messagePic.visibility = ImageView.GONE
+        picContainer1.visibility = LinearLayout.VISIBLE
+        picContainer2.visibility = LinearLayout.VISIBLE
+        moneyButtonAccept.visibility = Button.GONE
+        moneyButtonDecline.visibility = Button.GONE
+        messagetv.text = message!!.fileNames!![0]
+        messagetv.setTextColor(ContextCompat.getColor(this, R.color.confirmText))
+        if(message.userId!!.toInt() != controller.getUserId){
+            Picasso.with(this).load(message.userAvatar).into(profPic)
+        }
+        if(message.timeDisplayed){
+            date.visibility = TextView.VISIBLE
+            val formatter = SimpleDateFormat("EEE - h:mm aaa")
+            date.text = formatter.format(message.createdAt)
+        }
     }
 
     private fun bindMoneyViewHolder(viewHolder: BaseViewHolder?, message: Message?){
-
+        val date = viewHolder!!.get<TextView>(R.id.cvc_message_date)
+        val messagetv = viewHolder.get<TextView>(R.id.cvc_message)
+        val profPic = viewHolder.get<ImageView>(R.id.cvc_profile_pic)
+        val messagePic = viewHolder.get<ImageView>(R.id.cvc_message_pic_small)
+        val picContainer1 = viewHolder.get<LinearLayout>(R.id.cvc_message_pic_container_1)
+        val picContainer2 = viewHolder.get<LinearLayout>(R.id.cvc_message_pic_container_2)
+        val moneyButtonAccept = viewHolder.get<Button>(R.id.cvc_message_button_money_accept)
+        val moneyButtonDecline = viewHolder.get<Button>(R.id.cvc_message_button_money_decline)
+        date.visibility = TextView.GONE
+        messagePic.visibility = ImageView.VISIBLE
+        picContainer1.visibility = LinearLayout.GONE
+        picContainer2.visibility = LinearLayout.GONE
+        moneyButtonAccept.visibility = Button.VISIBLE
+        moneyButtonDecline.visibility = Button.VISIBLE
+        messagetv.text = message!!.fileNames!![0]
+        messagetv.setTextColor(ContextCompat.getColor(this, R.color.black))
+        Picasso.with(this).load(R.drawable.ic_money).into(messagePic)
+        if(message.userId!!.toInt() != controller.getUserId){
+            Picasso.with(this).load(message.userAvatar).into(profPic)
+        }
+        if(message.timeDisplayed){
+            date.visibility = TextView.VISIBLE
+            val formatter = SimpleDateFormat("EEE - h:mm aaa")
+            date.text = formatter.format(message.createdAt)
+        }
     }
 
     private fun bindChannelViewHolder(viewHolder: BaseViewHolder?, message: Message?){
-
+        val date = viewHolder!!.get<TextView>(R.id.cvc_message_date)
+        val messagetv = viewHolder.get<TextView>(R.id.cvc_message)
+        val profPic = viewHolder.get<ImageView>(R.id.cvc_profile_pic)
+        val messagePic = viewHolder.get<ImageView>(R.id.cvc_message_pic_small)
+        val picContainer1 = viewHolder.get<LinearLayout>(R.id.cvc_message_pic_container_1)
+        val picContainer2 = viewHolder.get<LinearLayout>(R.id.cvc_message_pic_container_2)
+        val moneyButtonAccept = viewHolder.get<Button>(R.id.cvc_message_button_money_accept)
+        val moneyButtonDecline = viewHolder.get<Button>(R.id.cvc_message_button_money_decline)
+        date.visibility = TextView.GONE
+        messagePic.visibility = ImageView.VISIBLE
+        picContainer1.visibility = LinearLayout.GONE
+        picContainer2.visibility = LinearLayout.GONE
+        moneyButtonAccept.visibility = Button.GONE
+        moneyButtonDecline.visibility = Button.GONE
+        messagetv.text = message!!.channelInfo!!.name
+        messagetv.setTextColor(ContextCompat.getColor(this, R.color.confirmText))
+        Picasso.with(this).load(message.userAvatar).into(messagePic) //TODO: change this to channel picture from channelinfo
+        messagetv.setOnClickListener({
+            Toast.makeText(this, "this needs to dl", Toast.LENGTH_SHORT).show()
+        })
+        if(message.userId!!.toInt() != controller.getUserId){
+            Picasso.with(this).load(message.userAvatar).into(profPic)
+        }
+        if(message.timeDisplayed){
+            date.visibility = TextView.VISIBLE
+            val formatter = SimpleDateFormat("EEE - h:mm aaa")
+            date.text = formatter.format(message.createdAt)
+        }
     }
 
     override val get8Application: Application
@@ -330,7 +484,7 @@ class ChatActivity: CoreActivity(), ChatContract.View{
 
     override fun updateRecycler() {
         mAdapter.clear()
-        val m = controller.getMessages()
+//        val m = controller.getMessages()
         mAdapter.setItems(controller.getMessages())
         mAdapter.notifyDataSetChanged()
         if(controller.getMessages().size>1){
@@ -341,7 +495,7 @@ class ChatActivity: CoreActivity(), ChatContract.View{
 
     override fun updateRecycler(position: Int) {
         mAdapter.clear()
-        val m = controller.getMessages()
+//        val m = controller.getMessages()
         mAdapter.setItems(controller.getMessages())
         mAdapter.notifyItemInserted(position)
         if(controller.getMessages().size>1){

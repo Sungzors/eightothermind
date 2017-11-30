@@ -37,5 +37,12 @@
     <string name="share_file">Share File</string>
     <string name="share_chennal">Share Channel</string>
     <string name="share_money">Share Money</string>
+    <string name="accept">Accept</string>
+    <string name="decline">Decline</string>
+    <string name="conversations">Conversations</string>
+    <string name="name_your_channel">Name your channel</string>
+    <string name="unique_id">Unique ID</string>
+    <string name="short_description">Short Description</string>
+    <string name="add_to_profile">Add to Profile</string>
 
 </resources>

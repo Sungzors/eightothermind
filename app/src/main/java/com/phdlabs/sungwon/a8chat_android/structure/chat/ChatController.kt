@@ -298,7 +298,7 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
                     var description : String? = null
                     var color : String? = null
                     var background : String? = null
-                    var add_to_profile : String? = null
+                    var add_to_profile : Boolean? = null
                     var user_creator_id : String? = null
                     var room_id : String? = null
                     var channel : Channel? = null
@@ -310,7 +310,7 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
                         description = channelInfo.getString("description")
                         color = channelInfo.getString("color")
                         background = channelInfo.getString("background")
-                        add_to_profile = channelInfo.getString("add_to_profile")
+                        add_to_profile = channelInfo.getBoolean("add_to_profile")
                         user_creator_id = channelInfo.getString("user_creator_id")
                         room_id = channelInfo.getString("room_id")
                         channel = Channel(id, name, unique_id, room_id)

@@ -14,6 +14,7 @@ data class Channel(
     var description: String? = null
     var color: String? = null
     var background: String? = null
-    var add_to_profile: String? = null
+    var add_to_profile: Boolean? = null
     var user_creator_id: String? = null
+    var isRead: Boolean = false
 }

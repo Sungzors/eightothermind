@@ -8,10 +8,12 @@
     <color name="confirmText">#4a90e2</color>
     <color name="gradientLeft">#495fff</color>
     <color name="gradientRight">#0ccafe</color>
+    <color name="orange">#ffa336</color>
     <color name="unselectGrey">#40cfcfcf</color>
     <color name="unselectfullGrey">#cfcfcf</color>
     <color name="tabbg">#e0e0e0</color>
     <color name="white">#FFFFFF</color>
+    <color name="halftransparent">#84ffffff</color>
     <color name="transparent">#00ffffff</color>
     <color name="grey">#bdbdbd</color>
     <color name="black">#000000</color>

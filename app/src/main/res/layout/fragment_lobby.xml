@@ -18,13 +18,6 @@
                 android:layout_marginStart="15dp"
                 android:layout_marginBottom="20dp"
                 android:text="@string/my_channels"/>
-            <ImageView
-                android:id="@+id/fl_my_channels_button"
-                android:layout_width="15dp"
-                android:layout_height="15dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="15dp"
-                android:layout_alignParentEnd="true"/>
         </RelativeLayout>
 
         <android.support.v7.widget.RecyclerView
@@ -32,29 +25,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_marginStart="15dp"
-                android:layout_marginBottom="20dp"
-                android:text="@string/channels"/>
-            <ImageView
-                android:id="@+id/fl_channels_button"
-                android:layout_width="15dp"
-                android:layout_height="15dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="15dp"
-                android:layout_alignParentEnd="true"/>
-        </RelativeLayout>
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/fl_channels_recycler"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -68,13 +39,6 @@
                 android:layout_marginBottom="20dp"
                 android:text="@string/events"/>
 
-            <ImageView
-                android:id="@+id/fl_events_button"
-                android:layout_width="15dp"
-                android:layout_height="15dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="15dp"
-                android:layout_alignParentEnd="true"/>
 
         </RelativeLayout>
 
@@ -108,6 +72,39 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginBottom="20dp"
+                android:text="@string/channels"/>
+        </RelativeLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/fl_channels_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginBottom="20dp"
+                android:text="@string/conversations"/>
+        </RelativeLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/fl_chat_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
         
     </LinearLayout>
 

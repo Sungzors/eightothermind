@@ -15,4 +15,9 @@ data class Room(
         val participantsId: MutableList<Int> = mutableListOf<Int>(),
         val locked: Boolean
 
-                )
+                ) {
+    var isRead: Boolean = true
+    var isFavorite: Boolean = false
+    var subRooms: SubRoomNest? = null
+    var users: User? = null
+}

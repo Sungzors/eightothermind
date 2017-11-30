@@ -8,4 +8,18 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="AppTheme.AppBarWhite" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/white</item>
+        <item name="colorPrimaryDark">@color/white</item>
+        <item name="colorAccent">@color/white</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat">
+        <item name="android:itemBackground">@color/white</item>
+        <item name="android:background">@color/halftransparent</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+        <!--<item name="fontPath">fonts/avenir-light-webfont.ttf</item>-->
+    </style>
+
 </resources>

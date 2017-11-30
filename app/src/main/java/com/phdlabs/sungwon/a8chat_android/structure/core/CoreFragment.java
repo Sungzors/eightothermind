@@ -33,7 +33,7 @@ public abstract class CoreFragment extends Fragment implements CoreActivity.OnBa
             return (CoreActivity) getActivity();
         } else {
             if (BuildConfig.DEBUG) {
-                throw new IllegalStateException("Parent activity doesn't extend BaseActivity");
+                throw new IllegalStateException("Parent activity doesn't extend CoreActivity");
             } else
                 return null;
         }

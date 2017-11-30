@@ -3,12 +3,15 @@ package com.phdlabs.sungwon.a8chat_android.api.rest;
 import com.phdlabs.sungwon.a8chat_android.api.data.LoginData;
 import com.phdlabs.sungwon.a8chat_android.api.data.PrivateChatCreateData;
 import com.phdlabs.sungwon.a8chat_android.api.data.PrivateChatPatchData;
+import com.phdlabs.sungwon.a8chat_android.api.data.SendMessageContactData;
 import com.phdlabs.sungwon.a8chat_android.api.data.SendMessageGeneralData;
+import com.phdlabs.sungwon.a8chat_android.api.data.SendMessageMoneyData;
 import com.phdlabs.sungwon.a8chat_android.api.data.SendMessageStringData;
 import com.phdlabs.sungwon.a8chat_android.api.data.UserData;
 import com.phdlabs.sungwon.a8chat_android.api.data.VerifyData;
 import com.phdlabs.sungwon.a8chat_android.api.response.ErrorResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.MediaResponse;
+import com.phdlabs.sungwon.a8chat_android.api.response.PrivateChatResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.ResendResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.RoomHistoryResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.RoomResponse;
@@ -35,15 +38,6 @@ public interface Caller {
     //api endpoint holder
 
     final String TOKEN = "Authorization";
-
-    @POST("/users")
-    Call<UserDataResponse> login(@Body LoginData loginData);
-
-    @GET("/users/{userid}")
-    Call<UserDataResponse> getUser(@Header(TOKEN) String token, @Path("userid") int userid);
-
-    @PATCH("/users/{userid}")
-    Call<UserDataResponse> updateUser(@Header(TOKEN) String token, @Path("userid") int userid, @Body UserData userData);
 
     @POST("/auth/verify")
     Call<TokenResponse> verify(@Body VerifyData verifyData);
@@ -72,8 +66,36 @@ public interface Caller {
     @POST("/messages/string")
     Call<ErrorResponse> sendMessageString(@Header(TOKEN)String token, @Body SendMessageStringData data);
 
-    @POST("/messages/share/drawer_location")
+    @POST("/messages/media")
+    Call<ErrorResponse> sendMessageMedia(@Header(TOKEN)String token, @Body RequestBody data);
+
+    @POST("/messages/money")
+    Call<ErrorResponse> sendMessageMoney(@Header(TOKEN)String token, @Body SendMessageMoneyData data);
+
+    @POST("/messages/share/location")
     Call<ErrorResponse> sendMessageLocation(@Header(TOKEN)String token, @Body SendMessageGeneralData data);
 
+    @POST("/messages/share/contact")
+    Call<ErrorResponse> sendMessageContact(@Header(TOKEN)String token, @Body SendMessageContactData data);
 
+    @POST("/messages/share/channel")
+    Call<ErrorResponse> sendMessageChannel(@Header(TOKEN)String token, @Body SendMessageGeneralData data);
+
+    @POST("/messages/share/groupChat")
+    Call<ErrorResponse> sendMessageGroupChat(@Header(TOKEN)String token, @Body SendMessageContactData data);
+
+    @POST("/users")
+    Call<UserDataResponse> login(@Body LoginData loginData);
+
+    @GET("/users/{userid}")
+    Call<UserDataResponse> getUser(@Header(TOKEN) String token, @Path("userid") int userid);
+
+    @PATCH("/users/{userid}")
+    Call<UserDataResponse> updateUser(@Header(TOKEN) String token, @Path("userid") int userid, @Body UserData userData);
+
+    @GET("/users/{userid}/privateChats")
+    Call<PrivateChatResponse> getPrivateChats(@Header(TOKEN) String token, @Path("userid") int userid);
+
+    @GET("/users/{userid}/groupChats")
+    Call<UserDataResponse> getGroupChats(@Header(TOKEN) String token, @Path("userid") int userid);
 }

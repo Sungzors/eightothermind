@@ -5,16 +5,23 @@
     
     <ImageView
         android:id="@+id/cvlc_background_unread"
-        android:layout_width="62dp"
-        android:layout_height="62dp"
-        android:layout_centerInParent="true"
-        android:background="@drawable/bg_circle_blue_lobby"/>
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_centerInParent="true"/>
     <ImageView
         android:id="@+id/cvlc_picture_profile"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:layout_centerInParent="true"
-        android:background="@drawable/ic_person_empty"/>
+        android:layout_centerInParent="true"/>
+
+    <TextView
+        android:id="@+id/cvlc_name_channel"
+        android:layout_width="65dp"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:layout_below="@id/cvlc_picture_profile"
+        android:layout_centerHorizontal="true"/>
 
 
 </RelativeLayout>

@@ -17,8 +17,8 @@
         android:text="SAT 11:09 PM"
         android:textSize="14sp"/>
 
-    <TextView
-        android:id="@+id/cvc_message"
+    <RelativeLayout
+        android:id="@+id/cvc_message_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/cvc_message_date"
@@ -30,16 +30,59 @@
         android:paddingTop="15dp"
         android:paddingStart="30dp"
         android:paddingBottom="15dp"
-        android:paddingEnd="30dp"
-        android:textSize="14sp"
-        android:text="test"/>
+        android:paddingEnd="30dp">
+        <ImageView
+            android:id="@+id/cvc_message_pic_small"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginEnd="10dp"/>
+        <TextView
+            android:id="@+id/cvc_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:text="test"
+            android:layout_toEndOf="@id/cvc_message_pic_small"/>
+        <LinearLayout
+            android:id="@+id/cvc_message_pic_container_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_below="@id/cvc_message"
+            android:layout_marginTop="10dp"/>
+        <LinearLayout
+            android:id="@+id/cvc_message_pic_container_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_below="@id/cvc_message_pic_container_1"
+            android:layout_marginTop="10dp"/>
+        <Button
+            android:id="@+id/cvc_message_button_money_decline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/cvc_message"
+            android:text="@string/decline"/>
+
+        <Button
+            android:id="@+id/cvc_message_button_money_accept"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/cvc_message_button_money_decline"
+            android:layout_below="@id/cvc_message"
+            android:text="@string/accept"/>
+
+
+    </RelativeLayout>
+
+
     <!--android:layout_marginTop="5dp"-->
     <!--android:layout_marginStart="45dp"-->
     <!--android:layout_marginEnd="55dp"-->
     <!--android:layout_marginBottom="5dp"-->
 
     <ImageView
-        android:id="@+id/cvm_profile_pic"
+        android:id="@+id/cvc_profile_pic"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginTop="-38dp"
