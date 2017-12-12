@@ -3,6 +3,7 @@ package com.phdlabs.sungwon.a8chat_android.structure.main
 import android.view.MenuItem
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
+import com.phdlabs.sungwon.a8chat_android.structure.main.lobby.LobbyFragment
 import kotlinx.android.synthetic.main.activity_main.*
 
 /**
@@ -43,11 +44,12 @@ class MainActivity: CoreActivity(), MainContract.View{
             onTabSelected(item)
             true
         }
+        am_bottom_tab_nav.selectedItemId = R.id.mmt_home
     }
 
     private fun onTabSelected(item: MenuItem){
         when (item.itemId){
-            R.id.mmt_home -> controller.showHome()
+            R.id.mmt_home -> addFragment(LobbyFragment.newInstance(), false)
             R.id.mmt_camera -> controller.showCamera()
             R.id.mmt_profile -> controller.showProfile()
         }

@@ -1,14 +1,23 @@
 package com.phdlabs.sungwon.a8chat_android.api.rest;
 
+import com.phdlabs.sungwon.a8chat_android.api.data.CommentPostData;
+import com.phdlabs.sungwon.a8chat_android.api.data.FollowUserData;
 import com.phdlabs.sungwon.a8chat_android.api.data.LoginData;
+import com.phdlabs.sungwon.a8chat_android.api.data.CommentPatchData;
+import com.phdlabs.sungwon.a8chat_android.api.data.PostChannelData;
 import com.phdlabs.sungwon.a8chat_android.api.data.PrivateChatCreateData;
 import com.phdlabs.sungwon.a8chat_android.api.data.PrivateChatPatchData;
+import com.phdlabs.sungwon.a8chat_android.api.data.SendMessageChannelData;
 import com.phdlabs.sungwon.a8chat_android.api.data.SendMessageContactData;
 import com.phdlabs.sungwon.a8chat_android.api.data.SendMessageGeneralData;
 import com.phdlabs.sungwon.a8chat_android.api.data.SendMessageMoneyData;
 import com.phdlabs.sungwon.a8chat_android.api.data.SendMessageStringData;
 import com.phdlabs.sungwon.a8chat_android.api.data.UserData;
 import com.phdlabs.sungwon.a8chat_android.api.data.VerifyData;
+import com.phdlabs.sungwon.a8chat_android.api.response.ChannelArrayResponse;
+import com.phdlabs.sungwon.a8chat_android.api.response.ChannelResponse;
+import com.phdlabs.sungwon.a8chat_android.api.response.CommentArrayResponse;
+import com.phdlabs.sungwon.a8chat_android.api.response.CommentResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.ErrorResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.MediaResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.PrivateChatResponse;
@@ -27,6 +36,7 @@ import retrofit2.http.Header;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 /**
  * Created by SungWon on 9/18/2017.
@@ -38,6 +48,22 @@ public interface Caller {
     //api endpoint holder
 
     final String TOKEN = "Authorization";
+
+    //get channels only for testing
+    @GET("/channels")
+    Call<ChannelArrayResponse> getChannel(@Header(TOKEN) String token);
+
+    @POST("/channels")
+    Call<ChannelResponse> postChannel(@Header(TOKEN) String token, @Body PostChannelData postChannelData);
+
+    @PATCH("/channels/{channelId}/follow")
+    Call<RoomResponse> followChannel(@Header(TOKEN) String token, @Path("channelId") int channelId, @Body FollowUserData data);
+
+    @GET("/channels/{roomId}/user/{userId}/messages")
+    Call<RoomHistoryResponse> getChannelPosts(@Header(TOKEN) String token, @Path("roomId") int roomId, @Path("userId") int userId, @Query("messageId") String messageId);
+
+    @PATCH("/channels/{messageId}/like/{userId}/user")
+    Call<ErrorResponse> likePost(@Header(TOKEN) String token, @Path("messageId") int messageId, @Path("userId") int userId);
 
     @POST("/auth/verify")
     Call<TokenResponse> verify(@Body VerifyData verifyData);
@@ -79,7 +105,7 @@ public interface Caller {
     Call<ErrorResponse> sendMessageContact(@Header(TOKEN)String token, @Body SendMessageContactData data);
 
     @POST("/messages/share/channel")
-    Call<ErrorResponse> sendMessageChannel(@Header(TOKEN)String token, @Body SendMessageGeneralData data);
+    Call<ErrorResponse> sendMessageChannel(@Header(TOKEN)String token, @Body SendMessageChannelData data);
 
     @POST("/messages/share/groupChat")
     Call<ErrorResponse> sendMessageGroupChat(@Header(TOKEN)String token, @Body SendMessageContactData data);
@@ -98,4 +124,13 @@ public interface Caller {
 
     @GET("/users/{userid}/groupChats")
     Call<UserDataResponse> getGroupChats(@Header(TOKEN) String token, @Path("userid") int userid);
+
+    @POST("/comments/{messageId}")
+    Call<CommentResponse> postComment(@Header(TOKEN) String token, @Path("messageId") int messageId, @Body CommentPostData data);
+
+    @PATCH("/comments/{commentId}/edit")
+    Call<CommentResponse> patchComment(@Header(TOKEN) String token, @Path("commentId") int commentId, @Body CommentPatchData data);
+
+    @GET("/comments/{messageId}/user/{userId}")
+    Call<CommentArrayResponse> getComments(@Header(TOKEN) String token, @Path("messageId") int messageId, @Path("userId") int userId, @Query("commentId") String commentId);
 }

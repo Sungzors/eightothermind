@@ -9,6 +9,8 @@ object Constants{
         const val LOGIN_KEY = "login_key"
         const val LOGIN_CC = "login_cc"
         const val LOGIN_PHONE = "login_phone"
+        const val CHANNEL_ID = "channel_id"
+        const val MESSAGE_ID = "message_id"
     }
 
     object PrefKeys{
@@ -25,5 +27,14 @@ object Constants{
         const val UPDATE_CHAT_CHANNEL = "update-chat-channel"
         const val UPDATE_CHAT_CONTACT = "update-chat-drawer_contact"
         const val ON_ERROR = "on-error"
+    }
+
+    object RequestCode{
+        const val MY_CHANNELS_LIST = 1
+    }
+
+    object ResultCode{
+        const val SUCCESS = 0
+        const val FAILURE = 1
     }
 }

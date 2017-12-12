@@ -2,10 +2,18 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/acps_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarWhite">
+        <include layout="@layout/toolbar"/>
+    </android.support.design.widget.AppBarLayout>
     <ImageView
         android:id="@+id/acps_post_pic"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_below="@id/acps_toolbar"/>
     <ImageView
         android:id="@+id/acps_like_button"
         android:layout_width="30dp"
@@ -22,6 +30,7 @@
         android:layout_toEndOf="@id/acps_like_button"
         android:layout_marginStart="20dp"
         android:layout_marginTop="15dp"
+        android:layout_below="@id/acps_post_pic"
         android:background="@drawable/ic_comment"/>
     <TextView
         android:id="@+id/acps_post_text"
@@ -30,7 +39,7 @@
         android:layout_below="@id/acps_like_button"
         android:layout_marginStart="20dp"
         android:layout_marginBottom="15dp"/>
-    <view
+    <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/grey"

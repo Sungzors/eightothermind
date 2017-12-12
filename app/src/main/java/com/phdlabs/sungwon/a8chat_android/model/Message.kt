@@ -7,6 +7,7 @@ import java.util.*
  */
 class Message private constructor(){
 
+    var id: String? = null
     var userId: String? = null
     var message: String? = null
     var roomId: String? = null
@@ -19,6 +20,8 @@ class Message private constructor(){
     var subRoom_id: String? = null
     var original_message_id: String? = null
     val mediaArray = mutableListOf<MediaDetailNest>()
+    var comments: Int? = null
+    var likes: Int? = null
     var channelInfo: Channel? = null
     var contactInfo: User? = null
     var locationInfo: LocationInfoNest? = null
@@ -36,7 +39,7 @@ class Message private constructor(){
         val TYPE_MONEY = "money"
     }
 
-    class Builder(private val mType: String, private val mUserId: String, private val mRoomId: String) {
+    class Builder(private val id: String, private val mType: String, private val mUserId: String, private val mRoomId: String) {
         private var mMessage: String? = null
         private var mChannel: Channel? = null
         private var mContact: User? = null

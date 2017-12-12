@@ -8,6 +8,8 @@ import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
 import com.phdlabs.sungwon.a8chat_android.api.utility.Callback8
 import com.phdlabs.sungwon.a8chat_android.db.EventBusManager
 import com.phdlabs.sungwon.a8chat_android.db.UserManager
+import com.phdlabs.sungwon.a8chat_android.structure.channel.create.ChannelCreateActivity
+import com.phdlabs.sungwon.a8chat_android.structure.channel.postshow.ChannelPostShowActivity
 import com.phdlabs.sungwon.a8chat_android.structure.chat.ChatActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.structure.login.LoginActivity
@@ -59,7 +61,7 @@ class DebugActivity: CoreActivity(){
 
     private fun setClickers(){
         ad_start_button.setOnClickListener({
-            //TODO: build launch
+            startActivity(Intent(this, LoginActivity::class.java))
         })
         ad_login_button.setOnClickListener({
             startActivity(Intent(this, LoginActivity::class.java))
@@ -73,6 +75,12 @@ class DebugActivity: CoreActivity(){
         ad_chat_button.setOnClickListener({
             startActivity(Intent(this, ChatActivity::class.java))
         })
+        ad_create_channel_button.setOnClickListener {
+            startActivity(Intent(this, ChannelCreateActivity::class.java))
+        }
+        ad_channel_post_button.setOnClickListener {
+            startActivity(Intent(this, ChannelPostShowActivity::class.java))
+        }
         ad_sandbox_button.setOnClickListener({
             //TODO: build sandbox
         })

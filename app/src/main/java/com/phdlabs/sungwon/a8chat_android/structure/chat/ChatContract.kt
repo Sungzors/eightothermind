@@ -36,6 +36,8 @@ interface ChatContract {
 
         fun retrieveChatHistory()
 
+        fun sendChannel(channelId: Int)
+
         fun sendMessage()
 
         fun sendLocation()

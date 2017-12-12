@@ -8,6 +8,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+        <android.support.design.widget.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/AppTheme.AppBarWhite">
+            <include layout="@layout/toolbar"/>
+        </android.support.design.widget.AppBarLayout>
 
         <View
             android:layout_width="match_parent"
@@ -102,18 +108,15 @@
                     android:layout_marginTop="20dp"
                     android:text="@string/what_languages_do_you_speak"/>
 
-                <EditText
+                <Spinner
                     android:id="@+id/ap_language_spinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/ap_language_question_fix"
-                    android:layout_marginStart="25dp"
-                    android:layout_marginEnd="25dp"
-                    android:paddingStart="0dp"
-                    android:paddingEnd="0dp"
+                    android:layout_marginTop="15dp"
                     android:layout_marginBottom="20dp"
-                    android:enabled="false"
-                    android:text="@string/english"/>
+                    android:layout_marginStart="20dp"
+                    android:enabled="false"/>
 
             </RelativeLayout>
 

@@ -45,7 +45,7 @@ class ConfirmActivity: CoreActivity(){
         isRegister = intent.getBooleanExtra(Constants.IntentKeys.LOGIN_KEY, true)
         mCountryCode = intent.getStringExtra(Constants.IntentKeys.LOGIN_CC)
         mPhone = intent.getStringExtra(Constants.IntentKeys.LOGIN_PHONE)
-
+        setToolbarTitle("Confirmation")
         setupUI()
         setupClickers()
     }

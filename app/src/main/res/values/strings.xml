@@ -44,5 +44,14 @@
     <string name="unique_id">Unique ID</string>
     <string name="short_description">Short Description</string>
     <string name="add_to_profile">Add to Profile</string>
+    <string name="search_channel">Search Channel</string>
+
+    <string-array name="language_array">
+        <item>English</item>
+        <item>Spanish</item>
+        <item>Arabic</item>
+        <item>Portuguese</item>
+        <item>French</item>
+    </string-array>
 
 </resources>

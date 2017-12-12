@@ -8,4 +8,5 @@ import com.phdlabs.sungwon.a8chat_android.model.Message
 class MessageResponseNest {
     internal var unread: Array<Message>? = null
     internal var read: Array<Message>? = null
+    internal var allMessages: Array<Message>? = null
 }

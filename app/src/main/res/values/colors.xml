@@ -16,5 +16,7 @@
     <color name="halftransparent">#84ffffff</color>
     <color name="transparent">#00ffffff</color>
     <color name="grey">#bdbdbd</color>
+    <color name="searchGrey">#ebeef2</color>
+    <color name="activityBackgroundGrey">#f9f9f9</color>
     <color name="black">#000000</color>
 </resources>

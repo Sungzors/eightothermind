@@ -1,6 +1,9 @@
 package com.phdlabs.sungwon.a8chat_android.structure.profile
 
 import android.content.Intent
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.ImageView
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.api.data.UserData
@@ -12,9 +15,10 @@ import kotlinx.android.synthetic.main.activity_profile.*
 /**
  * Created by SungWon on 10/2/2017.
  */
-class ProfileActivity: CoreActivity(), ProfileContract.View {
+class ProfileActivity: CoreActivity(), ProfileContract.View, AdapterView.OnItemSelectedListener{
 
     private var profilePic: ImageView? = null
+    private var language: String = "english"
 
     override fun layoutId() = R.layout.activity_profile
 
@@ -24,8 +28,12 @@ class ProfileActivity: CoreActivity(), ProfileContract.View {
 
     override fun onStart() {
         super.onStart()
+        setToolbarTitle("Tell Us About Yourself")
         ProfileAController(this)
         profilePic = ap_profile_pic
+        val spinnerAdapter = ArrayAdapter.createFromResource(this, R.array.language_array, android.R.layout.simple_spinner_item)
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        ap_language_spinner.adapter = spinnerAdapter
         controller.start()
         setClickers()
     }
@@ -50,7 +58,7 @@ class ProfileActivity: CoreActivity(), ProfileContract.View {
     override val getProfileImageView  = profilePic
 
     override val getUserData: UserData
-        get() = UserData(ap_first_name.text.toString(), ap_last_name.text.toString(), arrayOf(ap_language_spinner.text.toString().toLowerCase()))
+        get() = UserData(ap_first_name.text.toString(), ap_last_name.text.toString(), language)
 
     override fun nullChecker(): Boolean = (ap_first_name.text.toString() == "" || ap_last_name.text.toString() == "")
 
@@ -72,5 +80,13 @@ class ProfileActivity: CoreActivity(), ProfileContract.View {
     override fun setProfileImageView(pictureUrl: String) { //UI
         Picasso.with(context).load("file://"+pictureUrl).transform(CircleTransform()).into(profilePic)
 
+    }
+
+    override fun onNothingSelected(p0: AdapterView<*>?) {
+        language = "english"
+    }
+
+    override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+        language = p0!!.getItemAtPosition(p2).toString().toLowerCase()
     }
 }

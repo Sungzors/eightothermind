@@ -17,4 +17,6 @@ data class Channel(
     var add_to_profile: Boolean? = null
     var user_creator_id: String? = null
     var isRead: Boolean = false
+    var profile_picture_string: String? = null
+    var avatar: String? = null
 }

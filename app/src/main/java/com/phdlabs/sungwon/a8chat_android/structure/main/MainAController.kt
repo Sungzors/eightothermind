@@ -24,6 +24,7 @@ class MainAController(val mView: MainContract.View): MainContract.Controller{
     }
 
     override fun showHome() {
+
     }
 
     override fun showCamera() {

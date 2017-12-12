@@ -1,6 +1,8 @@
 package com.phdlabs.sungwon.a8chat_android.structure.chat
 
 import android.content.Context
+import android.content.Intent
+import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
@@ -11,7 +13,9 @@ import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.db.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.Message
 import com.phdlabs.sungwon.a8chat_android.structure.application.Application
+import com.phdlabs.sungwon.a8chat_android.structure.channel.mychannels.MyChannelsListActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
+import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseRecyclerAdapter
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseViewHolder
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.ViewMap
@@ -32,8 +36,8 @@ class ChatActivity: CoreActivity(), ChatContract.View{
 
     override fun contentContainerId() = 0
 
-    override fun onStart() {
-        super.onStart()
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         showProgress()
         ChatController(this)
         controller.start()
@@ -41,7 +45,10 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         setupDrawer()
         setupClickers()
         setupRecycler()
+    }
 
+    override fun onStart() {
+        super.onStart()
     }
 
     override fun onResume() {
@@ -100,7 +107,8 @@ class ChatActivity: CoreActivity(), ChatContract.View{
             }
         }
         ac_drawer_channel.setOnClickListener {
-            Toast.makeText(this, "thaiwerhiwer", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, MyChannelsListActivity::class.java)
+            startActivityForResult(intent, Constants.RequestCode.MY_CHANNELS_LIST)
         }
         ac_drawer_contact.setOnClickListener {
 
@@ -177,7 +185,7 @@ class ChatActivity: CoreActivity(), ChatContract.View{
 //                val a = mAdapter.getItem(i)
 //                val b = mAdapter.getItem(position)
 //                val c = controller.getMessages()[position].createdAt!!.time.minus(controller.getMessages()[i].createdAt!!.time)
-                return (controller.getMessages()[position].createdAt!!.time.minus(controller.getMessages()[i].createdAt!!.time) >= 5 * 86400000)
+                return (controller.getMessages()[position].createdAt!!.time.minus(controller.getMessages()[i].createdAt!!.time) >= 5 * 60 * 1000)
             }
         }
         return true
@@ -192,7 +200,8 @@ class ChatActivity: CoreActivity(), ChatContract.View{
 //                val a = mAdapter.getItem(i)
 //                val b = mAdapter.getItem(position)
 //                val c = controller.getMessages()[position].createdAt!!.time.minus(controller.getMessages()[i].createdAt!!.time)
-                return (message.createdAt!!.time.minus(controller.getMessages()[i].createdAt!!.time)>= 5 * 86400000 /*1000*60*60*24*/)
+                val a = message.createdAt!!.time.minus(controller.getMessages()[i].createdAt!!.time)
+                return (message.createdAt!!.time.minus(controller.getMessages()[i].createdAt!!.time)>= 5 * 60 * 1000 )
             }
         }
         return true
@@ -453,9 +462,9 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         moneyButtonDecline.visibility = Button.GONE
         messagetv.text = message!!.channelInfo!!.name
         messagetv.setTextColor(ContextCompat.getColor(this, R.color.confirmText))
-        Picasso.with(this).load(message.userAvatar).into(messagePic) //TODO: change this to channel picture from channelinfo
+        Picasso.with(this).load(message.channelInfo!!.avatar).into(messagePic) //TODO: change this to channel picture from channelinfo
         messagetv.setOnClickListener({
-            Toast.makeText(this, "this needs to dl", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "to be implemented", Toast.LENGTH_SHORT).show()
         })
         if(message.userId!!.toInt() != controller.getUserId){
             Picasso.with(this).load(message.userAvatar).into(profPic)
@@ -474,7 +483,7 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         get() = this
 
     override val getChatParticipant: Int
-        get() = 2 //TODO: grab id from Intent
+        get() = 8 //TODO: grab id from Intent
 
     override val getMessageET: String
         get() = ac_conjuring_conduit_of_messages.text.toString()
@@ -498,8 +507,22 @@ class ChatActivity: CoreActivity(), ChatContract.View{
 //        val m = controller.getMessages()
         mAdapter.setItems(controller.getMessages())
         mAdapter.notifyItemInserted(position)
+//        mAdapter.notifyDataSetChanged()
         if(controller.getMessages().size>1){
             ac_floating_cascade_of_parchments.smoothScrollToPosition(controller.getMessages().size-1)
         }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        showProgress()
+        when(requestCode){
+            Constants.RequestCode.MY_CHANNELS_LIST -> {
+                controller.sendChannel(data!!.getIntExtra(Constants.IntentKeys.CHANNEL_ID, 0))
+                controller.retrieveChatHistory()
+                ac_the_daddy_drawer.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data)
+        hideProgress()
     }
 }

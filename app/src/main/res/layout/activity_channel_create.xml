@@ -34,7 +34,8 @@
                     android:layout_width="45dp"
                     android:layout_height="45dp"
                     android:layout_marginStart="20dp"
-                    android:layout_marginTop="20dp"/>
+                    android:layout_marginTop="20dp"
+                    android:src="@drawable/addphoto"/>
                 <TextView
                     android:id="@+id/acc_name_your_fucking_channel"
                     android:layout_width="wrap_content"
@@ -54,8 +55,7 @@
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="20dp"
                     android:inputType="textCapSentences"
-                    android:imeOptions="actionNext"
-                    android:paddingStart="0dp"/>
+                    android:imeOptions="actionNext"/>
                 <TextView
                     android:id="@+id/acc_unique_your_fucking_id"
                     android:layout_width="wrap_content"
@@ -73,7 +73,8 @@
                     android:layout_below="@id/acc_unique_your_fucking_id"
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="20dp"
-                    android:paddingStart="0dp"/>
+                    android:inputType="textCapSentences"
+                    android:imeOptions="actionNext"/>
                 <TextView
                     android:id="@+id/acc_short_fucking_description"
                     android:layout_width="wrap_content"
@@ -91,7 +92,9 @@
                     android:layout_below="@id/acc_short_fucking_description"
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="20dp"/>
+                    android:layout_marginBottom="20dp"
+                    android:inputType="textCapSentences"
+                    android:imeOptions="actionDone"/>
 
             </RelativeLayout>
         </android.support.v7.widget.CardView>

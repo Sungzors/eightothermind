@@ -8,12 +8,20 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.phdlabs.sungwon.a8chat_android.R
+import com.phdlabs.sungwon.a8chat_android.api.event.Event
+import com.phdlabs.sungwon.a8chat_android.api.response.ChannelArrayResponse
+import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
+import com.phdlabs.sungwon.a8chat_android.api.utility.Callback8
+import com.phdlabs.sungwon.a8chat_android.db.EventBusManager
 import com.phdlabs.sungwon.a8chat_android.model.Channel
 import com.phdlabs.sungwon.a8chat_android.model.EventsEight
 import com.phdlabs.sungwon.a8chat_android.model.Room
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreFragment
+import com.phdlabs.sungwon.a8chat_android.utility.Constants
+import com.phdlabs.sungwon.a8chat_android.utility.Preferences
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseRecyclerAdapter
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseViewHolder
+import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_lobby.*
 import java.text.SimpleDateFormat
@@ -25,6 +33,7 @@ import java.util.*
 class LobbyFragment: CoreFragment(), LobbyContract.View {
 
     override lateinit var controller: LobbyContract.Controller
+    private val mChannels = mutableListOf<Channel>()
 
     private lateinit var mAdapterMyChannel: BaseRecyclerAdapter<Channel, BaseViewHolder>
     private lateinit var mAdapterEvent: BaseRecyclerAdapter<EventsEight, BaseViewHolder>
@@ -34,15 +43,27 @@ class LobbyFragment: CoreFragment(), LobbyContract.View {
 
     override fun layoutId() = R.layout.fragment_lobby
 
+    companion object {
+        fun newInstance(): LobbyFragment = LobbyFragment()
+    }
+
     override fun onStart() {
         super.onStart()
         LobbyController(this)
         controller.start()
-        setUpChannelRecycler()
-        setUpChannelsFollowedRecycler()
-        setUpChatRecycler()
-        setUpEventsRecycler()
-        setUpMyChannelRecycler()
+        val call = Rest.getInstance().caller.getChannel(Preferences(coreActivity.context).getPreferenceString(Constants.PrefKeys.TOKEN_KEY))
+        val events = EventBusManager.instance().mDataEventBus
+        call.enqueue(object: Callback8<ChannelArrayResponse, Event>(events){
+            override fun onSuccess(data: ChannelArrayResponse?) {
+                mChannels.addAll(data!!.channels!!)
+                setUpMyChannelRecycler()
+            }
+        })
+//        setUpChannelRecycler()
+//        setUpChannelsFollowedRecycler()
+//        setUpChatRecycler()
+//        setUpEventsRecycler()
+//        setUpMyChannelRecycler()
     }
 
     override fun onResume() {
@@ -72,7 +93,8 @@ class LobbyFragment: CoreFragment(), LobbyContract.View {
                 }
             }
         }
-        mAdapterMyChannel.setItems(controller.getMyChannel())
+        mAdapterMyChannel.setItems(mChannels)//TODO: fix to controller.getMyChannel()
+        fl_my_channels_title.visibility = TextView.VISIBLE
         fl_my_channels_recycler.visibility = RecyclerView.VISIBLE
         fl_my_channels_recycler.layoutManager = LinearLayoutManager(coreActivity.context, LinearLayoutManager.HORIZONTAL, false)
         fl_my_channels_recycler.adapter = mAdapterMyChannel
@@ -83,7 +105,7 @@ class LobbyFragment: CoreFragment(), LobbyContract.View {
         val profilePic = viewHolder.get<ImageView>(R.id.cvlc_picture_profile)
         val channelName = viewHolder.get<TextView>(R.id.cvlc_name_channel)
         Picasso.with(coreActivity.context).load(R.drawable.bg_circle_orange_lobby).into(bg)
-        //TODO: set prof pic after tomer makes the thing, use circletransform
+        Picasso.with(coreActivity.context).load(data.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(profilePic)
         channelName.text = data.name
     }
 

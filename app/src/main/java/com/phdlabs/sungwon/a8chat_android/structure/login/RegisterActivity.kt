@@ -34,6 +34,7 @@ class RegisterActivity : CoreActivity(){
         if (intent.getStringExtra(Constants.IntentKeys.LOGIN_KEY) != "register"){
             isRegister = false
         }
+        setToolbarTitle("Phone Number")
         ar_phone.addTextChangedListener(PhoneNumberFormattingTextWatcher())
         setOnClickers()
     }

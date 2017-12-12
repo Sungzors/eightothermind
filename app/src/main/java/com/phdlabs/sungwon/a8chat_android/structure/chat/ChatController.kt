@@ -4,6 +4,7 @@ import android.util.Log
 import com.github.nkzawa.emitter.Emitter
 import com.github.nkzawa.socketio.client.Socket
 import com.phdlabs.sungwon.a8chat_android.api.data.PrivateChatCreateData
+import com.phdlabs.sungwon.a8chat_android.api.data.SendMessageChannelData
 import com.phdlabs.sungwon.a8chat_android.api.data.SendMessageGeneralData
 import com.phdlabs.sungwon.a8chat_android.api.data.SendMessageStringData
 import com.phdlabs.sungwon.a8chat_android.api.event.MessageLocationSentEvent
@@ -44,7 +45,7 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
     private lateinit var mRoomName: String
     private lateinit var mRoomType: String
 
-    private val mMessages = mutableListOf<Message>()
+    private var mMessages = mutableListOf<Message>()
 
     private lateinit var mCaller: Caller
     private lateinit var mEventBus: EventBus
@@ -77,22 +78,24 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
         mSocket.on(Constants.SocketKeys.UPDATE_CHAT_MEDIA, onNewMessage)
         mSocket.on(Constants.SocketKeys.ON_ERROR, onError)
         mSocket.connect()
-
-
 //        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(mView.getContext()!!)
     }
 
     override fun resume() {
-        if(mMessages == null){
-            retrieveChatHistory()
-        }
     }
 
     override fun pause() {
     }
 
     override fun stop() {
-        mMessages.clear()
+        mSocket.off(Constants.SocketKeys.CONNECT)
+        mSocket.off(Constants.SocketKeys.UPDATE_ROOM)
+        mSocket.off(Constants.SocketKeys.UPDATE_CHAT_STRING)
+        mSocket.off(Constants.SocketKeys.UPDATE_CHAT_CHANNEL)
+        mSocket.off(Constants.SocketKeys.UPDATE_CHAT_CONTACT)
+        mSocket.off(Constants.SocketKeys.UPDATE_CHAT_LOCATION)
+        mSocket.off(Constants.SocketKeys.UPDATE_CHAT_MEDIA)
+        mSocket.off(Constants.SocketKeys.ON_ERROR)
     }
 
     override fun destroy() {
@@ -124,21 +127,15 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
         )
         call.enqueue(object: Callback8<RoomHistoryResponse, RoomHistoryEvent>(mEventBus){
             override fun onSuccess(data: RoomHistoryResponse?) {
-
+                mMessages.clear()
                 //TODO: need to add read first then unread always, but check for unread null instead.
-                for(item in data!!.messages!!.unread!!){
+                for(item in data!!.messages!!.allMessages!!){
                     if(item.roomId == mRoomId.toString()){
                         mMessages.add(item)
                     }
                 }
-                for(item in data.messages!!.read!!){
-                    if(item.roomId == mRoomId.toString()){
-                        mMessages.add(item)
-                    }
-                }
-                mMessages.reverse()
                 var i = 0
-                for(item in mMessages){
+                for(item in mMessages!!){
                     item.timeDisplayed = mView.lastTimeDisplayed(i)
                     setMessageObject(i, item)
                     i++
@@ -151,6 +148,19 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
                 super.onError(response)
                 Log.e(TAG, response!!.message())
                 mView.hideProgress()
+            }
+        })
+    }
+
+    override fun sendChannel(channelId: Int) {
+        val call = mCaller.sendMessageChannel(
+                Preferences(mView.getContext()!!).getPreferenceString(Constants.PrefKeys.TOKEN_KEY),
+                SendMessageChannelData(UserManager.instance.user!!.id.toString(), mRoomId.toString(), channelId.toString())
+        )
+        call.enqueue(object : Callback8<ErrorResponse, MessageSentEvent>(mEventBus){
+            override fun onSuccess(data: ErrorResponse?) {
+                mEventBus.post(MessageSentEvent())
+                mView.getMessageETObject.setText("")
             }
         })
     }
@@ -188,7 +198,7 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
         })
     }
 
-    override fun getMessages(): MutableList<Message> = mMessages
+    override fun getMessages(): MutableList<Message> = mMessages!!
 
     override val getUserId: Int
         get() = UserManager.instance.user!!.id
@@ -211,7 +221,7 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
             var userAdded : String? = null
             var userLeaving : String? = null
             try {
-                mRoomId = data.getInt("roomId")
+//                mRoomId = data.getInt("roomId")
                 userAdded = data.getString("userAdded")
                 userLeaving = data.getString("userLeaving")
             } catch (e: JSONException){
@@ -243,6 +253,7 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
     private val onNewMessage = Emitter.Listener { args ->
         mView.getActivity.runOnUiThread({
             val data : JSONObject = args[0] as JSONObject
+            var id : String? = null
             var message : String? = null
             var roomId : String? = null
             var userId : String? = null
@@ -253,6 +264,7 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
                 Log.e(TAG, e.message)
             }
             try {
+                id = data.getString("id")
                 roomId = data.getString("roomId")
                 userId = data.getString("userId")
                 type = data.getString("type")
@@ -263,7 +275,7 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
                 Log.e(TAG, "Message's type is null")
                 return@runOnUiThread
             }
-            val builder = Message.Builder(type, userId!!, roomId!!)
+            val builder = Message.Builder(id!!, type, userId!!, roomId!!)
             when (type){
                 Message.TYPE_STRING -> {
                     val message = builder.message(message!!).build()
@@ -287,8 +299,8 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
                         Log.e(TAG, e.message)
                     }
                     message.timeDisplayed = mView.lastTimeDisplayed(message)
-                    mMessages.add(message)
-                    mView.updateRecycler(mMessages.size)
+                    mMessages!!.add(message)
+                    mView.updateRecycler(mMessages!!.size)
                 }
                 Message.TYPE_CHANNEL -> {
                     val channelInfo : JSONObject
@@ -323,8 +335,8 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
                         Log.e(TAG, e.message)
                         return@runOnUiThread
                     }
-                    mMessages.add(builder.message(message).channel(channel).build())
-                    mView.updateRecycler(mMessages.size)
+                    mMessages!!.add(builder.message(message).channel(channel).build())
+                    mView.updateRecycler(mMessages!!.size)
                 }
                 Message.TYPE_CONTACT ->{
                     val contactInfo : JSONObject
@@ -373,8 +385,8 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
                         Log.e(TAG, e.message)
                         return@runOnUiThread
                     }
-                    mMessages.add(builder.message(message).contact(contact).build())
-                    mView.updateRecycler(mMessages.size)
+                    mMessages!!.add(builder.message(message).contact(contact).build())
+                    mView.updateRecycler(mMessages!!.size)
                 }
                 Message.TYPE_LOCATION -> {
                     val message = builder.message(message!!).build()
@@ -398,8 +410,8 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
                         Log.e(TAG, e.message)
                     }
                     message.timeDisplayed = mView.lastTimeDisplayed(message)
-                    mMessages.add(message)
-                    mView.updateRecycler(mMessages.size)
+                    mMessages!!.add(message)
+                    mView.updateRecycler(mMessages!!.size)
                 }
 
             }
