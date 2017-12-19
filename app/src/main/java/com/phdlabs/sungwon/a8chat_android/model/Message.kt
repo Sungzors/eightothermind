@@ -13,6 +13,7 @@ class Message private constructor(){
     var roomId: String? = null
     var type: String? = null
     var language: String? = null
+    var name: String? = null
     var userAvatar: String? = null
     var createdAt: Date? = null
     var updatedAt: Date? = null

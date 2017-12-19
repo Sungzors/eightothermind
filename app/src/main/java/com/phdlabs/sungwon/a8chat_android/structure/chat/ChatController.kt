@@ -279,11 +279,13 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
             when (type){
                 Message.TYPE_STRING -> {
                     val message = builder.message(message!!).build()
+                    var name : String? = null
                     var userAvatar : String? = null
                     var createdAt : Date? = null
 //                    var updatedAt : Date? = null
                     var original_message_id : String? = null
                     try {
+                        name = data.getString("name")
                         userAvatar = data.getString("userAvatar")
                         val createdAtString = data.getString("createdAt")
                         val df = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
@@ -291,6 +293,7 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
 //                        val updatedAtString = data.getString("updatedAt")
 //                        updatedAt = df.parse(updatedAtString)
                         original_message_id = data.getString("original_message_id")
+                        message.name = name
                         message.userAvatar = userAvatar
                         message.createdAt = createdAt
 //                        message.updatedAt = updatedAt
@@ -390,11 +393,13 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
                 }
                 Message.TYPE_LOCATION -> {
                     val message = builder.message(message!!).build()
+                    var name : String? = null
                     var userAvatar : String? = null
                     var createdAt : Date? = null
 //                    var updatedAt : Date? = null
                     var original_message_id : String? = null
                     try {
+                        name = data.getString("name")
                         userAvatar = data.getString("userAvatar")
                         val createdAtString = data.getString("createdAt")
                         val df = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
@@ -402,6 +407,7 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
 //                        val updatedAtString = data.getString("updatedAt")
 //                        updatedAt = df.parse(updatedAtString)
                         original_message_id = data.getString("original_message_id")
+                        message.name = name
                         message.userAvatar = userAvatar
                         message.createdAt = createdAt
 //                        message.updatedAt = updatedAt
