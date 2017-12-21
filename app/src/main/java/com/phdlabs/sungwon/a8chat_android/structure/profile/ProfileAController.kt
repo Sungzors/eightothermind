@@ -53,6 +53,7 @@ class ProfileAController(val mView: ProfileContract.View) : ProfileContract.Cont
     }
 
     override fun postProfile() {
+
         if (mView.nullChecker()) {
             Toast.makeText(mView.getContext(), "Please enter a first and last name", Toast.LENGTH_SHORT).show()
         }
@@ -61,7 +62,8 @@ class ProfileAController(val mView: ProfileContract.View) : ProfileContract.Cont
 //        val v = pref.getPreferenceString(Constants.PrefKeys.TOKEN_KEY)
 //        val w = UserManager.instance().user!!.id
 //        val x = mView.getUserData
-        val call = Rest.getInstance().caller.updateUser(pref.getPreferenceString(Constants.PrefKeys.TOKEN_KEY), pref.getPreferenceInt(Constants.PrefKeys.USER_ID), mView.getUserData)
+        val call = Rest.getInstance().caller.updateUser(pref.getPreferenceString(Constants.PrefKeys.TOKEN_KEY),
+                pref.getPreferenceInt(Constants.PrefKeys.USER_ID), mView.getUserData)
         call.enqueue(object : Callback8<UserDataResponse, UserPatchEvent>(EventBusManager.instance().mDataEventBus) {
             override fun onSuccess(data: UserDataResponse?) {
                 mView.hideProgress()

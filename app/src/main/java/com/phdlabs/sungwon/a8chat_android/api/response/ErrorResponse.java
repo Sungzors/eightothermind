@@ -8,6 +8,7 @@ import retrofit2.Response;
 
 /**
  * Created by SungWon on 9/18/2017.
+ * Updated by JPAM 12/20/2017
  */
 
 public class ErrorResponse extends StatusResponse {
@@ -30,10 +31,14 @@ public class ErrorResponse extends StatusResponse {
 
     public static ErrorResponse fromResponse(Response<?> response) {
         try {
-            return GsonHolder.get().fromJson(response.errorBody().charStream(), ErrorResponse.class);
+
+            return GsonHolder.Companion.getInstance().get().fromJson(response.errorBody().charStream(), ErrorResponse.class);
+
         } catch (Exception e) {
+
             Log.d("ErrorResponse", e.toString());
             return new ErrorResponse(e.getMessage());
+
         }
     }
 }

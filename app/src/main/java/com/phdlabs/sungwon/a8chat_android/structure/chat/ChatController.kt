@@ -21,7 +21,7 @@ import com.phdlabs.sungwon.a8chat_android.db.EventBusManager
 import com.phdlabs.sungwon.a8chat_android.db.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.Channel
 import com.phdlabs.sungwon.a8chat_android.model.Message
-import com.phdlabs.sungwon.a8chat_android.model.User
+import com.phdlabs.sungwon.a8chat_android.model.user.User
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.Preferences
 import org.greenrobot.eventbus.EventBus
@@ -372,7 +372,10 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
 //                        position = contactInfo.getJSONObject("room_id")
                         verified = contactInfo.getBoolean("verified")
                         socket_id = contactInfo.getString("socket_id")
-                        contact = User(id, first_name, last_name)
+                        contact = User()
+                        contact.id = id
+                        contact.first_name = first_name
+                        contact.last_name = last_name
                         contact.phone = phone
                         contact.country_code = country_code
                         contact.email = email

@@ -25,7 +25,8 @@
     <string name="events">Events</string>
     <string name="channels_i_follow">Channels I follow</string>
     <string name="my_channels">My Channels</string>
-    <string name="type_something">Type Something...</string>
+    <string name="type_something">Type Something…</string>
+
     <!--Camera Control-->
     <string name="pick_image_intent_text">Choose an image</string>
     <string name="profile_image">Profile Image</string>
@@ -53,5 +54,8 @@
         <item>Portuguese</item>
         <item>French</item>
     </string-array>
+
+    <!--Realm-->
+    <string name="realm_path">8_realm</string>
 
 </resources>

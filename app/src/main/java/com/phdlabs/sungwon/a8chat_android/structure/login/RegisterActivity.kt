@@ -19,18 +19,27 @@ import org.greenrobot.eventbus.Subscribe
 
 /**
  * Created by SungWon on 9/24/2017.
+ * Updated by JPAM on 12/18/2017
  */
 class RegisterActivity : CoreActivity(){
 
-    var isRegister: Boolean = true
-    val mDataEventBus: EventBus = EventBusManager.instance().mDataEventBus
-    override fun layoutId() = R.layout.activity_register
+    /*Properties*/
+    private var isRegister: Boolean = true
 
+    //TODO: Remove Event Bus
+    val mDataEventBus: EventBus = EventBusManager.instance().mDataEventBus
+
+    /*Layout*/
+    override fun layoutId() = R.layout.activity_register
     override fun contentContainerId() = 0
 
+    /*LifeCycle*/
     override fun onStart() {
         super.onStart()
+
+        //TODO: Remove EventBus
         mDataEventBus.register(this)
+
         if (intent.getStringExtra(Constants.IntentKeys.LOGIN_KEY) != "register"){
             isRegister = false
         }
@@ -41,18 +50,23 @@ class RegisterActivity : CoreActivity(){
 
     override fun onStop() {
         super.onStop()
+
+        //TODO: Remove event bus
         mDataEventBus.unregister(this)
     }
 
+    //TODO: Remove Event Bus subscriptions
     @Subscribe
     public fun onEventUIThread(event: LoginEvent){
         if(event.isSuccess){
             hideProgress()
+
             val intent = Intent(this, ConfirmActivity::class.java)
             intent.putExtra(Constants.IntentKeys.LOGIN_KEY, isRegister)
             intent.putExtra(Constants.IntentKeys.LOGIN_CC, ar_ccp.selectedCountryCodeWithPlus)
             intent.putExtra(Constants.IntentKeys.LOGIN_PHONE, ar_phone.text.toString())
             startActivity(intent)
+
         } else {
             showError(event.errorMessage)
         }
@@ -61,16 +75,24 @@ class RegisterActivity : CoreActivity(){
     private fun setOnClickers(){
         ar_confirm_button.setOnClickListener({
             showProgress()
-            val x = ar_ccp.selectedCountryCodeWithPlus
+
             var phone = ar_phone.text.toString()
             phone = phone.replace("[^0-9]".toRegex(),"")
+
+            //TODO: Check if user has registered on realm
+
+
             val call = Rest.getInstance().caller.login(LoginData(ar_ccp.selectedCountryCodeWithPlus, phone))
             call.enqueue(object: Callback8<UserDataResponse, LoginEvent>(mDataEventBus){
+
                 override fun onSuccess(data: UserDataResponse?) {
+                    /*Local DB*/
+
                     Preferences(context).putPreference(Constants.PrefKeys.USER_ID, data!!.user.id)
                     UserManager.instance.user = data.user
                     mDataEventBus.post(LoginEvent())
                 }
+
             })
         })
     }

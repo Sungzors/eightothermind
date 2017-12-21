@@ -1,6 +1,7 @@
 package com.phdlabs.sungwon.a8chat_android.structure.debug
 
 import android.content.Intent
+import android.os.Bundle
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.api.event.UserGetEvent
 import com.phdlabs.sungwon.a8chat_android.api.response.UserDataResponse
@@ -17,16 +18,31 @@ import com.phdlabs.sungwon.a8chat_android.structure.main.MainActivity
 import com.phdlabs.sungwon.a8chat_android.structure.profile.ProfileActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.Preferences
+import io.realm.Realm
+import io.realm.RealmConfiguration
 import kotlinx.android.synthetic.main.activity_debug.*
 import retrofit2.Response
 
 /**
  * Created by SungWon on 10/2/2017.
  */
-class DebugActivity: CoreActivity(){
+class DebugActivity : CoreActivity() {
     override fun layoutId() = R.layout.activity_debug
 
     override fun contentContainerId() = 0
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        /*Realm*/ //TODO: Remove for production, this should be in Application()
+        Realm.init(this)
+        val realmConfig: RealmConfiguration = RealmConfiguration.Builder().
+                name(resources.getString(R.string.realm_path)).deleteRealmIfMigrationNeeded().build()
+        Realm.setDefaultConfiguration(realmConfig)
+        //DEV
+        print("REALM PATH: " + realmConfig.path) //Path for realm browser
+
+    }
 
     override fun onStart() {
         super.onStart()
@@ -39,8 +55,10 @@ class DebugActivity: CoreActivity(){
         ad_token.text = "Token: " + token?.length
         ad_user_id.text = "User ID: " + userID
 
-        if(UserManager.instance.user == null){
-            if (token?.length!=0){
+        //TODO: Switch this call to realm
+
+        if (UserManager.instance.user == null) {
+            if (token?.length != 0) {
                 ad_loading_text.text = "Loading User..."
                 val call = Rest.getInstance().caller.getUser(token, userID!!)
                 call.enqueue(object : Callback8<UserDataResponse, UserGetEvent>(EventBusManager.instance().mDataEventBus) {
@@ -59,7 +77,7 @@ class DebugActivity: CoreActivity(){
         }
     }
 
-    private fun setClickers(){
+    private fun setClickers() {
         ad_start_button.setOnClickListener({
             startActivity(Intent(this, LoginActivity::class.java))
         })

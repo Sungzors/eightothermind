@@ -1,6 +1,6 @@
 package com.phdlabs.sungwon.a8chat_android.db
 
-import com.phdlabs.sungwon.a8chat_android.model.User
+import com.phdlabs.sungwon.a8chat_android.model.user.User
 
 /**
  * Created by SungWon on 9/27/2017.

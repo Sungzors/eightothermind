@@ -1,5 +1,6 @@
 package com.phdlabs.sungwon.a8chat_android.model
 
+import com.phdlabs.sungwon.a8chat_android.model.user.User
 import java.util.*
 
 /**

@@ -40,7 +40,7 @@ import retrofit2.http.Query;
 
 /**
  * Created by SungWon on 9/18/2017.
- *
+ * <p>
  * https://eight-backend.herokuapp.com/swagger/
  */
 
@@ -90,32 +90,35 @@ public interface Caller {
     Call<RoomHistoryResponse> getMessageHistory(@Header(TOKEN) String token, @Path("roomId") int roomId, @Path("userId") int userId);
 
     @POST("/messages/string")
-    Call<ErrorResponse> sendMessageString(@Header(TOKEN)String token, @Body SendMessageStringData data);
+    Call<ErrorResponse> sendMessageString(@Header(TOKEN) String token, @Body SendMessageStringData data);
 
     @POST("/messages/media")
-    Call<ErrorResponse> sendMessageMedia(@Header(TOKEN)String token, @Body RequestBody data);
+    Call<ErrorResponse> sendMessageMedia(@Header(TOKEN) String token, @Body RequestBody data);
 
     @POST("/messages/money")
-    Call<ErrorResponse> sendMessageMoney(@Header(TOKEN)String token, @Body SendMessageMoneyData data);
+    Call<ErrorResponse> sendMessageMoney(@Header(TOKEN) String token, @Body SendMessageMoneyData data);
 
     @POST("/messages/share/location")
-    Call<ErrorResponse> sendMessageLocation(@Header(TOKEN)String token, @Body SendMessageGeneralData data);
+    Call<ErrorResponse> sendMessageLocation(@Header(TOKEN) String token, @Body SendMessageGeneralData data);
 
     @POST("/messages/share/contact")
-    Call<ErrorResponse> sendMessageContact(@Header(TOKEN)String token, @Body SendMessageContactData data);
+    Call<ErrorResponse> sendMessageContact(@Header(TOKEN) String token, @Body SendMessageContactData data);
 
     @POST("/messages/share/channel")
-    Call<ErrorResponse> sendMessageChannel(@Header(TOKEN)String token, @Body SendMessageChannelData data);
+    Call<ErrorResponse> sendMessageChannel(@Header(TOKEN) String token, @Body SendMessageChannelData data);
 
     @POST("/messages/share/groupChat")
-    Call<ErrorResponse> sendMessageGroupChat(@Header(TOKEN)String token, @Body SendMessageContactData data);
+    Call<ErrorResponse> sendMessageGroupChat(@Header(TOKEN) String token, @Body SendMessageContactData data);
 
+    //TODO: Refactoring USERS
     @POST("/users")
     Call<UserDataResponse> login(@Body LoginData loginData);
 
+    //TODO: Refactoring USERS
     @GET("/users/{userid}")
     Call<UserDataResponse> getUser(@Header(TOKEN) String token, @Path("userid") int userid);
 
+    //TODO: Refactoring USERS
     @PATCH("/users/{userid}")
     Call<UserDataResponse> updateUser(@Header(TOKEN) String token, @Path("userid") int userid, @Body UserData userData);
 
