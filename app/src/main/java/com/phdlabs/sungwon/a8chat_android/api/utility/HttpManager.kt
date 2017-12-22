@@ -59,18 +59,16 @@ class HttpManager {
 
                     override fun shouldSkipField(f: FieldAttributes?): Boolean =
                             f?.declaredClass == RealmObject::class.java
-
                 }).create()
 
         /*Retrofit Rx*/
         httpClient?.let {
 
-            retrofitRx = Retrofit
-                    .Builder()
-                    .baseUrl(BuildConfig.BASE_URL)
-                    .client(it)
+            retrofitRx =  Retrofit.Builder()
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .addConverterFactory(GsonConverterFactory.create(gson))
+                    .baseUrl(BuildConfig.BASE_URL)
+                    .client(it)
                     .build()
 
             /*Retrofit*/
@@ -86,6 +84,8 @@ class HttpManager {
 
     /*Getters*/
     fun getRetrofit(): Retrofit? = retrofit
+
+    fun getRetrofitRx(): Retrofit? = retrofitRx
 
     fun getHttpClient(): OkHttpClient? = httpClient
 

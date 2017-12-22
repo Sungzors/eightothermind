@@ -24,7 +24,11 @@ open class User() : RealmObject() {
     @PrimaryKey
     @SerializedName("id")
     @Expose
-    var id: Int = 0
+    var id: Int? = null
+
+    @SerializedName("mediaId")
+    @Expose
+    var mediaId: String? = null
 
     @SerializedName("first_name")
     @Expose

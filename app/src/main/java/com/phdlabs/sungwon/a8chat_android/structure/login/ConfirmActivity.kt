@@ -15,36 +15,38 @@ import com.phdlabs.sungwon.a8chat_android.api.rest.Caller
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
 import com.phdlabs.sungwon.a8chat_android.api.utility.Callback8
 import com.phdlabs.sungwon.a8chat_android.db.EventBusManager
+import com.phdlabs.sungwon.a8chat_android.model.user.User
+import com.phdlabs.sungwon.a8chat_android.model.user.registration.Token
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.structure.profile.ProfileActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
-import com.phdlabs.sungwon.a8chat_android.utility.Preferences
+import com.vicpin.krealmextensions.queryFirst
+import com.vicpin.krealmextensions.save
 import kotlinx.android.synthetic.main.activity_confirm.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 
 /**
  * Created by SungWon on 9/26/2017.
+ * Updated by JPAM on 12/21/2017
  */
-class ConfirmActivity: CoreActivity(){
 
+class ConfirmActivity : CoreActivity() {
+
+    /*Properties*/
     val mDataEventBus: EventBus = EventBusManager.instance().mDataEventBus
     val mCaller: Caller = Rest.getInstance().caller
-
     private var isRegister: Boolean = true
-    private lateinit var mCountryCode: String
-    private lateinit var mPhone: String
+    private var user: User? = null
 
     override fun layoutId() = R.layout.activity_confirm
-
     override fun contentContainerId() = 0
 
     override fun onStart() {
         super.onStart()
         mDataEventBus.register(this)
         isRegister = intent.getBooleanExtra(Constants.IntentKeys.LOGIN_KEY, true)
-        mCountryCode = intent.getStringExtra(Constants.IntentKeys.LOGIN_CC)
-        mPhone = intent.getStringExtra(Constants.IntentKeys.LOGIN_PHONE)
+        user = User().queryFirst()
         setToolbarTitle("Confirmation")
         setupUI()
         setupClickers()
@@ -56,10 +58,9 @@ class ConfirmActivity: CoreActivity(){
     }
 
 
-
     @Subscribe
-    public fun onEventUIThread(event: ConfirmEvent){
-        if(event.isSuccess){
+    public fun onEventUIThread(event: ConfirmEvent) {
+        if (event.isSuccess) {
             hideProgress()
             startActivity(Intent(this, ProfileActivity::class.java))
         } else {
@@ -69,8 +70,8 @@ class ConfirmActivity: CoreActivity(){
     }
 
     @Subscribe
-    public fun onEventUIThread(event: ResendEvent){
-        if(event.isSuccess){
+    public fun onEventUIThread(event: ResendEvent) {
+        if (event.isSuccess) {
             hideProgress()
             Toast.makeText(this, "The code has been resent via a text message", Toast.LENGTH_SHORT).show()
         } else {
@@ -79,36 +80,56 @@ class ConfirmActivity: CoreActivity(){
         }
     }
 
-    private fun setupUI(){
-        ac_textview_instruction.text = String.format(getString(R.string.send_1, mPhone))
-        val content = SpannableString(getString(R.string.resend_code))
-        content.setSpan(UnderlineSpan(), 0, content.length, 0)
-        ac_textview_resend_code.text = content
+    private fun setupUI() {
+        user?.let {
+            ac_textview_instruction.text = String.format(getString(R.string.send_1, it.phone))
+            val content = SpannableString(getString(R.string.resend_code))
+            content.setSpan(UnderlineSpan(), 0, content.length, 0)
+            ac_textview_resend_code.text = content
+        }
     }
 
-    private fun setupClickers(){
+    private fun setupClickers() {
         ac_button_create_profile.setOnClickListener({
             showProgress()
-            var phone = mPhone
-            phone = phone.replace("[^0-9]".toRegex(),"")
-            val call = mCaller.verify(VerifyData(mCountryCode, phone, ac_code_input.code.joinToString("")))
-            call.enqueue(object: Callback8<TokenResponse, ConfirmEvent>(mDataEventBus){
-                override fun onSuccess(data: TokenResponse?) {
-                    Preferences(context).putPreference(Constants.PrefKeys.TOKEN_KEY, "Bearer " + data?.token)
-                    mDataEventBus.post(ConfirmEvent())
-                    hideProgress()
-                    Toast.makeText(context, "Confirmed " + data?.token, Toast.LENGTH_SHORT).show()
+            user?.let {
+                it.phone?.let {
+                    var phone = it
+                    phone = phone.replace("[^0-9]".toRegex(), "")
+                    val call = mCaller.verify(VerifyData(user!!.country_code!!, phone, ac_code_input.code.joinToString("")))
+                    call.enqueue(object : Callback8<TokenResponse, ConfirmEvent>(mDataEventBus) {
+                        override fun onSuccess(data: TokenResponse?) {
+                            /*Cache token in Realm*/
+                            data?.let {
+                                val realmToken = Token()
+                                realmToken.token = "Bearer " + it.token
+                                /*Save token*/
+                                realmToken.save()
+                                /*Update user*/
+                                it.user?.save()
+                            }
+                            /*Update User*/
+                            mDataEventBus.post(ConfirmEvent())
+                            hideProgress()
+                            //Toast.makeText(context, "Confirmed " + data?.token, Toast.LENGTH_SHORT).show()
+                        }
+                    })
+
                 }
-            })
+            }
         })
         ac_textview_resend_code.setOnClickListener({
             showProgress()
-            val call = mCaller.resend(LoginData(mCountryCode, mPhone))
-            call.enqueue(object: Callback8<ResendResponse,ResendEvent>(mDataEventBus){
-                override fun onSuccess(data: ResendResponse?) {
-                    mDataEventBus.post(ResendEvent())
+            user?.let {
+                if (!it.phone.isNullOrBlank() && !it.country_code.isNullOrBlank()) {
+                    val call = mCaller.resend(LoginData(it.country_code!!, it.phone!!))
+                    call.enqueue(object : Callback8<ResendResponse, ResendEvent>(mDataEventBus) {
+                        override fun onSuccess(data: ResendResponse?) {
+                            mDataEventBus.post(ResendEvent())
+                        }
+                    })
                 }
-            })
+            }
         })
     }
 }

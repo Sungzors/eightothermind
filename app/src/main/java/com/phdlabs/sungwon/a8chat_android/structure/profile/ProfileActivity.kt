@@ -15,17 +15,22 @@ import kotlinx.android.synthetic.main.activity_profile.*
 /**
  * Created by SungWon on 10/2/2017.
  */
-class ProfileActivity: CoreActivity(), ProfileContract.View, AdapterView.OnItemSelectedListener{
+class ProfileActivity : CoreActivity(), ProfileContract.View, AdapterView.OnItemSelectedListener {
 
+    /*Properties*/
     private var profilePic: ImageView? = null
     private var language: String = "english"
 
+    /*UI*/
     override fun layoutId() = R.layout.activity_profile
 
     override fun contentContainerId() = 0
 
+    /*Controller*/
     override lateinit var controller: ProfileContract.Controller
+    override val getActivity = this
 
+    /*LifeCycle*/
     override fun onStart() {
         super.onStart()
         setToolbarTitle("Tell Us About Yourself")
@@ -53,16 +58,21 @@ class ProfileActivity: CoreActivity(), ProfileContract.View, AdapterView.OnItemS
         controller.stop()
     }
 
-    override val getActivity = this
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        controller.onPictureResult(requestCode, resultCode, data)
 
-    override val getProfileImageView  = profilePic
+    }
+
+    /*Data*/
+    override val getProfileImageView = profilePic
 
     override val getUserData: UserData
         get() = UserData(ap_first_name.text.toString(), ap_last_name.text.toString(), language)
 
     override fun nullChecker(): Boolean = (ap_first_name.text.toString() == "" || ap_last_name.text.toString() == "")
 
-    private fun setClickers(){
+    private fun setClickers() {
         ap_profile_pic.setOnClickListener({
             controller.showPicture(this)
         })
@@ -71,17 +81,13 @@ class ProfileActivity: CoreActivity(), ProfileContract.View, AdapterView.OnItemS
         })
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        controller.onPictureResult(requestCode, resultCode, data)
-
-    }
-
+    /*Profile image*/
     override fun setProfileImageView(pictureUrl: String) { //UI
-        Picasso.with(context).load("file://"+pictureUrl).transform(CircleTransform()).into(profilePic)
+        Picasso.with(context).load("file://" + pictureUrl).transform(CircleTransform()).into(profilePic)
 
     }
 
+    /*Language*/
     override fun onNothingSelected(p0: AdapterView<*>?) {
         language = "english"
     }

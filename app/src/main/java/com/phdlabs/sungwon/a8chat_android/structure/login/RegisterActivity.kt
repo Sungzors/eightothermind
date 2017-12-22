@@ -3,44 +3,35 @@ package com.phdlabs.sungwon.a8chat_android.structure.login
 import android.content.Intent
 import android.telephony.PhoneNumberFormattingTextWatcher
 import com.phdlabs.sungwon.a8chat_android.R
-import com.phdlabs.sungwon.a8chat_android.api.data.LoginData
-import com.phdlabs.sungwon.a8chat_android.api.event.LoginEvent
-import com.phdlabs.sungwon.a8chat_android.api.response.UserDataResponse
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
-import com.phdlabs.sungwon.a8chat_android.api.utility.Callback8
-import com.phdlabs.sungwon.a8chat_android.db.EventBusManager
-import com.phdlabs.sungwon.a8chat_android.db.UserManager
+import com.phdlabs.sungwon.a8chat_android.model.user.registration.RegistrationData
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
-import com.phdlabs.sungwon.a8chat_android.utility.Preferences
+import com.vicpin.krealmextensions.queryFirst
+import com.vicpin.krealmextensions.save
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_register.*
-import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
 
 /**
  * Created by SungWon on 9/24/2017.
- * Updated by JPAM on 12/18/2017
+ * Updated by JPAM on 12/18/2017 (Error Handling & Cache)
  */
-class RegisterActivity : CoreActivity(){
+class RegisterActivity : CoreActivity() {
 
     /*Properties*/
     private var isRegister: Boolean = true
 
-    //TODO: Remove Event Bus
-    val mDataEventBus: EventBus = EventBusManager.instance().mDataEventBus
-
     /*Layout*/
     override fun layoutId() = R.layout.activity_register
+
     override fun contentContainerId() = 0
 
     /*LifeCycle*/
     override fun onStart() {
         super.onStart()
-
-        //TODO: Remove EventBus
-        mDataEventBus.register(this)
-
-        if (intent.getStringExtra(Constants.IntentKeys.LOGIN_KEY) != "register"){
+        if (intent.getStringExtra(Constants.IntentKeys.LOGIN_KEY) != "register") {
             isRegister = false
         }
         setToolbarTitle("Phone Number")
@@ -48,52 +39,72 @@ class RegisterActivity : CoreActivity(){
         setOnClickers()
     }
 
-    override fun onStop() {
-        super.onStop()
-
-        //TODO: Remove event bus
-        mDataEventBus.unregister(this)
+    private fun confirmation() {
+        hideProgress()
+        val intent = Intent(this, ConfirmActivity::class.java)
+        intent.putExtra(Constants.IntentKeys.LOGIN_KEY, isRegister)
+        startActivity(intent)
     }
 
-    //TODO: Remove Event Bus subscriptions
-    @Subscribe
-    public fun onEventUIThread(event: LoginEvent){
-        if(event.isSuccess){
-            hideProgress()
-
-            val intent = Intent(this, ConfirmActivity::class.java)
-            intent.putExtra(Constants.IntentKeys.LOGIN_KEY, isRegister)
-            intent.putExtra(Constants.IntentKeys.LOGIN_CC, ar_ccp.selectedCountryCodeWithPlus)
-            intent.putExtra(Constants.IntentKeys.LOGIN_PHONE, ar_phone.text.toString())
-            startActivity(intent)
-
-        } else {
-            showError(event.errorMessage)
-        }
-    }
-
-    private fun setOnClickers(){
+    private fun setOnClickers() {
         ar_confirm_button.setOnClickListener({
             showProgress()
 
-            var phone = ar_phone.text.toString()
-            phone = phone.replace("[^0-9]".toRegex(),"")
+            /*Phone Input & Data Validation*/
+            var phone: String? = ar_phone.text.toString()
+            if (!phone.isNullOrEmpty()) {
+                phone = phone?.replace("[^0-9]".toRegex(), "")
+                /*Query Cached registered users on this phone*/
+                var realm: Realm? = null
+                try {
+                    realm = Realm.getDefaultInstance()
+                    val realmRegistrationData: RegistrationData? = RegistrationData().queryFirst { query ->
+                        query.equalTo("phone", phone)
+                    }
+                    realmRegistrationData?.let {
+                        /*Already registered*/
+                        confirmation()
+                    } ?: run {
+                        /*Not registered*/
+                        val registrationData = RegistrationData()
+                        registrationData.phone = phone
+                        registrationData.country_code = ar_ccp.selectedCountryCodeWithPlus
+                        /*Network Call*/
+                        val call = Rest.getInstance().getmCallerRx().login(registrationData)
+                        call.subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(
+                                        { user ->
+                                            if (user.isSuccess) {
+                                                /*Save to Realm*/
+                                                registrationData.save()
+                                                user.user.save()
+                                                /*Transition to Confirm Activity*/
+                                                confirmation()
+                                            } else if (user.isError) {
+                                                hideProgress()
+                                                showError(user.message)
+                                            }
+                                        })
+                    }
+                } catch (e: Throwable) {
+                    /*Do not leave realm transactions open*/
+                    hideProgress()
+                    if (realm != null && realm.isInTransaction) {
+                        realm.cancelTransaction()
+                    }
+                    //Stack trace
+                    print("REALM ERROR: " + e.stackTrace)
 
-            //TODO: Check if user has registered on realm
-
-
-            val call = Rest.getInstance().caller.login(LoginData(ar_ccp.selectedCountryCodeWithPlus, phone))
-            call.enqueue(object: Callback8<UserDataResponse, LoginEvent>(mDataEventBus){
-
-                override fun onSuccess(data: UserDataResponse?) {
-                    /*Local DB*/
-
-                    Preferences(context).putPreference(Constants.PrefKeys.USER_ID, data!!.user.id)
-                    UserManager.instance.user = data.user
-                    mDataEventBus.post(LoginEvent())
+                } finally {
+                    /*Close realm instance*/
+                    realm?.close()
                 }
-
-            })
+            } else {
+                /*Error*/
+                hideProgress()
+                showError("8 needs a phone number for registration")
+            }
         })
     }
 }

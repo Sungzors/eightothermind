@@ -71,9 +71,6 @@ public interface Caller {
     @POST("/auth/resend")
     Call<ResendResponse> resend(@Body LoginData loginData);
 
-    @POST("/drawer_media")
-    Call<MediaResponse> userPicPost(@Header(TOKEN) String token, @Body RequestBody data);
-
     @POST("/privateChats")
     Call<RoomResponse> createPrivateChatRoom(@Header(TOKEN) String token, @Body PrivateChatCreateData body);
 
@@ -110,17 +107,8 @@ public interface Caller {
     @POST("/messages/share/groupChat")
     Call<ErrorResponse> sendMessageGroupChat(@Header(TOKEN) String token, @Body SendMessageContactData data);
 
-    //TODO: Refactoring USERS
-    @POST("/users")
-    Call<UserDataResponse> login(@Body LoginData loginData);
-
-    //TODO: Refactoring USERS
     @GET("/users/{userid}")
     Call<UserDataResponse> getUser(@Header(TOKEN) String token, @Path("userid") int userid);
-
-    //TODO: Refactoring USERS
-    @PATCH("/users/{userid}")
-    Call<UserDataResponse> updateUser(@Header(TOKEN) String token, @Path("userid") int userid, @Body UserData userData);
 
     @GET("/users/{userid}/privateChats")
     Call<PrivateChatResponse> getPrivateChats(@Header(TOKEN) String token, @Path("userid") int userid);

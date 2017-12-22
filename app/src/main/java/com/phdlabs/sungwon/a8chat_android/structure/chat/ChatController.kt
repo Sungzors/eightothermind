@@ -109,7 +109,7 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
     override fun createPrivateChatRoom() {
         val call = mCaller.createPrivateChatRoom(
                 Preferences(mView.getContext()!!).getPreferenceString(Constants.PrefKeys.TOKEN_KEY),
-                PrivateChatCreateData(mutableListOf(UserManager.instance.user!!.id, mView.getChatParticipant))
+                PrivateChatCreateData(mutableListOf(UserManager.instance.user!!.id!!, mView.getChatParticipant))
         )
         call.enqueue(object: Callback8<RoomResponse, PrivateChatCreateEvent>(mEventBus){
             override fun onSuccess(data: RoomResponse?) {
@@ -123,7 +123,7 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
         val call = mCaller.getMessageHistory(
                 Preferences(mView.getContext()!!).getPreferenceString(Constants.PrefKeys.TOKEN_KEY),
                 mRoomId,
-                UserManager.instance.user!!.id
+                UserManager.instance.user!!.id!!
         )
         call.enqueue(object: Callback8<RoomHistoryResponse, RoomHistoryEvent>(mEventBus){
             override fun onSuccess(data: RoomHistoryResponse?) {
@@ -201,7 +201,7 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
     override fun getMessages(): MutableList<Message> = mMessages!!
 
     override val getUserId: Int
-        get() = UserManager.instance.user!!.id
+        get() = UserManager.instance.user!!.id!!
 
     //listeners
     private val onConnect = Emitter.Listener{ args ->

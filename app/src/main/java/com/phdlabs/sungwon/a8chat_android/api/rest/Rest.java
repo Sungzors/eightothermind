@@ -11,6 +11,7 @@ public class Rest {
     //caller manager
     private static Rest mInstance = new Rest();
     private Caller mCaller;
+    private CallerRx mCallerRx;
 
     public static Rest getInstance() {
         return mInstance;
@@ -25,5 +26,12 @@ public class Rest {
             mCaller = HttpManager.Companion.getInstance().getRetrofit().create(Caller.class);
         }
         return mCaller;
+    }
+
+    public CallerRx getmCallerRx() {
+        if(mCallerRx == null) {
+            mCallerRx = HttpManager.Companion.getInstance().getRetrofitRx().create(CallerRx.class);
+        }
+        return mCallerRx;
     }
 }
