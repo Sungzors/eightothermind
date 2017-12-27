@@ -52,58 +52,13 @@ class DebugActivity : CoreActivity() {
     override fun onStart() {
         super.onStart()
         setClickers()
-
-        //debug stopper here to get the values
-        val token: String? = Preferences(this).getPreferenceString(Constants.PrefKeys.TOKEN_KEY)
-        val userID: Int? = Preferences(this).getPreferenceInt(Constants.PrefKeys.USER_ID)
-
-        ad_token.text = "Token: " + token?.length
-        ad_user_id.text = "User ID: " + userID
-
-        //TODO: Switch this call to realm **************************
-
-//        var realm: Realm? = null
-//        try {
-//            realm = Realm.getDefaultInstance()
-//            val currentUser:User? = User().queryFirst()
-//            currentUser?.let {
-//                ad_loading_text.text = "User Loaded"
-//            } ?: run {
-//
-//                //Pull user
-//                val call = Rest.getInstance().getmCallerRx()
-//
-//            }
-//
-//
-//        }catch (e: Throwable) {
-//            if (realm != null && realm.isInTransaction) {
-//                realm.cancelTransaction()
-//            }
-//            //Stack trace
-//            print("REALM ERROR: " + e.stackTrace)
-//        }finally {
-//            realm?.close()
-//        }
-
-        //TODO: **********************************
-
-        if (UserManager.instance.user == null) {
-            if (token?.length != 0) {
-                ad_loading_text.text = "Loading User..."
-                val call = Rest.getInstance().caller.getUser(token, userID!!)
-                call.enqueue(object : Callback8<UserDataResponse, UserGetEvent>(EventBusManager.instance().mDataEventBus) {
-                    override fun onSuccess(data: UserDataResponse?) {
-                        ad_loading_text.text = "User Loaded"
-                        EventBusManager.instance().mDataEventBus.post(UserGetEvent())
-                        UserManager.instance.user = data!!.user
-                    }
-
-                    override fun onError(response: Response<UserDataResponse>?) {
-                        ad_loading_text.text = "User Load failed"
-                        super.onError(response)
-                    }
-                })
+        /*Get current user*/
+        UserManager.instance.getCurrentUser { success, user, token ->
+            if (success) {
+                ad_token.text = "Token: " + token?.token?.length
+                ad_user_id.text = "User ID: " + user?.id
+            } else {
+                ad_loading_text.text = "User Load failed"
             }
         }
     }

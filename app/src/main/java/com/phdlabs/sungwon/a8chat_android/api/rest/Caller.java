@@ -107,8 +107,8 @@ public interface Caller {
     @POST("/messages/share/groupChat")
     Call<ErrorResponse> sendMessageGroupChat(@Header(TOKEN) String token, @Body SendMessageContactData data);
 
-    @GET("/users/{userid}")
-    Call<UserDataResponse> getUser(@Header(TOKEN) String token, @Path("userid") int userid);
+//    @GET("/users/{userid}")
+//    Call<UserDataResponse> getUser(@Header(TOKEN) String token, @Path("userid") int userid);
 
     @GET("/users/{userid}/privateChats")
     Call<PrivateChatResponse> getPrivateChats(@Header(TOKEN) String token, @Path("userid") int userid);

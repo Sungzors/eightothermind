@@ -35,12 +35,12 @@ import java.io.ByteArrayOutputStream
  */
 class ProfileAController(val mView: ProfileContract.View) : ProfileContract.Controller {
 
-    //connects to ProfileActivity
-
+    /*Initialization*/
     init {
         mView.controller = this
     }
 
+    /*LifeCycle*/
     override fun start() {
     }
 
@@ -53,6 +53,7 @@ class ProfileAController(val mView: ProfileContract.View) : ProfileContract.Cont
     override fun stop() {
     }
 
+    /*Camera Intent*/
     override fun showPicture(activity: CoreActivity) {
         CameraControl.instance.pickImage(mView.getActivity,
                 "Choose a profile picture",
@@ -60,6 +61,10 @@ class ProfileAController(val mView: ProfileContract.View) : ProfileContract.Cont
                 false)
     }
 
+    /**@Patch user profile
+     * Updates Realm
+     * [postProfile]
+     * */
     override fun postProfile() {
         /*Data validation*/
         if (mView.nullChecker()) {
@@ -93,8 +98,10 @@ class ProfileAController(val mView: ProfileContract.View) : ProfileContract.Cont
         }
     }
 
+    /**@Post Media
+     * Profile picture
+     * [onPictureResult] handled in onActivityResult in ProfileActivity*/
     override fun onPictureResult(requestCode: Int, resultCode: Int, data: Intent?) {
-
         //Change image if available
         if (resultCode != Activity.RESULT_CANCELED) {
             mView.showProgress()
@@ -105,16 +112,25 @@ class ProfileAController(val mView: ProfileContract.View) : ProfileContract.Cont
             }
             //Upload Image
             val imageBitmap = CameraControl.instance.getImageFromResult(mView.getActivity, requestCode, resultCode, data)
-            imageBitmap.let {
+            imageBitmap?.let {
+                //Image compression
                 val bos = ByteArrayOutputStream()
-                it!!.compress(Bitmap.CompressFormat.PNG, 0, bos)
+                it.compress(Bitmap.CompressFormat.PNG, 0, bos)
                 val bitmapData = bos.toByteArray()
+                //User query
                 val currentUser = User().queryFirst()
+                //@Post
                 currentUser?.let {
-                    val formBody = MultipartBody.Builder().setType(MultipartBody.FORM)
+                    /*Uploaded as multipart body*/
+                    val formBody = MultipartBody.Builder()
+                            .setType(MultipartBody.FORM)
                             .addFormDataPart("user_id", it.id.toString())
-                            .addFormDataPart("file", "8chat" + System.currentTimeMillis(), RequestBody.create(MediaType.parse("image/png"), bitmapData))
+                            .addFormDataPart("file",
+                                    "8chat" + System.currentTimeMillis(),
+                                    RequestBody.create(MediaType.parse("image/png"),
+                                            bitmapData))
                             .build()
+                    print("FORM BODY: " + formBody)
                     Token().queryFirst()?.let {
                         val call = Rest.getInstance().getmCallerRx().userPostPic(it.token!!, formBody)
                         call.subscribeOn(Schedulers.newThread())
@@ -123,6 +139,16 @@ class ProfileAController(val mView: ProfileContract.View) : ProfileContract.Cont
                                     mView.hideProgress()
                                     if (response.isSuccess) {
 
+                                       response.media?.let {
+                                           for (media in it){
+                                               print("*********************************************")
+                                               print("MEDIA: " + media.id)
+                                               print("MEDIA: " + media.user_id)
+                                               print("MEDIA: " + media.media_file)
+                                               print("**********************************************")
+                                           }
+                                       }
+
                                         //TODO: Media is not being mapped
 
                                         //TODO: Cache media object
@@ -130,13 +156,13 @@ class ProfileAController(val mView: ProfileContract.View) : ProfileContract.Cont
                                         //TODO: Update local user with media ID before patching
 
                                         /*Cache media info in realm*/
-                                        response.media?.save()
+                                        //response.media?.save()
                                         /*Update Realm user with profile picture url*/
-                                        val updatedUser = currentUser
-                                        updatedUser.mediaId = response.media?.id?.toString()
-                                        print(updatedUser.mediaId)
-                                        updatedUser.save()
-                                        Toast.makeText(mView.getContext(), "Profile Picture Updated", Toast.LENGTH_SHORT).show()
+                                        //val updatedUser = currentUser
+                                        //updatedUser.mediaId = response.media?.id?.toString()
+                                        //print(updatedUser.mediaId)
+                                        //updatedUser.save()
+                                        //Toast.makeText(mView.getContext(), "Profile Picture Updated", Toast.LENGTH_SHORT).show()
 
 
                                     } else if (response.isError) {

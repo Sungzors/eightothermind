@@ -23,6 +23,9 @@ interface CallerRx {
     @PATCH("/users/{userid}")
     fun updateUser(@Header(TOKEN) token: String, @Path("userid") userId: Int, @Body userData: UserData): Observable<UserDataResponse>
 
+    @GET("/users/{userid}")
+    fun getUser(@Header(TOKEN) token: String, @Path("userid") userId: Int): Observable<UserDataResponse>
+
     /*Media*/
     @POST("/media")
     fun userPostPic(@Header(TOKEN) token: String, @Body data: RequestBody): Observable<MediaResponse>
