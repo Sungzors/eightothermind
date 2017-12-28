@@ -3,6 +3,7 @@ package com.phdlabs.sungwon.a8chat_android.structure.core;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
+import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -26,6 +27,7 @@ public abstract class CoreFragment extends Fragment implements CoreActivity.OnBa
 
     public View view;
 
+    @LayoutRes
     protected abstract int layoutId();
 
     public CoreActivity getCoreActivity() {

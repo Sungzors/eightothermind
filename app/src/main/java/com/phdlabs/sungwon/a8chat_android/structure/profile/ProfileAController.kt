@@ -161,7 +161,7 @@ class ProfileAController(val mView: ProfileContract.View) : ProfileContract.Cont
                                         //updatedUser.mediaId = response.media?.id?.toString()
                                         //print(updatedUser.mediaId)
                                         //updatedUser.save()
-                                        //Toast.makeText(mView.getContext(), "Profile Picture Updated", Toast.LENGTH_SHORT).show()
+                                        //Toast.makeText(mRoot.getContext(), "Profile Picture Updated", Toast.LENGTH_SHORT).show()
 
 
                                     } else if (response.isError) {
