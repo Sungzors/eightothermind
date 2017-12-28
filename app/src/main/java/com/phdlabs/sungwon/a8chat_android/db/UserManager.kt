@@ -1,6 +1,5 @@
 package com.phdlabs.sungwon.a8chat_android.db
 
-import android.widget.Toast
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
 import com.phdlabs.sungwon.a8chat_android.model.user.User
 import com.phdlabs.sungwon.a8chat_android.model.user.registration.Token
@@ -8,7 +7,6 @@ import com.vicpin.krealmextensions.queryFirst
 import com.vicpin.krealmextensions.save
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import io.realm.Realm
 
 /**
  * Created by SungWon on 9/27/2017.
@@ -27,8 +25,8 @@ class UserManager {
     var user: User? = null
 
     /**[getCurrentUser]
-     * Method for retrieving current user from cached data or pull if non existeng
-     * @callback (success, User?)
+     * Method for retrieving current user from cached data or pull if non-existent
+     * @callback (success, User?, Token?)
      * */
     fun getCurrentUser(callback: (Boolean, User?, Token?) -> Unit) {
 
@@ -59,46 +57,6 @@ class UserManager {
             callback(false, null, null)
             print("UserManager: No token, return user to Log In screen")
         }
-
-//        var realm: Realm? = null
-//        try {
-//            realm = Realm.getDefaultInstance()
-//            val currentUser: User? = User().queryFirst()
-//            currentUser?.let {
-//                callback(true, it,)
-//            } ?: run {
-//                val token = Token().queryFirst()
-//                token?.token?.let {
-//                    val call = Rest.getInstance().getmCallerRx().getUser(it, currentUser!!.id!!)
-//                    call.subscribeOn(Schedulers.newThread())
-//                            .observeOn(AndroidSchedulers.mainThread())
-//                            .subscribe { response ->
-//                                if (response.isSuccess) {
-//                                    /*Cache user in realm*/
-//                                    response.user.save()
-//                                    print("User downloaded & cached in realm")
-//                                    callback(true, response.user)
-//                                } else if (response.isError) {
-//                                    /*Server call failed*/
-//                                    print("Server call failed for user in UserManager")
-//                                    callback(false, null)
-//                                }
-//                            }
-//
-//                } ?: run {
-//                    /*No available token*/
-//                    print("NO available token in UserManager")
-//                    callback(false, null)
-//                }
-//            }
-//        } catch (e: Throwable) {
-//            if (realm != null && realm.isInTransaction) {
-//                realm.cancelTransaction()
-//            }
-//        } finally {
-//            realm?.close()
-//        }
     }
-
 
 }

@@ -2,6 +2,7 @@ package com.phdlabs.sungwon.a8chat_android.structure.channel
 
 import com.phdlabs.sungwon.a8chat_android.api.data.PostChannelData
 import com.phdlabs.sungwon.a8chat_android.model.Channel
+import com.phdlabs.sungwon.a8chat_android.model.user.User
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseController
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseView
 
@@ -9,6 +10,7 @@ import com.phdlabs.sungwon.a8chat_android.structure.core.BaseView
  * Created by SungWon on 11/30/2017.
  */
 interface ChannelContract {
+
     interface Create {
         interface View: BaseView<Controller>{
             fun finishActivity()
@@ -51,4 +53,6 @@ interface ChannelContract {
 
         }
     }
+
+
 }

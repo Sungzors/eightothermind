@@ -93,7 +93,6 @@ class ProfileAController(val mView: ProfileContract.View) : ProfileContract.Cont
                                 Toast.makeText(mView.getContext(), "Unable to update", Toast.LENGTH_SHORT).show()
                             }
                         }
-
             }
         }
     }
