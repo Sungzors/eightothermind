@@ -201,8 +201,10 @@ class CameraControl private constructor() {
     }
 
     private fun startChooser(fragmentContext: Fragment) {
-        val chooseImageIntent = getPickImageIntent(fragmentContext.context, mChooserTitle)
-        fragmentContext.startActivityForResult(chooseImageIntent, mPickImageRequestCode)
+        fragmentContext.context?.let {
+            val chooseImageIntent = getPickImageIntent(it, mChooserTitle)
+            fragmentContext.startActivityForResult(chooseImageIntent, mPickImageRequestCode)
+        }
     }
 
     private fun startChooser(activityContext: Activity) {

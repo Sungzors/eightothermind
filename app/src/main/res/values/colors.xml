@@ -13,10 +13,13 @@
     <color name="unselectfullGrey">#cfcfcf</color>
     <color name="tabbg">#e0e0e0</color>
     <color name="white">#FFFFFF</color>
+    <color name="whiteTransparent">#BBFFFFFF</color>
     <color name="halftransparent">#84ffffff</color>
+    <color name="cameraBlurView">#58e4e4e4</color>
     <color name="transparent">#00ffffff</color>
     <color name="grey">#bdbdbd</color>
     <color name="searchGrey">#ebeef2</color>
     <color name="activityBackgroundGrey">#f9f9f9</color>
     <color name="black">#000000</color>
+
 </resources>

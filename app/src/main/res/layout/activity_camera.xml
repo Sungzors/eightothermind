@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@android:color/black"
+    android:orientation="vertical">
+
+    <!--Background-->
+    <View
+        android:id="@+id/cam_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/holo_green_light" />
+
+    <!--Pager-->
+    <android.support.v4.view.ViewPager
+        android:id="@+id/cam_view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!--Tab Layout with BlurView-->
+    <eightbitlab.com.blurview.BlurView
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_alignParentBottom="true">
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/cam_tabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/cameraBlurView"
+            android:minHeight="?attr/actionBarSize"
+            app:tabTextColor="@color/whiteTransparent"
+            app:tabSelectedTextColor="@color/white"
+            app:tabIndicatorColor="@color/white"/>
+
+    </eightbitlab.com.blurview.BlurView>
+
+
+</RelativeLayout>

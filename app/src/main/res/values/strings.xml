@@ -31,6 +31,10 @@
     <string name="pick_image_intent_text">Choose an image</string>
     <string name="profile_image">Profile Image</string>
     <string name="profile_image_circle">Profile image circle</string>
+    <!--Camera-->
+    <string name="camera_left_tab">Camera Roll</string>
+    <string name="camera_center_tab">Normal</string>
+    <string name="camera_right_tab">Hands Free</string>
     
     <string name="share_media">Share Media</string>
     <string name="share_contact">Share Contact</string>

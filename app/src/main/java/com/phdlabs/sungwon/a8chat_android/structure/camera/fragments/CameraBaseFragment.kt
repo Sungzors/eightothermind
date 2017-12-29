@@ -26,12 +26,13 @@ abstract class CameraBaseFragment() : CoreFragment() {
     protected abstract fun inOnCreateView(root: View?, @Nullable container: ViewGroup?, @Nullable savedInstanceState: Bundle?)
 
     /*Root View management*/
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        mRoot = inflater?.inflate(cameraLayoutId(), container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        mRoot = inflater.inflate(cameraLayoutId(), container, false)
         inOnCreateView(mRoot, container, savedInstanceState)
         mRoot?.let {
             return it
         }
         return super.onCreateView(inflater, container, savedInstanceState)
     }
+
 }

@@ -57,6 +57,10 @@ dependencies {
     //Fonts
     compile 'uk.co.chrisjenx:calligraphy:2.3.0'
 
+    //Blur View
+    implementation 'com.eightbitlab:blurview:1.3.4'
+    implementation 'com.eightbitlab:supportrenderscriptblur:1.0.1'
+
     //Sliding up panel
     compile 'com.sothree.slidinguppanel:library:3.4.0'
 
