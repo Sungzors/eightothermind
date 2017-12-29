@@ -46,7 +46,7 @@ class CameraControl private constructor() {
 
         private val DEFAULT_MIN_WIDTH_QUALITY = 400
         private val DEFAULT_MIN_HEIGHT_QUALITY = 400
-        private val TAG = "CameraControl"
+        private val TAG = "CameraControlView"
         private val TEMP_IMAGE_NAME = "tempImage"
 
         private var minWidthQuality = DEFAULT_MIN_WIDTH_QUALITY
@@ -65,10 +65,10 @@ class CameraControl private constructor() {
      *
      * INFO:
      * init will be called when this class is initialized for
-     * the first time (i.e. when calling CameraControl.instance)
+     * the first time (i.e. when calling CameraControlView.instance)
      * */
     init {
-        println("CameraControl ($this) is a Singleton")
+        println("CameraControlView ($this) is a Singleton")
     }
 
     /**Instance Holder for Singleton - Camera Control
@@ -76,7 +76,7 @@ class CameraControl private constructor() {
      *
      * INFO:
      * Holder object & lazy instance is used to ensure only one
-     * instance of CameraControl() is created
+     * instance of CameraControlView() is created
      * */
     private object Holder {
         val INSTANCE = CameraControl()
@@ -506,7 +506,7 @@ class CameraControl private constructor() {
 
     /**
      * Minimum image quality to be processed
-     * Important to call before accessing CameraControl class
+     * Important to call before accessing CameraControlView class
      * Defaults is set to 400x400
      * @param _minWidthQuality minimum width image quality in pixels
      * @param _minHeightQuality minimum height image quality in pixels

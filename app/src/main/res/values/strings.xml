@@ -61,5 +61,8 @@
 
     <!--Realm-->
     <string name="realm_path">8_realm</string>
+    <string name="camera_action">camera_action</string>
+    <string name="camera_flash">camera_flash</string>
+    <string name="camera_flip">camera_flip</string>
 
 </resources>

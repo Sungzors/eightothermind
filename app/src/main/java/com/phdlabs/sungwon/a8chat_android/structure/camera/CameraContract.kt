@@ -2,6 +2,7 @@ package com.phdlabs.sungwon.a8chat_android.structure.camera
 
 import android.support.design.widget.TabLayout
 import android.support.v4.view.ViewPager
+import com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControl.CameraControlView
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseController
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseView
 
@@ -11,7 +12,7 @@ import com.phdlabs.sungwon.a8chat_android.structure.core.BaseView
 interface CameraContract {
 
     interface View:BaseView<Controller>{
-
+        fun getCameraControl(): CameraControlView
     }
 
     interface Controller: BaseController {

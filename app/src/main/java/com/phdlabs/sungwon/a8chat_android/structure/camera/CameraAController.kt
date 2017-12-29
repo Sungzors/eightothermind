@@ -2,6 +2,8 @@ package com.phdlabs.sungwon.a8chat_android.structure.camera
 
 import android.support.design.widget.TabLayout
 import android.support.v4.view.ViewPager
+import android.view.View
+import com.phdlabs.sungwon.a8chat_android.utility.Constants
 
 /**
  * Created by paix on 12/28/17.
@@ -38,7 +40,15 @@ class CameraAController(val mView: CameraContract.View) : CameraContract.Control
 
     override fun onTabSelected(tab: TabLayout.Tab?, viewPager: ViewPager) {
         tab?.let {
-            viewPager.setCurrentItem(tab.position)
+            /*View pager item position*/
+            viewPager.setCurrentItem(it.position)
+            /*Show || Hide Camera Controls*/
+            if(it.position.equals(Constants.CameraPager.NORMAL) ||
+                    it.position.equals(Constants.CameraPager.HANDS_FREE)){
+                mView.getCameraControl().visibility = View.VISIBLE
+            }else{
+                mView.getCameraControl().visibility = View.GONE
+            }
         }
     }
 

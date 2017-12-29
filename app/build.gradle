@@ -71,7 +71,7 @@ dependencies {
     compile 'com.github.glomadrian:CodeInput:1.1@aar'
 
     //Location
-    compile 'com.google.android.gms:play-services-location:11.6.2'
+    compile 'com.google.android.gms:play-services-location:11.8.0'
 
     //JSON parsing
     compile 'com.google.code.gson:gson:2.8.1'

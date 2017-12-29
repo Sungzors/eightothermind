@@ -2,15 +2,20 @@ package com.phdlabs.sungwon.a8chat_android.structure.camera
 
 import android.os.Bundle
 import android.support.design.widget.TabLayout
-import android.support.v4.view.ViewPager
+import android.view.View
 import com.phdlabs.sungwon.a8chat_android.R
+import com.phdlabs.sungwon.a8chat_android.structure.camera.adapters.CameraPagerAdapter
+import com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControl.CameraControlView
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
+import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import kotlinx.android.synthetic.main.activity_camera.*
 
 /**
  * Created by paix on 12/28/17.
+ * CameraActivity for controlling CameraPagerAdapter with structure:
+ * [Camera Roll - Normal - Hands Free]
  */
-class CameraActivity: CoreActivity(), CameraContract.View, TabLayout.OnTabSelectedListener {
+class CameraActivity : CoreActivity(), CameraContract.View, TabLayout.OnTabSelectedListener {
 
     /*Controller*/
     override lateinit var controller: CameraContract.Controller
@@ -38,6 +43,23 @@ class CameraActivity: CoreActivity(), CameraContract.View, TabLayout.OnTabSelect
         controller.resume()
     }
 
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        /*Hide Status Bar*/
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
+        actionBar?.hide()
+        window.decorView.setOnSystemUiVisibilityChangeListener { visible ->
+            when (visible) {
+                0 -> print("System bars are visible")
+            //TODO: Remove camera navigation
+                else -> {
+                    print("System bars are not visible")
+                    //TODO: Setup camera navigation controllers
+                }
+            }
+        }
+    }
+
     override fun onPause() {
         super.onPause()
         controller.pause()
@@ -51,16 +73,18 @@ class CameraActivity: CoreActivity(), CameraContract.View, TabLayout.OnTabSelect
     /*User Interface*/
     private fun setupUI() {
         /*View Pager Adapter*/
-        cam_view_pager.adapter = CameraPagerAdapter(supportFragmentManager)
-        /*Tab Layout*/
-        cam_tabLayout.addTab(cam_tabLayout.newTab().setText(getString(R.string.camera_left_tab)))
-        cam_tabLayout.addTab(cam_tabLayout.newTab().setText(getString(R.string.camera_center_tab)))
-        cam_tabLayout.addTab(cam_tabLayout.newTab().setText(getString(R.string.camera_right_tab)))
-        cam_tabLayout.tabGravity = TabLayout.GRAVITY_FILL
-        cam_view_pager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(cam_tabLayout))
-        cam_tabLayout.addOnTabSelectedListener(this)
+        cam_view_pager.adapter = CameraPagerAdapter(supportFragmentManager, this)
+        cam_tabLayout_indicator.setupWithViewPager(cam_view_pager)
+        /*Initial tab selection*/
+        val tab = cam_tabLayout_indicator.getTabAt(Constants.CameraPager.NORMAL)
+        tab?.select()
+        /*Tab indicator & listeners*/
+        cam_tabLayout_indicator.tabGravity = TabLayout.GRAVITY_FILL
+        cam_view_pager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(cam_tabLayout_indicator))
+        cam_tabLayout_indicator.addOnTabSelectedListener(this)
     }
 
+    /*Tab Control*/
     override fun onTabReselected(tab: TabLayout.Tab?) {
         controller.onTabReselected(tab)
     }
@@ -72,5 +96,8 @@ class CameraActivity: CoreActivity(), CameraContract.View, TabLayout.OnTabSelect
     override fun onTabSelected(tab: TabLayout.Tab?) {
         controller.onTabSelected(tab, cam_view_pager)
     }
+
+    /*Camera Control*/
+    override fun getCameraControl(): CameraControlView = cam_control
 
 }

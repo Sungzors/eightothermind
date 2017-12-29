@@ -37,4 +37,10 @@ object Constants{
         const val SUCCESS = 0
         const val FAILURE = 1
     }
+
+    object CameraPager {
+        const val CAMERA_ROLL = 0
+        const val NORMAL = 1
+        const val HANDS_FREE = 2
+    }
 }
