@@ -1,5 +1,6 @@
 package com.phdlabs.sungwon.a8chat_android.structure.main.lobby
 
+import android.content.Intent
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -16,6 +17,7 @@ import com.phdlabs.sungwon.a8chat_android.db.EventBusManager
 import com.phdlabs.sungwon.a8chat_android.model.Channel
 import com.phdlabs.sungwon.a8chat_android.model.EventsEight
 import com.phdlabs.sungwon.a8chat_android.model.Room
+import com.phdlabs.sungwon.a8chat_android.structure.channel.mychannel.MyChannelActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreFragment
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.Preferences
@@ -107,6 +109,13 @@ class LobbyFragment: CoreFragment(), LobbyContract.View {
         Picasso.with(coreActivity.context).load(R.drawable.bg_circle_orange_lobby).into(bg)
         Picasso.with(coreActivity.context).load(data.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(profilePic)
         channelName.text = data.name
+        profilePic.setOnClickListener {
+            val intent = Intent(activity, MyChannelActivity::class.java)
+            intent.putExtra(Constants.IntentKeys.CHANNEL_ID, data.id.toString())
+            intent.putExtra(Constants.IntentKeys.CHANNEL_NAME, data.name)
+            intent.putExtra(Constants.IntentKeys.ROOM_ID, data.room_id.toInt())
+            startActivity(intent)
+        }
     }
 
     override fun setUpEventsRecycler() {

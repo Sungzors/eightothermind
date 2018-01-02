@@ -2,7 +2,9 @@ package com.phdlabs.sungwon.a8chat_android.structure.channel.channelshow
 
 import android.widget.Toast
 import com.phdlabs.sungwon.a8chat_android.api.event.ChannelPostGetEvent
+import com.phdlabs.sungwon.a8chat_android.api.event.Event
 import com.phdlabs.sungwon.a8chat_android.api.event.PostLikeEvent
+import com.phdlabs.sungwon.a8chat_android.api.response.ChannelShowArrayResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.ErrorResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.RoomHistoryResponse
 import com.phdlabs.sungwon.a8chat_android.api.rest.Caller
@@ -20,12 +22,17 @@ import retrofit2.Response
  */
 class ChannelShowController(val mView : ChannelContract.ChannelShow.View): ChannelContract.ChannelShow.Controller{
 
-    private lateinit var mCaller: Caller
-    private lateinit var mEventBus: EventBus
+    private var mCaller: Caller
+    private var mEventBus: EventBus
 
-    override fun start() {
+    init {
+        mView.controller = this
         mCaller = Rest.getInstance().caller
         mEventBus = EventBusManager.instance().mDataEventBus
+    }
+
+    override fun start() {
+        loadChannels()
     }
 
     override fun resume() {
@@ -35,6 +42,18 @@ class ChannelShowController(val mView : ChannelContract.ChannelShow.View): Chann
     }
 
     override fun stop() {
+    }
+
+    private fun loadChannels(){
+        mView.showProgress()
+        val pref = Preferences(mView.getContext()!!)
+        val call = mCaller.getAssociatedChannels(pref.getPreferenceString(Constants.PrefKeys.TOKEN_KEY), pref.getPreferenceInt(Constants.PrefKeys.USER_ID))
+        call.enqueue(object : Callback8<ChannelShowArrayResponse, Event>(mEventBus){
+            override fun onSuccess(data: ChannelShowArrayResponse?) {
+                mView.addToChannels(data!!.channels!!)
+                mView.setUpTopRecycler()
+            }
+        })
     }
 
     override fun loadChannel(roomID: Int) {

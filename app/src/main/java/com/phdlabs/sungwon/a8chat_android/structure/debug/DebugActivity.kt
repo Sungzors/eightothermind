@@ -8,6 +8,7 @@ import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
 import com.phdlabs.sungwon.a8chat_android.api.utility.Callback8
 import com.phdlabs.sungwon.a8chat_android.db.EventBusManager
 import com.phdlabs.sungwon.a8chat_android.db.UserManager
+import com.phdlabs.sungwon.a8chat_android.structure.channel.channelshow.ChannelShowActivity
 import com.phdlabs.sungwon.a8chat_android.structure.channel.create.ChannelCreateActivity
 import com.phdlabs.sungwon.a8chat_android.structure.channel.postshow.ChannelPostShowActivity
 import com.phdlabs.sungwon.a8chat_android.structure.chat.ChatActivity
@@ -80,6 +81,9 @@ class DebugActivity: CoreActivity(){
         }
         ad_channel_post_button.setOnClickListener {
             startActivity(Intent(this, ChannelPostShowActivity::class.java))
+        }
+        ad_channel_show.setOnClickListener {
+            startActivity(Intent(this, ChannelShowActivity::class.java))
         }
         ad_sandbox_button.setOnClickListener({
             //TODO: build sandbox

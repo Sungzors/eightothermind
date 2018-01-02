@@ -53,6 +53,9 @@
         <activity
             android:name=".structure.channel.channelshow.ChannelShowActivity"
             android:screenOrientation="portrait"/>
+        <activity
+            android:name=".structure.channel.mychannel.MyChannelActivity"
+            android:screenOrientation="portrait"/>
         <!--Photos & Images File Provider-->
         <provider
             android:name=".utility.camera.PhotoFileProvider"
