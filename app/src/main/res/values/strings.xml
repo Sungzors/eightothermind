@@ -48,6 +48,11 @@
     <string name="search_channel">Search Channel</string>
     <string name="create_post">Create Post</string>
     <string name="live_braodcast">Live Broadcast</string>
+    <string name="name_your_event">Name Your Event</string>
+    <string name="location">Location</string>
+    <string name="friends_of_friends">Friends of Friends</string>
+    <string name="only_friends">Only Friends</string>
+    <string name="lock_after_24_hours">Lock after 24 hours</string>
 
     <string-array name="language_array">
         <item>English</item>
