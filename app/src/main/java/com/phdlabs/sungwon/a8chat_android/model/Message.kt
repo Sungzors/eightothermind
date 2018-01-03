@@ -13,6 +13,7 @@ class Message private constructor(){
     var roomId: String? = null
     var type: String? = null
     var language: String? = null
+    var name: String? = null
     var userAvatar: String? = null
     var createdAt: Date? = null
     var updatedAt: Date? = null
@@ -31,18 +32,20 @@ class Message private constructor(){
 
     companion object {
         val TYPE_STRING = "string"
-        val TYPE_MEDIA = "drawer_media"
-        val TYPE_CONTACT = "drawer_contact"
-        val TYPE_LOCATION = "drawer_location"
+        val TYPE_MEDIA = "media"
+        val TYPE_CONTACT = "contact"
+        val TYPE_LOCATION = "location"
         val TYPE_FILE = "file"
         val TYPE_CHANNEL = "channel"
         val TYPE_MONEY = "money"
+        val TYPE_POST = "post"
     }
 
     class Builder(private val id: String, private val mType: String, private val mUserId: String, private val mRoomId: String) {
         private var mMessage: String? = null
         private var mChannel: Channel? = null
         private var mContact: User? = null
+        private var mMedia: String? = null
 
         fun message(message: String?): Builder {
             mMessage = message
@@ -59,6 +62,11 @@ class Message private constructor(){
             return this
         }
 
+        fun media(media: String): Builder {
+            mMedia = media
+            return this
+        }
+
         fun build(): Message {
             val message = Message()
             message.type = mType
@@ -67,6 +75,7 @@ class Message private constructor(){
             message.message = mMessage
             message.channelInfo = mChannel
             message.contactInfo = mContact
+            message.addMedia(MediaDetailNest(mMedia, null))
             return message
         }
     }

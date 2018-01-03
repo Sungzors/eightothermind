@@ -45,12 +45,6 @@ class MyChannelsListActivity: CoreActivity(), ChannelContract.MyChannelsList.Vie
         controller.retrieveChannels()
         setUpSearcher()
         setToolbarTitle("My Channels")
-//        showRightTextToolbar("Send")
-//        toolbar_right_text.setOnClickListener {
-//
-//            setResult(1, )
-//            finish()
-//        }
     }
 
     override fun onResume() {

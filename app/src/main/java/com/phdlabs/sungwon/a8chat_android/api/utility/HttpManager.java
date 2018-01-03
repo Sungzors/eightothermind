@@ -31,7 +31,6 @@ public class HttpManager {
                 .build();
         Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'hh:mm:ssZ").create();//2017-05-08T14:24:08+0000
         mRetrofit = new Retrofit.Builder()
-                //TODO: generate with baseurl
                 .baseUrl(BuildConfig.BASE_URL)
                 .client(mHttpClient)
                 .addConverterFactory(GsonConverterFactory.create(gson))

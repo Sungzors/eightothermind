@@ -47,7 +47,17 @@
         <activity
             android:name=".structure.channel.postshow.ChannelPostShowActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".structure.channel.mychannels.MyChannelsListActivity"
+        <activity
+            android:name=".structure.channel.mychannels.MyChannelsListActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".structure.channel.channelshow.ChannelShowActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".structure.channel.mychannel.MyChannelActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".structure.event.create.EventCreateActivity"
             android:screenOrientation="portrait"/>
         <!--Photos & Images File Provider-->
         <provider

@@ -16,6 +16,7 @@ import com.phdlabs.sungwon.a8chat_android.api.data.UserData;
 import com.phdlabs.sungwon.a8chat_android.api.data.VerifyData;
 import com.phdlabs.sungwon.a8chat_android.api.response.ChannelArrayResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.ChannelResponse;
+import com.phdlabs.sungwon.a8chat_android.api.response.ChannelShowArrayResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.CommentArrayResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.CommentResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.ErrorResponse;
@@ -71,7 +72,7 @@ public interface Caller {
     @POST("/auth/resend")
     Call<ResendResponse> resend(@Body LoginData loginData);
 
-    @POST("/drawer_media")
+    @POST("/media")
     Call<MediaResponse> userPicPost(@Header(TOKEN) String token, @Body RequestBody data);
 
     @POST("/privateChats")
@@ -113,17 +114,20 @@ public interface Caller {
     @POST("/users")
     Call<UserDataResponse> login(@Body LoginData loginData);
 
-    @GET("/users/{userid}")
-    Call<UserDataResponse> getUser(@Header(TOKEN) String token, @Path("userid") int userid);
+    @GET("/users/{userId}")
+    Call<UserDataResponse> getUser(@Header(TOKEN) String token, @Path("userId") int userid);
 
-    @PATCH("/users/{userid}")
-    Call<UserDataResponse> updateUser(@Header(TOKEN) String token, @Path("userid") int userid, @Body UserData userData);
+    @PATCH("/users/{userId}")
+    Call<UserDataResponse> updateUser(@Header(TOKEN) String token, @Path("userId") int userid, @Body UserData userData);
 
-    @GET("/users/{userid}/privateChats")
-    Call<PrivateChatResponse> getPrivateChats(@Header(TOKEN) String token, @Path("userid") int userid);
+    @GET("/users/{userId}/privateChats")
+    Call<PrivateChatResponse> getPrivateChats(@Header(TOKEN) String token, @Path("userId") int userid);
 
-    @GET("/users/{userid}/groupChats")
-    Call<UserDataResponse> getGroupChats(@Header(TOKEN) String token, @Path("userid") int userid);
+    @GET("/users/{userId}/groupChats")
+    Call<UserDataResponse> getGroupChats(@Header(TOKEN) String token, @Path("userId") int userid);
+
+    @GET("/users/{userId}/channels")
+    Call<ChannelShowArrayResponse> getAssociatedChannels(@Header(TOKEN) String token, @Path("userId") int userid);
 
     @POST("/comments/{messageId}")
     Call<CommentResponse> postComment(@Header(TOKEN) String token, @Path("messageId") int messageId, @Body CommentPostData data);
