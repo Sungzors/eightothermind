@@ -4,22 +4,24 @@ import android.content.Intent
 import android.widget.EditText
 import com.phdlabs.sungwon.a8chat_android.api.data.PostChannelData
 import com.phdlabs.sungwon.a8chat_android.model.Channel
-import com.phdlabs.sungwon.a8chat_android.model.ChannelShowNest
-import com.phdlabs.sungwon.a8chat_android.model.Message
-import com.phdlabs.sungwon.a8chat_android.structure.application.Application
 import com.phdlabs.sungwon.a8chat_android.structure.channel.mychannel.MyChannelActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseController
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseView
+import com.phdlabs.sungwon.a8chat_android.model.ChannelShowNest
+import com.phdlabs.sungwon.a8chat_android.model.Message
+import com.phdlabs.sungwon.a8chat_android.structure.application.Application
+import com.phdlabs.sungwon.a8chat_android.model.user.User
 
 /**
  * Created by SungWon on 11/30/2017.
  */
 interface ChannelContract {
+
     interface Create {
-        interface View: BaseView<Controller>{
+        interface View: BaseView<Controller> {
             fun finishActivity()
         }
-        interface Controller: BaseController{
+        interface Controller: BaseController {
 
             fun createChannel(data: PostChannelData)
             fun uploadPicture()
@@ -96,4 +98,6 @@ interface ChannelContract {
 
         }
     }
+
+
 }

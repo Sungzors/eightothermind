@@ -28,7 +28,8 @@ interface ChatContract {
         fun destroy()
 
         fun getMessages() : MutableList<Message>
-        val getUserId : Int
+
+        fun getUserId(callback: (Int?) -> Unit)
 
         fun setMessageObject(position: Int, message: Message)
 

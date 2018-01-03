@@ -1,5 +1,6 @@
 package com.phdlabs.sungwon.a8chat_android.structure.channel.postshow
 
+import android.os.Bundle
 import android.widget.Toast
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.db.UserManager
@@ -7,6 +8,7 @@ import com.phdlabs.sungwon.a8chat_android.model.Channel
 import com.phdlabs.sungwon.a8chat_android.model.Comment
 import com.phdlabs.sungwon.a8chat_android.model.MediaDetailNest
 import com.phdlabs.sungwon.a8chat_android.model.Message
+import com.phdlabs.sungwon.a8chat_android.model.user.User
 import com.phdlabs.sungwon.a8chat_android.structure.channel.ChannelContract
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.squareup.picasso.Picasso
@@ -14,6 +16,7 @@ import kotlinx.android.synthetic.main.activity_channel_post_show.*
 
 /**
  * Created by SungWon on 12/4/2017.
+ * Updated by JPAM 12/27/2017
  */
 class ChannelPostShowActivity: CoreActivity(), ChannelContract.PostShow.View{
     override lateinit var controller: ChannelContract.PostShow.Controller
@@ -27,6 +30,21 @@ class ChannelPostShowActivity: CoreActivity(), ChannelContract.PostShow.View{
     private lateinit var mMessageId: String
     private var mMessage: Message? = null
     private var mComments = mutableListOf<Comment>()
+    private var mUser: User? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        /*Get current user*/
+        UserManager.instance.getCurrentUser { success, user, _ ->
+            if(success) {
+                user?.let {
+                    mUser = it
+                }
+            }else {
+                //TODO: Error handling -> Send user to LogIn screen
+            }
+        }
+    }
 
     override fun onStart() {
         super.onStart()
@@ -75,7 +93,10 @@ class ChannelPostShowActivity: CoreActivity(), ChannelContract.PostShow.View{
 
     private fun setUpClickers(){
         acps_like_button.setOnClickListener {
-            controller.likePost(mMessageId, UserManager.instance.user!!.id.toString())
+            /*User safe type for liking post*/
+            mUser?.let {
+                controller.likePost(mMessageId, it.id.toString())
+            }
         }
         acps_comment_button.setOnClickListener {
             controller.commentPost("")

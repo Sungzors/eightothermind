@@ -14,6 +14,8 @@ class Preferences(val context: Context) {
     fun putPreference(key: String, value: String? = null) {
         preferences().edit().putString(key, value).apply()
     }
+    //Preferences(context).putPreference(Constants.PrefKeys.TOKEN_KEY, "Bearer " + data?.token)
+
 
     fun putPreference(key: String, value: Int = 0) {
         preferences().edit().putInt(key, value).apply()

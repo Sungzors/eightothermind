@@ -1,8 +1,10 @@
 package com.phdlabs.sungwon.a8chat_android.structure.chat
 
 import android.util.Log
+import android.widget.Toast
 import com.github.nkzawa.emitter.Emitter
 import com.github.nkzawa.socketio.client.Socket
+import com.google.gson.JsonParser
 import com.phdlabs.sungwon.a8chat_android.api.data.PrivateChatCreateData
 import com.phdlabs.sungwon.a8chat_android.api.data.SendMessageChannelData
 import com.phdlabs.sungwon.a8chat_android.api.data.SendMessageGeneralData
@@ -21,13 +23,14 @@ import com.phdlabs.sungwon.a8chat_android.db.EventBusManager
 import com.phdlabs.sungwon.a8chat_android.db.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.Channel
 import com.phdlabs.sungwon.a8chat_android.model.Message
-import com.phdlabs.sungwon.a8chat_android.model.User
+import com.phdlabs.sungwon.a8chat_android.model.user.User
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.Preferences
 import org.greenrobot.eventbus.EventBus
 import org.json.JSONException
 import org.json.JSONObject
 import retrofit2.Response
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -35,7 +38,7 @@ import java.util.*
 /**
  * Created by SungWon on 10/18/2017.
  */
-class ChatController(val mView: ChatContract.View): ChatContract.Controller {
+class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
 
     private val TAG = "ChatController"
 
@@ -107,74 +110,91 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
     }
 
     override fun createPrivateChatRoom() {
-        val call = mCaller.createPrivateChatRoom(
-                Preferences(mView.getContext()!!).getPreferenceString(Constants.PrefKeys.TOKEN_KEY),
-                PrivateChatCreateData(mutableListOf(UserManager.instance.user!!.id, mView.getChatParticipant))
-        )
-        call.enqueue(object: Callback8<RoomResponse, PrivateChatCreateEvent>(mEventBus){
-            override fun onSuccess(data: RoomResponse?) {
-                mEventBus.post(PrivateChatCreateEvent())
-                mRoomId = data!!.room!!.id
+        getUserId { id ->
+            id?.let {
+                val call = mCaller.createPrivateChatRoom(
+                        Preferences(mView.getContext()!!).getPreferenceString(Constants.PrefKeys.TOKEN_KEY),
+                        PrivateChatCreateData(mutableListOf(it, mView.getChatParticipant))
+                )
+                call.enqueue(object : Callback8<RoomResponse, PrivateChatCreateEvent>(mEventBus) {
+                    override fun onSuccess(data: RoomResponse?) {
+                        mEventBus.post(PrivateChatCreateEvent())
+                        mRoomId = data!!.room!!.id
+                    }
+                })
             }
-        })
+        }
     }
 
     override fun retrieveChatHistory() {
-        val call = mCaller.getMessageHistory(
-                Preferences(mView.getContext()!!).getPreferenceString(Constants.PrefKeys.TOKEN_KEY),
-                mRoomId,
-                UserManager.instance.user!!.id
-        )
-        call.enqueue(object: Callback8<RoomHistoryResponse, RoomHistoryEvent>(mEventBus){
-            override fun onSuccess(data: RoomHistoryResponse?) {
-                mMessages.clear()
-                for(item in data!!.messages!!.allMessages!!){
-                    if(item.roomId == mRoomId.toString()){
-                        mMessages.add(item)
+        getUserId { id ->
+            id?.let {
+                val call = mCaller.getMessageHistory(
+                        Preferences(mView.getContext()!!).getPreferenceString(Constants.PrefKeys.TOKEN_KEY),
+                        mRoomId,
+                        id
+                )
+                call.enqueue(object : Callback8<RoomHistoryResponse, RoomHistoryEvent>(mEventBus) {
+                    override fun onSuccess(data: RoomHistoryResponse?) {
+                        mMessages.clear()
+                        //TODO: need to add read first then unread always, but check for unread null instead.
+                        for (item in data!!.messages!!.allMessages!!) {
+                            if (item.roomId == mRoomId.toString()) {
+                                mMessages.add(item)
+                            }
+                        }
+                        var i = 0
+                        for (item in mMessages!!) {
+                            item.timeDisplayed = mView.lastTimeDisplayed(i)
+                            setMessageObject(i, item)
+                            i++
+                        }
+                        mView.updateRecycler()
+                        mView.hideProgress()
                     }
-                }
-                var i = 0
-                for(item in mMessages!!){
-                    item.timeDisplayed = mView.lastTimeDisplayed(i)
-                    setMessageObject(i, item)
-                    i++
-                }
-                mView.updateRecycler()
-                mView.hideProgress()
-            }
 
-            override fun onError(response: Response<RoomHistoryResponse>?) {
-                super.onError(response)
-                Log.e(TAG, response!!.message())
-                mView.hideProgress()
+                    override fun onError(response: Response<RoomHistoryResponse>?) {
+                        super.onError(response)
+                        Log.e(TAG, response!!.message())
+                        mView.hideProgress()
+                    }
+                })
             }
-        })
+        }
     }
 
     override fun sendChannel(channelId: Int) {
-        val call = mCaller.sendMessageChannel(
-                Preferences(mView.getContext()!!).getPreferenceString(Constants.PrefKeys.TOKEN_KEY),
-                SendMessageChannelData(UserManager.instance.user!!.id.toString(), mRoomId.toString(), channelId.toString())
-        )
-        call.enqueue(object : Callback8<ErrorResponse, MessageSentEvent>(mEventBus){
-            override fun onSuccess(data: ErrorResponse?) {
-                mEventBus.post(MessageSentEvent())
-                mView.getMessageETObject.setText("")
+        getUserId { id ->
+            id?.let {
+                val call = mCaller.sendMessageChannel(
+                        Preferences(mView.getContext()!!).getPreferenceString(Constants.PrefKeys.TOKEN_KEY),
+                        SendMessageChannelData(id.toString(), mRoomId.toString(), channelId.toString())
+                )
+                call.enqueue(object : Callback8<ErrorResponse, MessageSentEvent>(mEventBus) {
+                    override fun onSuccess(data: ErrorResponse?) {
+                        mEventBus.post(MessageSentEvent())
+                        mView.getMessageETObject.setText("")
+                    }
+                })
             }
-        })
+        }
     }
 
     override fun sendMessage() {
-        val call = mCaller.sendMessageString(
-                Preferences(mView.getContext()!!).getPreferenceString(Constants.PrefKeys.TOKEN_KEY),
-                SendMessageStringData(UserManager.instance.user!!.id.toString(), mView.getMessageET, mRoomId.toString())
-        )
-        call.enqueue(object : Callback8<ErrorResponse, MessageSentEvent>(mEventBus){
-            override fun onSuccess(data: ErrorResponse?) {
-                mEventBus.post(MessageSentEvent())
-                mView.getMessageETObject.setText("")
+        getUserId { id ->
+            id?.let {
+                val call = mCaller.sendMessageString(
+                        Preferences(mView.getContext()!!).getPreferenceString(Constants.PrefKeys.TOKEN_KEY),
+                        SendMessageStringData(id.toString(), mView.getMessageET, mRoomId.toString())
+                )
+                call.enqueue(object : Callback8<ErrorResponse, MessageSentEvent>(mEventBus) {
+                    override fun onSuccess(data: ErrorResponse?) {
+                        mEventBus.post(MessageSentEvent())
+                        mView.getMessageETObject.setText("")
+                    }
+                })
             }
-        })
+        }
     }
 
     override fun sendLocation() {
@@ -186,51 +206,64 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
 //
 //            }
 //        })
-        val call = mCaller.sendMessageLocation(
-                Preferences(mView.getContext()!!).getPreferenceString(Constants.PrefKeys.TOKEN_KEY),
-                SendMessageGeneralData(UserManager.instance.user!!.id.toString(), mRoomId.toString())
-        )
-        call.enqueue(object : Callback8<ErrorResponse, MessageLocationSentEvent>(mEventBus){
-            override fun onSuccess(data: ErrorResponse?) {
-                mEventBus.post(MessageLocationSentEvent())
+        getUserId { id ->
+            id?.let {
+                val call = mCaller.sendMessageLocation(
+                        Preferences(mView.getContext()!!).getPreferenceString(Constants.PrefKeys.TOKEN_KEY),
+                        SendMessageGeneralData(id.toString(), mRoomId.toString())
+                )
+                call.enqueue(object : Callback8<ErrorResponse, MessageLocationSentEvent>(mEventBus) {
+                    override fun onSuccess(data: ErrorResponse?) {
+                        mEventBus.post(MessageLocationSentEvent())
+                    }
+                })
             }
-        })
+        }
     }
 
     override fun getMessages(): MutableList<Message> = mMessages
 
-    override val getUserId: Int
-        get() = UserManager.instance.user!!.id
+    override fun getUserId(callback: (Int?) -> Unit) {
+        UserManager.instance.getCurrentUser { success, user, _ ->
+            if (success) {
+                user?.id.let {
+                    callback(it)
+                }
+            }
+        }
+    }
 
     //listeners
-    private val onConnect = Emitter.Listener{ args ->
+    private val onConnect = Emitter.Listener { args ->
         mView.getActivity.runOnUiThread({
             val a = isConnected
             if (!isConnected) {
-                Log.d(TAG, "Socket Connected")
-                mSocket.emit("connect-rooms", UserManager.instance.user!!.id, mRoomType)
-                isConnected = true
+                getUserId { id ->
+                    Log.d(TAG, "Socket Connected")
+                    mSocket.emit("connect-rooms", id, mRoomType)
+                    isConnected = true
+                }
             }
         })
     }
 
     private val onUpdateRoom = Emitter.Listener { args ->
         mView.getActivity.runOnUiThread({
-            val data : JSONObject = args[0] as JSONObject
-            var userAdded : String? = null
-            var userLeaving : String? = null
+            val data: JSONObject = args[0] as JSONObject
+            var userAdded: String? = null
+            var userLeaving: String? = null
             try {
 //                mRoomId = data.getInt("roomId")
                 userAdded = data.getString("userAdded")
                 userLeaving = data.getString("userLeaving")
-            } catch (e: JSONException){
+            } catch (e: JSONException) {
                 Log.e(TAG, e.message)
             }
             retrieveChatHistory()
-            if(userAdded != null){
+            if (userAdded != null) {
 
             }
-            if(userLeaving != null){
+            if (userLeaving != null) {
 
             }
         })
@@ -251,15 +284,15 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
 
     private val onNewMessage = Emitter.Listener { args ->
         mView.getActivity.runOnUiThread({
-            val data : JSONObject = args[0] as JSONObject
-            var id : String? = null
-            var message : String? = null
-            var roomId : String? = null
-            var userId : String? = null
-            var type : String? = null
+            val data: JSONObject = args[0] as JSONObject
+            var id: String? = null
+            var message: String? = null
+            var roomId: String? = null
+            var userId: String? = null
+            var type: String? = null
             try {
                 message = data.getString("message")
-            } catch (e:JSONException){
+            } catch (e: JSONException) {
                 Log.e(TAG, e.message)
             }
             try {
@@ -267,22 +300,22 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
                 roomId = data.getString("roomId")
                 userId = data.getString("userId")
                 type = data.getString("type")
-            } catch (e: JSONException){
+            } catch (e: JSONException) {
                 Log.e(TAG, e.message)
             }
-            if(type == null){
+            if (type == null) {
                 Log.e(TAG, "Message's type is null")
                 return@runOnUiThread
             }
             val builder = Message.Builder(id!!, type, userId!!, roomId!!)
-            when (type){
+            when (type) {
                 Message.TYPE_STRING -> {
                     val message = builder.message(message!!).build()
                     var name : String? = null
                     var userAvatar : String? = null
                     var createdAt : Date? = null
 //                    var updatedAt : Date? = null
-                    var original_message_id : String? = null
+                    var original_message_id: String? = null
                     try {
                         name = data.getString("name")
                         userAvatar = data.getString("userAvatar")
@@ -297,7 +330,7 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
                         message.createdAt = createdAt
 //                        message.updatedAt = updatedAt
                         message.original_message_id = original_message_id
-                    } catch (e: JSONException){
+                    } catch (e: JSONException) {
                         Log.e(TAG, e.message)
                     }
                     message.timeDisplayed = mView.lastTimeDisplayed(message)
@@ -305,17 +338,17 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
                     mView.updateRecycler(mMessages!!.size)
                 }
                 Message.TYPE_CHANNEL -> {
-                    val channelInfo : JSONObject
-                    var id : Int? = null
-                    var name : String? = null
-                    var unique_id : String? = null
-                    var description : String? = null
-                    var color : String? = null
-                    var background : String? = null
-                    var add_to_profile : Boolean? = null
-                    var user_creator_id : String? = null
-                    var room_id : String? = null
-                    var channel : Channel? = null
+                    val channelInfo: JSONObject
+                    var id: Int? = null
+                    var name: String? = null
+                    var unique_id: String? = null
+                    var description: String? = null
+                    var color: String? = null
+                    var background: String? = null
+                    var add_to_profile: Boolean? = null
+                    var user_creator_id: String? = null
+                    var room_id: String? = null
+                    var channel: Channel? = null
                     try {
                         channelInfo = data.getJSONObject("channelInfo")
                         id = channelInfo.getInt("id")
@@ -333,29 +366,29 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
                         channel.background = background
                         channel.add_to_profile = add_to_profile
                         channel.user_creator_id = user_creator_id
-                    } catch (e: JSONException){
+                    } catch (e: JSONException) {
                         Log.e(TAG, e.message)
                         return@runOnUiThread
                     }
                     mMessages!!.add(builder.message(message).channel(channel).build())
                     mView.updateRecycler(mMessages!!.size)
                 }
-                Message.TYPE_CONTACT ->{
-                    val contactInfo : JSONObject
-                    var id : Int? = null
-                    var first_name : String? = null
-                    var last_name : String? = null
-                    var phone : String? = null
-                    var country_code : String? = null
-                    var email : String? = null
+                Message.TYPE_CONTACT -> {
+                    val contactInfo: JSONObject
+                    var id: Int? = null
+                    var first_name: String? = null
+                    var last_name: String? = null
+                    var phone: String? = null
+                    var country_code: String? = null
+                    var email: String? = null
                     val language_spoken = mutableListOf<String>()
-                    var country : String? = null
-                    var profile_picture_string : String? = null
-                    var avatar : String? = null
+                    var country: String? = null
+                    var profile_picture_string: String? = null
+                    var avatar: String? = null
 //                    var position : JSONObject
-                    var verified : Boolean? = null
-                    var socket_id : String? = null
-                    var contact : User? = null
+                    var verified: Boolean? = null
+                    var socket_id: String? = null
+                    var contact: User? = null
                     try {
                         contactInfo = data.getJSONObject("contactInfo")
                         id = contactInfo.getInt("id")
@@ -365,7 +398,7 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
                         country_code = contactInfo.getString("country_code")
                         email = contactInfo.getString("email")
                         val contacts = contactInfo.getJSONArray("language_spoken")
-                        for(i in 0..(contacts.length() - 1)){
+                        for (i in 0..(contacts.length() - 1)) {
                             language_spoken.add(contacts.get(i) as String)
                         }
                         country = contactInfo.getString("country")
@@ -374,7 +407,10 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
 //                        position = contactInfo.getJSONObject("room_id")
                         verified = contactInfo.getBoolean("verified")
                         socket_id = contactInfo.getString("socket_id")
-                        contact = User(id, first_name, last_name)
+                        contact = User()
+                        contact.id = id
+                        contact.first_name = first_name
+                        contact.last_name = last_name
                         contact.phone = phone
                         contact.country_code = country_code
                         contact.email = email
@@ -383,7 +419,7 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
                         contact.avatar = avatar
                         contact.verified = verified
                         contact.socket_id = socket_id
-                    } catch (e: JSONException){
+                    } catch (e: JSONException) {
                         Log.e(TAG, e.message)
                         return@runOnUiThread
                     }
@@ -396,7 +432,7 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
                     var userAvatar : String? = null
                     var createdAt : Date? = null
 //                    var updatedAt : Date? = null
-                    var original_message_id : String? = null
+                    var original_message_id: String? = null
                     try {
                         name = data.getString("name")
                         userAvatar = data.getString("userAvatar")
@@ -411,7 +447,7 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
                         message.createdAt = createdAt
 //                        message.updatedAt = updatedAt
                         message.original_message_id = original_message_id
-                    } catch (e: JSONException){
+                    } catch (e: JSONException) {
                         Log.e(TAG, e.message)
                     }
                     message.timeDisplayed = mView.lastTimeDisplayed(message)
@@ -425,8 +461,10 @@ class ChatController(val mView: ChatContract.View): ChatContract.Controller {
 
     private val onError = Emitter.Listener { args ->
         mView.getActivity.runOnUiThread {
-            val message = args[0] as JSONObject
-            Log.e(TAG, message.getString("message"))
+            val message = args[0] as String //args[0] as JSONObject
+            Toast.makeText(mView.getContext(),message,Toast.LENGTH_SHORT).show()
+            //Log.e(TAG, message.getString("message"))
+
         }
     }
 

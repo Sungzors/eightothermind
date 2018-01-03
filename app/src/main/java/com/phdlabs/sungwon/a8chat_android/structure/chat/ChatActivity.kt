@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import com.phdlabs.sungwon.a8chat_android.R
-import com.phdlabs.sungwon.a8chat_android.db.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.Message
 import com.phdlabs.sungwon.a8chat_android.structure.application.Application
 import com.phdlabs.sungwon.a8chat_android.structure.channel.mychannels.MyChannelsListActivity
@@ -26,11 +25,13 @@ import java.text.SimpleDateFormat
 
 /**
  * Created by SungWon on 10/18/2017.
+ * Updated by JPAM on 12/27/2017
  */
 class ChatActivity: CoreActivity(), ChatContract.View{
 
     override lateinit var controller: ChatContract.Controller
     private lateinit var mAdapter: BaseRecyclerAdapter<Message, BaseViewHolder>
+    private var mUserId: Int? = null
 
     override fun layoutId() = R.layout.activity_chat
 
@@ -41,6 +42,11 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         showProgress()
         ChatController(this)
         controller.start()
+        controller.getUserId { id ->
+            id?.let {
+                mUserId = it
+            }
+        }
         controller.createPrivateChatRoom()
         setupDrawer()
         setupClickers()
@@ -142,11 +148,11 @@ class ChatActivity: CoreActivity(), ChatContract.View{
             }
 
             override fun getItemType(t: Message?): Int {
-                if (t!!.userId == UserManager.instance.user!!.id.toString()){
-                    return 0
-                } else {
-                    return 1
-                }
+                    if (t!!.userId == mUserId?.toString()){
+                        return 0
+                    } else {
+                        return 1
+                    }
             }
 
             override fun viewHolder(inflater: LayoutInflater?, parent: ViewGroup?, type: Int): BaseViewHolder {
@@ -222,15 +228,20 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         picContainer2.visibility = LinearLayout.GONE
         moneyButtonAccept.visibility = Button.GONE
         moneyButtonDecline.visibility = Button.GONE
-        if(message!!.userId!!.toInt() != controller.getUserId){
-            Picasso.with(this).load(message.userAvatar).into(profPic)
-        }
-        messagetv.setTextColor(ContextCompat.getColor(this, R.color.black))
-        messagetv.text = message.message
-        if(message.timeDisplayed){
-            date.visibility = TextView.VISIBLE
-            val formatter = SimpleDateFormat("EEE - h:mm aaa")
-            date.text = formatter.format(message.createdAt)
+
+        controller.getUserId { id ->
+            id?.let {
+                if(message!!.userId!!.toInt() != it){
+                    Picasso.with(this).load(message.userAvatar).into(profPic)
+                }
+                messagetv.setTextColor(ContextCompat.getColor(this, R.color.black))
+                messagetv.text = message.message
+                if(message.timeDisplayed){
+                    date.visibility = TextView.VISIBLE
+                    val formatter = SimpleDateFormat("EEE - h:mm aaa")
+                    date.text = formatter.format(message.createdAt)
+                }
+            }
         }
 //        if(message!!.userId!!.toInt() != controller.getUserId){
 //            date.visibility = TextView.GONE
@@ -287,8 +298,12 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         messagetv.text = message!!.contactInfo!!.first_name + message.contactInfo!!.last_name
         messagetv.setTextColor(ContextCompat.getColor(this, R.color.confirmText))
         Picasso.with(this).load(message.contactInfo!!.avatar).into(profPic)
-        if(message.userId!!.toInt() != controller.getUserId){
-            Picasso.with(this).load(message.userAvatar).into(profPic)
+        controller.getUserId { id ->
+            id?.let {
+                if(message.userId!!.toInt() != it){
+                    Picasso.with(this).load(message.userAvatar).into(profPic)
+                }
+            }
         }
         if(message.timeDisplayed){
             date.visibility = TextView.VISIBLE
@@ -314,8 +329,12 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         moneyButtonDecline.visibility = Button.GONE
         messagetv.text = message!!.locationInfo!!.streetAddress
         messagetv.setTextColor(ContextCompat.getColor(this, R.color.confirmText))
-        if(message.userId!!.toInt() != controller.getUserId){
-            Picasso.with(this).load(message.userAvatar).into(profPic)
+        controller.getUserId { id ->
+            id?.let {
+                if(message.userId!!.toInt() != id){
+                    Picasso.with(this).load(message.userAvatar).into(profPic)
+                }
+            }
         }
         if(message.timeDisplayed){
             date.visibility = TextView.VISIBLE
@@ -380,8 +399,12 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         messagetv.setOnClickListener({
             Toast.makeText(this, "this needs to dl", Toast.LENGTH_SHORT).show()
         })
-        if(message.userId!!.toInt() != controller.getUserId){
-            Picasso.with(this).load(message.userAvatar).into(profPic)
+        controller.getUserId { id ->
+         id?.let {
+             if(message.userId!!.toInt() != it) {
+                 Picasso.with(this).load(message.userAvatar).into(profPic)
+             }
+         }
         }
         if(message.timeDisplayed){
             date.visibility = TextView.VISIBLE
@@ -407,8 +430,12 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         moneyButtonDecline.visibility = Button.GONE
         messagetv.text = message!!.fileNames!![0]
         messagetv.setTextColor(ContextCompat.getColor(this, R.color.confirmText))
-        if(message.userId!!.toInt() != controller.getUserId){
-            Picasso.with(this).load(message.userAvatar).into(profPic)
+        controller.getUserId { id ->
+            id?.let {
+                if(message.userId!!.toInt() != id){
+                    Picasso.with(this).load(message.userAvatar).into(profPic)
+                }
+            }
         }
         if(message.timeDisplayed){
             date.visibility = TextView.VISIBLE
@@ -435,8 +462,12 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         messagetv.text = message!!.fileNames!![0]
         messagetv.setTextColor(ContextCompat.getColor(this, R.color.black))
         Picasso.with(this).load(R.drawable.ic_money).into(messagePic)
-        if(message.userId!!.toInt() != controller.getUserId){
-            Picasso.with(this).load(message.userAvatar).into(profPic)
+        controller.getUserId { id ->
+            id?.let {
+                if(message.userId!!.toInt() != it){
+                    Picasso.with(this).load(message.userAvatar).into(profPic)
+                }
+            }
         }
         if(message.timeDisplayed){
             date.visibility = TextView.VISIBLE
@@ -466,8 +497,12 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         messagetv.setOnClickListener({
             Toast.makeText(this, "to be implemented", Toast.LENGTH_SHORT).show()
         })
-        if(message.userId!!.toInt() != controller.getUserId){
-            Picasso.with(this).load(message.userAvatar).into(profPic)
+        controller.getUserId { id ->
+            id?.let {
+                if(message.userId!!.toInt() != it){
+                    Picasso.with(this).load(message.userAvatar).into(profPic)
+                }
+            }
         }
         if(message.timeDisplayed){
             date.visibility = TextView.VISIBLE

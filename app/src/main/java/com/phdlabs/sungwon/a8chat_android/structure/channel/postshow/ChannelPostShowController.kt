@@ -56,4 +56,5 @@ class ChannelPostShowController(val mView: ChannelContract.PostShow.View): Chann
     override fun commentPost(messageId: String) {
         Toast.makeText(mView.getContext()!!, "To be implemented", Toast.LENGTH_SHORT).show()
     }
+
 }

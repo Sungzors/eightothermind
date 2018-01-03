@@ -4,6 +4,8 @@ import android.app.Application
 import com.github.nkzawa.socketio.client.IO
 import com.github.nkzawa.socketio.client.Socket
 import com.phdlabs.sungwon.a8chat_android.R
+import io.realm.Realm
+import io.realm.RealmConfiguration
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig
 import java.net.URISyntaxException
 
@@ -17,19 +19,26 @@ class Application : Application() {
     override fun onCreate() {
         super.onCreate()
 
+        /*Sockets*/
         try {
             mSocket = IO.socket("https://eight-backend.herokuapp.com/")
         } catch (e: URISyntaxException) {
             throw RuntimeException(e)
         }
 
+        /*Fonts*/
         CalligraphyConfig.initDefault(CalligraphyConfig.Builder()
                 .setDefaultFontPath("")
                 .setFontAttrId(R.attr.fontPath)
                 .build())
 
-    }
+//        /*Realm*/ //TODO: Uncomment for production -> Comment on DebugActivity.kt
+//        Realm.init(this)
+//        val realmConfig: RealmConfiguration = RealmConfiguration.Builder().
+//                name("8_Realm").deleteRealmIfMigrationNeeded().build()
+//        Realm.setDefaultConfiguration(realmConfig)
 
+    }
 
 
     fun getSocket(): Socket = mSocket

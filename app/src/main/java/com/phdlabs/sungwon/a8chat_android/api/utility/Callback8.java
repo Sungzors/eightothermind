@@ -29,7 +29,7 @@ public abstract class Callback8<Result, EventClass extends Event> implements Cal
     }
 
     @SuppressWarnings({"unchecked", "TryWithIdenticalCatches"})
-    void initParameter() {
+    private void initParameter() {
         // Get the class name of this instance's type.
         ParameterizedType pt = (ParameterizedType) getClass().getGenericSuperclass();
         // You may need this split or not, use logging to check

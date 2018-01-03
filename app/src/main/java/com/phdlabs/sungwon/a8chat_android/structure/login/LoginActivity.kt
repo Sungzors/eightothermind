@@ -21,11 +21,13 @@ class LoginActivity : CoreActivity() {
 
     override fun onStart() {
         super.onStart()
+        /*Register*/
         al_login_button.setOnClickListener({
             val intent = Intent(this, RegisterActivity::class.java)
             intent.putExtra(Constants.IntentKeys.LOGIN_KEY, "register")
             startActivity(intent)
         })
+        /*LogIn*/
         al_signin_button.setOnClickListener({
             val intent = Intent(this, RegisterActivity::class.java)
             intent.putExtra(Constants.IntentKeys.LOGIN_KEY, "login")
