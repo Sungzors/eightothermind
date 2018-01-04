@@ -5,9 +5,9 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import com.phdlabs.sungwon.a8chat_android.R
-import com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.CameraHandsFreeFragment
-import com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.CameraNormalFragment
-import com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.CameraRollFragment
+import com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.handsFree.HandsFreeFragment
+import com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.normal.NormalFragment
+import com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.cameraRoll.CameraRollFragment
 import com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.EmptyFragment
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 
@@ -23,8 +23,8 @@ class CameraPagerAdapter(fm: FragmentManager, val context: Context): FragmentPag
         /*Return desired camera fragment*/
         when(position) {
             Constants.CameraPager.CAMERA_ROLL -> return CameraRollFragment.create()
-            Constants.CameraPager.NORMAL -> return CameraNormalFragment.create()
-            Constants.CameraPager.HANDS_FREE -> return CameraHandsFreeFragment.create()
+            Constants.CameraPager.NORMAL -> return NormalFragment.create()
+            Constants.CameraPager.HANDS_FREE -> return HandsFreeFragment.create()
             else -> {
                 return EmptyFragment.create()
             }

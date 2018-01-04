@@ -1,6 +1,7 @@
 package com.phdlabs.sungwon.a8chat_android.structure.core;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
@@ -15,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.phdlabs.sungwon.a8chat_android.BuildConfig;
 import com.phdlabs.sungwon.a8chat_android.R;
@@ -23,7 +25,7 @@ import com.phdlabs.sungwon.a8chat_android.R;
  * Created by SungWon on 9/20/2017.
  */
 
-public abstract class CoreFragment extends Fragment implements CoreActivity.OnBackPressListener{
+public abstract class CoreFragment extends Fragment implements CoreActivity.OnBackPressListener {
 
     public View view;
 
@@ -154,6 +156,18 @@ public abstract class CoreFragment extends Fragment implements CoreActivity.OnBa
     public void showError(String message) {
         new AlertDialog.Builder(getActivity()).setMessage(message)
                 .setPositiveButton(android.R.string.ok, null).show();
+    }
+
+    /*Development Toast*/
+    public void showToast(final String messge) {
+        if (getCoreActivity() != null) {
+            getCoreActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getCoreActivity(), messge, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
     /*View*/

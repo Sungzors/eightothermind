@@ -1,19 +1,20 @@
-package com.phdlabs.sungwon.a8chat_android.structure.camera.fragments
+package com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.handsFree
 
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import com.phdlabs.sungwon.a8chat_android.R
+import com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.CameraBaseFragment
 
 /**
  * Created by paix on 12/28/17.
  */
-class CameraHandsFreeFragment : CameraBaseFragment() {
+class HandsFreeFragment : CameraBaseFragment() {
 
     /*Companion*/
     companion object {
-        fun create(): CameraHandsFreeFragment {
-            return CameraHandsFreeFragment()
+        fun create(): HandsFreeFragment {
+            return HandsFreeFragment()
         }
     }
 

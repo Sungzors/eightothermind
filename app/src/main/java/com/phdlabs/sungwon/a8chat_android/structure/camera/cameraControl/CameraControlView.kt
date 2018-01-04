@@ -19,7 +19,6 @@ class CameraControlView : FrameLayout, View.OnTouchListener {
     /*Override constructors with this() instead of super to actually call the last constructor with super
     * This will allow us to inflate it with our own layout*/
     constructor(context: Context) : this(context, null)
-
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
         init()
