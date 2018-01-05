@@ -127,7 +127,9 @@ class ChannelShowActivity: CoreActivity(), ChannelContract.ChannelShow.View{
 
         picasso.load(data.userAvatar).into(posterPic)
         posterName.text = data.name
-        picasso.load(data.mediaArray[0].media_file_string).into(postPic)
+        if(data.mediaArray != null){
+            picasso.load(data.mediaArray[0].media_file).into(postPic)
+        }
         val formatter = SimpleDateFormat("EEE - h:mm aaa")
         postDate.text = formatter.format(data.createdAt)
         likeButton.setOnClickListener {

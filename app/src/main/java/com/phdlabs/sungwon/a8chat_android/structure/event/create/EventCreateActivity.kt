@@ -1,9 +1,13 @@
 package com.phdlabs.sungwon.a8chat_android.structure.event.create
 
+import android.content.Intent
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.structure.application.Application
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.structure.event.EventContract
+import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
+import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_event_create.*
 import kotlinx.android.synthetic.main.toolbar.*
 
@@ -54,10 +58,24 @@ class EventCreateActivity: CoreActivity(), EventContract.Create.View {
 
     private fun setUpClickers(){
         toolbar_right_text.setOnClickListener {
-
+            controller.createEvent(aec_event_name.text.toString(), isLocked)
         }
         aec_event_picture.setOnClickListener {
+            CameraControl.instance.pickImage(this,
+                    "Choose a media",
+                    CameraControl.instance.requestCode(),
+                    false)
+        }
+    }
 
+    override fun showPicture(url: String) {
+        Picasso.with(this).load(url).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(aec_event_picture)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(requestCode == CameraControl.instance.requestCode()){
+            controller.onPictureResult(requestCode, resultCode, data)
         }
     }
 

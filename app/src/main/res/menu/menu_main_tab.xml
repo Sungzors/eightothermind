@@ -3,15 +3,15 @@
     <item
         android:id="@+id/mmt_home"
         android:title="@null"
-        android:icon="@android:drawable/ic_menu_agenda"/>
+        android:icon="@drawable/ic_home"/>
 
     <item
         android:id="@+id/mmt_camera"
         android:title="@null"
-        android:icon="@android:drawable/ic_menu_camera"/>
+        android:icon="@drawable/ic_camera"/>
 
     <item
         android:id="@+id/mmt_profile"
         android:title="@null"
-        android:icon="@android:drawable/ic_dialog_info"/>
+        android:icon="@drawable/ic_user"/>
 </menu>
