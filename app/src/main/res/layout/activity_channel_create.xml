@@ -37,7 +37,7 @@
                     android:layout_marginTop="20dp"
                     android:src="@drawable/addphoto"/>
                 <TextView
-                    android:id="@+id/acc_name_your_fucking_channel"
+                    android:id="@+id/acc_name_your_f_channel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toEndOf="@id/acc_channel_picture"
@@ -51,13 +51,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_toEndOf="@id/acc_channel_picture"
-                    android:layout_below="@id/acc_name_your_fucking_channel"
+                    android:layout_below="@id/acc_name_your_f_channel"
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="20dp"
                     android:inputType="textCapSentences"
                     android:imeOptions="actionNext"/>
                 <TextView
-                    android:id="@+id/acc_unique_your_fucking_id"
+                    android:id="@+id/acc_unique_your_f_id"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/acc_channel_name"
@@ -70,13 +70,13 @@
                     android:id="@+id/acc_unique_id"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/acc_unique_your_fucking_id"
+                    android:layout_below="@id/acc_unique_your_f_id"
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="20dp"
                     android:inputType="textCapSentences"
                     android:imeOptions="actionNext"/>
                 <TextView
-                    android:id="@+id/acc_short_fucking_description"
+                    android:id="@+id/acc_short_f_description"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/acc_unique_id"
@@ -89,7 +89,7 @@
                     android:id="@+id/acc_short_description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/acc_short_fucking_description"
+                    android:layout_below="@id/acc_short_f_description"
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="20dp"
                     android:layout_marginBottom="20dp"

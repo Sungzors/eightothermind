@@ -12,9 +12,11 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import com.phdlabs.sungwon.a8chat_android.R
+import com.phdlabs.sungwon.a8chat_android.db.TemporaryManager
 import com.phdlabs.sungwon.a8chat_android.model.Message
 import com.phdlabs.sungwon.a8chat_android.structure.application.Application
 import com.phdlabs.sungwon.a8chat_android.structure.channel.ChannelContract
+import com.phdlabs.sungwon.a8chat_android.structure.channel.postshow.ChannelPostShowActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseRecyclerAdapter
@@ -179,6 +181,13 @@ class MyChannelActivity: CoreActivity(), ChannelContract.MyChannel.View{
         picasso.load(data.mediaArray[0].media_file).into(postPic)
         val formatter = SimpleDateFormat("EEE - h:mm aaa")
         postDate.text = formatter.format(data.createdAt)
+        postPic.setOnClickListener {
+            TemporaryManager.instance.mMessageList.clear()
+            TemporaryManager.instance.mMessageList.add(data)
+            val intent = Intent(this, ChannelPostShowActivity::class.java)
+            intent.putExtra(Constants.IntentKeys.MESSAGE_ID, data.id)
+            startActivity(intent)
+        }
         likeButton.setOnClickListener {
 //            controller.likePost(data.id!!)
         }

@@ -20,7 +20,6 @@ import com.phdlabs.sungwon.a8chat_android.api.rest.Caller
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
 import com.phdlabs.sungwon.a8chat_android.api.utility.Callback8
 import com.phdlabs.sungwon.a8chat_android.db.EventBusManager
-import com.phdlabs.sungwon.a8chat_android.db.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.Channel
 import com.phdlabs.sungwon.a8chat_android.model.Message
 import com.phdlabs.sungwon.a8chat_android.structure.channel.ChannelContract
@@ -103,7 +102,7 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View): ChannelCon
     override fun sendMessage() {
         val call = mCaller.sendMessageString(
                 Preferences(mView.getContext()!!).getPreferenceString(Constants.PrefKeys.TOKEN_KEY),
-                SendMessageStringData(UserManager.instance.user!!.id.toString(), mView.getMessageET, mRoomId.toString())
+                SendMessageStringData(Preferences(mView.getContext()!!).getPreferenceInt(Constants.PrefKeys.USER_ID, 0).toString(), mView.getMessageET, mRoomId.toString())
         )
         call.enqueue(object : Callback8<ErrorResponse, MessageSentEvent>(mEventBus){
             override fun onSuccess(data: ErrorResponse?) {
@@ -136,7 +135,7 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View): ChannelCon
         val call = mCaller.getChannelPosts(
                 Preferences(mView.getContext()!!).getPreferenceString(Constants.PrefKeys.TOKEN_KEY),
                 mRoomId,
-                UserManager.instance.user!!.id,
+                Preferences(mView.getContext()!!).getPreferenceInt(Constants.PrefKeys.USER_ID, 0),
                 null
         )
         call.enqueue(object: Callback8<RoomHistoryResponse, RoomHistoryEvent>(mEventBus){
@@ -165,7 +164,7 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View): ChannelCon
             val a = isConnected
             if (!isConnected) {
                 Log.d(TAG, "Socket Connected")
-                mSocket.emit("connect-rooms", UserManager.instance.user!!.id, "channel")
+                mSocket.emit("connect-rooms", Preferences(mView.getContext()!!).getPreferenceInt(Constants.PrefKeys.USER_ID, 0), "channel")
                 isConnected = true
             }
         })
@@ -224,12 +223,12 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View): ChannelCon
                     val message = builder.message(message!!).build()
                     var name : String? = null
                     var userAvatar : String? = null
-                    var createdAt : Date? = null
+                    var createdAt = Date()
 //                    var updatedAt : Date? = null
                     var original_message_id : String? = null
                     try {
                         name = data.getString("name")
-                        userAvatar = data.getString("userAvatar")
+//                        userAvatar = data.getString("userAvatar")
                         val createdAtString = data.getString("createdAt")
                         val df = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
                         createdAt = df.parse(createdAtString)
@@ -237,7 +236,7 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View): ChannelCon
 //                        updatedAt = df.parse(updatedAtString)
                         original_message_id = data.getString("original_message_id")
                         message.name = name
-                        message.userAvatar = userAvatar
+//                        message.userAvatar = userAvatar
                         message.createdAt = createdAt
 //                        message.updatedAt = updatedAt
                         message.original_message_id = original_message_id

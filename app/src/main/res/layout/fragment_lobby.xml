@@ -18,13 +18,15 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginStart="15dp"
                 android:layout_marginBottom="20dp"
-                android:text="@string/my_channels"/>
+                android:text="@string/my_channels"
+                android:visibility="gone"/>
         </RelativeLayout>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/fl_my_channels_recycler"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:visibility="gone"/>
 
 
 
@@ -33,6 +35,7 @@
             android:layout_height="wrap_content">
 
             <TextView
+                android:id="@+id/fl_events_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
