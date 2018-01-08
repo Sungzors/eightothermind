@@ -1,21 +1,31 @@
 package com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.normal
 
+import android.content.Context
+import android.content.pm.PackageManager
+import android.content.res.Configuration
+import android.graphics.ImageFormat
+import android.graphics.Point
 import android.graphics.SurfaceTexture
 import android.hardware.camera2.*
+import android.hardware.camera2.params.StreamConfigurationMap
 import android.media.ImageReader
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
+import android.support.v13.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import android.util.Size
 import android.util.SparseIntArray
 import android.view.*
 import com.phdlabs.sungwon.a8chat_android.R
-import com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControl.AutoFitTextureView
 import com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.CameraBaseFragment
+import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import kotlinx.android.synthetic.main.fragment_cameranormal.*
 import java.io.File
 import java.util.*
 import java.util.concurrent.Semaphore
+import kotlin.Comparator
+import kotlin.collections.ArrayList
 
 /**
  * Created by paix on 12/28/17.
@@ -33,13 +43,13 @@ class NormalFragment : CameraBaseFragment(), NormalContract.View {
      * Camera Properties
      * */
     /*ID of the current camera device*/
-    val cameraId: String? = null
+    var mCameraId: String? = null
     /*Capture session for camera preview*/
     val mCaptureSession: CameraCaptureSession? = null
     /*Camera device*/
     val mCameraDevice: CameraDevice? = null
     /*Camera peview size*/
-    val mPreviewSize: Size? = null
+    var mPreviewSize: Size? = null
 
     /**
      * Image Properties
@@ -49,7 +59,7 @@ class NormalFragment : CameraBaseFragment(), NormalContract.View {
     /*Handler for running tasks in the background*/
     val mBackgroundHandler: Handler? = null
     /*Image reader that handles still image capturing*/
-    val mImageReader: ImageReader? = null
+    var mImageReader: ImageReader? = null
     /*Picture output file*/
     var mFile: File? = null
     /*Capture request builder for the camera preview*/
@@ -115,9 +125,21 @@ class NormalFragment : CameraBaseFragment(), NormalContract.View {
         controller.stop()
     }
 
+    /*Layout*/
     override fun cameraLayoutId(): Int = R.layout.fragment_cameranormal
 
     override fun inOnCreateView(root: View?, container: ViewGroup?, savedInstanceState: Bundle?) {
+    }
+
+    /*Results*/
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        if (requestCode == Constants.PermissionsReqCode.CAMERA_REQ_CODE) {
+            if (grantResults.size != 1 || grantResults.get(0) != PackageManager.PERMISSION_GRANTED) {
+                showError(getString(R.string.request_camera_permission))
+            }
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        }
     }
 
 
@@ -172,7 +194,7 @@ class NormalFragment : CameraBaseFragment(), NormalContract.View {
          * @param aspectRatio
          * @return optimal size or an arbitrary one if none were big enough
          * */
-        private fun chooseOptimalSize(choices: ArrayList<Size>, textureViewWidth: Int, textureViewHeight: Int,
+        private fun chooseOptimalSize(choices: Array<out Size>, textureViewWidth: Int, textureViewHeight: Int,
                                       maxWidth: Int, maxHeight: Int, aspectRatio: Size): Size? {
             //collect supported resolutions that are at least as big as the preview surface
             val bigEnough: ArrayList<Size> = ArrayList<Size>()
@@ -202,6 +224,25 @@ class NormalFragment : CameraBaseFragment(), NormalContract.View {
                 return choices[0]
             }
             return null
+        }
+
+        /**
+         * Compares two sizes based on their areas
+         * [CompareSizesByArea]
+         * */
+        class CompareSizesByArea : Comparator<Size> {
+            override fun compare(p0: Size?, p1: Size?): Int {
+                //Cast to avoid overflow with multipliers
+                var compare: Int = 0
+                p0?.let {
+                    p1?.let {
+                        compare = java.lang.Long.signum(p0.width.toLong() * p0.height -
+                                p1.width.toLong() * p1.height)
+                    }
+                }
+                return compare
+            }
+
         }
 
 
@@ -332,10 +373,136 @@ class NormalFragment : CameraBaseFragment(), NormalContract.View {
 
     }
 
-    /*Camera permissions*/
+    /**Camera permissions
+     * [requestCameraPermissions]
+     * //TODO: Add permissions for Audio Recording & Video Recording
+     * Request Camera, Audio & Video
+     * */
     private fun requestCameraPermissions() {
-        //TODO: Finish camera permissions
+        //Required permissions
+        val whatPermissions = arrayOf(Constants.AppPermissions.CAMERA)
+        context?.let {
+            //Request Permissions
+            if (ContextCompat.checkSelfPermission(it, whatPermissions.get(0)) != PackageManager.PERMISSION_GRANTED) {
+                activity?.let {
+                    ActivityCompat.requestPermissions(it, whatPermissions, Constants.PermissionsReqCode.CAMERA_REQ_CODE)
+                }
+            }
+        }
     }
+
+    /**Setup member variables for the camera
+     * <FullScreen>
+     * [setupCameraOutputs]
+     * @param width The width of available size for camera preview
+     * @param height The height of available size for camera preview
+     * */
+    private fun setupCameraOutputs(width: Int, height: Int) {
+
+        activity?.let {
+            val manager: CameraManager = it.getSystemService(Context.CAMERA_SERVICE) as CameraManager
+            try {
+                loop@ for (cameraId: String in manager.cameraIdList) {
+                    val characteristics: CameraCharacteristics = manager.getCameraCharacteristics(cameraId)
+                    //TODO: Front face camera is not yet supported
+
+                    val facing = characteristics.get(CameraCharacteristics.LENS_FACING)
+                    if (facing == null || facing != CameraCharacteristics.LENS_FACING_FRONT) {
+                        break@loop
+                    }
+                    val map: StreamConfigurationMap = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
+
+                    //For still image captures, we use the largest available size
+                    val largest = Collections.max(
+                            Arrays.asList(*map.getOutputSizes(ImageFormat.JPEG)),
+                            CompareSizesByArea())
+                    mImageReader = ImageReader.newInstance(largest.width, largest.height, ImageFormat.JPEG, 2)
+                    mImageReader?.setOnImageAvailableListener(mOnImageAvailableListener, mBackgroundHandler)
+
+                    //Find out if we need to swap dimension to get the preview size relative to the sensor coordinate
+                    val displayRotation = it.windowManager.defaultDisplay.rotation
+
+                    //non-inspection constants conditions
+                    mSensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION)
+                    var swappedDimensions: Boolean = false
+
+                    when (displayRotation) {
+                        Surface.ROTATION_0 -> {/*Do nothing*/
+                        }
+                        Surface.ROTATION_180 -> {
+                            if (mSensorOrientation == 90 || mSensorOrientation == 270) {
+                                swappedDimensions = true
+                            }
+                        }
+                        Surface.ROTATION_90 -> {/*Do nothing*/
+                        }
+                        Surface.ROTATION_270 -> {
+                            if (mSensorOrientation == 0 || mSensorOrientation == 180) {
+                                swappedDimensions = true
+                            }
+                        }
+                    }
+
+                    //Size & Rotation
+                    val displaySize: Point = Point()
+                    it.windowManager.defaultDisplay.getSize(displaySize)
+                    var rotatedPreviewWidth = width
+                    var rotatedPreviewHeight = height
+                    var maxPreviewWidth = displaySize.x
+                    var maxPreviewHeight = displaySize.y
+                    if(swappedDimensions) {
+                        rotatedPreviewWidth = height
+                        rotatedPreviewHeight = width
+                        maxPreviewWidth = displaySize.y
+                        maxPreviewHeight = displaySize.x
+                    }
+                    if(maxPreviewWidth > MAX_PREVIEW_WIDTH) {
+                        maxPreviewWidth = MAX_PREVIEW_WIDTH
+                    }
+                    if(maxPreviewHeight > MAX_PREVIEW_HEIGHT) {
+                        maxPreviewHeight = MAX_PREVIEW_HEIGHT
+                    }
+
+                    /*
+                    * Important:
+                    * attempting to use a very large preview size could exceed the camera bus
+                    * band-with & result in great previews with garbage captured data
+                    * */
+                    mPreviewSize = chooseOptimalSize(map.getOutputSizes(SurfaceTexture::class.java),
+                            rotatedPreviewWidth, rotatedPreviewHeight, maxPreviewWidth,
+                            maxPreviewHeight, largest)
+
+                    //Fit the aspect ratio of TextureView ot the size of preview picked
+                    val orientation = resources.configuration.orientation
+                    if(orientation == Configuration.ORIENTATION_LANDSCAPE){
+                        mPreviewSize?.let {
+                            mTextureView.setAspectRatio(it.width, it.height)
+                        }
+                    } else {
+                        mPreviewSize?.let {
+                            mTextureView.setAspectRatio(it.height, it.width)
+                        }
+                    }
+
+                    //Check if the flash is supported
+                    //TODO: Manage the flash manually
+                    val available = characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE)
+                    mFlashSupported = available
+
+                    //Camera hardware id
+                    mCameraId = cameraId
+                    return
+                }
+            } catch (e: CameraAccessException) {
+                e.printStackTrace()
+            } catch (e: NullPointerException) {
+                showError(getString(R.string.camera_error))
+            }
+        }
+    }
+
+    //TODO: Open Camera
+
 
 
 }
