@@ -11,6 +11,9 @@ object Constants{
         const val LOGIN_PHONE = "login_phone"
         const val CHANNEL_ID = "channel_id"
         const val CHANNEL_NAME = "channel_name"
+        const val EVENT_ID = "event_id"
+        const val EVENT_NAME = "event_name"
+        const val EVENT_LOCATION = "event_location"
         const val ROOM_ID = "room_id"
         const val MESSAGE_ID = "message_id"
     }

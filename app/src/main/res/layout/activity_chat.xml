@@ -202,6 +202,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"/>
             <LinearLayout
+                android:id="@+id/ac_drawer_money_container"
                 android:layout_width="80dp"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
@@ -219,6 +220,7 @@
                     android:textAlignment="center"/>
             </LinearLayout>
             <View
+                android:id="@+id/ac_drawer_money_filler"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"/>

@@ -55,7 +55,7 @@ class MyChannelActivity: CoreActivity(), ChannelContract.MyChannel.View{
         setToolbarTitle(mChannelName)
         setUpRecycler()
         controller.start()
-        controller.createChannelRoom()
+//        controller.createChannelRoom()
 
     }
 

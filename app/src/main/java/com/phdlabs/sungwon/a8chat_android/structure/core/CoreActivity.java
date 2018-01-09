@@ -19,6 +19,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.phdlabs.sungwon.a8chat_android.R;
@@ -69,10 +70,26 @@ public abstract class CoreActivity extends AppCompatActivity{
     }
 
     public void setToolbarTitle(String title) {
+        LinearLayout doubleContainer = findById(R.id.toolbar_title_double_container);
         View view = findById(R.id.toolbar_title);
+        doubleContainer.setVisibility(LinearLayout.GONE);
+        view.setVisibility(TextView.VISIBLE);
         if (view != null) {
             ((TextView) view).setText(title);
         }
+    }
+
+    public void setDoubleToolbarTitle(String titleTop, String titleBottom){
+        LinearLayout doubleContainer = findById(R.id.toolbar_title_double_container);
+        View singleTV = findById(R.id.toolbar_title);
+        doubleContainer.setVisibility(LinearLayout.VISIBLE);
+        singleTV.setVisibility(TextView.GONE);
+
+        TextView viewTop = findById(R.id.toolbar_title_double_top);
+        TextView viewBottom = findById(R.id.toolbar_title_double_bottom);
+
+        viewTop.setText(titleTop);
+        viewBottom.setText(titleBottom);
     }
 
     public void setToolbarColor(@ColorRes int color) {
