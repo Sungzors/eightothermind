@@ -141,4 +141,7 @@ public interface Caller {
 
     @POST("/events")
     Call<EventPostResponse> postEvents(@Header(TOKEN) String token, @Body EventPostData data);
+
+    @GET("/events/{roomId}/user/{userId}/messages")
+    Call<RoomHistoryResponse> getEventHistory(@Header(TOKEN) String token, @Path("roomId") int roomId, @Path("userId") int userId);
 }

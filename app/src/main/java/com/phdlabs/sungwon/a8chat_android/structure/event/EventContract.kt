@@ -32,6 +32,9 @@ interface EventContract {
             val getMessageETObject : EditText
             val getRoomId : Int
 
+            fun lastTimeDisplayed(position : Int) : Boolean
+            fun lastTimeDisplayed(message: Message) : Boolean
+
             fun updateRecycler()
         }
         interface Controller: BaseController {
@@ -42,9 +45,15 @@ interface EventContract {
             fun sendLocation()
             fun sendMedia()
 
+            fun onDestroy()
+
+            fun setMessageObject(position: Int, message: Message)
+
             fun retrieveChatHistory()
 
             fun getMessages() : MutableList<Message>
+
+            fun getUserId(callback: (Int?) -> Unit)
 
             fun onPictureResult(requestCode: Int, resultCode: Int, data: Intent?)
         }

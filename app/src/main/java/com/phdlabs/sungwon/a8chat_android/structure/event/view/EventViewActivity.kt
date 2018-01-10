@@ -71,6 +71,11 @@ class EventViewActivity: CoreActivity(), EventContract.View.View{
         controller.stop()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        controller.onDestroy()
+    }
+
     override fun updateRecycler() {
     }
 
