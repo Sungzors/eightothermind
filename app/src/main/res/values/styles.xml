@@ -22,4 +22,9 @@
         <!--<item name="fontPath">fonts/avenir-light-webfont.ttf</item>-->
     </style>
 
+    <!--Camera-->
+    <style name="Camera" parent="AppTheme">
+        <item name="android:windowTranslucentStatus">true</item>
+    </style>
+
 </resources>

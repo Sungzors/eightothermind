@@ -23,4 +23,8 @@ interface CameraContract {
         fun onTabSelected(tab: TabLayout.Tab?, viewPager: ViewPager)
     }
 
+    interface CameraActions {
+        fun takePicture()
+    }
+
 }

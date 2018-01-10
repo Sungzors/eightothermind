@@ -6,6 +6,7 @@ import android.content.res.Configuration
 import android.graphics.*
 import android.hardware.camera2.*
 import android.hardware.camera2.params.StreamConfigurationMap
+import android.media.Image
 import android.media.ImageReader
 import android.os.Bundle
 import android.os.Handler
@@ -16,10 +17,12 @@ import android.util.Size
 import android.util.SparseIntArray
 import android.view.*
 import com.phdlabs.sungwon.a8chat_android.R
-import com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControl.AutoFitTextureView
+import com.phdlabs.sungwon.a8chat_android.structure.camera.CameraContract
 import com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.CameraBaseFragment
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 import java.util.*
 import java.util.concurrent.Semaphore
 import java.util.concurrent.TimeUnit
@@ -28,15 +31,9 @@ import kotlin.collections.ArrayList
 
 /**
  * Created by paix on 12/28/17.
- *
+ * Camera Preview in Camera-Normal-Fragment with Camera API 2
  */
-class NormalFragment : CameraBaseFragment(), NormalContract.View {
-
-
-    /**
-     * Controller
-     * */
-    override lateinit var controller: NormalContract.Controller
+class NormalFragment : CameraBaseFragment(), CameraContract.CameraActions {
 
     /**
      * Camera Properties
@@ -81,9 +78,6 @@ class NormalFragment : CameraBaseFragment(), NormalContract.View {
     /*LifeCycle*/
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        /*Init controller*/
-        NormalController(this)
-
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -93,12 +87,10 @@ class NormalFragment : CameraBaseFragment(), NormalContract.View {
 
     override fun onStart() {
         super.onStart()
-        controller.start()
     }
 
     override fun onResume() {
         super.onResume()
-        controller.resume()
         startBackgroundThread()
         /*When screen is turned on & off -> SurfaceTexture is already available & will not be
         * called. We can open a camera and start preview from [onResume] || we wait until the surface
@@ -112,7 +104,6 @@ class NormalFragment : CameraBaseFragment(), NormalContract.View {
 
     override fun onPause() {
         super.onPause()
-        controller.pause()
         closeCamera()
         stopBackgroundThread()
     }
@@ -120,7 +111,6 @@ class NormalFragment : CameraBaseFragment(), NormalContract.View {
 
     override fun onStop() {
         super.onStop()
-        controller.stop()
     }
 
     /*Layout*/
@@ -177,6 +167,8 @@ class NormalFragment : CameraBaseFragment(), NormalContract.View {
         private val STATE_WAITING_PRECAPTURE: Int = 2 // Waiting for the exposure to be in pre-capture state
         private val STATE_WAITING_NON_PRECAPTURE: Int = 3 // Waiting for the exposure state to be anything but pre-capture
         private val STATE_PICTURE_TAKEN: Int = 4 // Picture was taken
+
+        //TODO: Not used for now
         private val MAX_PREVIEW_WIDTH = 1920 // Max preview width guaranteed by camera API-2
         private val MAX_PREVIEW_HEIGHT = 1080 // Max preview height guaranteed by camera API -2
 
@@ -195,6 +187,7 @@ class NormalFragment : CameraBaseFragment(), NormalContract.View {
          * @param maxHeight
          * @param aspectRatio
          * @return optimal size or an arbitrary one if none were big enough
+         * *****Important: Second method is used for testing*****
          * */
         private fun chooseOptimalSize(choices: Array<out Size>, textureViewWidth: Int, textureViewHeight: Int,
                                       maxWidth: Int, maxHeight: Int, aspectRatio: Size): Size? {
@@ -225,6 +218,21 @@ class NormalFragment : CameraBaseFragment(), NormalContract.View {
             }
         }
 
+        //USED FOR TESTING
+        private fun chooseOptimalSize(choices: Array<out Size>, width: Int, height: Int): Size {
+            val preferedRatio: Double = (height / width.toDouble())
+            var currentOptimalSize = choices[0]
+            var currentOptimalRatio: Double = currentOptimalSize.width / currentOptimalSize.height.toDouble()
+            for (size in choices) {
+                val currentRatio: Double = size.width / size.height.toDouble()
+                if (Math.abs(preferedRatio - currentRatio) < Math.abs(preferedRatio - currentOptimalRatio)) {
+                    currentOptimalSize = size
+                    currentOptimalRatio = currentRatio
+                }
+            }
+
+            return currentOptimalSize
+        }
 
     }//end companion
 
@@ -299,11 +307,8 @@ class NormalFragment : CameraBaseFragment(), NormalContract.View {
      * [mOnImageAvailableListener]
      * Callback object for the [ImageReader] which is called when a still image is ready to be saved
      * */
-    private val mOnImageAvailableListener = object : ImageReader.OnImageAvailableListener {
-        override fun onImageAvailable(p0: ImageReader?) {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-            //TODO: post imageSaver
-        }
+    private val mOnImageAvailableListener = ImageReader.OnImageAvailableListener { reader ->
+        mBackgroundHandler?.post(ImageSaver(reader.acquireNextImage(), mFile!!))
     }
 
     /**
@@ -402,7 +407,6 @@ class NormalFragment : CameraBaseFragment(), NormalContract.View {
      * @param width The width of available size for camera preview
      * @param height The height of available size for camera preview
      * */
-    //TODO: Fix method
     private fun setupCameraOutputs(width: Int, height: Int) {
 
         val manager = activity?.getSystemService(Context.CAMERA_SERVICE) as CameraManager
@@ -412,11 +416,11 @@ class NormalFragment : CameraBaseFragment(), NormalContract.View {
 
                 // We don't use a front facing camera in this sample.
                 val facing = characteristics.get(CameraCharacteristics.LENS_FACING)
-                if (facing != null && facing === CameraCharacteristics.LENS_FACING_FRONT) {
+                if (facing == CameraCharacteristics.LENS_FACING_FRONT) {
                     continue
                 }
 
-                val map = characteristics.get(
+                val map: StreamConfigurationMap = characteristics.get(
                         CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP) ?: continue
 
                 // For still image captures, we use the largest available size.
@@ -425,7 +429,7 @@ class NormalFragment : CameraBaseFragment(), NormalContract.View {
                         CompareSizesByArea())
                 mImageReader = ImageReader.newInstance(largest.width, largest.height,
                         ImageFormat.JPEG, /*maxImages*/2)
-                mImageReader!!.setOnImageAvailableListener(
+                mImageReader?.setOnImageAvailableListener(
                         mOnImageAvailableListener, mBackgroundHandler)
 
                 // Find out if we need to swap dimension to get the preview size relative to sensor
@@ -440,11 +444,11 @@ class NormalFragment : CameraBaseFragment(), NormalContract.View {
                     Surface.ROTATION_90, Surface.ROTATION_270 -> if (sensorOrientation == 0 || sensorOrientation == 180) {
                         swappedDimensions = true
                     }
-                    //else -> Log.e(TAG, "Display rotation is invalid: " + displayRotation)
                 }
 
                 val displaySize = Point()
                 activity?.windowManager?.defaultDisplay?.getSize(displaySize)
+
                 var rotatedPreviewWidth = width
                 var rotatedPreviewHeight = height
                 var maxPreviewWidth = displaySize.x
@@ -465,12 +469,15 @@ class NormalFragment : CameraBaseFragment(), NormalContract.View {
                     maxPreviewHeight = MAX_PREVIEW_HEIGHT
                 }
 
-                // Danger, W.R.! Attempting to use too large a preview size could  exceed the camera
-                // bus' bandwidth limitation, resulting in gorgeous previews but the storage of
-                // garbage capture data.
+                /*Danger, W.R.! Attempting to use too large a preview size could  exceed the camera
+                bus' bandwidth limitation, resulting in gorgeous previews but the storage of
+                garbage capture data.*/
+
                 mPreviewSize = chooseOptimalSize(map.getOutputSizes<SurfaceTexture>(SurfaceTexture::class.java),
                         rotatedPreviewWidth, rotatedPreviewHeight, maxPreviewWidth,
                         maxPreviewHeight, largest)
+
+//                mPreviewSize = chooseOptimalSize(map.getOutputSizes<SurfaceTexture>(SurfaceTexture::class.java), displaySize.x, displaySize.y)
 
                 // We fit the aspect ratio of TextureView to the size of preview we picked.
                 val orientation = resources.configuration.orientation
@@ -696,9 +703,10 @@ class NormalFragment : CameraBaseFragment(), NormalContract.View {
 
     /**
      * Initiate a still Image capture
+     * Overridden method from CameraContract.CameraActions
      * [takePicture]
      * */
-    private fun takePicture() {
+    override fun takePicture() {
         lockFocus()
     }
 
@@ -804,6 +812,42 @@ class NormalFragment : CameraBaseFragment(), NormalContract.View {
         } catch (e: CameraAccessException) {
             e.printStackTrace()
         }
+    }
+
+    /**Save a JPEG [Image] into the specified [File]*/
+    private class ImageSaver(
+            /**
+             * The JPEG image
+             */
+            private val mImage: Image,
+            /**
+             * The file we save the image into.
+             */
+            private val mFile: File) : Runnable {
+
+        override fun run() {
+            val buffer = mImage.planes[0].buffer
+            val bytes = ByteArray(buffer.remaining())
+            buffer.get(bytes)
+            var output: FileOutputStream? = null
+            try {
+                output = FileOutputStream(mFile)
+                output.write(bytes)
+            } catch (e: IOException) {
+                e.printStackTrace()
+            } finally {
+                mImage.close()
+                if (null != output) {
+                    try {
+                        output.close()
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                    }
+
+                }
+            }
+        }
+
     }
 
     /*Threads*/

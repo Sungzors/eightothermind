@@ -4,15 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/black"
-    android:orientation="vertical">
+    android:background="@android:color/black">
 
     <!--Background-->
     <View
         android:id="@+id/cam_background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/holo_green_light" />
+        android:background="@android:color/black" />
 
     <!--Pager-->
     <android.support.v4.view.ViewPager

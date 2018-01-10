@@ -1,4 +1,4 @@
-package com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControl
+package com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.normal
 
 import android.content.Context
 import android.util.AttributeSet
@@ -7,6 +7,7 @@ import android.view.TextureView
 /**
  * Created by paix on 1/2/18.
  * A [TextureView] that can be adjusted to a specified aspect ratio
+ * Used for Camera Preview
  */
 class AutoFitTextureView : TextureView {
 
@@ -51,9 +52,11 @@ class AutoFitTextureView : TextureView {
             setMeasuredDimension(width, height)
         } else {
             if (width < height * mRatioWidth / mRatioHeight) {
-                setMeasuredDimension(width, width * mRatioHeight / mRatioWidth)
+                //setMeasuredDimension(width, width * mRatioHeight / mRatioWidth)
+                setMeasuredDimension(width, height) //Full screen
             } else {
-                setMeasuredDimension(height * mRatioWidth / mRatioHeight, height)
+                //setMeasuredDimension(height * mRatioWidth / mRatioHeight, height)
+                setMeasuredDimension(width, height) //Full screen
             }
         }
     }
