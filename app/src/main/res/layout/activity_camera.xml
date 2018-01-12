@@ -42,7 +42,8 @@
             android:minHeight="?attr/actionBarSize"
             app:tabIndicatorColor="@color/white"
             app:tabSelectedTextColor="@color/white"
-            app:tabTextColor="@color/whiteTransparent" />
+            app:tabTextColor="@color/whiteTransparent"
+            />
 
     </eightbitlab.com.blurview.BlurView>
 

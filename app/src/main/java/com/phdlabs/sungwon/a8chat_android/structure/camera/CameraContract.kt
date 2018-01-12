@@ -1,6 +1,7 @@
 package com.phdlabs.sungwon.a8chat_android.structure.camera
 
 import android.support.design.widget.TabLayout
+import android.support.v4.app.Fragment
 import android.support.v4.view.ViewPager
 import com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControl.CameraControlView
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseController
@@ -13,6 +14,7 @@ interface CameraContract {
 
     interface View:BaseView<Controller>{
         fun getCameraControl(): CameraControlView
+        fun currentFragment(fragment: Fragment)
     }
 
     interface Controller: BaseController {
@@ -21,10 +23,9 @@ interface CameraContract {
         fun onTabReselected(tab: TabLayout.Tab?)
         fun onTabUnselected(tab: TabLayout.Tab?)
         fun onTabSelected(tab: TabLayout.Tab?, viewPager: ViewPager)
-    }
+        /*Current Fragment*/
+        fun currentFragment(viewPager: ViewPager)
 
-    interface CameraActions {
-        fun takePicture()
     }
 
 }

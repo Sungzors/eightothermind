@@ -33,7 +33,7 @@ import kotlin.collections.ArrayList
  * Created by paix on 12/28/17.
  * Camera Preview in Camera-Normal-Fragment with Camera API 2
  */
-class NormalFragment : CameraBaseFragment(), CameraContract.CameraActions {
+class NormalFragment : CameraBaseFragment() {
 
     /**
      * Camera Properties
@@ -706,7 +706,7 @@ class NormalFragment : CameraBaseFragment(), CameraContract.CameraActions {
      * Overridden method from CameraContract.CameraActions
      * [takePicture]
      * */
-    override fun takePicture() {
+    fun takePicture() {
         lockFocus()
     }
 

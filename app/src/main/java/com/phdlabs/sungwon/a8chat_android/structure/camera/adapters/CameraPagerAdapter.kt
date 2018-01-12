@@ -15,35 +15,38 @@ import com.phdlabs.sungwon.a8chat_android.utility.Constants
  * Created by paix on 12/28/17.
  * Pager Adapter controlling CameraRoll (left) - Normal (center) - HandsFree (right)
  */
-class CameraPagerAdapter(fm: FragmentManager, val context: Context): FragmentPagerAdapter(fm) {
+class CameraPagerAdapter(fm: FragmentManager, val context: Context) : FragmentPagerAdapter(fm) {
+
+    /*Return desired camera fragment*/
+    override fun getItem(position: Int): Fragment =
+            when (position) {
+                Constants.CameraPager.CAMERA_ROLL ->
+                    CameraRollFragment.create()
+
+                Constants.CameraPager.NORMAL ->
+                    NormalFragment.create()
 
 
+                Constants.CameraPager.HANDS_FREE ->
+                    HandsFreeFragment.create()
 
-    override fun getItem(position: Int): Fragment {
-        /*Return desired camera fragment*/
-        when(position) {
-            Constants.CameraPager.CAMERA_ROLL -> return CameraRollFragment.create()
-            Constants.CameraPager.NORMAL -> return NormalFragment.create()
-            Constants.CameraPager.HANDS_FREE -> return HandsFreeFragment.create()
-            else -> {
-                return EmptyFragment.create()
+                else -> {
+                    EmptyFragment.create()
+                }
             }
-        }
-    }
 
     /*Camera fragment count*/
     override fun getCount(): Int = 3
 
     /*Page title*/
-    override fun getPageTitle(position: Int): CharSequence? {
-        when(position) {
-            Constants.CameraPager.CAMERA_ROLL -> return context.getString(R.string.camera_left_tab)
-            Constants.CameraPager.NORMAL -> return context.getString(R.string.camera_center_tab)
-            Constants.CameraPager.HANDS_FREE -> return context.getString(R.string.camera_right_tab)
-            else -> {
-                return ""
+    override fun getPageTitle(position: Int): CharSequence? =
+            when (position) {
+                Constants.CameraPager.CAMERA_ROLL -> context.getString(R.string.camera_left_tab)
+                Constants.CameraPager.NORMAL -> context.getString(R.string.camera_center_tab)
+                Constants.CameraPager.HANDS_FREE -> context.getString(R.string.camera_right_tab)
+                else -> {
+                    ""
+                }
             }
-        }
-    }
 
 }

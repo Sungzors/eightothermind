@@ -2,10 +2,14 @@ package com.phdlabs.sungwon.a8chat_android.structure.camera
 
 import android.os.Bundle
 import android.support.design.widget.TabLayout
+import android.support.v4.app.Fragment
 import android.view.View
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.structure.camera.adapters.CameraPagerAdapter
 import com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControl.CameraControlView
+import com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.cameraRoll.CameraRollFragment
+import com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.handsFree.HandsFreeFragment
+import com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.normal.NormalFragment
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import kotlinx.android.synthetic.main.activity_camera.*
@@ -78,6 +82,7 @@ class CameraActivity : CoreActivity(), CameraContract.View, TabLayout.OnTabSelec
         /*Initial tab selection*/
         val tab = cam_tabLayout_indicator.getTabAt(Constants.CameraPager.NORMAL)
         tab?.select()
+        controller.currentFragment(cam_view_pager)
         /*Tab indicator & listeners*/
         cam_tabLayout_indicator.tabGravity = TabLayout.GRAVITY_FILL
         cam_view_pager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(cam_tabLayout_indicator))
@@ -99,5 +104,15 @@ class CameraActivity : CoreActivity(), CameraContract.View, TabLayout.OnTabSelec
 
     /*Camera Control*/
     override fun getCameraControl(): CameraControlView = cam_control
+
+    override fun currentFragment(fragment: Fragment) {
+        if (fragment::class == CameraRollFragment::class) {
+            print("Camera Roll Frag")
+        } else if (fragment::class == NormalFragment::class) {
+            print("Normal Fragment")
+        } else if (fragment::class == HandsFreeFragment::class) {
+            print("Hands Free Fragment")
+        }
+    }
 
 }
