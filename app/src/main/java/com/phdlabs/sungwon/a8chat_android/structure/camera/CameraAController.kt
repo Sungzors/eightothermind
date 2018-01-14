@@ -4,6 +4,7 @@ import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.support.v4.view.ViewPager
 import android.view.View
+import com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.normal.NormalFragment
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 
 /**
@@ -46,7 +47,7 @@ class CameraAController(val mView: CameraContract.View) : CameraContract.Control
     override fun onTabSelected(tab: TabLayout.Tab?, viewPager: ViewPager) {
         tab?.let {
             /*View pager item position*/
-            viewPager.setCurrentItem(it.position)
+            viewPager.currentItem = it.position
             /*Show || Hide Camera Controls depending on tab*/
             if (it.position.equals(Constants.CameraPager.NORMAL) ||
                     it.position.equals(Constants.CameraPager.HANDS_FREE)) {
@@ -54,19 +55,13 @@ class CameraAController(val mView: CameraContract.View) : CameraContract.Control
             } else {
                 mView.getCameraControl().visibility = View.GONE
             }
-            /*Current Fragment*/
-            currentFragment(viewPager)
         }
     }
 
-    /*Current available fragment on screen*/
-    override fun currentFragment(viewPager: ViewPager) {
-        if (viewPager.currentItem == Constants.CameraPager.CAMERA_ROLL) {
-            mView.currentFragment(viewPager.adapter?.instantiateItem(viewPager, Constants.CameraPager.CAMERA_ROLL) as Fragment)
-        } else if (viewPager.currentItem == Constants.CameraPager.NORMAL) {
-            mView.currentFragment(viewPager.adapter?.instantiateItem(viewPager, Constants.CameraPager.NORMAL) as Fragment)
-        }else {
-            mView.currentFragment(viewPager.adapter?.instantiateItem(viewPager, Constants.CameraPager.HANDS_FREE) as Fragment)
+    override fun takePhoto(viewPager: ViewPager) {
+        if (viewPager.currentItem == Constants.CameraPager.NORMAL) {
+            val normalFrag: NormalFragment = viewPager.adapter?.instantiateItem(viewPager, Constants.CameraPager.NORMAL) as NormalFragment
+            normalFrag.takePicture()
         }
     }
 

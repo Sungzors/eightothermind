@@ -13,8 +13,8 @@ import com.phdlabs.sungwon.a8chat_android.structure.core.BaseView
 interface CameraContract {
 
     interface View:BaseView<Controller>{
+        /*Control View*/
         fun getCameraControl(): CameraControlView
-        fun currentFragment(fragment: Fragment)
     }
 
     interface Controller: BaseController {
@@ -23,9 +23,8 @@ interface CameraContract {
         fun onTabReselected(tab: TabLayout.Tab?)
         fun onTabUnselected(tab: TabLayout.Tab?)
         fun onTabSelected(tab: TabLayout.Tab?, viewPager: ViewPager)
-        /*Current Fragment*/
-        fun currentFragment(viewPager: ViewPager)
-
+        /*Camera Actions*/
+        fun takePhoto(viewPager: ViewPager)
     }
 
 }
