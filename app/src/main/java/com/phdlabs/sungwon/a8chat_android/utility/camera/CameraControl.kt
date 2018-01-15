@@ -390,7 +390,7 @@ class CameraControl private constructor() {
      * @param uri uri of the incoming file
      * @return path to the saved image.
      */
-    private fun getFilePathFromUri(context: Context, uri: Uri): String? {
+     fun getFilePathFromUri(context: Context, uri: Uri): String? {
         var `is`: InputStream? = null
         if (uri.authority != null) {
             try {

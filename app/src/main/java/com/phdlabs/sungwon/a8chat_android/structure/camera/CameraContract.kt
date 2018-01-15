@@ -1,9 +1,8 @@
 package com.phdlabs.sungwon.a8chat_android.structure.camera
 
 import android.support.design.widget.TabLayout
-import android.support.v4.app.Fragment
 import android.support.v4.view.ViewPager
-import com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControl.CameraControlView
+import com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControls.CameraControlView
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseController
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseView
 
@@ -25,6 +24,9 @@ interface CameraContract {
         fun onTabSelected(tab: TabLayout.Tab?, viewPager: ViewPager)
         /*Camera Actions*/
         fun takePhoto(viewPager: ViewPager)
+        /*Start Preview Activity*/
+        fun startPreviewActivity(imageFilePath: String?)
+
     }
 
 }

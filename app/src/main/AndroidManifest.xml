@@ -59,6 +59,9 @@
         <activity android:name=".structure.camera.CameraActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Camera"/>
+        <activity android:name=".structure.camera.preview.PreviewActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Camera"/>
         <!--Photos & Images File Provider-->
         <provider
             android:name=".utility.camera.PhotoFileProvider"

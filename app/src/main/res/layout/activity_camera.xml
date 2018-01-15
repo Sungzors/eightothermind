@@ -28,22 +28,16 @@
         android:orientation="horizontal">
 
         <!--Editing Control-->
-        <com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControl.CameraEditingView
-            android:id="@+id/cam_edit_control"
+        <com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControls.CameraCloseView
+            android:id="@+id/cam_close_control"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start" />
 
-        <com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControl.CameraCloseView
-            android:id="@+id/cam_close_control"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"/>
-
     </FrameLayout>
 
     <!--Recording Control-->
-    <com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControl.CameraControlView
+    <com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControls.CameraControlView
         android:id="@+id/cam_control"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -69,5 +63,6 @@
 
     </eightbitlab.com.blurview.BlurView>
 
+    <include layout="@layout/progress_view"/>
 
 </RelativeLayout>

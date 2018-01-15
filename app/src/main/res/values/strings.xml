@@ -66,5 +66,8 @@
     <string name="camera_action">camera_action</string>
     <string name="camera_flash">camera_flash</string>
     <string name="camera_flip">camera_flip</string>
+    <string name="camera_preview">cameraPreview</string>
+    <string name="camera_save">cameraSave</string>
+    <string name="camera_send">cameraSend</string>
 
 </resources>

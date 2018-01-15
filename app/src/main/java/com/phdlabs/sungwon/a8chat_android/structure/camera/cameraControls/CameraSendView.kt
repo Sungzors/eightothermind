@@ -1,4 +1,4 @@
-package com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControl
+package com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControls
 
 import android.content.Context
 import android.util.AttributeSet
@@ -7,10 +7,9 @@ import android.widget.FrameLayout
 import com.phdlabs.sungwon.a8chat_android.R
 
 /**
- * Created by paix on 1/14/18.
- * Custom [FrameLayout] for camera editing & close controls
+ * Created by paix on 1/15/18.
  */
-class CameraEditingView: FrameLayout {
+class CameraSendView: FrameLayout {
 
     /*Override constructors with this() instead of super, to actually call the last constructor with
     * super() This will allow us to inflate with our own layout*/
@@ -25,7 +24,7 @@ class CameraEditingView: FrameLayout {
     fun init() {
 
         /*Inflate FrameLayout with custom view*/
-        LayoutInflater.from(context).inflate(R.layout.view_camera_control_editing, this)
+        LayoutInflater.from(context).inflate(R.layout.view_camera_control_send, this)
 
     }
 

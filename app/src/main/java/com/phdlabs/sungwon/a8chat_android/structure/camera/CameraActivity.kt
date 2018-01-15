@@ -7,11 +7,11 @@ import android.view.View
 import android.widget.Toast
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.structure.camera.adapters.CameraPagerAdapter
-import com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControl.CameraControlView
+import com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControls.CameraControlView
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import kotlinx.android.synthetic.main.activity_camera.*
-import kotlinx.android.synthetic.main.view_camera_control_editing.*
+import kotlinx.android.synthetic.main.view_camera_control_close.*
 import kotlinx.android.synthetic.main.view_camera_control_tabs.*
 
 /**
@@ -117,7 +117,8 @@ class CameraActivity : CoreActivity(), CameraContract.View, TabLayout.OnTabSelec
     override fun onClick(p0: View?) {
         when (p0) {
             iv_camera_action -> {
-                Toast.makeText(this, "Take photo", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(this, "Take photo", Toast.LENGTH_SHORT).show()
+                showProgress()
                 controller.takePhoto(cam_view_pager)
             }
             iv_camera_flash -> {
@@ -126,7 +127,17 @@ class CameraActivity : CoreActivity(), CameraContract.View, TabLayout.OnTabSelec
             iv_camera_flip -> {
                 Toast.makeText(this, "Camera Flip", Toast.LENGTH_SHORT).show()
             }
+            iv_camera_close -> {
+                /*Finish camera activity*/
+                //TODO: Go back to?
+                this.close()
+            }
         }
+    }
+
+    /*Start preview activity*/
+    fun getImageFilePath(filePath: String?) {
+        controller.startPreviewActivity(filePath)
     }
 
 }

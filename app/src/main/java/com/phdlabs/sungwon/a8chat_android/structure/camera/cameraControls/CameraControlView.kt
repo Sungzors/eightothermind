@@ -1,16 +1,10 @@
-package com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControl
+package com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControls
 
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
 import android.widget.FrameLayout
-import android.widget.Toast
 import com.phdlabs.sungwon.a8chat_android.R
-import com.phdlabs.sungwon.a8chat_android.structure.camera.CameraContract
-import com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.normal.NormalFragment
-import kotlinx.android.synthetic.main.view_camera_control_tabs.view.*
 
 /**
  * Created by paix on 12/29/17.

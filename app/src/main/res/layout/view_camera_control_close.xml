@@ -3,9 +3,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="75dp"
-    android:layout_gravity="end|top"
+    android:layout_gravity="top"
     android:orientation="horizontal"
     tools:background="@android:color/black">
+
+    <!--Close camera-->
+    <ImageView
+        android:id="@+id/iv_camera_close"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_gravity="start|center"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="35dp"
+        android:background="@color/transparent"
+        android:contentDescription="@string/camera_flash"
+        android:src="@drawable/camera_close" />
 
     <!--Back-->
     <ImageView
@@ -13,44 +25,11 @@
         android:layout_width="15dp"
         android:layout_height="15dp"
         android:layout_gravity="start|center"
-        android:layout_marginStart="45dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="35dp"
         android:background="@color/transparent"
         android:contentDescription="@string/camera_flash"
         android:src="@drawable/camera_back"
         android:visibility="gone" />
-
-    <!--Text-->
-    <ImageView
-        android:id="@+id/iv_camera_text"
-        android:layout_width="15dp"
-        android:layout_height="19dp"
-        android:layout_gravity="end|center"
-        android:layout_marginEnd="130dp"
-        android:layout_marginStart="10dp"
-        android:background="@color/transparent"
-        android:contentDescription="@string/camera_flash"
-        android:src="@drawable/t" />
-
-    <!--Crop-->
-    <ImageView
-        android:id="@+id/iv_camera_crop"
-        android:layout_width="22dp"
-        android:layout_height="22dp"
-        android:layout_gravity="end|center"
-        android:layout_marginEnd="78dp"
-        android:background="@color/transparent"
-        android:contentDescription="@string/camera_flash"
-        android:src="@drawable/crop_edit" />
-
-    <!--Edit-->
-    <ImageView
-        android:id="@+id/iv_camera_edit"
-        android:layout_width="22dp"
-        android:layout_height="22dp"
-        android:layout_gravity="end|center"
-        android:layout_marginEnd="28dp"
-        android:background="@color/transparent"
-        android:contentDescription="@string/camera_flash"
-        android:src="@drawable/camera_edit" />
 
 </FrameLayout>
