@@ -8,12 +8,10 @@ import android.widget.Toast
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.structure.camera.adapters.CameraPagerAdapter
 import com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControl.CameraControlView
-import com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.cameraRoll.CameraRollFragment
-import com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.handsFree.HandsFreeFragment
-import com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.normal.NormalFragment
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import kotlinx.android.synthetic.main.activity_camera.*
+import kotlinx.android.synthetic.main.view_camera_control_editing.*
 import kotlinx.android.synthetic.main.view_camera_control_tabs.*
 
 /**
@@ -95,6 +93,7 @@ class CameraActivity : CoreActivity(), CameraContract.View, TabLayout.OnTabSelec
         iv_camera_action.setOnClickListener(this)
         iv_camera_flash.setOnClickListener(this)
         iv_camera_flip.setOnClickListener(this)
+        iv_camera_close.setOnClickListener(this)
     }
 
     /*Tab Control*/
@@ -116,7 +115,7 @@ class CameraActivity : CoreActivity(), CameraContract.View, TabLayout.OnTabSelec
 
     /*Camera actions*/
     override fun onClick(p0: View?) {
-        when(p0) {
+        when (p0) {
             iv_camera_action -> {
                 Toast.makeText(this, "Take photo", Toast.LENGTH_SHORT).show()
                 controller.takePhoto(cam_view_pager)

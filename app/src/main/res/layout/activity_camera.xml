@@ -19,13 +19,36 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <!--Top controls-->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:gravity="top|center"
+        android:orientation="horizontal">
+
+        <!--Editing Control-->
+        <com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControl.CameraEditingView
+            android:id="@+id/cam_edit_control"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start" />
+
+        <com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControl.CameraCloseView
+            android:id="@+id/cam_close_control"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"/>
+
+    </FrameLayout>
+
     <!--Recording Control-->
     <com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControl.CameraControlView
         android:id="@+id/cam_control"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/blurView"
-        android:layout_marginBottom="13sp"/>
+        android:layout_marginBottom="13sp" />
 
     <!--Tab Layout with BlurView-->
     <eightbitlab.com.blurview.BlurView
@@ -42,8 +65,7 @@
             android:minHeight="?attr/actionBarSize"
             app:tabIndicatorColor="@color/white"
             app:tabSelectedTextColor="@color/white"
-            app:tabTextColor="@color/whiteTransparent"
-            />
+            app:tabTextColor="@color/whiteTransparent" />
 
     </eightbitlab.com.blurview.BlurView>
 
