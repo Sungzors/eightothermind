@@ -8,20 +8,22 @@ import android.content.pm.PackageManager
 import android.content.res.AssetFileDescriptor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
+import android.os.Environment
 import android.os.Parcelable
 import android.provider.MediaStore
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.support.v4.content.FileProvider
+import android.util.DisplayMetrics
 import android.util.Log
 import com.phdlabs.sungwon.a8chat_android.BuildConfig
 import com.phdlabs.sungwon.a8chat_android.R
-import java.io.FileInputStream
-import java.io.FileNotFoundException
-import java.io.IOException
-import java.io.InputStream
+import kotlinx.android.synthetic.main.activity_camera_preview.*
+import java.io.*
+import java.text.SimpleDateFormat
 import java.util.*
 
 /**
@@ -353,6 +355,21 @@ class CameraControl private constructor() {
     }
 
     /**
+     * Return [Bitmap] from image file path
+     * @param context
+     * @param filePath as [String]
+     * @return [Bitmap]
+     * */
+    fun getImageFromPath(context: Context?, filePath: String): Bitmap? {
+        var bm: Bitmap? = null
+        val imageFile = Uri.fromFile(File(filePath))
+        context?.let {
+            bm = decodeBitmap(it, imageFile)
+        }
+        return bm
+    }
+
+    /**
      * Called after launching the picker with the same values of Activity.getImageFromResult
      * in order to resolve the result and get the image path.
      *
@@ -390,7 +407,7 @@ class CameraControl private constructor() {
      * @param uri uri of the incoming file
      * @return path to the saved image.
      */
-     fun getFilePathFromUri(context: Context, uri: Uri): String? {
+    fun getFilePathFromUri(context: Context, uri: Uri): String? {
         var `is`: InputStream? = null
         if (uri.authority != null) {
             try {
@@ -525,5 +542,114 @@ class CameraControl private constructor() {
         return true
     }
 
+    /**
+     * [addToGallery]
+     * Add photo to phone gallery
+     * @param context is current context
+     * @param filePath of the temporary file to be copied to the android gallery
+     * */
+    fun addToGallery(context: Context, filePath: String) {
+        val intent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
+        val file = File(filePath)
+        val contentUri = Uri.fromFile(file)
+        intent.data = contentUri
+        context.sendBroadcast(intent)
+    }
 
+    /**
+     * [compressFile]
+     * will compress the file for faster memory management & image resizing displayed
+     * to the user
+     * @param filepath of the temporary file that contains the photo
+     * @param filePath of the compressed file
+     * */
+    fun compressFile(filePath: String, desiredWidth: Int, desiredHeight: Int): String {
+        var scaledBitmap: Bitmap? = null
+        var imagePath: String? = null
+        try {
+            //Decode image
+            val unscaledBitmap: Bitmap = ImageScaling.instance.decodeFileToBitmap(filePath, desiredWidth, desiredHeight, ImageScaling.ScalingLogic.FIT)
+            //Scale image
+            if (!(unscaledBitmap.width <= 800 && unscaledBitmap.height <= 800)) {
+                scaledBitmap = ImageScaling.instance.createScaledBitmap(unscaledBitmap, desiredWidth, desiredHeight, ImageScaling.ScalingLogic.FIT)
+            } else {
+                unscaledBitmap.recycle()
+                return filePath
+            }
+            //Store to temporary file
+            val file = temporaryFile()
+            imagePath = file.absolutePath
+            try {
+                val fos = FileOutputStream(file)
+                scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 70, fos)
+                fos.flush()
+                fos.close()
+            } catch (e: FileNotFoundException) {
+                e.printStackTrace()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            scaledBitmap.recycle()
+        } catch (e: Throwable) {
+            e.printStackTrace()
+        }
+        if (imagePath == null) {
+            return filePath
+        }
+        return imagePath
+    }
+
+    /**
+     * [temporaryFile] creates a temporary holding cached file with naming convention to store
+     * the current photo taken by the user
+     * */
+    fun temporaryFile(): File {
+        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val imageFileName = "JPEG_" + timeStamp + "_"
+        val storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+        val file = File.createTempFile(
+                imageFileName,
+                ".jpg",
+                storageDir
+        )
+        return file
+    }
+
+    /**
+     * [getScreenSize] for the current device & provide full screen image preview
+     * */
+    fun getScreenSize(activity: Activity): Pair<Int, Int> {
+        val displayMetrics = DisplayMetrics()
+        activity.windowManager.defaultDisplay.getMetrics(displayMetrics)
+        return Pair(displayMetrics.widthPixels, displayMetrics.heightPixels)
+    }
+
+    /**
+     * [imageOrientation] retrieves the image orientation in degrees according to the file in the
+     * @param filePath
+     * */
+    fun imageOrientation(filePath: String?): Int {
+        var rotate: Int = 0
+        try {
+            val file = File(filePath)
+            val exifInterface = ExifInterface(file.absolutePath)
+            val orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
+            when (orientation) {
+
+                ExifInterface.ORIENTATION_ROTATE_90 -> {
+                    rotate = 90
+                }
+                ExifInterface.ORIENTATION_ROTATE_180 -> {
+                    rotate = 180
+                }
+                ExifInterface.ORIENTATION_ROTATE_270 -> {
+                    rotate = 270
+                }
+
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return rotate
+    }
 }

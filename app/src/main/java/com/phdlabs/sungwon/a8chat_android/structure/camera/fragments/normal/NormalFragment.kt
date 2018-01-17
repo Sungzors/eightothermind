@@ -10,6 +10,7 @@ import android.media.Image
 import android.media.ImageReader
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.os.Handler
 import android.os.HandlerThread
 import android.support.v13.app.ActivityCompat
@@ -24,6 +25,7 @@ import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.Semaphore
 import java.util.concurrent.TimeUnit
@@ -103,7 +105,14 @@ class NormalFragment : CameraBaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        mFile = File(activity?.getExternalFilesDir(null), "pic.jpg") //TODO: Dynamic fiename
+        activity?.let {
+            //Permissions
+            if (ContextCompat.checkSelfPermission(it, Constants.AppPermissions.WRITE_EXTERNAL) != PackageManager.PERMISSION_GRANTED) {
+                requestExternalStoragePermissions()
+            } else {
+                mFile = CameraControl.instance.temporaryFile()
+            }
+        }
     }
 
     override fun onResume() {
@@ -142,9 +151,16 @@ class NormalFragment : CameraBaseFragment() {
             if (grantResults.size != 1 || grantResults.get(0) != PackageManager.PERMISSION_GRANTED) {
                 showError(getString(R.string.request_camera_permission))
             }
+        } else if (requestCode == Constants.PermissionsReqCode.WRITE_EXTERNAL_REQ_CODE) {
+            if (grantResults.size != 1 || grantResults.get(0) != PackageManager.PERMISSION_GRANTED) {
+                showError(getString(R.string.request_write_external_permission))
+            } else {
+                mFile = CameraControl.instance.temporaryFile()
+            }
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }
+
     }
 
 
@@ -227,22 +243,6 @@ class NormalFragment : CameraBaseFragment() {
             } else {
                 return choices[0]
             }
-        }
-
-        //USED FOR TESTING
-        private fun chooseOptimalSize(choices: Array<out Size>, width: Int, height: Int): Size {
-            val preferedRatio: Double = (height / width.toDouble())
-            var currentOptimalSize = choices[0]
-            var currentOptimalRatio: Double = currentOptimalSize.width / currentOptimalSize.height.toDouble()
-            for (size in choices) {
-                val currentRatio: Double = size.width / size.height.toDouble()
-                if (Math.abs(preferedRatio - currentRatio) < Math.abs(preferedRatio - currentOptimalRatio)) {
-                    currentOptimalSize = size
-                    currentOptimalRatio = currentRatio
-                }
-            }
-
-            return currentOptimalSize
         }
 
     }//end companion
@@ -337,11 +337,15 @@ class NormalFragment : CameraBaseFragment() {
                     if (afState == null) {
                         captureStillPicture()
                     } else if (afState == CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED
-                            || afState == CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED) {
+                            || afState == CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED
+                            || afState == CaptureResult.CONTROL_AF_STATE_PASSIVE_FOCUSED) {
+
                         val aeState = captureResult.get(CaptureResult.CONTROL_AE_STATE)
+
                         if (aeState == null || aeState == CaptureResult.CONTROL_AE_STATE_CONVERGED) {
                             mState = STATE_PICTURE_TAKEN
                             captureStillPicture()
+
                         } else {
                             runPrecaptureSequence()
                         }
@@ -393,9 +397,22 @@ class NormalFragment : CameraBaseFragment() {
         context?.let {
             //Request Permissions
             if (ContextCompat.checkSelfPermission(it, whatPermissions.get(0)) != PackageManager.PERMISSION_GRANTED) {
-                activity?.let {
-                    ActivityCompat.requestPermissions(it, whatPermissions, Constants.PermissionsReqCode.CAMERA_REQ_CODE)
-                }
+                requestPermissions(whatPermissions, Constants.PermissionsReqCode.CAMERA_REQ_CODE)
+            }
+        }
+    }
+
+    /**External storage permissions
+     * Request external storage permissions
+     * */
+    private fun requestExternalStoragePermissions() {
+        //Required permissions
+        val whatPermissions = arrayOf(Constants.AppPermissions.WRITE_EXTERNAL)
+        context?.let {
+            //Request Permissions
+            if (ContextCompat.checkSelfPermission(it, whatPermissions.get(0)) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(whatPermissions, Constants.PermissionsReqCode.WRITE_EXTERNAL_REQ_CODE)
+
             }
         }
     }
@@ -437,11 +454,13 @@ class NormalFragment : CameraBaseFragment() {
                 val sensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION)
                 var swappedDimensions = false
                 when (displayRotation) {
-                    Surface.ROTATION_0 -> {/*Do nothing*/}
+                    Surface.ROTATION_0 -> {/*Do nothing*/
+                    }
                     Surface.ROTATION_180 -> if (sensorOrientation == 90 || sensorOrientation == 270) {
                         swappedDimensions = true
                     }
-                    Surface.ROTATION_90 -> {/*Do Nothing*/}
+                    Surface.ROTATION_90 -> {/*Do Nothing*/
+                    }
                     Surface.ROTATION_270 -> if (sensorOrientation == 0 || sensorOrientation == 180) {
                         swappedDimensions = true
                     }
@@ -758,7 +777,7 @@ class NormalFragment : CameraBaseFragment() {
                         createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE)?.apply {
                     addTarget(mImageReader?.surface)
                     /*Sensor orientation is 90 for most devices, or 270 for some devices*/
-                    var rot = (ORIENTATIONS.get(rotation) + mSensorOrientation + 270) % 360
+                    val rot = (ORIENTATIONS.get(rotation) + mSensorOrientation + 270) % 360
                     set(CaptureRequest.JPEG_ORIENTATION,
                             rot)
                     set(CaptureRequest.CONTROL_AF_MODE,
@@ -771,11 +790,14 @@ class NormalFragment : CameraBaseFragment() {
                     override fun onCaptureCompleted(session: CameraCaptureSession,
                                                     request: CaptureRequest,
                                                     result: TotalCaptureResult) {
-                        unlockFocus()
                         /*Get file path to start preview activity*/
                         mFile.let {
-                            activity?.getImageFilePath(CameraControl.instance.getFilePathFromUri(activity!!, Uri.fromFile(it)))
+                            /*Compress File*/
+                            val displaySize: Pair<Int, Int> = CameraControl.instance.getScreenSize(activity!!)
+                            val compressedFile = File(CameraControl.instance.compressFile(mFile.absolutePath, displaySize.first, displaySize.second))
+                            activity?.getImageFilePath(compressedFile.absolutePath)
                         }
+                        unlockFocus()
                     }
                 }
 

@@ -13,11 +13,14 @@ interface PreviewContract {
 
     interface View:BaseView<Controller> {
         fun getPreviewLayout(): ImageView
-        fun getScreenSize():Point
+        fun getScreenSize():Pair<Int, Int>
+        fun feedback(message: String)
     }
 
     interface Controller: BaseController {
         fun loadImagePreview(filePath: String?)
+        fun saveImageToGallery()
+        fun requestStoragePermissions()
     }
 
 }

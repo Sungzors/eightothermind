@@ -36,6 +36,7 @@
     <string name="camera_center_tab">Normal</string>
     <string name="camera_right_tab">Hands Free</string>
     <string name="request_camera_permission">Camera permission needed</string>
+    <string name="request_write_external_permission">Storage permission needed</string>
     <string name="camera_error">This device doesn\'t support Camera</string>
 
     <string name="share_media">Share Media</string>
