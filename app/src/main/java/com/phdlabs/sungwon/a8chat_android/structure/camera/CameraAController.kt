@@ -2,9 +2,9 @@ package com.phdlabs.sungwon.a8chat_android.structure.camera
 
 import android.content.Intent
 import android.support.design.widget.TabLayout
-import android.support.v4.app.Fragment
 import android.support.v4.view.ViewPager
 import android.view.View
+import com.phdlabs.sungwon.a8chat_android.structure.camera.adapters.CameraPagerAdapter
 import com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.normal.NormalFragment
 import com.phdlabs.sungwon.a8chat_android.structure.camera.preview.PreviewActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
@@ -62,10 +62,18 @@ class CameraAController(val mView: CameraContract.View) : CameraContract.Control
         }
     }
 
+    /*Take picture*/
     override fun takePhoto(viewPager: ViewPager) {
         if (viewPager.currentItem == Constants.CameraPager.NORMAL) {
             val normalFrag: NormalFragment = viewPager.adapter?.instantiateItem(viewPager, Constants.CameraPager.NORMAL) as NormalFragment
             normalFrag.takePicture()
+        }
+    }
+
+    override fun cameraFlip(viewPager: ViewPager) {
+        /*NormalCamera Fragment*/
+        if (viewPager.currentItem == Constants.CameraPager.NORMAL) {
+            viewPager.adapter?.notifyDataSetChanged()
         }
     }
 

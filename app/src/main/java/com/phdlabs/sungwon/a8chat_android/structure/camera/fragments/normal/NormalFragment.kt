@@ -8,12 +8,9 @@ import android.hardware.camera2.*
 import android.hardware.camera2.params.StreamConfigurationMap
 import android.media.Image
 import android.media.ImageReader
-import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.os.Handler
 import android.os.HandlerThread
-import android.support.v13.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.util.Size
 import android.util.SparseIntArray
@@ -25,7 +22,6 @@ import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.Semaphore
 import java.util.concurrent.TimeUnit
@@ -36,7 +32,7 @@ import kotlin.collections.ArrayList
  * Created by paix on 12/28/17.
  * Camera Preview in Camera-Normal-Fragment with Camera API 2
  */
-class NormalFragment : CameraBaseFragment() {
+class NormalFragment() : CameraBaseFragment() {
 
     /**
      * Camera Properties
@@ -44,6 +40,15 @@ class NormalFragment : CameraBaseFragment() {
     /**ID of the current [CameraDevice]
      */
     private lateinit var mCameraId: String
+
+    /**
+     * Camera Lens Facing
+     * ID of the current lens
+     * [CameraCharacteristics.LENS_FACING_FRONT]
+     * [CameraCharacteristics.LENS_FACING_BACK] -> Default
+     * Two orientations supported Front || Back
+     * */
+    private var mFacing: Int = CameraCharacteristics.LENS_FACING_BACK
 
     /**[CameraCaptureSession] for camera preview
      */
@@ -163,14 +168,33 @@ class NormalFragment : CameraBaseFragment() {
 
     }
 
-
     /**
      * Companion
      * */
     companion object {
 
-        /*instance*/
+        /*instances*/
+        /**
+         * Default constructor
+         * Should only be used inside Normal Fragment companion object
+         * [create]
+         * @return [NormalFragment]
+         * */
         fun create(): NormalFragment = NormalFragment()
+
+//        /**
+//         * Camera lens choosing constructor
+//         * Will instantiate the [SurfaceTexture] with the selected lens
+//         * @param cameraOrientation based on [CameraCharacteristics]
+//         * @return [NormalFragment] with [Bundle]
+//         * */
+//        fun create(cameraOrientation: Int): NormalFragment {
+//            val args = Bundle()
+//            args.putSerializable(Constants.CameraIntents.LENS_FACING, cameraOrientation)
+//            val normalFragment = create()
+//            normalFragment.arguments = args
+//            return normalFragment
+//        }
 
         /*Screen Rotation to JPEG conversion*/
         var ORIENTATIONS: SparseIntArray = SparseIntArray()
@@ -430,9 +454,8 @@ class NormalFragment : CameraBaseFragment() {
             for (cameraId in manager.cameraIdList) {
                 val characteristics = manager.getCameraCharacteristics(cameraId)
 
-                // We don't use a front facing camera in this sample.
-                val facing = characteristics.get(CameraCharacteristics.LENS_FACING)
-                if (facing == CameraCharacteristics.LENS_FACING_FRONT) {
+                //Selected camera lens (front || back)
+                if (mFacing != cameraId.toInt()) {
                     continue
                 }
 
@@ -794,7 +817,7 @@ class NormalFragment : CameraBaseFragment() {
                         mFile.let {
                             /*Compress File*/
                             val displaySize: Pair<Int, Int> = CameraControl.instance.getScreenSize(activity!!)
-                            val compressedFile = File(CameraControl.instance.compressFile(mFile.absolutePath, displaySize.first, displaySize.second))
+                            val compressedFile = File(CameraControl.instance.compressFile(mFile.absolutePath, displaySize.first, displaySize.second, mFacing))
                             activity?.getImageFilePath(compressedFile.absolutePath)
                         }
                         unlockFocus()
@@ -828,6 +851,18 @@ class NormalFragment : CameraBaseFragment() {
             mCaptureSession?.setRepeatingRequest(mPreviewRequest, mCaptureCallback, mBackgroundHandler)
         } catch (e: CameraAccessException) {
             e.printStackTrace()
+        }
+    }
+
+    /**
+     * [flipCamera] Switches camera
+     * @see mFacing lens
+     * */
+    fun flipCamera() {
+        mFacing = if (mFacing == CameraCharacteristics.LENS_FACING_BACK) {
+            CameraCharacteristics.LENS_FACING_FRONT
+        } else {
+            CameraCharacteristics.LENS_FACING_BACK
         }
     }
 

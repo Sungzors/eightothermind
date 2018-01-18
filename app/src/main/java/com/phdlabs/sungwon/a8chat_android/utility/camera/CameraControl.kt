@@ -8,6 +8,8 @@ import android.content.pm.PackageManager
 import android.content.res.AssetFileDescriptor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
+import android.hardware.camera2.CameraCharacteristics
 import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
@@ -562,13 +564,14 @@ class CameraControl private constructor() {
      * to the user
      * @param filepath of the temporary file that contains the photo
      * @param filePath of the compressed file
+     * @see [ImageScaling]
      * */
-    fun compressFile(filePath: String, desiredWidth: Int, desiredHeight: Int): String {
+    fun compressFile(filePath: String, desiredWidth: Int, desiredHeight: Int, facingLens: Int): String {
         var scaledBitmap: Bitmap? = null
         var imagePath: String? = null
         try {
             //Decode image
-            val unscaledBitmap: Bitmap = ImageScaling.instance.decodeFileToBitmap(filePath, desiredWidth, desiredHeight, ImageScaling.ScalingLogic.FIT)
+            val unscaledBitmap: Bitmap = ImageScaling.instance.decodeFileToBitmap(filePath, desiredWidth, desiredHeight, ImageScaling.ScalingLogic.FIT, facingLens)
             //Scale image
             if (!(unscaledBitmap.width <= 800 && unscaledBitmap.height <= 800)) {
                 scaledBitmap = ImageScaling.instance.createScaledBitmap(unscaledBitmap, desiredWidth, desiredHeight, ImageScaling.ScalingLogic.FIT)
@@ -624,32 +627,4 @@ class CameraControl private constructor() {
         return Pair(displayMetrics.widthPixels, displayMetrics.heightPixels)
     }
 
-    /**
-     * [imageOrientation] retrieves the image orientation in degrees according to the file in the
-     * @param filePath
-     * */
-    fun imageOrientation(filePath: String?): Int {
-        var rotate: Int = 0
-        try {
-            val file = File(filePath)
-            val exifInterface = ExifInterface(file.absolutePath)
-            val orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
-            when (orientation) {
-
-                ExifInterface.ORIENTATION_ROTATE_90 -> {
-                    rotate = 90
-                }
-                ExifInterface.ORIENTATION_ROTATE_180 -> {
-                    rotate = 180
-                }
-                ExifInterface.ORIENTATION_ROTATE_270 -> {
-                    rotate = 270
-                }
-
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        return rotate
-    }
 }

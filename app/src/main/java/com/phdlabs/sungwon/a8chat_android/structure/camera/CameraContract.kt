@@ -11,19 +11,24 @@ import com.phdlabs.sungwon.a8chat_android.structure.core.BaseView
  */
 interface CameraContract {
 
-    interface View:BaseView<Controller>{
+    interface View : BaseView<Controller> {
         /*Control View*/
         fun getCameraControl(): CameraControlView
     }
 
-    interface Controller: BaseController {
+    interface Controller : BaseController {
 
         /*Tab selection*/
         fun onTabReselected(tab: TabLayout.Tab?)
+
         fun onTabUnselected(tab: TabLayout.Tab?)
         fun onTabSelected(tab: TabLayout.Tab?, viewPager: ViewPager)
         /*Camera Actions*/
         fun takePhoto(viewPager: ViewPager)
+
+        /*Camera Flip*/
+        fun cameraFlip(viewPager: ViewPager)
+
         /*Start Preview Activity*/
         fun startPreviewActivity(imageFilePath: String?)
 

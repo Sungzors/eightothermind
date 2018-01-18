@@ -57,6 +57,7 @@ class PreviewActivityController(val mView: PreviewContract.View) : PreviewContra
 
     /*Load image preview*/
     override fun loadImagePreview(filePath: String?) {
+
         filePath?.let {
             imageFilePath = it
             if (Devices.instance.isWarningDevice(Build.MODEL)) {

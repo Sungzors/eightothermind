@@ -1,9 +1,11 @@
 package com.phdlabs.sungwon.a8chat_android.structure.camera.adapters
 
 import android.content.Context
+import android.hardware.camera2.CameraCharacteristics
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
+import android.support.v4.view.PagerAdapter
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.handsFree.HandsFreeFragment
 import com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.normal.NormalFragment
@@ -15,7 +17,10 @@ import com.phdlabs.sungwon.a8chat_android.utility.Constants
  * Created by paix on 12/28/17.
  * Pager Adapter controlling CameraRoll (left) - Normal (center) - HandsFree (right)
  */
-class CameraPagerAdapter(fm: FragmentManager, val context: Context) : FragmentPagerAdapter(fm) {
+class CameraPagerAdapter(val fm: FragmentManager, val context: Context) : FragmentPagerAdapter(fm) {
+
+    /*Properties*/
+    var normalFragment: NormalFragment = NormalFragment.create()
 
     /*Return desired camera fragment*/
     override fun getItem(position: Int): Fragment =
@@ -24,8 +29,7 @@ class CameraPagerAdapter(fm: FragmentManager, val context: Context) : FragmentPa
                     CameraRollFragment.create()
 
                 Constants.CameraPager.NORMAL ->
-                    NormalFragment.create()
-
+                    normalFragment
 
                 Constants.CameraPager.HANDS_FREE ->
                     HandsFreeFragment.create()
@@ -35,7 +39,24 @@ class CameraPagerAdapter(fm: FragmentManager, val context: Context) : FragmentPa
                 }
             }
 
-    /*Camera fragment count*/
+    /*Only reaload fragment if it's a NormalFragment instance*/
+    override fun getItemPosition(`object`: Any): Int {
+        when (`object`) {
+            is NormalFragment -> {
+                normalFragment.flipCamera()
+                return PagerAdapter.POSITION_NONE
+            }
+            else -> {
+                return PagerAdapter.POSITION_UNCHANGED
+            }
+        }
+    }
+
+    /**Camera fragment count
+     * [CameraRollFragment]
+     * [NormalFragment]
+     * [HandsFreeFragment]
+     * */
     override fun getCount(): Int = 3
 
     /*Page title*/
@@ -48,5 +69,4 @@ class CameraPagerAdapter(fm: FragmentManager, val context: Context) : FragmentPa
                     ""
                 }
             }
-
 }

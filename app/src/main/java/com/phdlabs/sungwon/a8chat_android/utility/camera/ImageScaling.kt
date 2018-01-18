@@ -1,9 +1,11 @@
 package com.phdlabs.sungwon.a8chat_android.utility.camera
 
 import android.graphics.*
+import android.hardware.camera2.CameraCharacteristics
 
 /**
  * Created by paix on 1/16/18.
+ * Simple class to scale & compress images taken by the user & provide an overall best performance
  */
 class ImageScaling {
 
@@ -48,14 +50,29 @@ class ImageScaling {
      * @param scale -> scaling logic
      * @return [Bitmap] resized & ready for scaling
      * */
-    fun decodeFileToBitmap(filePath: String, dWidth: Int, dHeight: Int, scaling: ScalingLogic): Bitmap {
+    fun decodeFileToBitmap(filePath: String, dWidth: Int, dHeight: Int, scaling: ScalingLogic, facingLens: Int): Bitmap {
         /*Bitmap Options*/
-        var options: BitmapFactory.Options = BitmapFactory.Options()
+        val options: BitmapFactory.Options = BitmapFactory.Options()
         options.inJustDecodeBounds = true
         BitmapFactory.decodeFile(filePath)
         options.inJustDecodeBounds = false
         options.inSampleSize = calculateSampleSize(options.outWidth, options.outHeight, dWidth, dHeight, scaling)
-        return BitmapFactory.decodeFile(filePath, options)
+
+        //Rotate image before compression (if using the front camera lens)
+        val matrixPreRotateRight = Matrix()
+        if (facingLens == CameraCharacteristics.LENS_FACING_BACK) {
+            //Mirror matrix
+            val mirrorY = floatArrayOf(-1f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 1f)
+            val matrixRotateRight = Matrix()
+            val matrixMirrorY = Matrix()
+            matrixMirrorY.setValues(mirrorY)
+            matrixPreRotateRight.postConcat(matrixMirrorY)
+            matrixRotateRight.preRotate(270f)
+        }
+        var bm: Bitmap = BitmapFactory.decodeFile(filePath, options)
+        bm = Bitmap.createBitmap(bm, 0, 0, bm.width, bm.height, matrixPreRotateRight, true)
+        return bm
+        //return BitmapFactory.decodeFile(filePath, options)
     }
 
     /**

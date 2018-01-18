@@ -3,6 +3,7 @@ package com.phdlabs.sungwon.a8chat_android.structure.camera
 import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentPagerAdapter
 import android.view.View
 import android.widget.Toast
 import com.phdlabs.sungwon.a8chat_android.R
@@ -126,6 +127,10 @@ class CameraActivity : CoreActivity(), CameraContract.View, TabLayout.OnTabSelec
             }
             iv_camera_flip -> {
                 Toast.makeText(this, "Camera Flip", Toast.LENGTH_SHORT).show()
+                //TODO: Set fragment with camera flip instructions
+                //Should have two sates & change to the other camera when clicked
+                controller.cameraFlip(cam_view_pager)
+
             }
             iv_camera_close -> {
                 /*Finish camera activity*/
@@ -139,5 +144,7 @@ class CameraActivity : CoreActivity(), CameraContract.View, TabLayout.OnTabSelec
     fun getImageFilePath(filePath: String?) {
         controller.startPreviewActivity(filePath)
     }
+
+
 
 }
