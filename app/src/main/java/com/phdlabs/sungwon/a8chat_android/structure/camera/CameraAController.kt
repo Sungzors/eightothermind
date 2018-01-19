@@ -70,10 +70,20 @@ class CameraAController(val mView: CameraContract.View) : CameraContract.Control
         }
     }
 
+    /*Camera Flip -> Front Lens || Back Lens*/
     override fun cameraFlip(viewPager: ViewPager) {
         /*NormalCamera Fragment*/
         if (viewPager.currentItem == Constants.CameraPager.NORMAL) {
             viewPager.adapter?.notifyDataSetChanged()
+        }
+    }
+
+    /*Turn on or off manual flash*/
+    override fun manualFlash(viewPager: ViewPager) {
+        /*NormalCamera Fragment*/
+        if (viewPager.currentItem == Constants.CameraPager.NORMAL) {
+            val normalFrag: NormalFragment = viewPager.adapter?.instantiateItem(viewPager, Constants.CameraPager.NORMAL) as NormalFragment
+            normalFrag.manualFlashSelection()
         }
     }
 

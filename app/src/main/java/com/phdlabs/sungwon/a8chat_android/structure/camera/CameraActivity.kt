@@ -124,11 +124,11 @@ class CameraActivity : CoreActivity(), CameraContract.View, TabLayout.OnTabSelec
             }
             iv_camera_flash -> {
                 Toast.makeText(this, "Flash", Toast.LENGTH_SHORT).show()
+                //TODO: Flash User Interface change
+                controller.manualFlash(cam_view_pager)
             }
             iv_camera_flip -> {
-                Toast.makeText(this, "Camera Flip", Toast.LENGTH_SHORT).show()
-                //TODO: Set fragment with camera flip instructions
-                //Should have two sates & change to the other camera when clicked
+                //Toast.makeText(this, "Camera Flip", Toast.LENGTH_SHORT).show()
                 controller.cameraFlip(cam_view_pager)
 
             }
@@ -144,7 +144,6 @@ class CameraActivity : CoreActivity(), CameraContract.View, TabLayout.OnTabSelec
     fun getImageFilePath(filePath: String?) {
         controller.startPreviewActivity(filePath)
     }
-
 
 
 }

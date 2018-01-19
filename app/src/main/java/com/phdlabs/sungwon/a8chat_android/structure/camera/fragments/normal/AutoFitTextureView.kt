@@ -45,7 +45,7 @@ class AutoFitTextureView : TextureView {
 
     /*LifeCycle*/
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        //super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         val width = MeasureSpec.getSize(widthMeasureSpec)
         val height = MeasureSpec.getSize(heightMeasureSpec)
         if (0 == mRatioWidth || 0 == mRatioHeight) {

@@ -522,6 +522,28 @@ class CameraControl private constructor() {
         return outputBitmap
     }
 
+    /**
+     * [rotatedBitmap] used for display purposes
+     * @param facingLens of current camera
+     * @param bitmapOptions bitmap options
+     * @param filePath of current image used for displaying
+     * */
+    fun rotatedBitmapCameraFrontLens(facingLens: Int, bitmapOptions: BitmapFactory.Options, filePath: String): Bitmap {
+        //Rotate Image
+        val matrixPreRotateRight = Matrix()
+        if (facingLens == CameraCharacteristics.LENS_FACING_BACK) {
+            //Mirror matrix
+            val mirrorY = floatArrayOf(-1f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 1f)
+            val matrixRotateRight = Matrix()
+            val matrixMirrorY = Matrix()
+            matrixMirrorY.setValues(mirrorY)
+            matrixPreRotateRight.postConcat(matrixMirrorY)
+            matrixRotateRight.preRotate(270f)
+        }
+        val bm: Bitmap = BitmapFactory.decodeFile(filePath, bitmapOptions)
+        return Bitmap.createBitmap(bm, 0, 0, bm.width, bm.height, matrixPreRotateRight, true)
+    }
+
 
     /**
      * Minimum image quality to be processed

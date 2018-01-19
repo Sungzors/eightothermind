@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.*
+import android.hardware.Camera
 import android.hardware.camera2.*
 import android.hardware.camera2.params.StreamConfigurationMap
 import android.media.Image
@@ -99,6 +100,9 @@ class NormalFragment() : CameraBaseFragment() {
 
     /*Whether the current camera supports flash or not */
     private var mFlashSupported: Boolean = false
+
+    /*Acitve or Inavtive flash*/
+    private var isFlashOn: Boolean = false
 
     /*Orientation for the caemra sensor*/
     private var mSensorOrientation: Int = 0
@@ -453,6 +457,10 @@ class NormalFragment() : CameraBaseFragment() {
         try {
             for (cameraId in manager.cameraIdList) {
                 val characteristics = manager.getCameraCharacteristics(cameraId)
+                /*Flash Support*/
+                if (characteristics[CameraCharacteristics.FLASH_INFO_AVAILABLE]) {
+                    mFlashSupported = true
+                }
 
                 //Selected camera lens (front || back)
                 if (mFacing != cameraId.toInt()) {
@@ -728,11 +736,21 @@ class NormalFragment() : CameraBaseFragment() {
      * */
     private fun setAutoFlash(requestBuilder: CaptureRequest.Builder?) {
         mFlashSupported.let {
-            if (it) {
+            if (isFlashOn) {
                 requestBuilder?.set(CaptureRequest.CONTROL_AE_MODE,
-                        CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH)
+                        CaptureRequest.CONTROL_AE_MODE_ON_ALWAYS_FLASH)
+            } else {
+                requestBuilder?.set(CaptureRequest.CONTROL_AE_MODE,
+                        CaptureRequest.FLASH_MODE_OFF)
             }
         }
+    }
+
+    /**
+     * [manualFlashSelection]Set manual flash mode
+     * */
+    fun manualFlashSelection() {
+        isFlashOn = !isFlashOn
     }
 
     /**
@@ -865,6 +883,7 @@ class NormalFragment() : CameraBaseFragment() {
             CameraCharacteristics.LENS_FACING_BACK
         }
     }
+
 
     /**Save a JPEG [Image] into the specified [File]*/
     private class ImageSaver(

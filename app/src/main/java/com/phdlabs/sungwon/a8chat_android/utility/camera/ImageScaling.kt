@@ -57,22 +57,7 @@ class ImageScaling {
         BitmapFactory.decodeFile(filePath)
         options.inJustDecodeBounds = false
         options.inSampleSize = calculateSampleSize(options.outWidth, options.outHeight, dWidth, dHeight, scaling)
-
-        //Rotate image before compression (if using the front camera lens)
-        val matrixPreRotateRight = Matrix()
-        if (facingLens == CameraCharacteristics.LENS_FACING_BACK) {
-            //Mirror matrix
-            val mirrorY = floatArrayOf(-1f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 1f)
-            val matrixRotateRight = Matrix()
-            val matrixMirrorY = Matrix()
-            matrixMirrorY.setValues(mirrorY)
-            matrixPreRotateRight.postConcat(matrixMirrorY)
-            matrixRotateRight.preRotate(270f)
-        }
-        var bm: Bitmap = BitmapFactory.decodeFile(filePath, options)
-        bm = Bitmap.createBitmap(bm, 0, 0, bm.width, bm.height, matrixPreRotateRight, true)
-        return bm
-        //return BitmapFactory.decodeFile(filePath, options)
+        return CameraControl.instance.rotatedBitmapCameraFrontLens(facingLens, options, filePath)
     }
 
     /**

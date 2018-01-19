@@ -29,6 +29,9 @@ interface CameraContract {
         /*Camera Flip*/
         fun cameraFlip(viewPager: ViewPager)
 
+        /*Manual Flash*/
+        fun manualFlash(viewPager: ViewPager)
+
         /*Start Preview Activity*/
         fun startPreviewActivity(imageFilePath: String?)
 
