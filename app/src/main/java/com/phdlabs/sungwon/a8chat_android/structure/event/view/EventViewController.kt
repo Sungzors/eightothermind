@@ -5,6 +5,7 @@ import android.util.Log
 import android.widget.Toast
 import com.github.nkzawa.emitter.Emitter
 import com.github.nkzawa.socketio.client.Socket
+import com.google.gson.Gson
 import com.phdlabs.sungwon.a8chat_android.api.data.SendMessageGeneralData
 import com.phdlabs.sungwon.a8chat_android.api.event.MessageLocationSentEvent
 import com.phdlabs.sungwon.a8chat_android.api.event.RoomHistoryEvent
@@ -31,7 +32,7 @@ import java.util.*
 /**
  * Created by SungWon on 1/8/2018.
  */
-class EventViewController(val mView: EventContract.View.View): EventContract.View.Controller{
+class EventViewController(val mView: EventContract.ViewDetail.View): EventContract.ViewDetail.Controller{
 
     private val TAG = "EventViewController"
 
@@ -113,7 +114,9 @@ class EventViewController(val mView: EventContract.View.View): EventContract.Vie
 
     private val onNewMessage = Emitter.Listener { args ->
         mView.getActivity.runOnUiThread({
+            val gson = Gson()
             val data: JSONObject = args[0] as JSONObject
+            val gsonData = gson.fromJson(args[0] as String, Channel::class.java)
             var id: String? = null
             var message: String? = null
             var roomId: String? = null
@@ -300,7 +303,7 @@ class EventViewController(val mView: EventContract.View.View): EventContract.Vie
     override fun sendMessage() {
     }
 
-    override fun sendChannel() {
+    override fun sendChannel(channelId: Int) {
     }
 
     override fun sendContact() {

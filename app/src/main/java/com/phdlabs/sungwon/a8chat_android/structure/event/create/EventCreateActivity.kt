@@ -2,9 +2,12 @@ package com.phdlabs.sungwon.a8chat_android.structure.event.create
 
 import android.content.Intent
 import com.phdlabs.sungwon.a8chat_android.R
+import com.phdlabs.sungwon.a8chat_android.api.response.EventPostResponse
 import com.phdlabs.sungwon.a8chat_android.structure.application.Application
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.structure.event.EventContract
+import com.phdlabs.sungwon.a8chat_android.structure.event.view.EventViewActivity
+import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform
 import com.squareup.picasso.Picasso
@@ -58,7 +61,7 @@ class EventCreateActivity: CoreActivity(), EventContract.Create.View {
 
     private fun setUpClickers(){
         toolbar_right_text.setOnClickListener {
-            controller.createEvent(aec_event_name.text.toString(), isLocked)
+            controller.createEvent(aec_event_name.text.toString(), isLocked, aec_location_et.text.toString())
         }
         aec_event_picture.setOnClickListener {
             CameraControl.instance.pickImage(this,
@@ -70,6 +73,16 @@ class EventCreateActivity: CoreActivity(), EventContract.Create.View {
 
     override fun showPicture(url: String) {
         Picasso.with(this).load(url).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(aec_event_picture)
+    }
+
+    override fun onCreateEvent(data: EventPostResponse) {
+        val a = data
+        val intent = Intent(this, EventViewActivity::class.java)
+        intent.putExtra(Constants.IntentKeys.EVENT_ID, data.event!!.newChannelGroupOrEvent!!.id)
+        intent.putExtra(Constants.IntentKeys.EVENT_NAME, data.event!!.newChannelGroupOrEvent!!.name)
+        intent.putExtra(Constants.IntentKeys.EVENT_LOCATION, data.event!!.newChannelGroupOrEvent!!.location_name)
+        intent.putExtra(Constants.IntentKeys.ROOM_ID, data.event!!.room!!.id)
+        startActivity(intent)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

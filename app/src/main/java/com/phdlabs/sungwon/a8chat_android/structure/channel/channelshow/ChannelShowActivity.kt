@@ -37,7 +37,7 @@ class ChannelShowActivity: CoreActivity(), ChannelContract.ChannelShow.View{
         super.onStart()
         ChannelShowController(this)
         controller.start()
-        showBackArrow(R.drawable.ic_back)
+        showBackArrow(R.drawable.ic_back, true)
     }
 
     override fun onResume() {

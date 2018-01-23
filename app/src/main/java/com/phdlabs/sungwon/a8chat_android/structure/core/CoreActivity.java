@@ -129,6 +129,20 @@ public abstract class CoreActivity extends AppCompatActivity{
         });
     }
 
+    public void showBackArrow(int icon, boolean finish){
+        if(finish){
+            mToolbar.setNavigationIcon(icon);
+            mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    finish();
+                }
+            });
+        } else {
+            showBackArrow(icon);
+        }
+    }
+
     /*Progress Dialog*/
     public void showProgress() {
         View progress = findById(R.id.progress_view);

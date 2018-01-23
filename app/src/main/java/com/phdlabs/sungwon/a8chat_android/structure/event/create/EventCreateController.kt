@@ -1,9 +1,14 @@
 package com.phdlabs.sungwon.a8chat_android.structure.event.create
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.support.v4.app.ActivityCompat
 import android.widget.Toast
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.phdlabs.sungwon.a8chat_android.api.data.EventPostData
 import com.phdlabs.sungwon.a8chat_android.api.event.Event
 import com.phdlabs.sungwon.a8chat_android.api.response.EventPostResponse
@@ -32,14 +37,32 @@ class EventCreateController(val mView: EventContract.Create.View) : EventContrac
 
     private var mCaller: Caller
     private var mEventBus: EventBus
-    private var mMediaId: Int = 1
+    private var mMediaId: Int = 2
+    private var mFusedLocationClient: FusedLocationProviderClient
+
+    private var mLat = ""
+    private var mLng = ""
 
     init {
         mView.controller = this
         mCaller = Rest.getInstance().caller
         mEventBus = EventBusManager.instance().mDataEventBus
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(mView.getContext()!!)
     }
     override fun start() {
+        mView.showProgress()
+        if (ActivityCompat.checkSelfPermission(mView.getContext()!!, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mView.getContext()!!, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            mView.hideProgress()
+            Toast.makeText(mView.getContext()!!, "Please enable location permission to send your location (optional)", Toast.LENGTH_SHORT).show()
+            return
+        }
+        mFusedLocationClient.lastLocation.addOnSuccessListener({ location ->
+            if(location != null){
+                mLat = location.latitude.toString()
+                mLng = location.longitude.toString()
+            }
+        })
+        mView.hideProgress()
     }
 
     override fun resume() {
@@ -51,19 +74,20 @@ class EventCreateController(val mView: EventContract.Create.View) : EventContrac
     override fun stop() {
     }
 
-    override fun createEvent(name: String, lock: Boolean) {
+    override fun createEvent(name: String, lock: Boolean, location: String) {
         val call = mCaller.postEvents(Preferences(mView.getContext()!!).getPreferenceString(Constants.PrefKeys.TOKEN_KEY),
                 EventPostData(
                         mMediaId.toString(),
-                        "",
-                        "",
+                        location,
                         Preferences(mView.getContext()!!).getPreferenceInt(Constants.PrefKeys.USER_ID).toString(),
                         name,
                         lock
                 ))
         call.enqueue(object: Callback8<EventPostResponse, Event>(mEventBus){
             override fun onSuccess(data: EventPostResponse?) {
-                Toast.makeText(mView.getContext(), "Event Posted (functionality coming soon)", Toast.LENGTH_SHORT).show()
+                data?.let {
+                    mView.onCreateEvent(it)
+                }
             }
         })
     }
