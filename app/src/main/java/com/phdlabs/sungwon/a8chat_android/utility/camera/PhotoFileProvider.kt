@@ -22,14 +22,6 @@ class PhotoFileProvider: FileProvider(){
     companion object {
         //Singleton INSTANCE
         val instance: PhotoFileProvider by lazy { Holder.INSTANCE }
-        //Buckets where we are fetching images from
-        var CAMERA_IMAGE_BUCKET_NAME = Environment.getExternalStorageDirectory().toString() + "/DCIM/Camera"
-        var CAMERA_IMAGE_BUCKET_ID = getBucketId(CAMERA_IMAGE_BUCKET_NAME)
-        /**
-         * Matches code in [MediaProvider.computeBucketValues]
-         * returns the specified BUCKET ID
-         * */
-        fun getBucketId(path:String):String = path.toLowerCase().hashCode().toString()
     }
 
     /**
@@ -41,19 +33,19 @@ class PhotoFileProvider: FileProvider(){
     fun getAlbumImages(context: Context):List<GalleryPhoto> {
         val projection = arrayOf(
                 MediaStore.Images.Media.DATA,
-                MediaStore.Images.Media._ID
-//                MediaStore.Images.Media.DATE_TAKEN
+                MediaStore.Images.Media._ID,
+                MediaStore.Images.Media.DATE_TAKEN
         )
         val cursor = context.contentResolver.query(
                 MediaStore.Images.Media.INTERNAL_CONTENT_URI, // Directory
                 projection, // Which columns to return
                 null, // Return all rows
                 null,
-                MediaStore.Images.Media.DATE_TAKEN // Ordered by Date Taken
+                null// Ordered by Date Taken
         )
         //Extract propper columns
         val imagesColumnIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA)
-//        val dateColumnIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATE_TAKEN)
+        val dateColumnIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATE_TAKEN)
         val result: ArrayList<GalleryPhoto> = ArrayList<GalleryPhoto>(cursor.count)
 
         if(cursor.moveToFirst()){
@@ -61,9 +53,9 @@ class PhotoFileProvider: FileProvider(){
                 //Full Image
                 val thumbnailId = cursor.getInt(imagesColumnIndex)
                 val fullImageUri = cursor.getString(thumbnailId)
-//                //Date
+                //Date
 //                val dateId = cursor.getInt(dateColumnIndex)
-//                val photoDateTaken = cursor.getString(dateId)
+//                val photoDateTaken = cursor.getLong(dateId)
                 //Create the list item
                 //var galleryPhoto = GalleryPhoto(fullImageUri, photoDateTaken)
                 var galleryPhoto = GalleryPhoto(fullImageUri, null)

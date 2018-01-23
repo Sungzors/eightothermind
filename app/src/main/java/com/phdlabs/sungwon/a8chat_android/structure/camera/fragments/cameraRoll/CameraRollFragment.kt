@@ -89,13 +89,13 @@ class CameraRollFragment: CameraBaseFragment(), LoaderManager.LoaderCallbacks<Li
             }
             var photoCount = mGalleryPhotos.count()
             println("Photo COunt: " + photoCount)
-            hideProgress()
+            //hideProgress()
         }
     }
 
     override fun onLoaderReset(loader: Loader<List<GalleryPhoto>>?) {
         mGalleryPhotos.clear()
-        hideProgress()
+        //hideProgress()
     }
 
 

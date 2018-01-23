@@ -94,7 +94,7 @@ class CameraActivity : CoreActivity(), CameraContract.View, TabLayout.OnTabSelec
         iv_camera_action.setOnClickListener(this)
         iv_camera_flash.setOnClickListener(this)
         iv_camera_flip.setOnClickListener(this)
-        iv_camera_close.setOnClickListener(this)
+        cc_close_back.setOnClickListener(this)
     }
 
     /*Tab Control*/
@@ -132,10 +132,10 @@ class CameraActivity : CoreActivity(), CameraContract.View, TabLayout.OnTabSelec
                 controller.cameraFlip(cam_view_pager)
 
             }
-            iv_camera_close -> {
+            cc_close_back -> {
                 /*Finish camera activity*/
                 //TODO: Go back to?
-                this.close()
+                this.finish()
             }
         }
     }

@@ -20,6 +20,7 @@ import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.CameraBaseFragment
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
+import kotlinx.android.synthetic.main.fragment_cameranormal.*
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -151,7 +152,7 @@ class NormalFragment() : CameraBaseFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        mTextureView = findById(R.id.texture) as AutoFitTextureView
+        mTextureView = texture as AutoFitTextureView
     }
 
     /*Results*/

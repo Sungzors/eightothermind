@@ -74,7 +74,7 @@ class PreviewActivity : CoreActivity(), PreviewContract.View, View.OnClickListen
         //Switch close & back controls
         iv_camera_close.visibility = View.GONE
         iv_camera_back.visibility = View.VISIBLE
-        iv_camera_back.setOnClickListener(this)
+        cc_close_back.setOnClickListener(this)
         iv_camera_save.setOnClickListener(this)
     }
 
@@ -98,7 +98,7 @@ class PreviewActivity : CoreActivity(), PreviewContract.View, View.OnClickListen
 
     override fun onClick(p0: View?) {
         when (p0) {
-            iv_camera_back -> {
+            cc_close_back -> {
                 onBackPressed()
             }
             iv_camera_save -> {
