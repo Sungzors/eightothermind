@@ -32,4 +32,9 @@
         <item name="cardCornerRadius">3dp</item>
     </style>
 
+    <!--Camera-->
+    <style name="Camera" parent="AppTheme">
+        <item name="android:windowTranslucentStatus">true</item>
+    </style>
+
 </resources>

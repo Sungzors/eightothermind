@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.phdlabs.sungwon.a8chat_android.R;
 import com.squareup.picasso.Picasso;
@@ -31,13 +32,13 @@ import java.util.List;
 /**
  * Created by SungWon on 9/11/2017.
  * Base class for all Activities
- *
+ * <p>
  * All kotlin activities must import kotlinx.android.synthetic.main.activity_{name}.* in order to use the ids as the object
- *
+ * <p>
  * Any Activity/Fragment implementing controller should override onStart etc and call Controller's start etc
  */
 
-public abstract class CoreActivity extends AppCompatActivity{
+public abstract class CoreActivity extends AppCompatActivity {
     /*Properties*/
     //Back button listeners
     private List<OnBackPressListener> mOnBackPressListeners = new ArrayList<>();
@@ -99,7 +100,7 @@ public abstract class CoreActivity extends AppCompatActivity{
         }
     }
 
-    public void showRightTextToolbar(String text){
+    public void showRightTextToolbar(String text) {
         TextView view = findById(R.id.toolbar_right_text);
         if (view != null) {
             view.setVisibility(TextView.VISIBLE);
@@ -107,7 +108,7 @@ public abstract class CoreActivity extends AppCompatActivity{
         }
     }
 
-    public void showRightImageToolbar(int resId){
+    public void showRightImageToolbar(int resId) {
         ImageView view = findById(R.id.toolbar_right_picture);
         view.setVisibility(ImageView.VISIBLE);
         Picasso.with(this).load(resId).into(view);
@@ -183,7 +184,7 @@ public abstract class CoreActivity extends AppCompatActivity{
         String name = fragment.getClass().getName();
         FragmentTransaction replaceTransaction = getSupportFragmentManager().beginTransaction()
                 .replace(containerId, fragment, name);
-        if(addToBackStack){
+        if (addToBackStack) {
             replaceTransaction.addToBackStack(name);
         }
         replaceTransaction.commit();
@@ -191,11 +192,11 @@ public abstract class CoreActivity extends AppCompatActivity{
 
     //ListFragment
     @SuppressLint("CommitTransaction")
-    public void replaceFragment(@IdRes int containerId, @NonNull ListFragment fragment, boolean addToBackStack){
+    public void replaceFragment(@IdRes int containerId, @NonNull ListFragment fragment, boolean addToBackStack) {
         String name = fragment.getClass().getName();
-        android.app.FragmentTransaction replaceTransaction = getFragmentManager().beginTransaction().replace(containerId,fragment,name);
-        getFragmentManager().beginTransaction().replace(containerId,fragment,name);
-        if(addToBackStack){
+        android.app.FragmentTransaction replaceTransaction = getFragmentManager().beginTransaction().replace(containerId, fragment, name);
+        getFragmentManager().beginTransaction().replace(containerId, fragment, name);
+        if (addToBackStack) {
             replaceTransaction.addToBackStack(name);
         }
         replaceTransaction.commit();
@@ -242,7 +243,8 @@ public abstract class CoreActivity extends AppCompatActivity{
     }
 
     /*Navigation - Back Button*/
-    @Override public void onBackPressed() {
+    @Override
+    public void onBackPressed() {
         if (interruptedByListener()) {
             //noinspection UnnecessaryReturnStatement
             return;
@@ -256,7 +258,7 @@ public abstract class CoreActivity extends AppCompatActivity{
     private boolean interruptedByListener() {
         boolean interrupt = false;
         for (OnBackPressListener listener : mOnBackPressListeners) {
-            if(listener.onBackPressed()){
+            if (listener.onBackPressed()) {
                 interrupt = true;
             }
         }
@@ -267,6 +269,11 @@ public abstract class CoreActivity extends AppCompatActivity{
     public void showError(String errorMessage) {
         new AlertDialog.Builder(this).setMessage(errorMessage)
                 .setPositiveButton(android.R.string.ok, null).show();
+    }
+
+    /*Info feedback*/
+    public void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     public void addOnBackPressListener(OnBackPressListener listener) {
@@ -291,6 +298,6 @@ public abstract class CoreActivity extends AppCompatActivity{
     /*View*/
     @SuppressWarnings("unchecked")
     public <V extends View> V findById(@IdRes int id) {
-        return (V)  findViewById(id);
+        return (V) findViewById(id);
     }
 }

@@ -4,6 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.db.UserManager
+import com.phdlabs.sungwon.a8chat_android.model.user.User
+import com.phdlabs.sungwon.a8chat_android.structure.camera.CameraActivity
 import com.phdlabs.sungwon.a8chat_android.structure.channel.channelshow.ChannelShowActivity
 import com.phdlabs.sungwon.a8chat_android.structure.channel.create.ChannelCreateActivity
 import com.phdlabs.sungwon.a8chat_android.structure.channel.postshow.ChannelPostShowActivity
@@ -88,6 +90,9 @@ class DebugActivity : CoreActivity() {
         }
         ad_sandbox_button.setOnClickListener({
             //TODO: build sandbox
+        })
+        ad_camera_button.setOnClickListener({
+            startActivity(Intent(this, CameraActivity::class.java))
         })
         ad_event_create.setOnClickListener {
             startActivity(Intent(this, EventCreateActivity::class.java))

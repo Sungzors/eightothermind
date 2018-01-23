@@ -71,10 +71,12 @@ class ProfileAController(val mView: ProfileContract.View) : ProfileContract.Cont
             Toast.makeText(mView.getContext(), "Please enter a first and last name", Toast.LENGTH_SHORT).show()
             return
         }
-        if (User().queryFirst()?.mediaId == null) {
-            mView.showError("Don't forget your profile picture")
-            return
-        }
+        //TODO: Update with realm caching
+//        if (User().queryFirst()?.mediaId == null) {
+//            mView.showError("Don't forget your profile picture")
+//            return
+//        }
+
         mView.showProgress()
         val currentUser = User().queryFirst()
         val token = Token().queryFirst()
@@ -159,9 +161,10 @@ class ProfileAController(val mView: ProfileContract.View) : ProfileContract.Cont
                                         /*Update Realm user with profile picture url*/
                                         //val updatedUser = currentUser
                                         //updatedUser.mediaId = response.media?.id?.toString()
+                                        //updatedUser.mediaId =
                                         //print(updatedUser.mediaId)
                                         //updatedUser.save()
-                                        //Toast.makeText(mView.getContext(), "Profile Picture Updated", Toast.LENGTH_SHORT).show()
+                                        //Toast.makeText(mRoot.getContext(), "Profile Picture Updated", Toast.LENGTH_SHORT).show()
 
 
                                     } else if (response.isError) {

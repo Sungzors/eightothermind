@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="85dp"
+    android:layout_gravity="bottom"
+    android:orientation="vertical"
+    tools:background="@android:color/transparent">
+
+    <!--Camera button-->
+    <ImageView
+        android:id="@+id/iv_camera_action"
+        android:layout_width="68dp"
+        android:layout_height="68dp"
+        android:layout_gravity="center|bottom"
+        android:layout_marginBottom="9dp"
+        android:background="@color/transparent"
+        android:src="@drawable/snap"
+        android:contentDescription="@string/camera_action" />
+
+    <!--Flash button-->
+    <ImageView
+        android:id="@+id/iv_camera_flash"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_gravity="start|bottom"
+        android:layout_marginBottom="30dp"
+        android:layout_marginStart="44dp"
+        android:background="@color/transparent"
+        android:contentDescription="@string/camera_flash"
+        android:src="@drawable/flash"/>
+
+    <!--Flip Camera button-->
+    <ImageView
+        android:id="@+id/iv_camera_flip"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_gravity="end|bottom"
+        android:layout_marginBottom="28dp"
+        android:layout_marginEnd="44dp"
+        android:background="@color/transparent"
+        android:src="@drawable/reverse"
+        android:contentDescription="@string/camera_flip" />
+
+</FrameLayout>

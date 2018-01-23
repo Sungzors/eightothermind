@@ -1,5 +1,7 @@
 package com.phdlabs.sungwon.a8chat_android.utility
 
+import android.Manifest
+
 /**
  * Created by SungWon on 9/24/2017.
  */
@@ -43,4 +45,30 @@ object Constants{
         const val SUCCESS = 0
         const val FAILURE = 1
     }
+
+    /*Camera*/
+    object CameraPager {
+        const val CAMERA_ROLL = 0
+        const val NORMAL = 1
+        const val HANDS_FREE = 2
+    }
+
+    object AppPermissions {
+        val CAMERA = Manifest.permission.CAMERA
+        val RECORD_AUDIO = Manifest.permission.RECORD_AUDIO
+        val WRITE_EXTERNAL = Manifest.permission.WRITE_EXTERNAL_STORAGE
+    }
+
+    object PermissionsReqCode {
+        val CAMERA_REQ_CODE = 0
+        val RECORD_AUDIO_REQ_CODE = 1
+        val WRITE_EXTERNAL_REQ_CODE = 2
+    }
+
+    object CameraIntents {
+        val IMAGE_FILE_PATH = "img_file_path"
+        val LENS_FACING = "lens_facing"
+    }
+
+
 }

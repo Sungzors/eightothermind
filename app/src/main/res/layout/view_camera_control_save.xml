@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="75dp"
+    android:layout_gravity="start|bottom"
+    android:orientation="horizontal"
+    tools:background="@android:color/transparent">
+
+    <!--Text-->
+    <ImageView
+        android:id="@+id/iv_camera_save"
+        android:layout_width="25dp"
+        android:layout_height="29dp"
+        android:layout_gravity="start|center"
+        android:layout_marginEnd="130dp"
+        android:layout_marginStart="35dp"
+        android:background="@color/transparent"
+        android:contentDescription="@string/camera_save"
+        android:src="@drawable/save_photo" />
+
+</FrameLayout>
