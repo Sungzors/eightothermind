@@ -8,20 +8,24 @@ import android.content.pm.PackageManager
 import android.content.res.AssetFileDescriptor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
+import android.hardware.camera2.CameraCharacteristics
+import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
+import android.os.Environment
 import android.os.Parcelable
 import android.provider.MediaStore
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.support.v4.content.FileProvider
+import android.util.DisplayMetrics
 import android.util.Log
 import com.phdlabs.sungwon.a8chat_android.BuildConfig
 import com.phdlabs.sungwon.a8chat_android.R
-import java.io.FileInputStream
-import java.io.FileNotFoundException
-import java.io.IOException
-import java.io.InputStream
+import kotlinx.android.synthetic.main.activity_camera_preview.*
+import java.io.*
+import java.text.SimpleDateFormat
 import java.util.*
 
 /**
@@ -46,7 +50,7 @@ class CameraControl private constructor() {
 
         private val DEFAULT_MIN_WIDTH_QUALITY = 400
         private val DEFAULT_MIN_HEIGHT_QUALITY = 400
-        private val TAG = "CameraControl"
+        private val TAG = "CameraControlView"
         private val TEMP_IMAGE_NAME = "tempImage"
 
         private var minWidthQuality = DEFAULT_MIN_WIDTH_QUALITY
@@ -56,7 +60,7 @@ class CameraControl private constructor() {
         private var mPickImageRequestCode = DEFAULT_REQUEST_CODE
         private var mGalleryOnly = false
 
-        //Singleton instance
+        //Singleton INSTANCE
         val instance: CameraControl by lazy { Holder.INSTANCE }
 
     }
@@ -65,18 +69,18 @@ class CameraControl private constructor() {
      *
      * INFO:
      * init will be called when this class is initialized for
-     * the first time (i.e. when calling CameraControl.instance)
+     * the first time (i.e. when calling CameraControlView.INSTANCE)
      * */
     init {
-        println("CameraControl ($this) is a Singleton")
+        println("CameraControlView ($this) is a Singleton")
     }
 
     /**Instance Holder for Singleton - Camera Control
-     * val instance is the initialized variable
+     * val INSTANCE is the initialized variable
      *
      * INFO:
-     * Holder object & lazy instance is used to ensure only one
-     * instance of CameraControl() is created
+     * Holder object & lazy INSTANCE is used to ensure only one
+     * INSTANCE of CameraControlView() is created
      * */
     private object Holder {
         val INSTANCE = CameraControl()
@@ -201,8 +205,10 @@ class CameraControl private constructor() {
     }
 
     private fun startChooser(fragmentContext: Fragment) {
-        val chooseImageIntent = getPickImageIntent(fragmentContext.context, mChooserTitle)
-        fragmentContext.startActivityForResult(chooseImageIntent, mPickImageRequestCode)
+        fragmentContext.context?.let {
+            val chooseImageIntent = getPickImageIntent(it, mChooserTitle)
+            fragmentContext.startActivityForResult(chooseImageIntent, mPickImageRequestCode)
+        }
     }
 
     private fun startChooser(activityContext: Activity) {
@@ -351,6 +357,21 @@ class CameraControl private constructor() {
     }
 
     /**
+     * Return [Bitmap] from image file path
+     * @param context
+     * @param filePath as [String]
+     * @return [Bitmap]
+     * */
+    fun getImageFromPath(context: Context?, filePath: String): Bitmap? {
+        var bm: Bitmap? = null
+        val imageFile = Uri.fromFile(File(filePath))
+        context?.let {
+            bm = decodeBitmap(it, imageFile)
+        }
+        return bm
+    }
+
+    /**
      * Called after launching the picker with the same values of Activity.getImageFromResult
      * in order to resolve the result and get the image path.
      *
@@ -388,7 +409,7 @@ class CameraControl private constructor() {
      * @param uri uri of the incoming file
      * @return path to the saved image.
      */
-    private fun getFilePathFromUri(context: Context, uri: Uri): String? {
+    fun getFilePathFromUri(context: Context, uri: Uri): String? {
         var `is`: InputStream? = null
         if (uri.authority != null) {
             try {
@@ -501,10 +522,32 @@ class CameraControl private constructor() {
         return outputBitmap
     }
 
+    /**
+     * [rotatedBitmap] used for display purposes
+     * @param facingLens of current camera
+     * @param bitmapOptions bitmap options
+     * @param filePath of current image used for displaying
+     * */
+    fun rotatedBitmapCameraFrontLens(facingLens: Int, bitmapOptions: BitmapFactory.Options, filePath: String): Bitmap {
+        //Rotate Image
+        val matrixPreRotateRight = Matrix()
+        if (facingLens == CameraCharacteristics.LENS_FACING_BACK) {
+            //Mirror matrix
+            val mirrorY = floatArrayOf(-1f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 1f)
+            val matrixRotateRight = Matrix()
+            val matrixMirrorY = Matrix()
+            matrixMirrorY.setValues(mirrorY)
+            matrixPreRotateRight.postConcat(matrixMirrorY)
+            matrixRotateRight.preRotate(270f)
+        }
+        val bm: Bitmap = BitmapFactory.decodeFile(filePath, bitmapOptions)
+        return Bitmap.createBitmap(bm, 0, 0, bm.width, bm.height, matrixPreRotateRight, true)
+    }
+
 
     /**
      * Minimum image quality to be processed
-     * Important to call before accessing CameraControl class
+     * Important to call before accessing CameraControlView class
      * Defaults is set to 400x400
      * @param _minWidthQuality minimum width image quality in pixels
      * @param _minHeightQuality minimum height image quality in pixels
@@ -523,5 +566,87 @@ class CameraControl private constructor() {
         return true
     }
 
+    /**
+     * [addToGallery]
+     * Add photo to phone gallery
+     * @param context is current context
+     * @param filePath of the temporary file to be copied to the android gallery
+     * */
+    fun addToGallery(context: Context, filePath: String) {
+        val intent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
+        val file = File(filePath)
+        val contentUri = Uri.fromFile(file)
+        intent.data = contentUri
+        context.sendBroadcast(intent)
+    }
+
+    /**
+     * [compressFile]
+     * will compress the file for faster memory management & image resizing displayed
+     * to the user
+     * @param filepath of the temporary file that contains the photo
+     * @param filePath of the compressed file
+     * @see [ImageScaling]
+     * */
+    fun compressFile(filePath: String, desiredWidth: Int, desiredHeight: Int, facingLens: Int): String {
+        var scaledBitmap: Bitmap? = null
+        var imagePath: String? = null
+        try {
+            //Decode image
+            val unscaledBitmap: Bitmap = ImageScaling.instance.decodeFileToBitmap(filePath, desiredWidth, desiredHeight, ImageScaling.ScalingLogic.FIT, facingLens)
+            //Scale image
+            if (!(unscaledBitmap.width <= 800 && unscaledBitmap.height <= 800)) {
+                scaledBitmap = ImageScaling.instance.createScaledBitmap(unscaledBitmap, desiredWidth, desiredHeight, ImageScaling.ScalingLogic.FIT)
+            } else {
+                unscaledBitmap.recycle()
+                return filePath
+            }
+            //Store to temporary file
+            val file = temporaryFile()
+            imagePath = file.absolutePath
+            try {
+                val fos = FileOutputStream(file)
+                scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 70, fos)
+                fos.flush()
+                fos.close()
+            } catch (e: FileNotFoundException) {
+                e.printStackTrace()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            scaledBitmap.recycle()
+        } catch (e: Throwable) {
+            e.printStackTrace()
+        }
+        if (imagePath == null) {
+            return filePath
+        }
+        return imagePath
+    }
+
+    /**
+     * [temporaryFile] creates a temporary holding cached file with naming convention to store
+     * the current photo taken by the user
+     * */
+    fun temporaryFile(): File {
+        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val imageFileName = "JPEG_" + timeStamp + "_"
+        val storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+        val file = File.createTempFile(
+                imageFileName,
+                ".jpg",
+                storageDir
+        )
+        return file
+    }
+
+    /**
+     * [getScreenSize] for the current device & provide full screen image preview
+     * */
+    fun getScreenSize(activity: Activity): Pair<Int, Int> {
+        val displayMetrics = DisplayMetrics()
+        activity.windowManager.defaultDisplay.getMetrics(displayMetrics)
+        return Pair(displayMetrics.widthPixels, displayMetrics.heightPixels)
+    }
 
 }

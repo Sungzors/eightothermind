@@ -31,7 +31,14 @@
     <string name="pick_image_intent_text">Choose an image</string>
     <string name="profile_image">Profile Image</string>
     <string name="profile_image_circle">Profile image circle</string>
-    
+    <!--Camera-->
+    <string name="camera_left_tab">Camera Roll</string>
+    <string name="camera_center_tab">Normal</string>
+    <string name="camera_right_tab">Hands Free</string>
+    <string name="request_camera_permission">Camera permission needed</string>
+    <string name="request_write_external_permission">Storage permission needed</string>
+    <string name="camera_error">This device doesn\'t support Camera</string>
+
     <string name="share_media">Share Media</string>
     <string name="share_contact">Share Contact</string>
     <string name="share_location">Share Location</string>
@@ -64,5 +71,11 @@
 
     <!--Realm-->
     <string name="realm_path">8_realm</string>
+    <string name="camera_action">camera_action</string>
+    <string name="camera_flash">camera_flash</string>
+    <string name="camera_flip">camera_flip</string>
+    <string name="camera_preview">cameraPreview</string>
+    <string name="camera_save">cameraSave</string>
+    <string name="camera_send">cameraSend</string>
 
 </resources>

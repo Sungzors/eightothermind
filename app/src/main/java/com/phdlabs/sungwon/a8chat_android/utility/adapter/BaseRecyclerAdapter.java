@@ -29,7 +29,8 @@ import java.util.List;
 
 public abstract class BaseRecyclerAdapter<T, VH extends RecyclerView.ViewHolder>
         extends RecyclerView.Adapter<VH>
-        implements Filterable{
+        implements Filterable {
+
     //TAG
     private static final String TAG = "BaseRecyclerAdapter";
 

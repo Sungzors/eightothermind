@@ -79,7 +79,7 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
         mSocket.on(Constants.SocketKeys.UPDATE_CHAT_MEDIA, onNewMessage)
         mSocket.on(Constants.SocketKeys.ON_ERROR, onError)
         mSocket.connect()
-//        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(mView.getContext()!!)
+//        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(mRoot.getContext()!!)
     }
 
     override fun resume() {
@@ -196,7 +196,7 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
     }
 
     override fun sendLocation() {
-//        if (ActivityCompat.checkSelfPermission(mView.getContext()!!, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mView.getContext()!!, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//        if (ActivityCompat.checkSelfPermission(mRoot.getContext()!!, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mRoot.getContext()!!, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 //            return
 //        }
 //        mFusedLocationClient.lastLocation.addOnSuccessListener({ drawer_location ->
@@ -268,14 +268,14 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
     }
 
 //    private val onDisconnect = Emitter.Listener { args ->
-//        mView.getActivity.runOnUiThread({
+//        mRoot.getActivity.runOnUiThread({
 //            Log.d(TAG, "Socket Disconnected")
 //            isConnected = false
 //        })
 //    }
 //
 //    private val onConnectError = Emitter.Listener { args ->
-//        mView.getActivity.runOnUiThread({
+//        mRoot.getActivity.runOnUiThread({
 //            Log.e(TAG, "Error Connecting")
 //        })
 //    }

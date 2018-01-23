@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black">
+
+    <!--Background-->
+    <View
+        android:id="@+id/cam_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/black" />
+
+    <!--Pager-->
+    <android.support.v4.view.ViewPager
+        android:id="@+id/cam_view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!--Top controls-->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:gravity="top|center"
+        android:orientation="horizontal">
+
+        <!--Editing Control-->
+        <com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControls.CameraCloseView
+            android:id="@+id/cam_close_control"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start" />
+
+    </FrameLayout>
+
+    <!--Recording Control-->
+    <com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControls.CameraControlView
+        android:id="@+id/cam_control"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/blurView"
+        android:layout_marginBottom="13sp" />
+
+    <!--Tab Layout with BlurView-->
+    <eightbitlab.com.blurview.BlurView
+        android:id="@+id/blurView"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true">
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/cam_tabLayout_indicator"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/cameraBlurView"
+            android:minHeight="?attr/actionBarSize"
+            app:tabIndicatorColor="@color/white"
+            app:tabSelectedTextColor="@color/white"
+            app:tabTextColor="@color/whiteTransparent" />
+
+    </eightbitlab.com.blurview.BlurView>
+
+    <include layout="@layout/progress_view"/>
+
+</RelativeLayout>
