@@ -49,7 +49,7 @@ class MainActivity: CoreActivity(), MainContract.View{
 
     private fun onTabSelected(item: MenuItem){
         when (item.itemId){
-            R.id.mmt_home -> addFragment(LobbyFragment.newInstance(), false)
+            R.id.mmt_home -> replaceFragment(LobbyFragment.newInstance(), false)
             R.id.mmt_camera -> controller.showCamera()
             R.id.mmt_profile -> controller.showProfile()
         }

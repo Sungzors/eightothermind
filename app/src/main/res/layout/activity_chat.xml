@@ -28,7 +28,6 @@
         </LinearLayout>
         <include layout="@layout/progress_view"/>
     </RelativeLayout>
-
     
     <LinearLayout
         android:id="@+id/ac_the_drawer"

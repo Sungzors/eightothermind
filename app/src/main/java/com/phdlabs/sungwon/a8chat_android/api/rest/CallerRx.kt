@@ -4,7 +4,6 @@ import com.phdlabs.sungwon.a8chat_android.api.data.UserData
 import com.phdlabs.sungwon.a8chat_android.api.response.MediaResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.UserDataResponse
 import com.phdlabs.sungwon.a8chat_android.api.rest.Caller.TOKEN
-import com.phdlabs.sungwon.a8chat_android.model.media.Media
 import com.phdlabs.sungwon.a8chat_android.model.user.registration.RegistrationData
 import io.reactivex.Observable
 import okhttp3.RequestBody

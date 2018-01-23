@@ -12,6 +12,8 @@ object Constants{
         const val LOGIN_CC = "login_cc"
         const val LOGIN_PHONE = "login_phone"
         const val CHANNEL_ID = "channel_id"
+        const val CHANNEL_NAME = "channel_name"
+        const val ROOM_ID = "room_id"
         const val MESSAGE_ID = "message_id"
     }
 
@@ -24,10 +26,11 @@ object Constants{
         const val CONNECT = "connect"
         const val UPDATE_ROOM = "update-room"
         const val UPDATE_CHAT_STRING = "update-chat-string"
-        const val UPDATE_CHAT_MEDIA = "update-chat-drawer_media"
-        const val UPDATE_CHAT_LOCATION = "update-chat-drawer_location"
+        const val UPDATE_CHAT_MEDIA = "update-chat-media"
+        const val UPDATE_CHAT_LOCATION = "update-chat-location"
         const val UPDATE_CHAT_CHANNEL = "update-chat-channel"
-        const val UPDATE_CHAT_CONTACT = "update-chat-drawer_contact"
+        const val UPDATE_CHAT_CONTACT = "update-chat-contact"
+        const val UPDATE_CHAT_POST = "update-chat-post"
         const val ON_ERROR = "on-error"
     }
 

@@ -6,174 +6,164 @@
 
     <!--no need to extract string resource here-->
 
-    <ScrollView
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="debug screen"/>
+
+    <TextView
+        android:id="@+id/ad_loading_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="load text here..."/>
+
+    <TextView
+        android:id="@+id/ad_token"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Token: Null"/>
+
+    <TextView
+        android:id="@+id/ad_user_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="User ID: Null"/>
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginTop="10dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="debug screen" />
-
-            <TextView
-                android:id="@+id/ad_loading_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="load text here..." />
-
-            <TextView
-                android:id="@+id/ad_token"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Token: Null" />
-
-            <TextView
-                android:id="@+id/ad_user_id"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="User ID: Null" />
-
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="2" />
-
+                android:layout_weight="2"/>
             <Button
                 android:id="@+id/ad_start_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
-                android:layout_marginEnd="10dp"
                 android:layout_marginStart="10dp"
-                android:text="App Start" />
-
+                android:layout_marginEnd="10dp"
+                android:text="App Start"/>
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="2" />
-
+                android:layout_weight="2"/>
             <Button
                 android:id="@+id/ad_login_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
-                android:layout_marginEnd="10dp"
                 android:layout_marginStart="10dp"
-                android:text="login" />
-
+                android:layout_marginEnd="10dp"
+                android:text="login"/>
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="2" />
-
+                android:layout_weight="2"/>
             <Button
                 android:id="@+id/ad_profile_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
-                android:layout_marginEnd="10dp"
                 android:layout_marginStart="10dp"
-                android:text="profile" />
-
+                android:layout_marginEnd="10dp"
+                android:text="profile"/>
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="2" />
-
+                android:layout_weight="2"/>
             <Button
                 android:id="@+id/ad_main_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
-                android:layout_marginEnd="10dp"
                 android:layout_marginStart="10dp"
-                android:text="main" />
-
+                android:layout_marginEnd="10dp"
+                android:text="main"/>
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="2" />
-
+                android:layout_weight="2"/>
             <Button
                 android:id="@+id/ad_chat_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
-                android:layout_marginEnd="10dp"
                 android:layout_marginStart="10dp"
-                android:text="chat" />
-
+                android:layout_marginEnd="10dp"
+                android:text="chat"/>
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="2" />
-
+                android:layout_weight="2"/>
             <Button
                 android:id="@+id/ad_create_channel_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
-                android:layout_marginEnd="10dp"
                 android:layout_marginStart="10dp"
-                android:text="Create Channel" />
-
+                android:layout_marginEnd="10dp"
+                android:text="Create Channel"/>
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="2" />
-
+                android:layout_weight="2"/>
             <Button
                 android:id="@+id/ad_channel_post_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
-                android:layout_marginEnd="10dp"
                 android:layout_marginStart="10dp"
-                android:text="Channel Post" />
-
+                android:layout_marginEnd="10dp"
+                android:text="Channel Post"/>
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="2" />
-
+                android:layout_weight="2"/>
             <Button
                 android:id="@+id/ad_sandbox_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
-                android:layout_marginEnd="10dp"
                 android:layout_marginStart="10dp"
-                android:text="sandbox" />
-
+                android:layout_marginEnd="10dp"
+                android:text="sandbox"/>
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="2" />
-
+                android:layout_weight="2"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2"/>
             <Button
-                android:id="@+id/ad_camera_button"
+                android:id="@+id/ad_channel_show"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
-                android:layout_marginEnd="10dp"
                 android:layout_marginStart="10dp"
-                android:text="camera" />
+                android:layout_marginEnd="10dp"
+                android:text="Channel Show"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2"/>
+            <Button
+                android:id="@+id/ad_event_create"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:text="Create Event"/>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_marginBottom="15dp"
-                android:layout_weight="2" />
-            <!--Remove view margin bottom when adding another button-->
-
+                android:layout_weight="2"/>
         </LinearLayout>
+    </LinearLayout>
 
-    </ScrollView>
 
 </LinearLayout>

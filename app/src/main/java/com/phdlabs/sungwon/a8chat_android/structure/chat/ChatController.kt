@@ -4,7 +4,6 @@ import android.util.Log
 import android.widget.Toast
 import com.github.nkzawa.emitter.Emitter
 import com.github.nkzawa.socketio.client.Socket
-import com.google.gson.JsonParser
 import com.phdlabs.sungwon.a8chat_android.api.data.PrivateChatCreateData
 import com.phdlabs.sungwon.a8chat_android.api.data.SendMessageChannelData
 import com.phdlabs.sungwon.a8chat_android.api.data.SendMessageGeneralData
@@ -30,7 +29,6 @@ import org.greenrobot.eventbus.EventBus
 import org.json.JSONException
 import org.json.JSONObject
 import retrofit2.Response
-import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -221,7 +219,7 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
         }
     }
 
-    override fun getMessages(): MutableList<Message> = mMessages!!
+    override fun getMessages(): MutableList<Message> = mMessages
 
     override fun getUserId(callback: (Int?) -> Unit) {
         UserManager.instance.getCurrentUser { success, user, _ ->
@@ -311,11 +309,13 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
             when (type) {
                 Message.TYPE_STRING -> {
                     val message = builder.message(message!!).build()
-                    var userAvatar: String? = null
-                    var createdAt: Date? = null
+                    var name : String? = null
+                    var userAvatar : String? = null
+                    var createdAt : Date? = null
 //                    var updatedAt : Date? = null
                     var original_message_id: String? = null
                     try {
+                        name = data.getString("name")
                         userAvatar = data.getString("userAvatar")
                         val createdAtString = data.getString("createdAt")
                         val df = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
@@ -323,6 +323,7 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
 //                        val updatedAtString = data.getString("updatedAt")
 //                        updatedAt = df.parse(updatedAtString)
                         original_message_id = data.getString("original_message_id")
+                        message.name = name
                         message.userAvatar = userAvatar
                         message.createdAt = createdAt
 //                        message.updatedAt = updatedAt
@@ -420,16 +421,18 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
                         Log.e(TAG, e.message)
                         return@runOnUiThread
                     }
-                    mMessages!!.add(builder.message(message).contact(contact).build())
-                    mView.updateRecycler(mMessages!!.size)
+                    mMessages.add(builder.message(message).contact(contact).build())
+                    mView.updateRecycler(mMessages.size)
                 }
                 Message.TYPE_LOCATION -> {
                     val message = builder.message(message!!).build()
-                    var userAvatar: String? = null
-                    var createdAt: Date? = null
+                    var name : String? = null
+                    var userAvatar : String? = null
+                    var createdAt : Date? = null
 //                    var updatedAt : Date? = null
                     var original_message_id: String? = null
                     try {
+                        name = data.getString("name")
                         userAvatar = data.getString("userAvatar")
                         val createdAtString = data.getString("createdAt")
                         val df = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
@@ -437,6 +440,7 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
 //                        val updatedAtString = data.getString("updatedAt")
 //                        updatedAt = df.parse(updatedAtString)
                         original_message_id = data.getString("original_message_id")
+                        message.name = name
                         message.userAvatar = userAvatar
                         message.createdAt = createdAt
 //                        message.updatedAt = updatedAt
@@ -445,8 +449,8 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
                         Log.e(TAG, e.message)
                     }
                     message.timeDisplayed = mView.lastTimeDisplayed(message)
-                    mMessages!!.add(message)
-                    mView.updateRecycler(mMessages!!.size)
+                    mMessages.add(message)
+                    mView.updateRecycler(mMessages.size)
                 }
 
             }
