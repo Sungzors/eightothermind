@@ -26,6 +26,7 @@
     <string name="channels_i_follow">Channels I follow</string>
     <string name="my_channels">My Channels</string>
     <string name="type_something">Type Something…</string>
+    <string name="fave_messages">Favorite Messages (%1$)</string>
 
     <!--Camera Control-->
     <string name="pick_image_intent_text">Choose an image</string>
@@ -71,6 +72,13 @@
 
     <!--Realm-->
     <string name="realm_path">8_realm</string>
+    <string name="chat">Chat</string>
+    <string name="call">Call</string>
+    <string name="video">Video</string>
+    <string name="notification">Notification</string>
+    <string name="send_money">Send Money</string>
+    <string name="clear_conversation">Clear Conversation</string>
+    <string name="block_contact">Block Contact</string>
     <string name="camera_action">camera_action</string>
     <string name="camera_flash">camera_flash</string>
     <string name="camera_flip">camera_flip</string>

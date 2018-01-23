@@ -55,7 +55,7 @@ class MyChannelActivity: CoreActivity(), ChannelContract.MyChannel.View{
         setToolbarTitle(mChannelName)
         setUpRecycler()
         controller.start()
-        controller.createChannelRoom()
+//        controller.createChannelRoom()
 
     }
 
@@ -135,7 +135,9 @@ class MyChannelActivity: CoreActivity(), ChannelContract.MyChannel.View{
             }
         }
         mAdapter.setItems(controller.getMessages())
-        acm_post_recycler.layoutManager = LinearLayoutManager(this)
+        val layoutManager = LinearLayoutManager(this)
+        layoutManager.stackFromEnd = true
+        acm_post_recycler.layoutManager = layoutManager
         acm_post_recycler.adapter = mAdapter
     }
     private fun bindMessageViewHolder(viewHolder: BaseViewHolder, data: Message){

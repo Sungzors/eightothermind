@@ -1,5 +1,6 @@
 package com.phdlabs.sungwon.a8chat_android.structure.main
 
+import android.os.Bundle
 import android.view.MenuItem
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
@@ -17,15 +18,20 @@ class MainActivity: CoreActivity(), MainContract.View{
 
     override fun contentContainerId() = R.id.am_content_frame
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        showTabs()
+    }
+
     override fun onStart() {
         super.onStart()
         MainAController(this)
         controller.start()
-        showTabs()
     }
 
     override fun onResume() {
         super.onResume()
+//        replaceFragment(LobbyFragment.newInstance(), false)
         controller.resume()
     }
 

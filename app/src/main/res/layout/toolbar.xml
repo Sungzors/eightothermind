@@ -29,6 +29,33 @@
         android:textAlignment="center"
         android:text="Title"/>
 
+    <LinearLayout
+        android:id="@+id/toolbar_title_double_container"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+        <TextView
+            android:id="@+id/toolbar_title_double_top"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="@color/black"
+            android:text="asdfasdf"
+            android:textAlignment="center"/>
+        <TextView
+            android:id="@+id/toolbar_title_double_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="10sp"
+            android:textColor="@color/black"
+            android:text="asdfasdfasdfasdf"
+            android:textAlignment="center"/>
+    </LinearLayout>
+
+
+
     <TextView
         android:id="@+id/toolbar_right_text"
         android:layout_width="wrap_content"

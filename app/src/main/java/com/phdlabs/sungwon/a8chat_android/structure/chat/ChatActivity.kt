@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
@@ -81,6 +82,8 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         ac_the_daddy_drawer.isClipPanel = false
         ac_the_daddy_drawer.panelHeight = 150
         ac_the_daddy_drawer.coveredFadeColor = ContextCompat.getColor(this, R.color.transparent)
+        ac_drawer_money_container.visibility = LinearLayout.VISIBLE
+        ac_drawer_money_filler.visibility = View.VISIBLE
     }
 
     private fun setupClickers() {

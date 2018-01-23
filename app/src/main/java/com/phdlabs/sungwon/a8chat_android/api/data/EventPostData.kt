@@ -5,8 +5,7 @@ package com.phdlabs.sungwon.a8chat_android.api.data
  */
 class EventPostData(
         val mediaId: String?,
-        val lat: String?,
-        val lng: String?,
+        val location_name: String?,
         val user_creator_id: String,
         val name: String,
         //TODO: friend of friends

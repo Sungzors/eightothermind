@@ -39,6 +39,10 @@ open class EventsEight(): RealmObject(){
     @Expose
     var location: RealmList<String>? = null
 
+    @SerializedName("location_name")
+    @Expose
+    var location_name: String? = null
+
     @SerializedName("room_id")
     @Expose
     var room_id: String? = null
