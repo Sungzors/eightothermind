@@ -9,7 +9,9 @@ import java.io.IOException
 
 /**
  * Created by paix on 11/8/17.
- * Image Utilities
+ * [ImageUtils] Used to provide temporary file naming convention to
+ * images & an ordered file saving system
+ *
  */
 
 class ImageUtils private constructor() {
@@ -25,11 +27,11 @@ class ImageUtils private constructor() {
     }
 
     /**Instance Holder for Singleton - Camera Control
-     * val instance is the initialized variable
+     * val INSTANCE is the initialized variable
      *
      * INFO:
-     * Holder object & lazy instance is used to ensure only one
-     * instance of CameraControl() is created
+     * Holder object & lazy INSTANCE is used to ensure only one
+     * INSTANCE of CameraControl() is created
      * */
     private object Holder {
 
@@ -39,7 +41,7 @@ class ImageUtils private constructor() {
     /*Singleton companion object*/
     companion object {
         private val BASE_IMAGE_NAME = "i_prefix_"
-        //Singleton instance
+        //Singleton INSTANCE
         val instance: ImageUtils by lazy { Holder.INSTANCE }
     }
 

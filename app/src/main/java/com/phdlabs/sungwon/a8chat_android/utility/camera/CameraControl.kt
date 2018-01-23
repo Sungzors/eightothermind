@@ -60,7 +60,7 @@ class CameraControl private constructor() {
         private var mPickImageRequestCode = DEFAULT_REQUEST_CODE
         private var mGalleryOnly = false
 
-        //Singleton instance
+        //Singleton INSTANCE
         val instance: CameraControl by lazy { Holder.INSTANCE }
 
     }
@@ -69,18 +69,18 @@ class CameraControl private constructor() {
      *
      * INFO:
      * init will be called when this class is initialized for
-     * the first time (i.e. when calling CameraControlView.instance)
+     * the first time (i.e. when calling CameraControlView.INSTANCE)
      * */
     init {
         println("CameraControlView ($this) is a Singleton")
     }
 
     /**Instance Holder for Singleton - Camera Control
-     * val instance is the initialized variable
+     * val INSTANCE is the initialized variable
      *
      * INFO:
-     * Holder object & lazy instance is used to ensure only one
-     * instance of CameraControlView() is created
+     * Holder object & lazy INSTANCE is used to ensure only one
+     * INSTANCE of CameraControlView() is created
      * */
     private object Holder {
         val INSTANCE = CameraControl()

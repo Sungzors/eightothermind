@@ -17,7 +17,7 @@ class ImageScaling {
     /*Companion*/
     companion object {
 
-        /*Singleton instance model*/
+        /*Singleton INSTANCE model*/
         val instance: ImageScaling by lazy { Holder.INSTANCE }
 
     }

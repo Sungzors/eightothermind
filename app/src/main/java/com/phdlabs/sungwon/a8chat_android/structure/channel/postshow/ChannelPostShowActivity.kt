@@ -49,9 +49,9 @@ class ChannelPostShowActivity: CoreActivity(), ChannelContract.PostShow.View{
     override fun onStart() {
         super.onStart()
 //        mChannelId = intent.getStringExtra(Constants.IntentKeys.CHANNEL_ID)
-//        mChannel = TemporaryManager.instance.getChannel(mChannelId.toInt())
+//        mChannel = TemporaryManager.INSTANCE.getChannel(mChannelId.toInt())
 //        mMessageId = intent.getStringExtra(Constants.IntentKeys.MESSAGE_ID)
-//        mMessage = TemporaryManager.instance.getMessage(mMessageId)
+//        mMessage = TemporaryManager.INSTANCE.getMessage(mMessageId)
         mMessageId = "11"
         mMessage = Message.Builder("11", "media", "1", "4").build()
         mMessage!!.mediaArray.add(MediaDetailNest("https://s3.amazonaws.com/eight-testing123/1512695725084.PNG", "https://s3.amazonaws.com/eight-testing123/1512695725084.PNG"))

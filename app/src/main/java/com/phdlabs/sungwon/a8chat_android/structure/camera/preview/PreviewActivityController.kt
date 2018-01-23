@@ -1,15 +1,11 @@
 package com.phdlabs.sungwon.a8chat_android.structure.camera.preview
 
-import android.app.admin.SystemUpdateInfo
 import android.content.pm.PackageManager
-import android.graphics.BitmapFactory
-import android.net.Uri
 import android.os.Build
-import android.provider.MediaStore
 import android.support.v13.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
-import com.phdlabs.sungwon.a8chat_android.utility.Devices
+import com.phdlabs.sungwon.a8chat_android.utility.DeviceInfo
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
 import com.squareup.picasso.Picasso
 import java.io.File
@@ -60,7 +56,7 @@ class PreviewActivityController(val mView: PreviewContract.View) : PreviewContra
 
         filePath?.let {
             imageFilePath = it
-            if (Devices.instance.isWarningDevice(Build.MODEL)) {
+            if (DeviceInfo.INSTANCE.isWarningDevice(Build.MODEL)) {
                 Picasso.with(mView.getContext())
                         .load(File(it))
                         .rotate(270f) //Full screen

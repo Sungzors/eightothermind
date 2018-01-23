@@ -97,7 +97,7 @@ class RegisterActivity : CoreActivity() {
                     print("REALM ERROR: " + e.stackTrace)
 
                 } finally {
-                    /*Close realm instance*/
+                    /*Close realm INSTANCE*/
                     realm?.close()
                 }
             } else {
