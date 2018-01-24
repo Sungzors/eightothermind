@@ -13,10 +13,12 @@ import com.phdlabs.sungwon.a8chat_android.model.Channel
 import com.phdlabs.sungwon.a8chat_android.model.EventsEight
 import com.phdlabs.sungwon.a8chat_android.model.Room
 import com.phdlabs.sungwon.a8chat_android.structure.channel.mychannel.MyChannelActivity
+import com.phdlabs.sungwon.a8chat_android.structure.chat.ChatActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreFragment
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseRecyclerAdapter
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseViewHolder
+import com.phdlabs.sungwon.a8chat_android.utility.adapter.ViewMap
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_lobby.*
@@ -45,6 +47,7 @@ class LobbyFragment: CoreFragment(), LobbyContract.View {
     override fun onStart() {
         super.onStart()
         LobbyController(this)
+        coreActivity.setToolbarTitle("Lobby")
         controller.start()
 
 //        setUpChannelRecycler()
@@ -223,11 +226,22 @@ class LobbyFragment: CoreFragment(), LobbyContract.View {
 
             override fun viewHolder(inflater: LayoutInflater?, parent: ViewGroup?, type: Int): BaseViewHolder {
                 return object : BaseViewHolder(R.layout.card_view_lobby_event, inflater!!, parent){
-
+                    override fun addClicks(views: ViewMap?) {
+                        views!!.click {
+                            //TODO: Add conditional for private/group
+                            val room = getItem(adapterPosition)
+                            val intent = Intent(context, ChatActivity::class.java)
+                            intent.putExtra(Constants.IntentKeys.CHAT_NAME, room.user!!.first_name + " " + room.user!!.last_name)
+                            intent.putExtra(Constants.IntentKeys.PARTICIPANT_ID, room.user!!.id)
+                            intent.putExtra(Constants.IntentKeys.ROOM_ID, room.id)
+                            startActivity(intent)
+                        }
+                    }
                 }
             }
         }
         mAdapterChat.setItems(controller.getChat())
+        fl_chat_title.visibility = TextView.VISIBLE
         fl_chat_recycler.visibility = RecyclerView.VISIBLE
         fl_chat_recycler.layoutManager = LinearLayoutManager(coreActivity.context)
         fl_chat_recycler.adapter = mAdapterChat
@@ -239,19 +253,24 @@ class LobbyFragment: CoreFragment(), LobbyContract.View {
         val title = viewHolder.get<TextView>(R.id.cvle_title)
         val message = viewHolder.get<TextView>(R.id.cvle_message)
         val time = viewHolder.get<TextView>(R.id.cvle_time)
-        //TODO: populate pic once tomer gets that done
-        title.text = data.users!!.first_name + " " + data.users!!.last_name
-        message.text = data.subRooms!!.message.message
-        if(!data.isRead){
-            eventIndicator.visibility = ImageView.VISIBLE
+        if(data.chatType == "private"){
+            Picasso.with(context).load(data.user!!.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(eventPic)
+            title.text = data.user!!.first_name + " " + data.user!!.last_name
+            message.text = data.message!!.message
+            if(!data.isRead){
+                eventIndicator.visibility = ImageView.VISIBLE
+            } else {
+                eventIndicator.visibility = ImageView.INVISIBLE
+            }
+            if(Date().time.minus(data.message!!.createdAt!!.time)>= 24 * 60 * 60 * 1000){
+                time.text = SimpleDateFormat("EEE").format(data.message!!.createdAt)
+            } else {
+                time.text = SimpleDateFormat("h:mm aaa").format(data.message!!.createdAt)
+            }
         } else {
-            eventIndicator.visibility = ImageView.INVISIBLE
+            title.text = "group chat in progress"
         }
-        if(Date().time.minus(data.subRooms!!.message.createdAt!!.time)>=86400000){
-            time.text = SimpleDateFormat("EEE").format(data.subRooms!!.message.createdAt)
-        } else {
-            time.text = SimpleDateFormat("h:mm aaa").format(data.subRooms!!.message.createdAt)
-        }
+
     }
 
     override fun updateMyChannelRecycler() {

@@ -52,7 +52,7 @@ class ChannelCreateController(val mView : ChannelContract.Create.View): ChannelC
                 chan.isRead = true
                 TemporaryManager.instance.mChannelList.add(chan) //TODO: add realm
                 //TODO: lead to channel screen
-                mView.finishActivity()
+                mView.finishActivity(data!!.newChannelGroupOrEvent!!.id, data.newChannelGroupOrEvent!!.name, data.newChannelGroupOrEvent!!.room_id.toInt())
             }
         })
     }

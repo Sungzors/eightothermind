@@ -198,7 +198,7 @@ class EventViewActivity: CoreActivity(), EventContract.ViewDetail.View{
         controller.getUserId { id ->
             id?.let {
                 if(message!!.userId!!.toInt() != it){
-                    Picasso.with(this).load(message.userAvatar).into(profPic)
+                    Picasso.with(this).load(message.user!!.avatar).into(profPic)
                 }
                 messagetv.setTextColor(ContextCompat.getColor(this, R.color.black))
                 messagetv.text = message.message
@@ -232,7 +232,7 @@ class EventViewActivity: CoreActivity(), EventContract.ViewDetail.View{
         controller.getUserId { id ->
             id?.let {
                 if(message.userId!!.toInt() != it){
-                    Picasso.with(this).load(message.userAvatar).into(profPic)
+                    Picasso.with(this).load(message.user!!.avatar).into(profPic)
                 }
             }
         }
@@ -263,7 +263,7 @@ class EventViewActivity: CoreActivity(), EventContract.ViewDetail.View{
         controller.getUserId { id ->
             id?.let {
                 if(message.userId!!.toInt() != id){
-                    Picasso.with(this).load(message.userAvatar).into(profPic)
+                    Picasso.with(this).load(message.user!!.avatar).into(profPic)
                 }
             }
         }
@@ -298,7 +298,7 @@ class EventViewActivity: CoreActivity(), EventContract.ViewDetail.View{
         controller.getUserId { id ->
             id?.let {
                 if(message.userId!!.toInt() != it) {
-                    Picasso.with(this).load(message.userAvatar).into(profPic)
+                    Picasso.with(this).load(message.user!!.avatar).into(profPic)
                 }
             }
         }
@@ -329,7 +329,7 @@ class EventViewActivity: CoreActivity(), EventContract.ViewDetail.View{
         controller.getUserId { id ->
             id?.let {
                 if(message.userId!!.toInt() != id){
-                    Picasso.with(this).load(message.userAvatar).into(profPic)
+                    Picasso.with(this).load(message.user!!.avatar).into(profPic)
                 }
             }
         }
@@ -364,7 +364,7 @@ class EventViewActivity: CoreActivity(), EventContract.ViewDetail.View{
         controller.getUserId { id ->
             id?.let {
                 if(message.userId!!.toInt() != it){
-                    Picasso.with(this).load(message.userAvatar).into(profPic)
+                    Picasso.with(this).load(message.user!!.avatar).into(profPic)
                 }
             }
         }

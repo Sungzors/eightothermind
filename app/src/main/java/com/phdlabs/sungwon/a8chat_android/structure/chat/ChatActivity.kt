@@ -19,6 +19,7 @@ import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseRecyclerAdapter
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseViewHolder
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.ViewMap
+import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_chat.*
@@ -33,6 +34,7 @@ class ChatActivity: CoreActivity(), ChatContract.View{
     override lateinit var controller: ChatContract.Controller
     private lateinit var mAdapter: BaseRecyclerAdapter<Message, BaseViewHolder>
     private var mUserId: Int? = null
+    private var mParticipantId: Int = 8
 
     override fun layoutId() = R.layout.activity_chat
 
@@ -42,6 +44,9 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         super.onCreate(savedInstanceState)
         showProgress()
         ChatController(this)
+        val chatName = intent.getStringExtra(Constants.IntentKeys.CHAT_NAME)
+        mParticipantId = intent.getIntExtra(Constants.IntentKeys.PARTICIPANT_ID, 8)
+        setToolbarTitle(chatName)
         controller.start()
         controller.getUserId { id ->
             id?.let {
@@ -235,7 +240,7 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         controller.getUserId { id ->
             id?.let {
                 if(message!!.userId!!.toInt() != it){
-                    Picasso.with(this).load(message.userAvatar).into(profPic)
+                    Picasso.with(this).load(message.user!!.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(profPic)
                 }
                 messagetv.setTextColor(ContextCompat.getColor(this, R.color.black))
                 messagetv.text = message.message
@@ -300,11 +305,11 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         moneyButtonDecline.visibility = Button.GONE
         messagetv.text = message!!.contactInfo!!.first_name + message.contactInfo!!.last_name
         messagetv.setTextColor(ContextCompat.getColor(this, R.color.confirmText))
-        Picasso.with(this).load(message.contactInfo!!.avatar).into(profPic)
+        Picasso.with(this).load(message.contactInfo!!.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(messagePic)
         controller.getUserId { id ->
             id?.let {
                 if(message.userId!!.toInt() != it){
-                    Picasso.with(this).load(message.userAvatar).into(profPic)
+                    Picasso.with(this).load(message.user!!.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(profPic)
                 }
             }
         }
@@ -335,7 +340,7 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         controller.getUserId { id ->
             id?.let {
                 if(message.userId!!.toInt() != id){
-                    Picasso.with(this).load(message.userAvatar).into(profPic)
+                    Picasso.with(this).load(message.user!!.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(profPic)
                 }
             }
         }
@@ -405,7 +410,7 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         controller.getUserId { id ->
          id?.let {
              if(message.userId!!.toInt() != it) {
-                 Picasso.with(this).load(message.userAvatar).into(profPic)
+                 Picasso.with(this).load(message.user!!.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(profPic)
              }
          }
         }
@@ -436,7 +441,7 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         controller.getUserId { id ->
             id?.let {
                 if(message.userId!!.toInt() != id){
-                    Picasso.with(this).load(message.userAvatar).into(profPic)
+                    Picasso.with(this).load(message.user!!.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(profPic)
                 }
             }
         }
@@ -468,7 +473,7 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         controller.getUserId { id ->
             id?.let {
                 if(message.userId!!.toInt() != it){
-                    Picasso.with(this).load(message.userAvatar).into(profPic)
+                    Picasso.with(this).load(message.user!!.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(profPic)
                 }
             }
         }
@@ -503,7 +508,7 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         controller.getUserId { id ->
             id?.let {
                 if(message.userId!!.toInt() != it){
-                    Picasso.with(this).load(message.userAvatar).into(profPic)
+                    Picasso.with(this).load(message.user!!.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(profPic)
                 }
             }
         }
@@ -521,7 +526,7 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         get() = this
 
     override val getChatParticipant: Int
-        get() = 8 //TODO: grab id from Intent
+        get() = mParticipantId //TODO: grab id from Intent
 
     override val getMessageET: String
         get() = ac_conjuring_conduit_of_messages.text.toString()

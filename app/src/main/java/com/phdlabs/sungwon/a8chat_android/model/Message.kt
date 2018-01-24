@@ -1,6 +1,7 @@
 package com.phdlabs.sungwon.a8chat_android.model
 
 import com.phdlabs.sungwon.a8chat_android.model.user.User
+import com.phdlabs.sungwon.a8chat_android.model.user.UserNest
 import java.util.*
 
 /**
@@ -18,10 +19,12 @@ class Message private constructor(){
     var userAvatar: String? = null
     var createdAt: Date? = null
     var updatedAt: Date? = null
+    var post: Boolean? = null
     var fileNames: Array<String>? = null
     var subRoom_id: String? = null
     var original_message_id: String? = null
     val mediaArray = mutableListOf<MediaDetailNest>()
+    var user: UserNest? = null
     var comments: Int? = null
     var likes: Int? = null
     var channelInfo: Channel? = null

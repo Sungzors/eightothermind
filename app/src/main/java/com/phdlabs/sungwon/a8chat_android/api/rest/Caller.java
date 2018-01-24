@@ -18,6 +18,7 @@ import com.phdlabs.sungwon.a8chat_android.api.response.ChannelArrayResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.ChannelFollowResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.ChannelResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.ChannelShowArrayResponse;
+import com.phdlabs.sungwon.a8chat_android.api.response.ChatsRetrievalResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.CommentArrayResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.CommentResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.ErrorResponse;
@@ -120,6 +121,9 @@ public interface Caller {
 
     @GET("/users/{userId}/groupChats")
     Call<UserDataResponse> getGroupChats(@Header(TOKEN) String token, @Path("userId") int userid);
+
+    @GET("/users/{userId}/private&group_chats")
+    Call<ChatsRetrievalResponse> getAllChats(@Header(TOKEN) String token, @Path("userId") int userid);
 
     @GET("/users/{userId}/channels")
     Call<ChannelShowArrayResponse> getAssociatedChannels(@Header(TOKEN) String token, @Path("userId") int userid);

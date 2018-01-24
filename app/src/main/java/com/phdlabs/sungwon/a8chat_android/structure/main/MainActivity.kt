@@ -20,6 +20,7 @@ class MainActivity: CoreActivity(), MainContract.View{
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        toolbar.setBackgroundResource(R.drawable.gradient_eightchatblue_updown)
         showTabs()
     }
 

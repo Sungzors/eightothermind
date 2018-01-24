@@ -125,7 +125,7 @@ class ChannelShowActivity: CoreActivity(), ChannelContract.ChannelShow.View{
         val likeCount = viewHolder.get<TextView>(R.id.cvpm_like_count)
         val commentCount = viewHolder.get<TextView>(R.id.cvpm_comment_count)
 
-        picasso.load(data.userAvatar).into(posterPic)
+        picasso.load(data.user!!.avatar).into(posterPic)
         posterName.text = data.name
         if(data.mediaArray != null){
             picasso.load(data.mediaArray[0].media_file).into(postPic)
