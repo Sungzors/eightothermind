@@ -2,7 +2,6 @@ package com.phdlabs.sungwon.a8chat_android.model.media
 
 import android.os.Parcel
 import android.os.Parcelable
-import java.util.*
 
 /**
  * Created by jpam on 1/19/18.
@@ -13,12 +12,14 @@ import java.util.*
 class GalleryPhoto() : Parcelable {
 
     /*Properties*/
-    var mPath:String? = null
+    var mFullPath:String? = null
+    var mThumbnailPath: String? = null
     var mDate: String? = null
 
     /*Constructors*/
-    constructor(imagePath: String, date: String?): this() {
-        mPath = imagePath
+    constructor(fullPath: String, thumbnailPath: String?, date: String?): this() {
+        mFullPath = fullPath
+        mThumbnailPath = thumbnailPath
         mDate = date
     }
 
@@ -28,7 +29,11 @@ class GalleryPhoto() : Parcelable {
     /*Required parcelable methods*/
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         //Image path
-        parcel.writeString(mPath)
+        parcel.writeString(mFullPath)
+        //Thumbnail path
+        mThumbnailPath?.let {
+            parcel.writeString(it)
+        }
         //Date path
         mDate?.let {
             parcel.writeString(it)
@@ -40,7 +45,7 @@ class GalleryPhoto() : Parcelable {
     /*Companion object*/
     companion object CREATOR : Parcelable.Creator<GalleryPhoto> {
 
-        fun create(thumbnailPath: String?,fullPath: String, date: String): GalleryPhoto = GalleryPhoto(fullPath, date)
+        fun create(thumbnailPath: String?,fullPath: String, date: String): GalleryPhoto = GalleryPhoto(fullPath, thumbnailPath, date)
 
         override fun createFromParcel(parcel: Parcel): GalleryPhoto = GalleryPhoto(parcel)
 

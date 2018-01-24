@@ -14,6 +14,8 @@ interface CameraContract {
     interface View : BaseView<Controller> {
         /*Control View*/
         fun getCameraControl(): CameraControlView
+        /*Flash UI*/
+        fun flashFeedback(isFLashOn: Boolean)
     }
 
     interface Controller : BaseController {

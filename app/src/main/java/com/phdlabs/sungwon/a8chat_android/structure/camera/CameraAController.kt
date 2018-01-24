@@ -18,7 +18,7 @@ class CameraAController(val mView: CameraContract.View) : CameraContract.Control
     private val TAG = "Camera Controller"
 
     /*Properties*/
-
+    private var isFlashOn: Boolean = false
 
     /*Initialization*/
     init {
@@ -84,6 +84,9 @@ class CameraAController(val mView: CameraContract.View) : CameraContract.Control
         if (viewPager.currentItem == Constants.CameraPager.NORMAL) {
             val normalFrag: NormalFragment = viewPager.adapter?.instantiateItem(viewPager, Constants.CameraPager.NORMAL) as NormalFragment
             normalFrag.manualFlashSelection()
+            //Flash UI
+            isFlashOn = !isFlashOn
+            mView.flashFeedback(isFlashOn)
         }
     }
 

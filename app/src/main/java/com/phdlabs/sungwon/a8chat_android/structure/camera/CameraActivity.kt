@@ -123,18 +123,15 @@ class CameraActivity : CoreActivity(), CameraContract.View, TabLayout.OnTabSelec
                 controller.takePhoto(cam_view_pager)
             }
             iv_camera_flash -> {
-                Toast.makeText(this, "Flash", Toast.LENGTH_SHORT).show()
-                //TODO: Flash User Interface change
                 controller.manualFlash(cam_view_pager)
             }
             iv_camera_flip -> {
-                //Toast.makeText(this, "Camera Flip", Toast.LENGTH_SHORT).show()
+                /*Flip camera*/
                 controller.cameraFlip(cam_view_pager)
 
             }
             cc_close_back -> {
                 /*Finish camera activity*/
-                //TODO: Go back to?
                 this.finish()
             }
         }
@@ -145,5 +142,15 @@ class CameraActivity : CoreActivity(), CameraContract.View, TabLayout.OnTabSelec
         controller.startPreviewActivity(filePath)
     }
 
+    /*Flash UI*/
+    override fun flashFeedback(isFLashOn: Boolean) {
+        var message = ""
+        if (isFLashOn) {
+            message = "Flash ON"
+        } else {
+            message = "Flash OFF"
+        }
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
 
 }
