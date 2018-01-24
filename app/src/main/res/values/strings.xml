@@ -85,5 +85,6 @@
     <string name="camera_preview">cameraPreview</string>
     <string name="camera_save">cameraSave</string>
     <string name="camera_send">cameraSend</string>
+    <string name="camerarollimage">CameraRollImage</string>
 
 </resources>
