@@ -136,7 +136,6 @@ class MyChannelActivity: CoreActivity(), ChannelContract.MyChannel.View{
         }
         mAdapter.setItems(controller.getMessages())
         val layoutManager = LinearLayoutManager(this)
-        layoutManager.stackFromEnd = true
         acm_post_recycler.layoutManager = layoutManager
         acm_post_recycler.adapter = mAdapter
     }
@@ -146,7 +145,7 @@ class MyChannelActivity: CoreActivity(), ChannelContract.MyChannel.View{
         val posterName = viewHolder.get<TextView>(R.id.cvps_poster_name)
         val postDate = viewHolder.get<TextView>(R.id.cvps_post_date)
 
-        Picasso.with(this).load(data.userAvatar).transform(CircleTransform()).into(pic)
+        Picasso.with(this).load(data.user!!.avatar).transform(CircleTransform()).into(pic)
         text.text = data.message
         posterName.text = data.name
         val formatter = SimpleDateFormat("EEE - h:mm aaa")
@@ -159,7 +158,7 @@ class MyChannelActivity: CoreActivity(), ChannelContract.MyChannel.View{
         val posterName = viewHolder.get<TextView>(R.id.cvpp_poster_name)
         val postDate = viewHolder.get<TextView>(R.id.cvpp_post_date)
 
-        Picasso.with(this).load(data.userAvatar).transform(CircleTransform()).into(pic)
+        Picasso.with(this).load(data.user!!.avatar).transform(CircleTransform()).into(pic)
         Picasso.with(this).load(data.mediaArray[0].media_file).into(postPic)
         posterName.text = data.name
         val formatter = SimpleDateFormat("EEE - h:mm aaa")
@@ -178,7 +177,7 @@ class MyChannelActivity: CoreActivity(), ChannelContract.MyChannel.View{
         val likeCount = viewHolder.get<TextView>(R.id.cvpm_like_count)
         val commentCount = viewHolder.get<TextView>(R.id.cvpm_comment_count)
 
-        picasso.load(data.userAvatar).transform(CircleTransform()).into(posterPic)
+        picasso.load(data.user!!.avatar).transform(CircleTransform()).into(posterPic)
         posterName.text = data.name
         picasso.load(data.mediaArray[0].media_file).into(postPic)
         val formatter = SimpleDateFormat("EEE - h:mm aaa")

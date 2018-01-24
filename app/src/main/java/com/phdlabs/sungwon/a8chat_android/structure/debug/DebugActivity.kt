@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.db.UserManager
-import com.phdlabs.sungwon.a8chat_android.model.user.User
 import com.phdlabs.sungwon.a8chat_android.structure.camera.CameraActivity
 import com.phdlabs.sungwon.a8chat_android.structure.channel.channelshow.ChannelShowActivity
 import com.phdlabs.sungwon.a8chat_android.structure.channel.create.ChannelCreateActivity
@@ -51,6 +50,7 @@ class DebugActivity : CoreActivity() {
         /*Get current user*/
         UserManager.instance.getCurrentUser { success, user, token ->
             if (success) {
+                ad_loading_text.text = "User Loaded"
                 ad_token.text = "Token: " + token?.token?.length
                 ad_user_id.text = "User ID: " + user?.id
                 Preferences(this).putPreference(Constants.PrefKeys.TOKEN_KEY, token?.token)

@@ -1,7 +1,6 @@
 package com.phdlabs.sungwon.a8chat_android.structure.profile
 
 import android.content.Intent
-import android.net.Uri
 import android.widget.ImageView
 import com.phdlabs.sungwon.a8chat_android.api.data.UserData
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseController
@@ -22,6 +21,8 @@ interface ProfileContract {
         val getUserData: UserData
 
         val getActivity: ProfileActivity
+
+        fun startApp()
 
 
         /* true if either first or last name is null*/

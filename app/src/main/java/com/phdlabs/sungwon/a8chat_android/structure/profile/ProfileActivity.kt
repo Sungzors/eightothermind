@@ -8,6 +8,7 @@ import android.widget.ImageView
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.api.data.UserData
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
+import com.phdlabs.sungwon.a8chat_android.structure.main.MainActivity
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_profile.*
@@ -62,6 +63,10 @@ class ProfileActivity : CoreActivity(), ProfileContract.View, AdapterView.OnItem
         super.onActivityResult(requestCode, resultCode, data)
         controller.onPictureResult(requestCode, resultCode, data)
 
+    }
+
+    override fun startApp() {
+        startActivity(Intent(this, MainActivity::class.java))
     }
 
     /*Data*/

@@ -20,6 +20,8 @@ data class Room(
                 ) {
     var isRead: Boolean = true
     var isFavorite: Boolean = false
+    var chatType: String? = null
     var subRooms: SubRoomNest? = null
-    var users: User? = null
+    var message: Message? = null
+    var user: User? = null
 }

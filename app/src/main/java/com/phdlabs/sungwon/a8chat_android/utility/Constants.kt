@@ -16,6 +16,8 @@ object Constants{
         const val EVENT_ID = "event_id"
         const val EVENT_NAME = "event_name"
         const val EVENT_LOCATION = "event_location"
+        const val CHAT_NAME = "chat_name"
+        const val PARTICIPANT_ID = "dunga"
         const val ROOM_ID = "room_id"
         const val MESSAGE_ID = "message_id"
     }

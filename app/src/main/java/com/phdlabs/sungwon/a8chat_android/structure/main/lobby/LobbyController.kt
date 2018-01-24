@@ -4,6 +4,7 @@ import com.phdlabs.sungwon.a8chat_android.api.event.Event
 import com.phdlabs.sungwon.a8chat_android.api.response.ChannelArrayResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.ChannelFollowResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.ChannelShowArrayResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.ChatsRetrievalResponse
 import com.phdlabs.sungwon.a8chat_android.api.rest.Caller
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
 import com.phdlabs.sungwon.a8chat_android.api.utility.Callback8
@@ -42,6 +43,7 @@ class LobbyController(val mView: LobbyContract.View): LobbyContract.Controller {
         callEvent()
         callFollow()
         callChannel()
+        callChats()
     }
 
     override fun resume() {
@@ -102,6 +104,18 @@ class LobbyController(val mView: LobbyContract.View): LobbyContract.Controller {
                 mChannel.addAll(data!!.channels!!)
                 if(mChannel.size>0){
                     mView.setUpChannelRecycler()
+                }
+            }
+        })
+    }
+
+    private fun callChats(){
+        val call = mCaller.getAllChats(Preferences(mView.getContext()!!).getPreferenceString(Constants.PrefKeys.TOKEN_KEY), Preferences(mView.getContext()!!).getPreferenceInt(Constants.PrefKeys.USER_ID))
+        call.enqueue(object : Callback8<ChatsRetrievalResponse, Event>(mEventBus){
+            override fun onSuccess(data: ChatsRetrievalResponse?) {
+                mChat.addAll(data!!.chats!!)
+                if (mChat.size>0){
+                    mView.setUpChatRecycler()
                 }
             }
         })

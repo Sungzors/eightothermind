@@ -1,11 +1,10 @@
 package com.phdlabs.sungwon.a8chat_android.structure.channel.create
 
 import android.content.Intent
-import android.widget.Toast
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.api.data.PostChannelData
 import com.phdlabs.sungwon.a8chat_android.structure.channel.ChannelContract
-import com.phdlabs.sungwon.a8chat_android.structure.channel.mychannels.MyChannelsListActivity
+import com.phdlabs.sungwon.a8chat_android.structure.channel.mychannel.MyChannelActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.Preferences
@@ -75,8 +74,11 @@ class ChannelCreateActivity: CoreActivity(), ChannelContract.Create.View {
 
     }
 
-    override fun finishActivity() {
-        startActivity(Intent(this, MyChannelsListActivity::class.java))
-        Toast.makeText(this, "Channel view screen in progress...", Toast.LENGTH_SHORT).show()
+    override fun finishActivity(chanId: String, chanName: String, roomId: Int) {
+        val intent = Intent(this, MyChannelActivity::class.java)
+        intent.putExtra(Constants.IntentKeys.CHANNEL_ID, chanId)
+        intent.putExtra(Constants.IntentKeys.CHANNEL_NAME, chanName)
+        intent.putExtra(Constants.IntentKeys.ROOM_ID, roomId)
+        startActivity(intent)
     }
 }

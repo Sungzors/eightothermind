@@ -4,19 +4,11 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.widget.Toast
-import com.phdlabs.sungwon.a8chat_android.api.event.MediaEvent
-import com.phdlabs.sungwon.a8chat_android.api.event.UserPatchEvent
-import com.phdlabs.sungwon.a8chat_android.api.response.MediaResponse
-import com.phdlabs.sungwon.a8chat_android.api.response.UserDataResponse
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
-import com.phdlabs.sungwon.a8chat_android.api.utility.Callback8
-import com.phdlabs.sungwon.a8chat_android.db.EventBusManager
 import com.phdlabs.sungwon.a8chat_android.model.user.User
 import com.phdlabs.sungwon.a8chat_android.model.user.registration.Token
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
-import com.phdlabs.sungwon.a8chat_android.utility.*
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
-import com.vicpin.krealmextensions.query
 import com.vicpin.krealmextensions.queryFirst
 import com.vicpin.krealmextensions.save
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -24,8 +16,6 @@ import io.reactivex.schedulers.Schedulers
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import retrofit2.Call
-import retrofit2.Response
 import java.io.ByteArrayOutputStream
 
 
@@ -90,6 +80,7 @@ class ProfileAController(val mView: ProfileContract.View) : ProfileContract.Cont
                             if (response.isSuccess) {
                                 /*Update user in Realm*/
                                 response.user.save()
+                                mView.startApp()
                                 Toast.makeText(mView.getContext(), "Profile updated", Toast.LENGTH_SHORT).show()
                             } else if (response.isError) {
                                 Toast.makeText(mView.getContext(), "Unable to update", Toast.LENGTH_SHORT).show()
