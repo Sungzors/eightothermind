@@ -67,7 +67,19 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
         mRoomName = "testRoom1"
         mRoomType = "privateChat"
 
-        mSocket.on(Constants.SocketKeys.CONNECT, onConnect)
+        getUserId { id ->
+            Log.d(TAG, "Socket Connected")
+            mSocket.emit("connect-rooms", id, mRoomType)
+            isConnected = true
+        }
+
+//        mSocket.on(Constants.SocketKeys.CONNECT, onConnect)
+//        mSocket.connect()
+//        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(mRoot.getContext()!!)
+        retrieveChatHistory()
+    }
+
+    override fun resume() {
         mSocket.on(Constants.SocketKeys.UPDATE_ROOM, onUpdateRoom)
         mSocket.on(Constants.SocketKeys.UPDATE_CHAT_STRING, onNewMessage)
         mSocket.on(Constants.SocketKeys.UPDATE_CHAT_CHANNEL, onNewMessage)
@@ -75,18 +87,9 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
         mSocket.on(Constants.SocketKeys.UPDATE_CHAT_LOCATION, onNewMessage)
         mSocket.on(Constants.SocketKeys.UPDATE_CHAT_MEDIA, onNewMessage)
         mSocket.on(Constants.SocketKeys.ON_ERROR, onError)
-        mSocket.connect()
-//        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(mRoot.getContext()!!)
-    }
-
-    override fun resume() {
     }
 
     override fun pause() {
-    }
-
-    override fun stop() {
-        mSocket.off(Constants.SocketKeys.CONNECT)
         mSocket.off(Constants.SocketKeys.UPDATE_ROOM)
         mSocket.off(Constants.SocketKeys.UPDATE_CHAT_STRING)
         mSocket.off(Constants.SocketKeys.UPDATE_CHAT_CHANNEL)
@@ -96,8 +99,12 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
         mSocket.off(Constants.SocketKeys.ON_ERROR)
     }
 
+    override fun stop() {
+//        mSocket.off(Constants.SocketKeys.CONNECT)
+    }
+
     override fun destroy() {
-        mSocket.disconnect()
+//        mSocket.disconnect()
     }
 
     override fun setMessageObject(position: Int, message: Message) {

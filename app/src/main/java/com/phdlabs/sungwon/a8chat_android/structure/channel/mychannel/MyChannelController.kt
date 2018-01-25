@@ -62,8 +62,15 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View): ChannelCon
         mCaller = Rest.getInstance().caller
         mEventBus = EventBusManager.instance().mDataEventBus
         mRoomId = mView.getRoomId
+        mSocket.emit("connect-rooms", Preferences(mView.getContext()!!).getPreferenceInt(Constants.PrefKeys.USER_ID, 0), "channel")
+        retrieveChatHistory()
 
-        mSocket.on(Constants.SocketKeys.CONNECT, onConnect)
+//        mSocket.on(Constants.SocketKeys.CONNECT, onConnect)
+//        mSocket.connect()
+    }
+
+    override fun resume() {
+
         mSocket.on(Constants.SocketKeys.UPDATE_ROOM, onUpdateRoom)
         mSocket.on(Constants.SocketKeys.UPDATE_CHAT_STRING, onNewMessage)
         mSocket.on(Constants.SocketKeys.UPDATE_CHAT_CHANNEL, onNewMessage)
@@ -72,17 +79,9 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View): ChannelCon
         mSocket.on(Constants.SocketKeys.UPDATE_CHAT_MEDIA, onNewMessage)
         mSocket.on(Constants.SocketKeys.UPDATE_CHAT_POST, onNewMessage)
         mSocket.on(Constants.SocketKeys.ON_ERROR, onError)
-        mSocket.connect()
-    }
-
-    override fun resume() {
     }
 
     override fun pause() {
-    }
-
-    override fun stop() {
-        mSocket.off(Constants.SocketKeys.CONNECT)
         mSocket.off(Constants.SocketKeys.UPDATE_ROOM)
         mSocket.off(Constants.SocketKeys.UPDATE_CHAT_STRING)
         mSocket.off(Constants.SocketKeys.UPDATE_CHAT_CHANNEL)
@@ -93,8 +92,12 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View): ChannelCon
         mSocket.off(Constants.SocketKeys.ON_ERROR)
     }
 
+    override fun stop() {
+//        mSocket.off(Constants.SocketKeys.CONNECT)
+    }
+
     override fun destroy() {
-        mSocket.disconnect()
+//        mSocket.disconnect()
     }
 
     override fun sendMessage() {

@@ -79,7 +79,7 @@ class ChannelCreateActivity: CoreActivity(), ChannelContract.Create.View {
         intent.putExtra(Constants.IntentKeys.CHANNEL_ID, chanId)
         intent.putExtra(Constants.IntentKeys.CHANNEL_NAME, chanName)
         intent.putExtra(Constants.IntentKeys.ROOM_ID, roomId)
-        intent.putExtra(Constants.IntentKeys.OWNER_ID, Preferences(this).getPreferenceInt(Constants.PrefKeys.USER_ID).toString())
+        intent.putExtra(Constants.IntentKeys.OWNER_ID, Preferences(this).getPreferenceInt(Constants.PrefKeys.USER_ID))
         startActivity(intent)
     }
 }

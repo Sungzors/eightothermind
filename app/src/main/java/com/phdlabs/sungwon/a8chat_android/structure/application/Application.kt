@@ -4,8 +4,6 @@ import android.app.Application
 import com.github.nkzawa.socketio.client.IO
 import com.github.nkzawa.socketio.client.Socket
 import com.phdlabs.sungwon.a8chat_android.R
-import io.realm.Realm
-import io.realm.RealmConfiguration
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig
 import java.net.URISyntaxException
 
@@ -25,6 +23,7 @@ class Application : Application() {
         } catch (e: URISyntaxException) {
             throw RuntimeException(e)
         }
+        mSocket.connect()
 
         /*Fonts*/
         CalligraphyConfig.initDefault(CalligraphyConfig.Builder()

@@ -32,19 +32,20 @@
         android:paddingEnd="30dp"
         android:layout_below="@id/cvc_message_date"
         android:layout_alignParentEnd="true">
+
+        <ImageView
+            android:id="@+id/cvc_message_pic_small"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginEnd="10dp"/>
         <TextView
             android:id="@+id/cvc_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="14sp"
             android:text="test"
-            android:textAlignment="textEnd"/>
-        <ImageView
-            android:id="@+id/cvc_message_pic_small"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_marginEnd="10dp"
-            android:layout_toStartOf="@id/cvc_message"/>
+            android:textAlignment="textEnd"
+            android:layout_toEndOf="@id/cvc_message_pic_small"/>
         <LinearLayout
             android:id="@+id/cvc_message_pic_container_1"
             android:layout_width="wrap_content"

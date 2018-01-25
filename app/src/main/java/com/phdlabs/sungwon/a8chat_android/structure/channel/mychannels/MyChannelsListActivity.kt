@@ -72,9 +72,12 @@ class MyChannelsListActivity: CoreActivity(), ChannelContract.MyChannelsList.Vie
                 override fun onQueryTextSubmit(p0: String?): Boolean {
                     mFilteredList.clear()
                     for(channel in mChannelList){
-                        if(channel.name.toLowerCase().contains(p0!!.toLowerCase())){
-                            mFilteredList.add(channel)
+                        if(channel.name != null){
+                            if(channel.name.toLowerCase().contains(p0!!.toLowerCase())){
+                                mFilteredList.add(channel)
+                            }
                         }
+
                     }
                     updateRecyclerSearch()
                     acl_searchview.clearFocus()

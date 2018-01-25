@@ -48,6 +48,7 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         val chatName = intent.getStringExtra(Constants.IntentKeys.CHAT_NAME)
         mParticipantId = intent.getIntExtra(Constants.IntentKeys.PARTICIPANT_ID, 8)
         setToolbarTitle(chatName)
+        showBackArrow(R.drawable.ic_back)
         controller.start()
         controller.getUserId { id ->
             id?.let {
@@ -513,7 +514,7 @@ class ChatActivity: CoreActivity(), ChatContract.View{
             val intent = Intent(this, MyChannelActivity::class.java)
             intent.putExtra(Constants.IntentKeys.CHANNEL_ID, message.channelInfo!!.id.toString())
             intent.putExtra(Constants.IntentKeys.CHANNEL_NAME, message.channelInfo!!.name)
-            intent.putExtra(Constants.IntentKeys.ROOM_ID, message.roomId!!.toInt())
+            intent.putExtra(Constants.IntentKeys.ROOM_ID, message.channelInfo!!.room_id.toInt())
             intent.putExtra(Constants.IntentKeys.OWNER_ID, message.channelInfo!!.user_creator_id!!.toInt())
             startActivity(intent)
         })
@@ -576,7 +577,9 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         showProgress()
         when(requestCode){
             Constants.RequestCode.MY_CHANNELS_LIST -> {
-                controller.sendChannel(data!!.getIntExtra(Constants.IntentKeys.CHANNEL_ID, 0))
+                if(data!= null){
+                    controller.sendChannel(data.getIntExtra(Constants.IntentKeys.CHANNEL_ID, 0))
+                }
                 controller.retrieveChatHistory()
                 ac_the_daddy_drawer.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED
             }

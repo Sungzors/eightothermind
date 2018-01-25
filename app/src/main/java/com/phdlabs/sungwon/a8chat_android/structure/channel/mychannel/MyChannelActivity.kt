@@ -239,7 +239,6 @@ class MyChannelActivity: CoreActivity(), ChannelContract.MyChannel.View{
         })
         acm_conjuring_conduit_of_messages.setOnClickListener {
             val layoutManager = acm_post_recycler.layoutManager as LinearLayoutManager
-            layoutManager.scrollToPositionWithOffset(controller.getMessages().size -1, 0)
             acm_conjuring_conduit_of_messages.isFocusableInTouchMode = true
 
             acm_conjuring_conduit_of_messages.post {

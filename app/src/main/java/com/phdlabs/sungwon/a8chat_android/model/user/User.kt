@@ -110,5 +110,7 @@ open class User() : RealmObject() {
     @Expose
     var translation_services: Boolean? = null
 
+    var userRooms: UserRooms? = null
+
 
 }

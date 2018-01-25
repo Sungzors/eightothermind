@@ -255,7 +255,7 @@ class LobbyFragment: CoreFragment(), LobbyContract.View {
                             val room = getItem(adapterPosition)
                             val intent = Intent(context, ChatActivity::class.java)
                             intent.putExtra(Constants.IntentKeys.CHAT_NAME, room.user!!.first_name + " " + room.user!!.last_name)
-                            intent.putExtra(Constants.IntentKeys.PARTICIPANT_ID, room.user!!.id)
+                            intent.putExtra(Constants.IntentKeys.PARTICIPANT_ID, room.user!!.userRooms!!.userId)
                             intent.putExtra(Constants.IntentKeys.ROOM_ID, room.id)
                             startActivity(intent)
                         }
@@ -280,7 +280,13 @@ class LobbyFragment: CoreFragment(), LobbyContract.View {
             Picasso.with(context).load(data.user!!.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(eventPic)
             title.text = data.user!!.first_name + " " + data.user!!.last_name
             if(data.message != null){
-                message.text = data.message!!.message
+                when(data.message!!.type){
+                    "string" -> message.text = data.message!!.message
+                    "media" -> message.text = "Picture posted"
+                    "contact" -> message.text = data.message!!.contactInfo!!.first_name + " " + data.message!!.contactInfo!!.last_name
+                    "channel" -> message.text = data.message!!.channelInfo!!.name
+                    "location" -> message.text = data.message!!.locationInfo!!.streetAddress
+                }
                 if(Date().time.minus(data.message!!.createdAt!!.time)>= 24 * 60 * 60 * 1000){
                     time.text = SimpleDateFormat("EEE").format(data.message!!.createdAt)
                 } else {
