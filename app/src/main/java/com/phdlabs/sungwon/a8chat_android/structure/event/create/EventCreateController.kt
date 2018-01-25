@@ -114,17 +114,17 @@ class EventCreateController(val mView: EventContract.Create.View) : EventContrac
                                 mView.hideProgress()
                                 if (response.isSuccess) {
 
-                                    response.media?.let {
-                                        for (media in it){
-                                            print("*********************************************")
-                                            print("MEDIA: " + media.id)
-                                            print("MEDIA: " + media.user_id)
-                                            print("MEDIA: " + media.media_file)
-                                            print("**********************************************")
-                                            mMediaId = media.id!!
-                                            mView.showPicture(media.media_file!!)
-                                        }
-                                    }
+//                                    response.media?.let {
+//                                        for (media in it){
+//                                            print("*********************************************")
+//                                            print("MEDIA: " + media.id)
+//                                            print("MEDIA: " + media.user_id)
+//                                            print("MEDIA: " + media.media_file)
+//                                            print("**********************************************")
+//                                            mMediaId = media.id!!
+//                                            mView.showPicture(media.media_file!!)
+//                                        }
+//                                    }
 
                                     //TODO: Media is not being mapped
 

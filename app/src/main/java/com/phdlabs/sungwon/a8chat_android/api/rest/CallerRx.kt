@@ -6,6 +6,7 @@ import com.phdlabs.sungwon.a8chat_android.api.response.UserDataResponse
 import com.phdlabs.sungwon.a8chat_android.api.rest.Caller.TOKEN
 import com.phdlabs.sungwon.a8chat_android.model.user.registration.RegistrationData
 import io.reactivex.Observable
+import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.*
 
@@ -28,5 +29,9 @@ interface CallerRx {
     /*Media*/
     @POST("/media")
     fun userPostPic(@Header(TOKEN) token: String, @Body data: RequestBody): Observable<MediaResponse>
+
+    @Multipart
+    @POST("/media")
+    fun uploadMedia(@Header(TOKEN) token: String, @Part image: MultipartBody.Part): Observable<MediaResponse>
 
 }

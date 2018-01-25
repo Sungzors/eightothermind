@@ -23,6 +23,7 @@ import com.phdlabs.sungwon.a8chat_android.api.response.CommentArrayResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.CommentResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.ErrorResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.EventPostResponse;
+import com.phdlabs.sungwon.a8chat_android.api.response.MediaResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.PrivateChatResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.ResendResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.RoomHistoryResponse;
@@ -30,14 +31,17 @@ import com.phdlabs.sungwon.a8chat_android.api.response.RoomResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.TokenResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.UserDataResponse;
 
+import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
+import retrofit2.http.Multipart;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -88,9 +92,6 @@ public interface Caller {
 
     @GET("/privateChats/{roomId}/user/{userId}/messages")
     Call<RoomHistoryResponse> getMessageHistory(@Header(TOKEN) String token, @Path("roomId") int roomId, @Path("userId") int userId);
-
-//    @POST("/media")
-//    Call<>
 
     @POST("/messages/string")
     Call<ErrorResponse> sendMessageString(@Header(TOKEN) String token, @Body SendMessageStringData data);
