@@ -28,6 +28,7 @@ class ChannelPostShowActivity: CoreActivity(), ChannelContract.PostShow.View{
     override fun contentContainerId(): Int = 0
 
     private lateinit var mChannelId: String
+    private var mChannelName = ""
     private var mChannel: Channel? = null
     private var mMessageId: String = "11"
     private var mMessage: Message? = Message.Builder("11", "media", "1", "4").build()
@@ -58,6 +59,7 @@ class ChannelPostShowActivity: CoreActivity(), ChannelContract.PostShow.View{
     override fun onStart() {
         super.onStart()
         mMessageId = intent.getStringExtra(Constants.IntentKeys.MESSAGE_ID)
+        mChannelName = intent.getStringExtra(Constants.IntentKeys.CHANNEL_NAME)
         if(TemporaryManager.instance.getMessage(mMessageId)!= null){
             mMessage = TemporaryManager.instance.getMessage(mMessageId)
         }
@@ -98,7 +100,7 @@ class ChannelPostShowActivity: CoreActivity(), ChannelContract.PostShow.View{
         acps_post_text.text = mMessage!!.message
         acps_like_count.text = mMessage!!.likes.toString()
         acps_comment_count.text = mMessage!!.comments.toString()
-        setToolbarTitle("TestChannel") //TODO: set to channel name
+        setToolbarTitle(mChannelName) //TODO: set to channel name
     }
 
     private fun setUpClickers(){

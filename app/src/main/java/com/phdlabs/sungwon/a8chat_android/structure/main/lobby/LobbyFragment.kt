@@ -15,6 +15,7 @@ import com.phdlabs.sungwon.a8chat_android.model.Room
 import com.phdlabs.sungwon.a8chat_android.structure.channel.mychannel.MyChannelActivity
 import com.phdlabs.sungwon.a8chat_android.structure.chat.ChatActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreFragment
+import com.phdlabs.sungwon.a8chat_android.structure.event.view.EventViewActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseRecyclerAdapter
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseViewHolder
@@ -47,7 +48,6 @@ class LobbyFragment: CoreFragment(), LobbyContract.View {
     override fun onStart() {
         super.onStart()
         LobbyController(this)
-        coreActivity.setToolbarTitle("Lobby")
         controller.start()
 
 //        setUpChannelRecycler()
@@ -103,6 +103,7 @@ class LobbyFragment: CoreFragment(), LobbyContract.View {
             intent.putExtra(Constants.IntentKeys.CHANNEL_ID, data.id.toString())
             intent.putExtra(Constants.IntentKeys.CHANNEL_NAME, data.name)
             intent.putExtra(Constants.IntentKeys.ROOM_ID, data.room_id.toInt())
+            intent.putExtra(Constants.IntentKeys.OWNER_ID, data.user_creator_id!!.toInt())
             startActivity(intent)
         }
     }
@@ -115,7 +116,16 @@ class LobbyFragment: CoreFragment(), LobbyContract.View {
 
             override fun viewHolder(inflater: LayoutInflater?, parent: ViewGroup?, type: Int): BaseViewHolder {
                 return object : BaseViewHolder(R.layout.card_view_lobby_event, inflater!!, parent){
-
+                    override fun addClicks(views: ViewMap?) {
+                        views!!.click {
+                            val event = getItem(adapterPosition)
+                            val intent = Intent(context, EventViewActivity::class.java)
+                            intent.putExtra(Constants.IntentKeys.EVENT_ID, event.eventId)
+                            intent.putExtra(Constants.IntentKeys.EVENT_NAME, event.event_name)
+                            intent.putExtra(Constants.IntentKeys.ROOM_ID, event.roomId)
+                            startActivity(intent)
+                        }
+                    }
                 }
             }
         }
@@ -133,13 +143,24 @@ class LobbyFragment: CoreFragment(), LobbyContract.View {
         val message = viewHolder.get<TextView>(R.id.cvle_message)
         val time = viewHolder.get<TextView>(R.id.cvle_time)
         Picasso.with(coreActivity.context).load(data.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(eventPic)
-        title.text = data.name
-        message.text = data.distribution //TODO: no subtext ask tomer?
+        title.text = data.event_name
+        if(data.message != null){
+            message.text = data.message!!.message
+            if(Date().time.minus(data.message!!.createdAt!!.time)>= 24 * 60 * 60 * 1000){
+                time.text = SimpleDateFormat("EEE").format(data.message!!.createdAt)
+            } else {
+                time.text = SimpleDateFormat("h:mm aaa").format(data.message!!.createdAt)
+            }
+        } else {
+            message.text = "A message will show once you start a conversation"
+            time.text = ""
+        }
         if(!data.isRead){
             eventIndicator.visibility = ImageView.VISIBLE
         } else {
             eventIndicator.visibility = ImageView.INVISIBLE
         }
+
     }
 
     override fun setUpChannelsFollowedRecycler() {
@@ -198,6 +219,7 @@ class LobbyFragment: CoreFragment(), LobbyContract.View {
             intent.putExtra(Constants.IntentKeys.CHANNEL_ID, data.id.toString())
             intent.putExtra(Constants.IntentKeys.CHANNEL_NAME, data.name)
             intent.putExtra(Constants.IntentKeys.ROOM_ID, data.room_id.toInt())
+            intent.putExtra(Constants.IntentKeys.OWNER_ID, data.user_creator_id!!.toInt())
             startActivity(intent)
         }
     }
@@ -214,6 +236,7 @@ class LobbyFragment: CoreFragment(), LobbyContract.View {
             intent.putExtra(Constants.IntentKeys.CHANNEL_ID, data.id.toString())
             intent.putExtra(Constants.IntentKeys.CHANNEL_NAME, data.name)
             intent.putExtra(Constants.IntentKeys.ROOM_ID, data.room_id.toInt())
+            intent.putExtra(Constants.IntentKeys.OWNER_ID, data.user_creator_id!!.toInt())
             startActivity(intent)
         }
     }
@@ -256,16 +279,21 @@ class LobbyFragment: CoreFragment(), LobbyContract.View {
         if(data.chatType == "private"){
             Picasso.with(context).load(data.user!!.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(eventPic)
             title.text = data.user!!.first_name + " " + data.user!!.last_name
-            message.text = data.message!!.message
+            if(data.message != null){
+                message.text = data.message!!.message
+                if(Date().time.minus(data.message!!.createdAt!!.time)>= 24 * 60 * 60 * 1000){
+                    time.text = SimpleDateFormat("EEE").format(data.message!!.createdAt)
+                } else {
+                    time.text = SimpleDateFormat("h:mm aaa").format(data.message!!.createdAt)
+                }
+            } else {
+                message.text = "A message will show once you start a conversation"
+                time.text = ""
+            }
             if(!data.isRead){
                 eventIndicator.visibility = ImageView.VISIBLE
             } else {
                 eventIndicator.visibility = ImageView.INVISIBLE
-            }
-            if(Date().time.minus(data.message!!.createdAt!!.time)>= 24 * 60 * 60 * 1000){
-                time.text = SimpleDateFormat("EEE").format(data.message!!.createdAt)
-            } else {
-                time.text = SimpleDateFormat("h:mm aaa").format(data.message!!.createdAt)
             }
         } else {
             title.text = "group chat in progress"

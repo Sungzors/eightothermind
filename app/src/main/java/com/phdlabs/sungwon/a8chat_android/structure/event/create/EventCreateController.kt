@@ -37,11 +37,11 @@ class EventCreateController(val mView: EventContract.Create.View) : EventContrac
 
     private var mCaller: Caller
     private var mEventBus: EventBus
-    private var mMediaId: Int = 2
+    private var mMediaId: Int = 32
     private var mFusedLocationClient: FusedLocationProviderClient
 
-    private var mLat = ""
-    private var mLng = ""
+    private var mLat = 0
+    private var mLng = 0
 
     init {
         mView.controller = this
@@ -58,8 +58,8 @@ class EventCreateController(val mView: EventContract.Create.View) : EventContrac
         }
         mFusedLocationClient.lastLocation.addOnSuccessListener({ location ->
             if(location != null){
-                mLat = location.latitude.toString()
-                mLng = location.longitude.toString()
+                mLat = location.latitude.toInt()
+                mLng = location.longitude.toInt()
             }
         })
         mView.hideProgress()
@@ -81,6 +81,9 @@ class EventCreateController(val mView: EventContract.Create.View) : EventContrac
                         location,
                         Preferences(mView.getContext()!!).getPreferenceInt(Constants.PrefKeys.USER_ID).toString(),
                         name,
+                        mLat,
+                        mLng,
+                        "friends of friends",
                         lock
                 ))
         call.enqueue(object: Callback8<EventPostResponse, Event>(mEventBus){

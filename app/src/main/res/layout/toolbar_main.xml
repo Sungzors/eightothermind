@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.Toolbar
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="40dp"
+    android:background="@drawable/gradient_eightchatblue_updown"
+    tools:ignore="MissingPrefix">
+
+    <!--Profile Picture View-->
+    <ImageView
+        android:id="@+id/toolbar_left_action"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="15dp"
+        android:layout_marginStart="15dp"
+        android:background="@drawable/toolbar_left"/>
+
+    <!--Toolbar title-->
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/toolbar_middle"/>
+
+
+    <LinearLayout
+        android:id="@+id/toolbar_title_double_container"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+        <TextView
+            android:id="@+id/toolbar_title_double_top"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="@color/black"
+            android:text="asdfasdf"
+            android:textAlignment="center"/>
+        <TextView
+            android:id="@+id/toolbar_title_double_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="10sp"
+            android:textColor="@color/black"
+            android:text="asdfasdfasdfasdf"
+            android:textAlignment="center"/>
+    </LinearLayout>
+
+
+
+    <TextView
+        android:id="@+id/toolbar_right_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|end"
+        android:layout_marginEnd="15dp"
+        android:textColor="@color/colorPrimary"
+        android:visibility="gone"/>
+
+    <ImageView
+        android:id="@+id/toolbar_right_picture"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|end"
+        android:layout_marginEnd="15dp"
+        android:src="@drawable/toolbar_right"/>
+
+
+</android.support.v7.widget.Toolbar>

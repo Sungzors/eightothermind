@@ -1,10 +1,7 @@
 package com.phdlabs.sungwon.a8chat_android.structure.main.lobby
 
 import com.phdlabs.sungwon.a8chat_android.api.event.Event
-import com.phdlabs.sungwon.a8chat_android.api.response.ChannelArrayResponse
-import com.phdlabs.sungwon.a8chat_android.api.response.ChannelFollowResponse
-import com.phdlabs.sungwon.a8chat_android.api.response.ChannelShowArrayResponse
-import com.phdlabs.sungwon.a8chat_android.api.response.ChatsRetrievalResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.*
 import com.phdlabs.sungwon.a8chat_android.api.rest.Caller
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
 import com.phdlabs.sungwon.a8chat_android.api.utility.Callback8
@@ -70,7 +67,15 @@ class LobbyController(val mView: LobbyContract.View): LobbyContract.Controller {
     }
 
     private fun callEvent(){
-
+        val call = mCaller.getEvents(Preferences(mView.getContext()!!).getPreferenceString(Constants.PrefKeys.TOKEN_KEY), Preferences(mView.getContext()!!).getPreferenceInt(Constants.PrefKeys.USER_ID))
+        call.enqueue(object : Callback8<EventRetrievalResponse, Event>(mEventBus){
+            override fun onSuccess(data: EventRetrievalResponse?) {
+                mEvents.addAll(data!!.events!!)
+                if(mEvents.size>0){
+                    mView.setUpEventsRecycler()
+                }
+            }
+        })
     }
 
     private fun callFollow(){

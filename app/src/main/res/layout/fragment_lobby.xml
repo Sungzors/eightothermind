@@ -19,7 +19,8 @@
                 android:layout_marginStart="15dp"
                 android:layout_marginBottom="20dp"
                 android:text="@string/my_channels"
-                android:visibility="gone"/>
+                android:visibility="gone"
+                android:textStyle="bold"/>
         </RelativeLayout>
 
         <android.support.v7.widget.RecyclerView
@@ -42,7 +43,8 @@
                 android:layout_marginStart="15dp"
                 android:layout_marginBottom="20dp"
                 android:text="@string/events"
-                android:visibility="gone"/>
+                android:visibility="gone"
+                android:textStyle="bold"/>
 
 
         </RelativeLayout>
@@ -51,7 +53,8 @@
             android:id="@+id/fl_events_recycler"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone"/>
+            android:visibility="gone"
+            android:layout_margin="10dp"/>
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -64,7 +67,8 @@
                 android:layout_marginStart="15dp"
                 android:layout_marginBottom="20dp"
                 android:text="@string/channels_i_follow"
-                android:visibility="gone"/>
+                android:visibility="gone"
+                android:textStyle="bold"/>
 
         </RelativeLayout>
 
@@ -85,7 +89,8 @@
                 android:layout_marginStart="15dp"
                 android:layout_marginBottom="20dp"
                 android:text="@string/channels"
-                android:visibility="gone"/>
+                android:visibility="gone"
+                android:textStyle="bold"/>
         </RelativeLayout>
 
         <android.support.v7.widget.RecyclerView
@@ -105,13 +110,14 @@
                 android:layout_marginStart="15dp"
                 android:layout_marginBottom="20dp"
                 android:text="@string/conversations"
-                android:visibility="gone"/>
+                android:visibility="gone"
+                android:textStyle="bold"/>
         </RelativeLayout>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/fl_chat_recycler"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="300dp"
             android:layout_margin="10dp"
             android:visibility="gone"/>
         

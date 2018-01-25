@@ -7,8 +7,8 @@
     
     <ImageView
         android:id="@+id/cvlc_background_unread"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:layout_centerHorizontal="true"/>
     <ImageView
         android:id="@+id/cvlc_picture_profile"
@@ -25,7 +25,9 @@
         android:layout_below="@id/cvlc_picture_profile"
         android:layout_centerHorizontal="true"
         android:textAlignment="center"
-        android:layout_marginTop="10dp"/>
+        android:layout_marginTop="10dp"
+        android:textSize="12sp"
+        android:textStyle="bold"/>
 
 
 </RelativeLayout>

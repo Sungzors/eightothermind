@@ -54,7 +54,7 @@ class EventCreateActivity: CoreActivity(), EventContract.Create.View {
         setToolbarTitle("Create an Event")
         showRightTextToolbar("Create")
         showBackArrow(R.drawable.ic_back)
-        aec_lock_switch.setOnCheckedChangeListener{ compoundButton, b ->
+        aec_lock_switch.setOnCheckedChangeListener{ _, b ->
             isLocked = b
         }
     }
@@ -78,10 +78,10 @@ class EventCreateActivity: CoreActivity(), EventContract.Create.View {
     override fun onCreateEvent(data: EventPostResponse) {
         val a = data
         val intent = Intent(this, EventViewActivity::class.java)
-        intent.putExtra(Constants.IntentKeys.EVENT_ID, data.event!!.newChannelGroupOrEvent!!.id)
-        intent.putExtra(Constants.IntentKeys.EVENT_NAME, data.event!!.newChannelGroupOrEvent!!.name)
-        intent.putExtra(Constants.IntentKeys.EVENT_LOCATION, data.event!!.newChannelGroupOrEvent!!.location_name)
-        intent.putExtra(Constants.IntentKeys.ROOM_ID, data.event!!.room!!.id)
+        intent.putExtra(Constants.IntentKeys.EVENT_ID, data.newChannelGroupOrEvent!!.id)
+        intent.putExtra(Constants.IntentKeys.EVENT_NAME, data.newChannelGroupOrEvent!!.name)
+        intent.putExtra(Constants.IntentKeys.EVENT_LOCATION, data.newChannelGroupOrEvent!!.location_name)
+        intent.putExtra(Constants.IntentKeys.ROOM_ID, data.room!!.id)
         startActivity(intent)
     }
 

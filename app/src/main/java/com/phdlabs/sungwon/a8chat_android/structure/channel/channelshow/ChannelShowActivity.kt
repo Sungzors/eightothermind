@@ -13,6 +13,7 @@ import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseRecyclerAdapter
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseViewHolder
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.ViewMap
+import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_channel.*
 import java.text.SimpleDateFormat
@@ -82,7 +83,7 @@ class ChannelShowActivity: CoreActivity(), ChannelContract.ChannelShow.View{
     private fun bindTopViewHolder(viewHolder: BaseViewHolder, data: ChannelShowNest){
         val pic = viewHolder.get<ImageView>(R.id.cvcl_channel_pic)
         val text = viewHolder.get<TextView>(R.id.cvcl_channel_text)
-        Picasso.with(this).load(data.channels[0].avatar).placeholder(R.drawable.addphoto).into(pic)
+        Picasso.with(this).load(data.channels[0].avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(pic)
         text.text = data.channels[0].name
     }
 
@@ -128,7 +129,7 @@ class ChannelShowActivity: CoreActivity(), ChannelContract.ChannelShow.View{
         picasso.load(data.user!!.avatar).into(posterPic)
         posterName.text = data.name
         if(data.mediaArray != null){
-            picasso.load(data.mediaArray[0].media_file).into(postPic)
+            picasso.load(data.mediaArray[0].media_file).transform(CircleTransform()).into(postPic)
         }
         val formatter = SimpleDateFormat("EEE - h:mm aaa")
         postDate.text = formatter.format(data.createdAt)

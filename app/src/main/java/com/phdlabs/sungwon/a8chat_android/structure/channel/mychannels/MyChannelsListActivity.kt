@@ -115,7 +115,7 @@ class MyChannelsListActivity: CoreActivity(), ChannelContract.MyChannelsList.Vie
     private fun bindItemViewHolder(viewHolder: BaseViewHolder, data: Channel){
         val pic = viewHolder.get<ImageView>(R.id.cvcl_channel_pic)
         val text = viewHolder.get<TextView>(R.id.cvcl_channel_text)
-        Picasso.with(this).load(data.avatar).transform(CircleTransform()).into(pic)
+        Picasso.with(this).load(data.avatar).transform(CircleTransform()).placeholder(R.drawable.addphoto).into(pic)
         text.text = data.name
     }
 

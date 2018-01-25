@@ -13,6 +13,7 @@ import android.widget.*
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.model.Message
 import com.phdlabs.sungwon.a8chat_android.structure.application.Application
+import com.phdlabs.sungwon.a8chat_android.structure.channel.mychannel.MyChannelActivity
 import com.phdlabs.sungwon.a8chat_android.structure.channel.mychannels.MyChannelsListActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
@@ -114,6 +115,11 @@ class ChatActivity: CoreActivity(), ChatContract.View{
             }
         })
         ac_drawer_summoner.setOnClickListener {
+            val view = this.currentFocus
+            if (view != null){
+                val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.hideSoftInputFromWindow(view.windowToken, 0)
+            }
             if(ac_the_daddy_drawer.panelState == SlidingUpPanelLayout.PanelState.COLLAPSED){
                 ac_the_daddy_drawer.panelState = SlidingUpPanelLayout.PanelState.EXPANDED
             } else {
@@ -335,6 +341,7 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         picContainer2.visibility = LinearLayout.GONE
         moneyButtonAccept.visibility = Button.GONE
         moneyButtonDecline.visibility = Button.GONE
+        messagetv.visibility = TextView.VISIBLE
         messagetv.text = message!!.locationInfo!!.streetAddress
         messagetv.setTextColor(ContextCompat.getColor(this, R.color.confirmText))
         controller.getUserId { id ->
@@ -501,9 +508,14 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         moneyButtonDecline.visibility = Button.GONE
         messagetv.text = message!!.channelInfo!!.name
         messagetv.setTextColor(ContextCompat.getColor(this, R.color.confirmText))
-        Picasso.with(this).load(message.channelInfo!!.avatar).into(messagePic) //TODO: change this to channel picture from channelinfo
+        Picasso.with(this).load(message.channelInfo!!.avatar).placeholder(R.drawable.addphoto).into(messagePic) //TODO: change this to channel picture from channelinfo
         messagetv.setOnClickListener({
-            Toast.makeText(this, "to be implemented", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, MyChannelActivity::class.java)
+            intent.putExtra(Constants.IntentKeys.CHANNEL_ID, message.channelInfo!!.id.toString())
+            intent.putExtra(Constants.IntentKeys.CHANNEL_NAME, message.channelInfo!!.name)
+            intent.putExtra(Constants.IntentKeys.ROOM_ID, message.roomId!!.toInt())
+            intent.putExtra(Constants.IntentKeys.OWNER_ID, message.channelInfo!!.user_creator_id!!.toInt())
+            startActivity(intent)
         })
         controller.getUserId { id ->
             id?.let {
@@ -533,6 +545,10 @@ class ChatActivity: CoreActivity(), ChatContract.View{
 
     override val getMessageETObject: EditText
         get() = ac_conjuring_conduit_of_messages
+
+    override fun hideDrawer() {
+        ac_the_daddy_drawer.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED
+    }
 
     override fun updateRecycler() {
         mAdapter.clear()

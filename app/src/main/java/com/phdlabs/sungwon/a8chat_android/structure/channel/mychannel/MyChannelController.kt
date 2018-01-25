@@ -19,8 +19,8 @@ import com.phdlabs.sungwon.a8chat_android.api.response.RoomResponse
 import com.phdlabs.sungwon.a8chat_android.api.rest.Caller
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
 import com.phdlabs.sungwon.a8chat_android.api.utility.Callback8
+import com.phdlabs.sungwon.a8chat_android.api.utility.GsonHolder
 import com.phdlabs.sungwon.a8chat_android.db.EventBusManager
-import com.phdlabs.sungwon.a8chat_android.model.Channel
 import com.phdlabs.sungwon.a8chat_android.model.Message
 import com.phdlabs.sungwon.a8chat_android.structure.channel.ChannelContract
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
@@ -34,8 +34,6 @@ import org.json.JSONException
 import org.json.JSONObject
 import retrofit2.Response
 import java.io.ByteArrayOutputStream
-import java.text.SimpleDateFormat
-import java.util.*
 
 /**
  * Created by SungWon on 12/20/2017.
@@ -144,7 +142,7 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View): ChannelCon
                 //TODO: need to add read first then unread always, but check for unread null instead.
                 for(item in data!!.messages!!.allMessages!!){
                     if(item.roomId == mRoomId.toString()){
-                        mMessages.add(item)
+                        mMessages.add(0, item)
                     }
                 }
                 mView.updateRecycler()
@@ -195,120 +193,123 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View): ChannelCon
     private val onNewMessage = Emitter.Listener { args ->
         mView.getActivity.runOnUiThread({
             val data : JSONObject = args[0] as JSONObject
-            var id : String? = null
-            var message : String? = null
-            var roomId : String? = null
-            var userId : String? = null
-            var type : String? = null
-            try {
-                message = data.getString("message")
-            } catch (e:JSONException){
-                Log.e(TAG, e.message)
-            }
-            try {
-                id = data.getString("id")
-                roomId = data.getString("roomId")
-                userId = data.getString("userId")
-                type = data.getString("type")
-            } catch (e: JSONException){
-                Log.e(TAG, e.message)
-            }
-            if(type == null){
-                Log.e(TAG, "Message's type is null")
-                return@runOnUiThread
-            }
-            val builder = Message.Builder(id!!, type, userId!!, roomId!!)
-            when (type){
-                Message.TYPE_STRING -> {
-                    val message = builder.message(message!!).build()
-                    var name : String? = null
-                    var userAvatar : String? = null
-                    var createdAt = Date()
-//                    var updatedAt : Date? = null
-                    var original_message_id : String? = null
-                    try {
-                        name = data.getString("name")
-//                        userAvatar = data.getString("userAvatar")
-                        val createdAtString = data.getString("createdAt")
-                        val df = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-                        createdAt = df.parse(createdAtString)
-//                        val updatedAtString = data.getString("updatedAt")
-//                        updatedAt = df.parse(updatedAtString)
-                        original_message_id = data.getString("original_message_id")
-                        message.name = name
-//                        message.userAvatar = userAvatar
-                        message.createdAt = createdAt
-//                        message.updatedAt = updatedAt
-                        message.original_message_id = original_message_id
-                    } catch (e: JSONException){
-                        Log.e(TAG, e.message)
-                    }
-                    mMessages.add(message)
-                    mView.updateRecycler()
-                }
-                Message.TYPE_CHANNEL -> {
-                    val channelInfo : JSONObject
-                    var id : Int? = null
-                    var name : String? = null
-                    var unique_id : String? = null
-                    var description : String? = null
-                    var color : String? = null
-                    var background : String? = null
-                    var add_to_profile : Boolean? = null
-                    var user_creator_id : String? = null
-                    var room_id : String? = null
-                    var channel : Channel? = null
-                    try {
-                        channelInfo = data.getJSONObject("channelInfo")
-                        id = channelInfo.getInt("id")
-                        name = channelInfo.getString("name")
-                        unique_id = channelInfo.getString("unique_id")
-                        description = channelInfo.getString("description")
-                        color = channelInfo.getString("color")
-                        background = channelInfo.getString("background")
-                        add_to_profile = channelInfo.getBoolean("add_to_profile")
-                        user_creator_id = channelInfo.getString("user_creator_id")
-                        room_id = channelInfo.getString("room_id")
-                        channel = Channel(id, name, unique_id, room_id)
-                        channel.description = description
-                        channel.color = color
-                        channel.background = background
-                        channel.add_to_profile = add_to_profile
-                        channel.user_creator_id = user_creator_id
-                    } catch (e: JSONException){
-                        Log.e(TAG, e.message)
-                        return@runOnUiThread
-                    }
-                    mMessages.add(builder.message(message).channel(channel).build())
-                    mView.updateRecycler()
-                }
-                Message.TYPE_MEDIA ->{
-                    val mediaArray : JSONObject
-                    val media_file_string : String
-                    try {
-                        mediaArray = data.getJSONObject("mediaArray")
-                        media_file_string = mediaArray.getString("media_file_string")
-                    } catch (e: JSONException){
-                        Log.e(TAG, e.message)
-                        return@runOnUiThread
-                    }
-                    mMessages.add(builder.message(message).media(media_file_string).build())
-                    mView.updateRecycler()
-                }
-                Message.TYPE_POST ->{
-                    val mediaArray : JSONObject
-                    val media_file_string : String
-                    try {
-                        mediaArray = data.getJSONObject("mediaArray")
-                        media_file_string = mediaArray.getString("media_file_string")
-                    } catch (e: JSONException){
-                        Log.e(TAG, e.message)
-                        return@runOnUiThread
-                    }
-                    mMessages.add(builder.message(message).media(media_file_string).build())
-                    mView.updateRecycler()
-                }
-            }
+            val message = GsonHolder.Companion.instance.get()!!.fromJson(data.toString(), Message::class.java)
+            mMessages.add(0, message)
+            mView.updateRecycler()
+//            var id : String? = null
+//            var message : String? = null
+//            var roomId : String? = null
+//            var userId : String? = null
+//            var type : String? = null
+//            try {
+//                message = data.getString("message")
+//            } catch (e:JSONException){
+//                Log.e(TAG, e.message)
+//            }
+//            try {
+//                id = data.getString("id")
+//                roomId = data.getString("roomId")
+//                userId = data.getString("userId")
+//                type = data.getString("type")
+//            } catch (e: JSONException){
+//                Log.e(TAG, e.message)
+//            }
+//            if(type == null){
+//                Log.e(TAG, "Message's type is null")
+//                return@runOnUiThread
+//            }
+//            val builder = Message.Builder(id!!, type, userId!!, roomId!!)
+//            when (type){
+//                Message.TYPE_STRING -> {
+//                    val message = builder.message(message!!).build()
+//                    var name : String? = null
+//                    var userAvatar : String? = null
+//                    var createdAt = Date()
+////                    var updatedAt : Date? = null
+//                    var original_message_id : String? = null
+//                    try {
+//                        name = data.getString("name")
+////                        userAvatar = data.getString("userAvatar")
+//                        val createdAtString = data.getString("createdAt")
+//                        val df = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+//                        createdAt = df.parse(createdAtString)
+////                        val updatedAtString = data.getString("updatedAt")
+////                        updatedAt = df.parse(updatedAtString)
+//                        original_message_id = data.getString("original_message_id")
+//                        message.name = name
+////                        message.userAvatar = userAvatar
+//                        message.createdAt = createdAt
+////                        message.updatedAt = updatedAt
+//                        message.original_message_id = original_message_id
+//                    } catch (e: JSONException){
+//                        Log.e(TAG, e.message)
+//                    }
+//                    mMessages.add(message)
+//                    mView.updateRecycler()
+//                }
+//                Message.TYPE_CHANNEL -> {
+//                    val channelInfo : JSONObject
+//                    var id : Int? = null
+//                    var name : String? = null
+//                    var unique_id : String? = null
+//                    var description : String? = null
+//                    var color : String? = null
+//                    var background : String? = null
+//                    var add_to_profile : Boolean? = null
+//                    var user_creator_id : String? = null
+//                    var room_id : String? = null
+//                    var channel : Channel? = null
+//                    try {
+//                        channelInfo = data.getJSONObject("channelInfo")
+//                        id = channelInfo.getInt("id")
+//                        name = channelInfo.getString("name")
+//                        unique_id = channelInfo.getString("unique_id")
+//                        description = channelInfo.getString("description")
+//                        color = channelInfo.getString("color")
+//                        background = channelInfo.getString("background")
+//                        add_to_profile = channelInfo.getBoolean("add_to_profile")
+//                        user_creator_id = channelInfo.getString("user_creator_id")
+//                        room_id = channelInfo.getString("room_id")
+//                        channel = Channel(id, name, unique_id, room_id)
+//                        channel.description = description
+//                        channel.color = color
+//                        channel.background = background
+//                        channel.add_to_profile = add_to_profile
+//                        channel.user_creator_id = user_creator_id
+//                    } catch (e: JSONException){
+//                        Log.e(TAG, e.message)
+//                        return@runOnUiThread
+//                    }
+//                    mMessages.add(builder.message(message).channel(channel).build())
+//                    mView.updateRecycler()
+//                }
+//                Message.TYPE_MEDIA ->{
+//                    val mediaArray : JSONObject
+//                    val media_file_string : String
+//                    try {
+//                        mediaArray = data.getJSONObject("mediaArray")
+//                        media_file_string = mediaArray.getString("media_file_string")
+//                    } catch (e: JSONException){
+//                        Log.e(TAG, e.message)
+//                        return@runOnUiThread
+//                    }
+//                    mMessages.add(builder.message(message).media(media_file_string).build())
+//                    mView.updateRecycler()
+//                }
+//                Message.TYPE_POST ->{
+//                    val mediaArray : JSONObject
+//                    val media_file_string : String
+//                    try {
+//                        mediaArray = data.getJSONObject("mediaArray")
+//                        media_file_string = mediaArray.getString("media_file_string")
+//                    } catch (e: JSONException){
+//                        Log.e(TAG, e.message)
+//                        return@runOnUiThread
+//                    }
+//                    mMessages.add(builder.message(message).media(media_file_string).build())
+//                    mView.updateRecycler()
+//                }
+//            }
         })
     }
 

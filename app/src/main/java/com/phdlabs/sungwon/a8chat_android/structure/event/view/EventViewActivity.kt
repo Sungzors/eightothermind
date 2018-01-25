@@ -36,7 +36,7 @@ class EventViewActivity: CoreActivity(), EventContract.ViewDetail.View{
 
     override fun contentContainerId(): Int = 0
 
-    private lateinit var mEventId: String
+    private var mEventId = 0
     private lateinit var mEventName: String
     private var mEventLocation: String? = null
     private var mRoomId: Int = 0
@@ -47,7 +47,7 @@ class EventViewActivity: CoreActivity(), EventContract.ViewDetail.View{
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         EventViewController(this)
-        mEventId = intent.getStringExtra(Constants.IntentKeys.EVENT_ID)
+        mEventId = intent.getIntExtra(Constants.IntentKeys.EVENT_ID, 0)
         mEventName = intent.getStringExtra(Constants.IntentKeys.EVENT_NAME)
         mEventLocation = intent.getStringExtra(Constants.IntentKeys.EVENT_LOCATION)
         mRoomId = intent.getIntExtra(Constants.IntentKeys.ROOM_ID, 0)
@@ -406,6 +406,11 @@ class EventViewActivity: CoreActivity(), EventContract.ViewDetail.View{
             }
         })
         ac_drawer_summoner.setOnClickListener {
+            val view = this.currentFocus
+            if (view != null){
+                val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.hideSoftInputFromWindow(view.windowToken, 0)
+            }
             if(ac_the_daddy_drawer.panelState == SlidingUpPanelLayout.PanelState.COLLAPSED){
                 ac_the_daddy_drawer.panelState = SlidingUpPanelLayout.PanelState.EXPANDED
             } else {
@@ -417,7 +422,8 @@ class EventViewActivity: CoreActivity(), EventContract.ViewDetail.View{
             startActivityForResult(intent, Constants.RequestCode.MY_CHANNELS_LIST)
         }
         ac_drawer_contact.setOnClickListener {
-            controller.sendContact()
+            val intent = Intent(this, MyChannelsListActivity::class.java)
+            startActivityForResult(intent, Constants.RequestCode.MY_CHANNELS_LIST)
         }
         ac_drawer_file.setOnClickListener {
             controller.sendFile()

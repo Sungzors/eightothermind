@@ -23,6 +23,7 @@ import com.phdlabs.sungwon.a8chat_android.api.response.CommentArrayResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.CommentResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.ErrorResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.EventPostResponse;
+import com.phdlabs.sungwon.a8chat_android.api.response.EventRetrievalResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.PrivateChatResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.ResendResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.RoomHistoryResponse;
@@ -130,6 +131,9 @@ public interface Caller {
 
 //    @GET("/users/{userId}/events")
 //    Call<> TODO:Event, talk to Tomer about wtf happened
+
+    @GET("/users/{userId}/events/with_flags")
+    Call<EventRetrievalResponse> getEvents(@Header(TOKEN) String token, @Path("userId") int userId);
 
     @GET("/users/{userId}/channels/follows")
     Call<ChannelFollowResponse> getFollowChannel(@Header(TOKEN) String token, @Path("userId") int userId);

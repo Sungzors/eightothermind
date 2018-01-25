@@ -1,7 +1,9 @@
 package com.phdlabs.sungwon.a8chat_android.structure.main
 
 import android.os.Bundle
+import android.support.v4.content.ContextCompat
 import android.view.MenuItem
+import android.view.WindowManager
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.structure.main.lobby.LobbyFragment
@@ -20,7 +22,10 @@ class MainActivity: CoreActivity(), MainContract.View{
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        toolbar.setBackgroundResource(R.drawable.gradient_eightchatblue_updown)
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        window.statusBarColor = ContextCompat.getColor(this, R.color.gradientRight)
+
         showTabs()
     }
 

@@ -8,6 +8,9 @@ class EventPostData(
         val location_name: String?,
         val user_creator_id: String,
         val name: String,
+        val lat: Int,
+        val lng: Int,
+        val distribution: String,
         //TODO: friend of friends
         val locks_after_24_hours: Boolean
 )

@@ -78,10 +78,10 @@ public abstract class Callback8<Result, EventClass extends Event> implements Cal
     }
 
     private void postErrorMessage(String message) {
-        if (eventClass == null) {
-            initParameter();
-        }
-        eventClass.setErrorMessage(message);
-        eventBus.post(eventClass);
+//        if (eventClass == null) {
+//            initParameter();
+//        }
+//        eventClass.setErrorMessage(message);
+//        eventBus.post(eventClass);
     }
 }

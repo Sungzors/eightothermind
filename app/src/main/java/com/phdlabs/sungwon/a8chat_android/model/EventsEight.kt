@@ -2,17 +2,15 @@ package com.phdlabs.sungwon.a8chat_android.model
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
-import io.realm.RealmList
-import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
-import io.realm.annotations.RealmClass
+import java.util.*
 
 /**
  * Created by SungWon on 11/21/2017.
  */
 
-@RealmClass
-open class EventsEight(): RealmObject(){
+//@RealmClass
+open class EventsEight{
 
     @PrimaryKey
     @SerializedName("id")
@@ -35,9 +33,9 @@ open class EventsEight(): RealmObject(){
     @Expose
     var locks_after_24_hours: Boolean = false
 
-    @SerializedName("location")
-    @Expose
-    var location: RealmList<String>? = null
+//    @SerializedName("location")
+//    @Expose
+//    var location: String? = null
 
     @SerializedName("location_name")
     @Expose
@@ -51,8 +49,20 @@ open class EventsEight(): RealmObject(){
     @Expose
     var isRead: Boolean = true
 
+    @SerializedName("last_activity")
+    @Expose
+    var last_activity: Date? = null
+
     @SerializedName("avatar")
     @Expose
     var avatar: String? = null
+
+    @SerializedName("message")
+    @Expose
+    var message: Message? = null
+
+    var event_name: String? = null
+    var eventId: Int? = null
+    var roomId: Int? = null
 }
 

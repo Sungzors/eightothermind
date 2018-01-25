@@ -20,6 +20,7 @@ object Constants{
         const val PARTICIPANT_ID = "dunga"
         const val ROOM_ID = "room_id"
         const val MESSAGE_ID = "message_id"
+        const val OWNER_ID = "owner_id"
     }
 
     object PrefKeys{

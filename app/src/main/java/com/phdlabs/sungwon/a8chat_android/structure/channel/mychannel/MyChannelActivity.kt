@@ -10,9 +10,11 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.db.TemporaryManager
+import com.phdlabs.sungwon.a8chat_android.db.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.Message
 import com.phdlabs.sungwon.a8chat_android.structure.application.Application
 import com.phdlabs.sungwon.a8chat_android.structure.channel.ChannelContract
@@ -42,6 +44,7 @@ class MyChannelActivity: CoreActivity(), ChannelContract.MyChannel.View{
     private lateinit var mChannelId: String
     private lateinit var mChannelName: String
     private var mRoomId: Int = 0
+    private var mOwnerId = 0
 
     private lateinit var mAdapter: BaseRecyclerAdapter<Message, BaseViewHolder>
 
@@ -51,9 +54,11 @@ class MyChannelActivity: CoreActivity(), ChannelContract.MyChannel.View{
         mChannelId = intent.getStringExtra(Constants.IntentKeys.CHANNEL_ID)
         mChannelName = intent.getStringExtra(Constants.IntentKeys.CHANNEL_NAME)
         mRoomId = intent.getIntExtra(Constants.IntentKeys.ROOM_ID, 0)
+        mOwnerId = intent.getIntExtra(Constants.IntentKeys.OWNER_ID, 0)
         showBackArrow(R.drawable.ic_back)
         setToolbarTitle(mChannelName)
         setUpRecycler()
+
         controller.start()
 //        controller.createChannelRoom()
 
@@ -61,6 +66,15 @@ class MyChannelActivity: CoreActivity(), ChannelContract.MyChannel.View{
 
     override fun onStart() {
         super.onStart()
+        UserManager.instance.getCurrentUser { success, user, _ ->
+            if (success) {
+                user?.id.let {
+                    if(it != mOwnerId){
+                        acm_the_drawer.visibility = LinearLayout.INVISIBLE
+                    }
+                }
+            }
+        }
         setUpDrawer()
         setUpClickers()
     }
@@ -107,7 +121,11 @@ class MyChannelActivity: CoreActivity(), ChannelContract.MyChannel.View{
                 } else if(t.message == null){
                     return 1
                 } else {
-                    return 2
+                    if(t.mediaArray.size>0){
+                        return 2
+                    } else {
+                        return 0
+                    }
                 }
             }
 
@@ -139,6 +157,7 @@ class MyChannelActivity: CoreActivity(), ChannelContract.MyChannel.View{
         acm_post_recycler.layoutManager = layoutManager
         acm_post_recycler.adapter = mAdapter
     }
+
     private fun bindMessageViewHolder(viewHolder: BaseViewHolder, data: Message){
         val pic = viewHolder.get<ImageView>(R.id.cvps_poster_pic)
         val text = viewHolder.get<TextView>(R.id.cvps_post_text)
@@ -187,6 +206,7 @@ class MyChannelActivity: CoreActivity(), ChannelContract.MyChannel.View{
             TemporaryManager.instance.mMessageList.add(data)
             val intent = Intent(this, ChannelPostShowActivity::class.java)
             intent.putExtra(Constants.IntentKeys.MESSAGE_ID, data.id)
+            intent.putExtra(Constants.IntentKeys.CHANNEL_NAME, mChannelName)
             startActivity(intent)
         }
         likeButton.setOnClickListener {
@@ -204,6 +224,7 @@ class MyChannelActivity: CoreActivity(), ChannelContract.MyChannel.View{
         mAdapter.clear()
         mAdapter.setItems(controller.getMessages())
         mAdapter.notifyDataSetChanged()
+        acm_post_recycler.smoothScrollToPosition(0)
     }
 
     private fun setUpDrawer(){

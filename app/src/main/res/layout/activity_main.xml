@@ -13,7 +13,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:theme="@style/AppTheme.AppBarWhite">
-            <include layout="@layout/toolbar"/>
+            <include layout="@layout/toolbar_main"/>
         </android.support.design.widget.AppBarLayout>
         <FrameLayout
             android:id="@+id/am_content_frame"

@@ -196,12 +196,13 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
 //        if (ActivityCompat.checkSelfPermission(mRoot.getContext()!!, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mRoot.getContext()!!, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 //            return
 //        }
-//        mFusedLocationClient.lastLocation.addOnSuccessListener({ drawer_location ->
-//            if(drawer_location != null){
+//        mFusedLocationClient.lastLocation.addOnSuccessListener({ location ->
+//            if(location != null){
 //
 //            }
 //        })
         getUserId { id ->
+            mView.showProgress()
             id?.let {
                 val call = mCaller.sendMessageLocation(
                         Preferences(mView.getContext()!!).getPreferenceString(Constants.PrefKeys.TOKEN_KEY),
@@ -210,6 +211,8 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
                 call.enqueue(object : Callback8<ErrorResponse, MessageLocationSentEvent>(mEventBus) {
                     override fun onSuccess(data: ErrorResponse?) {
                         mEventBus.post(MessageLocationSentEvent())
+                        mView.hideProgress()
+                        mView.hideDrawer()
                     }
                 })
             }
