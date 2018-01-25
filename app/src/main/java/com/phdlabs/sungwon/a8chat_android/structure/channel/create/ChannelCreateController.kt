@@ -1,5 +1,7 @@
 package com.phdlabs.sungwon.a8chat_android.structure.channel.create
 
+import android.app.Activity
+import android.content.Intent
 import com.phdlabs.sungwon.a8chat_android.api.data.PostChannelData
 import com.phdlabs.sungwon.a8chat_android.api.event.ChannelPostEvent
 import com.phdlabs.sungwon.a8chat_android.api.response.ChannelResponse
@@ -12,12 +14,14 @@ import com.phdlabs.sungwon.a8chat_android.model.Channel
 import com.phdlabs.sungwon.a8chat_android.structure.channel.ChannelContract
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.Preferences
+import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
 import org.greenrobot.eventbus.EventBus
 
 /**
  * Created by SungWon on 11/30/2017.
  */
-class ChannelCreateController(val mView : ChannelContract.Create.View): ChannelContract.Create.Controller{
+class ChannelCreateController(val mView: ChannelContract.Create.View) : ChannelContract.Create.Controller {
+
     private val TAG = "ChannelCreateController"
 
     private lateinit var mCaller: Caller
@@ -43,7 +47,7 @@ class ChannelCreateController(val mView : ChannelContract.Create.View): ChannelC
 
     override fun createChannel(data: PostChannelData) {
         val call = mCaller.postChannel(Preferences(mView.getContext()!!).getPreferenceString(Constants.PrefKeys.TOKEN_KEY), data)
-        call.enqueue(object : Callback8<ChannelResponse, ChannelPostEvent>(mEventBus){
+        call.enqueue(object : Callback8<ChannelResponse, ChannelPostEvent>(mEventBus) {
             override fun onSuccess(data: ChannelResponse?) {
                 val a = data
                 val chan = Channel(data!!.newChannelGroupOrEvent!!.id.toInt(), data.newChannelGroupOrEvent!!.name, data.newChannelGroupOrEvent!!.name, /*data.newChannelGroupOrEvent!!.roomId*/ data.newChannelGroupOrEvent!!.room_id)
@@ -57,7 +61,27 @@ class ChannelCreateController(val mView : ChannelContract.Create.View): ChannelC
         })
     }
 
-    override fun uploadPicture() {
+    /*Channel picture*/
+    override fun showPicture() {
+        CameraControl.instance.pickImage(mView.getActivity,
+                "Choose a channel picture",
+                CameraControl.instance.requestCode(),
+                false)
+    }
+
+    override fun onPictureResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        //Change image if available
+        if (resultCode != Activity.RESULT_CANCELED) {
+            mView.showProgress()
+            //Set image in UI
+            val imageUrl = CameraControl.instance.getImagePathFromResult(mView.getActivity, requestCode, resultCode, data)
+            imageUrl?.let {
+                //Set image in UI
+                mView.setChannelImage(it)
+                //TODO: Upload image
+            }
+            mView.hideProgress()
+        }
     }
 
 }
