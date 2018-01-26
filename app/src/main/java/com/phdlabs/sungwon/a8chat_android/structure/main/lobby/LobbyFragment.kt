@@ -145,14 +145,20 @@ class LobbyFragment: CoreFragment(), LobbyContract.View {
         Picasso.with(coreActivity.context).load(data.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(eventPic)
         title.text = data.event_name
         if(data.message != null){
-            message.text = data.message!!.message
+            when(data.message!!.type){
+                "string" -> message.text = data.message!!.message
+                "media" -> message.text = "Picture posted"
+                "contact" -> message.text = data.message!!.contactInfo!!.first_name + " " + data.message!!.contactInfo!!.last_name
+                "channel" -> message.text = data.message!!.channelInfo!!.name
+                "location" -> message.text = data.message!!.locationInfo!!.streetAddress
+            }
             if(Date().time.minus(data.message!!.createdAt!!.time)>= 24 * 60 * 60 * 1000){
                 time.text = SimpleDateFormat("EEE").format(data.message!!.createdAt)
             } else {
                 time.text = SimpleDateFormat("h:mm aaa").format(data.message!!.createdAt)
             }
         } else {
-            message.text = "A message will show once you start a conversation"
+            message.text = ""
             time.text = ""
         }
         if(!data.isRead){
@@ -293,7 +299,7 @@ class LobbyFragment: CoreFragment(), LobbyContract.View {
                     time.text = SimpleDateFormat("h:mm aaa").format(data.message!!.createdAt)
                 }
             } else {
-                message.text = "A message will show once you start a conversation"
+                message.text = ""
                 time.text = ""
             }
             if(!data.isRead){
