@@ -55,6 +55,7 @@ class ProfileAController(val mView: ProfileContract.View) : ProfileContract.Cont
      * [postProfile]
      * */
     override fun postProfile() {
+
         /*Data validation*/
         if (mView.nullChecker()) {
             Toast.makeText(mView.getContext(), "Please enter a first and last name", Toast.LENGTH_SHORT).show()

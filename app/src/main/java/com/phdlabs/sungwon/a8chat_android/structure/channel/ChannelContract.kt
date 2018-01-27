@@ -3,10 +3,12 @@ package com.phdlabs.sungwon.a8chat_android.structure.channel
 import android.content.Intent
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.Switch
 import com.phdlabs.sungwon.a8chat_android.api.data.PostChannelData
 import com.phdlabs.sungwon.a8chat_android.model.Channel
 import com.phdlabs.sungwon.a8chat_android.model.ChannelShowNest
 import com.phdlabs.sungwon.a8chat_android.model.Message
+import com.phdlabs.sungwon.a8chat_android.model.media.Media
 import com.phdlabs.sungwon.a8chat_android.structure.application.Application
 import com.phdlabs.sungwon.a8chat_android.structure.channel.create.ChannelCreateActivity
 import com.phdlabs.sungwon.a8chat_android.structure.channel.mychannel.MyChannelActivity
@@ -15,20 +17,24 @@ import com.phdlabs.sungwon.a8chat_android.structure.core.BaseView
 
 /**
  * Created by SungWon on 11/30/2017.
+ * Updated by JPAM on 26/01/2018
  */
 interface ChannelContract {
 
     interface Create {
         interface View : BaseView<Controller> {
-            fun finishActivity(chanId: String, chanName: String, roomId: Int)
-            val getChannelImage: ImageView?
+            /*UI*/
             val getActivity: ChannelCreateActivity
+            /*Camera||Photo*/
             fun setChannelImage(filePath: String)
+            /*Media*/
+            fun getMedia(media: Media)
+            /*LifeCycle*/
+            fun finishActivity(chanId: String, chanName: String, roomId: Int)
         }
 
         interface Controller : BaseController {
-
-            fun createChannel(data: PostChannelData)
+            fun createChannel(postChannelData: PostChannelData)
             fun onPictureResult(requestCode: Int, resultCode: Int, data: Intent?)
             fun showPicture()
         }

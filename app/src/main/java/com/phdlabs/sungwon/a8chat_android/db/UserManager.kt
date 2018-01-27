@@ -17,8 +17,6 @@ class UserManager {
     /*Singleton*/
     companion object {
         val instance: UserManager = UserManager()
-
-
     }
 
     /*Properties*/
@@ -55,7 +53,7 @@ class UserManager {
         } ?: run {
             /*No available token*/
             callback(false, null, null)
-            print("UserManager: No token, return user to Log In screen")
+            println("UserManager: No token, return user to Log In screen")
         }
     }
 

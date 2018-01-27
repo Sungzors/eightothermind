@@ -60,9 +60,6 @@ public interface Caller {
     @GET("/channels")
     Call<ChannelArrayResponse> getChannel(@Header(TOKEN) String token);
 
-    @POST("/channels")
-    Call<ChannelResponse> postChannel(@Header(TOKEN) String token, @Body PostChannelData postChannelData);
-
     @PATCH("/channels/{channelId}/follow")
     Call<RoomResponse> followChannel(@Header(TOKEN) String token, @Path("channelId") int channelId, @Body FollowUserData data);
 
@@ -113,9 +110,6 @@ public interface Caller {
 
     @POST("/messages/share/groupChat")
     Call<ErrorResponse> sendMessageGroupChat(@Header(TOKEN) String token, @Body SendMessageContactData data);
-
-//    @GET("/users/{userid}")
-//    Call<UserDataResponse> getUser(@Header(TOKEN) String token, @Path("userid") int userid);
 
     @GET("/users/{userId}/privateChats")
     Call<PrivateChatResponse> getPrivateChats(@Header(TOKEN) String token, @Path("userId") int userid);
