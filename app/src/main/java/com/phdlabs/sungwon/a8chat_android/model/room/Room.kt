@@ -3,7 +3,7 @@ package com.phdlabs.sungwon.a8chat_android.model.room
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.phdlabs.sungwon.a8chat_android.model.Message
-import com.phdlabs.sungwon.a8chat_android.model.channel.RealmInt
+import com.phdlabs.sungwon.a8chat_android.model.realmNative.RealmInt
 import com.phdlabs.sungwon.a8chat_android.model.user.User
 import io.realm.RealmList
 import io.realm.RealmObject
@@ -69,6 +69,9 @@ open class Room() : RealmObject() {
     @Ignore
     var message: Message? = null //Todo: Message in Realm
 
+    /**
+     * [User] assigned property when creating a Room
+     * */
     var user: User? = null
 
 }

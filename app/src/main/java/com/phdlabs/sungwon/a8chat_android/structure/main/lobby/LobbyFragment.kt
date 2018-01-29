@@ -9,8 +9,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.phdlabs.sungwon.a8chat_android.R
-import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
 import com.phdlabs.sungwon.a8chat_android.model.EventsEight
+import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.phdlabs.sungwon.a8chat_android.structure.channel.mychannel.MyChannelActivity
 import com.phdlabs.sungwon.a8chat_android.structure.chat.ChatActivity
@@ -102,7 +102,7 @@ class LobbyFragment: CoreFragment(), LobbyContract.View {
             val intent = Intent(activity, MyChannelActivity::class.java)
             intent.putExtra(Constants.IntentKeys.CHANNEL_ID, data.id.toString())
             intent.putExtra(Constants.IntentKeys.CHANNEL_NAME, data.name)
-            intent.putExtra(Constants.IntentKeys.ROOM_ID, data.room_id.toInt())
+            intent.putExtra(Constants.IntentKeys.ROOM_ID, data.room_id)
             startActivity(intent)
         }
     }
@@ -197,7 +197,7 @@ class LobbyFragment: CoreFragment(), LobbyContract.View {
             val intent = Intent(activity, MyChannelActivity::class.java)
             intent.putExtra(Constants.IntentKeys.CHANNEL_ID, data.id.toString())
             intent.putExtra(Constants.IntentKeys.CHANNEL_NAME, data.name)
-            intent.putExtra(Constants.IntentKeys.ROOM_ID, data.room_id.toInt())
+            intent.putExtra(Constants.IntentKeys.ROOM_ID, data.room_id)
             startActivity(intent)
         }
     }
@@ -213,7 +213,7 @@ class LobbyFragment: CoreFragment(), LobbyContract.View {
             val intent = Intent(activity, MyChannelActivity::class.java)
             intent.putExtra(Constants.IntentKeys.CHANNEL_ID, data.id.toString())
             intent.putExtra(Constants.IntentKeys.CHANNEL_NAME, data.name)
-            intent.putExtra(Constants.IntentKeys.ROOM_ID, data.room_id.toInt())
+            intent.putExtra(Constants.IntentKeys.ROOM_ID, data.room_id)
             startActivity(intent)
         }
     }

@@ -41,7 +41,7 @@ class MyChannelActivity: CoreActivity(), ChannelContract.MyChannel.View{
 
     override fun contentContainerId(): Int = 0
 
-    private lateinit var mChannelId: String
+    private var mChannelId: Int = 0
     private lateinit var mChannelName: String
     private var mRoomId: Int = 0
 
@@ -50,7 +50,7 @@ class MyChannelActivity: CoreActivity(), ChannelContract.MyChannel.View{
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         MyChannelController(this)
-        mChannelId = intent.getStringExtra(Constants.IntentKeys.CHANNEL_ID)
+        mChannelId = intent.getIntExtra(Constants.IntentKeys.CHANNEL_ID, 0 )
         mChannelName = intent.getStringExtra(Constants.IntentKeys.CHANNEL_NAME)
         mRoomId = intent.getIntExtra(Constants.IntentKeys.ROOM_ID, 0)
         showBackArrow(R.drawable.ic_back)
@@ -288,5 +288,5 @@ class MyChannelActivity: CoreActivity(), ChannelContract.MyChannel.View{
         get() = mRoomId
 
     override val getChannelId: Int
-        get() = mChannelId.toInt()
+        get() = mChannelId
 }

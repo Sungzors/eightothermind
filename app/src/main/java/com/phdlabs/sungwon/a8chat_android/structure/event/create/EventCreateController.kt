@@ -32,6 +32,7 @@ import java.io.ByteArrayOutputStream
 
 /**
  * Created by SungWon on 1/2/2018.
+ * Updated by JPAM on 1/29/2018
  */
 class EventCreateController(val mView: EventContract.Create.View) : EventContract.Create.Controller{
 
@@ -53,7 +54,7 @@ class EventCreateController(val mView: EventContract.Create.View) : EventContrac
         mView.showProgress()
         if (ActivityCompat.checkSelfPermission(mView.getContext()!!, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mView.getContext()!!, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             mView.hideProgress()
-            Toast.makeText(mView.getContext()!!, "Please enable location permission to send your location (optional)", Toast.LENGTH_SHORT).show()
+            Toast.makeText(mView.getContext()!!, "Please enable location permission to send your location (optional)", Toast.LENGTH_LONG).show()
             return
         }
         mFusedLocationClient.lastLocation.addOnSuccessListener({ location ->

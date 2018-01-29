@@ -66,7 +66,7 @@ class ChannelShowActivity: CoreActivity(), ChannelContract.ChannelShow.View{
                     override fun addClicks(views: ViewMap?) {
                         views!!.click({ view ->
                             val a = getItem(adapterPosition)
-                            controller.loadChannel(getItem(adapterPosition).channels[0].room_id.toInt())
+                            controller.loadChannel(getItem(adapterPosition).channels[0].room_id!!)
                         })
                     }
                 }

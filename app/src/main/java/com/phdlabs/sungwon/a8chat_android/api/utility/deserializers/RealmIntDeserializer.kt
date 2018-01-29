@@ -4,9 +4,8 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
-import com.phdlabs.sungwon.a8chat_android.model.channel.RealmInt
+import com.phdlabs.sungwon.a8chat_android.model.realmNative.RealmInt
 import io.realm.RealmList
-import org.json.JSONArray
 import java.lang.reflect.Type
 
 /**

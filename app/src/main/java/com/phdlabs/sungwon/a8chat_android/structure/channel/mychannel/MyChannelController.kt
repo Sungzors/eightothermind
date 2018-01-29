@@ -20,8 +20,8 @@ import com.phdlabs.sungwon.a8chat_android.api.rest.Caller
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
 import com.phdlabs.sungwon.a8chat_android.api.utility.Callback8
 import com.phdlabs.sungwon.a8chat_android.db.EventBusManager
-import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
 import com.phdlabs.sungwon.a8chat_android.model.Message
+import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
 import com.phdlabs.sungwon.a8chat_android.structure.channel.ChannelContract
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.Preferences
@@ -269,7 +269,11 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View): ChannelCon
                         add_to_profile = channelInfo.getBoolean("add_to_profile")
                         user_creator_id = channelInfo.getString("user_creator_id")
                         room_id = channelInfo.getString("room_id")
-                        channel = Channel(id, name, unique_id, room_id)
+                        channel = Channel()
+                        channel.id = id
+                        channel.name = name
+                        channel.unique_id = unique_id
+                        channel.room_id = room_id.toInt()
                         channel.description = description
                         channel.color = color
                         channel.background = background

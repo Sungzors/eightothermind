@@ -3,11 +3,14 @@ package com.phdlabs.sungwon.a8chat_android.structure.channel.create
 import android.app.Activity
 import android.content.Intent
 import android.widget.Toast
+import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.api.data.PostChannelData
 import com.phdlabs.sungwon.a8chat_android.api.rest.Caller
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
 import com.phdlabs.sungwon.a8chat_android.db.UserManager
-import com.phdlabs.sungwon.a8chat_android.model.channel.ChannelExample
+import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
+import com.phdlabs.sungwon.a8chat_android.model.room.Room
+import com.phdlabs.sungwon.a8chat_android.model.user.User
 import com.phdlabs.sungwon.a8chat_android.model.user.registration.Token
 import com.phdlabs.sungwon.a8chat_android.structure.channel.ChannelContract
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
@@ -20,7 +23,6 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.File
 
-//TODO: Add strings to the string file
 /**
  * Created by SungWon on 11/30/2017.
  * Updated by jpam on 01/25/2018
@@ -28,7 +30,6 @@ import java.io.File
 class ChannelCreateController(val mView: ChannelContract.Create.View) : ChannelContract.Create.Controller {
 
     /*Properties*/
-    private val TAG = "ChannelCreateController"
     private lateinit var mCaller: Caller
 
     /*Initialization*/
@@ -55,25 +56,27 @@ class ChannelCreateController(val mView: ChannelContract.Create.View) : ChannelC
      * on [ChannelCreateActivity]
      * @return [PostChannelData][Token] for @Posting new channel
      * */
-    private fun channelDataValidation(postChannelData: PostChannelData): Pair<Token?, PostChannelData?> {
+    private fun channelDataValidation(postChannelData: PostChannelData): Triple<Token?, PostChannelData?, User?> {
 
         //Data to be returned
         var mToken: Token? = null
-        var mPostChannelData: PostChannelData?
+        val mPostChannelData: PostChannelData?
+        var currentUser: User? = null
 
         /*Info Validation*/
         if (postChannelData.name.isNullOrBlank() ||
                 postChannelData.unique_id.isNullOrBlank() ||
                 postChannelData.description.isNullOrBlank()) {
 
-            Toast.makeText(mView.getContext(), "Incomplete information", Toast.LENGTH_SHORT).show()
-            return Pair(null, null)
+            Toast.makeText(mView.getContext(), mView.getContext()?.getString(R.string.incomplete_information), Toast.LENGTH_SHORT).show()
+            return Triple(null, null, null)
 
-            //TODO: Talk with Tomer, backend data type inconsistency
         } else if (postChannelData.mediaId.isNullOrBlank() || postChannelData.mediaId == "null") {
+
             //Channel picture missing
-            Toast.makeText(mView.getContext(), "Add channel photo", Toast.LENGTH_SHORT).show()
-            return Pair(null, null)
+            Toast.makeText(mView.getContext(), mView.getContext()?.getString(R.string.add_channel_photo), Toast.LENGTH_SHORT).show()
+            return Triple(null, null, null)
+
         }
 
         /*Media Validation*/
@@ -84,11 +87,12 @@ class ChannelCreateController(val mView: ChannelContract.Create.View) : ChannelC
             if (success) {
                 //Available data
                 mToken = token
+                currentUser = user
                 mPostChannelData.user_creator_id = user?.id
             }
         }
 
-        return Pair(mToken, mPostChannelData)
+        return Triple(mToken, mPostChannelData, currentUser)
     }
 
     /**
@@ -96,12 +100,13 @@ class ChannelCreateController(val mView: ChannelContract.Create.View) : ChannelC
      * */
     override fun createChannel(postChannelData: PostChannelData) {
         //Data Validation
-        val info: Pair<Token?, PostChannelData?> = channelDataValidation(postChannelData)
+        val info: Triple<Token?, PostChannelData?, User?> = channelDataValidation(postChannelData)
         if (info.first?.token != null && info.second != null) {
 
             mView.showProgress()
             /*Local channel data*/
-            val currentChannel: ChannelExample = ChannelExample()
+            val currentChannel = Channel()
+            var currentRoom = Room()
             currentChannel.unique_id = info.second?.unique_id
             currentChannel.description = info.second?.description
             currentChannel.add_to_profile = info.second?.add_to_profile
@@ -116,8 +121,11 @@ class ChannelCreateController(val mView: ChannelContract.Create.View) : ChannelC
                                 if (response.isSuccess) {
 
                                     //Save Room to Realm
-
-                                    response.room?.save()
+                                    response.room?.let {
+                                        currentRoom = it
+                                        currentRoom.user = info.third
+                                        currentRoom.save()
+                                    }
 
                                     //Create & Save Channel to Realm
                                     currentChannel.id = response.newChannelGroupOrEvent?.id
@@ -129,16 +137,15 @@ class ChannelCreateController(val mView: ChannelContract.Create.View) : ChannelC
                                     currentChannel.createdAt = response.newChannelGroupOrEvent?.createdAt
                                     currentChannel.save()
 
+                                    /*Transition*/
                                     mView.hideProgress()
-
-                                    //TODO: Uncomment Finish Activity
-                                    //mView.finishActivity(currentChannel.id, currentChannel.name, currentChannel.room_id)
-
-                                    //todo: Refactor everywhere a channel & room are being used -> Start with myChannel Activity
+                                    mView.finishActivity(currentChannel.id, currentChannel.name, currentChannel.room_id)
 
                                 } else if (response.isError) {
                                     mView.hideProgress()
-                                    Toast.makeText(mView.getContext(), "Add channel photo", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(mView.getContext(),
+                                            mView.getContext()?.getString(R.string.add_channel_photo),
+                                            Toast.LENGTH_SHORT).show()
                                 }
 
                             },

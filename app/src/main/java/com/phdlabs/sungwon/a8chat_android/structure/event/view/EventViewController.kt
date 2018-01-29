@@ -16,8 +16,8 @@ import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
 import com.phdlabs.sungwon.a8chat_android.api.utility.Callback8
 import com.phdlabs.sungwon.a8chat_android.db.EventBusManager
 import com.phdlabs.sungwon.a8chat_android.db.UserManager
-import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
 import com.phdlabs.sungwon.a8chat_android.model.Message
+import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
 import com.phdlabs.sungwon.a8chat_android.model.user.User
 import com.phdlabs.sungwon.a8chat_android.structure.event.EventContract
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
@@ -32,7 +32,7 @@ import java.util.*
 /**
  * Created by SungWon on 1/8/2018.
  */
-class EventViewController(val mView: EventContract.ViewDetail.View): EventContract.ViewDetail.Controller{
+class EventViewController(val mView: EventContract.ViewDetail.View) : EventContract.ViewDetail.Controller {
 
     private val TAG = "EventViewController"
 
@@ -143,9 +143,9 @@ class EventViewController(val mView: EventContract.ViewDetail.View): EventContra
             when (type) {
                 Message.TYPE_STRING -> {
                     val message = builder.message(message!!).build()
-                    var name : String? = null
-                    var userAvatar : String? = null
-                    var createdAt : Date? = null
+                    var name: String? = null
+                    var userAvatar: String? = null
+                    var createdAt: Date? = null
 //                    var updatedAt : Date? = null
                     var original_message_id: String? = null
                     try {
@@ -192,7 +192,11 @@ class EventViewController(val mView: EventContract.ViewDetail.View): EventContra
                         add_to_profile = channelInfo.getBoolean("add_to_profile")
                         user_creator_id = channelInfo.getString("user_creator_id")
                         room_id = channelInfo.getString("room_id")
-                        channel = Channel(id, name, unique_id, room_id)
+                        channel = Channel()
+                        channel.id = id
+                        channel.name = name
+                        channel.unique_id = unique_id
+                        channel.room_id = room_id.toInt()
                         channel.description = description
                         channel.color = color
                         channel.background = background
@@ -260,9 +264,9 @@ class EventViewController(val mView: EventContract.ViewDetail.View): EventContra
                 }
                 Message.TYPE_LOCATION -> {
                     val message = builder.message(message!!).build()
-                    var name : String? = null
-                    var userAvatar : String? = null
-                    var createdAt : Date? = null
+                    var name: String? = null
+                    var userAvatar: String? = null
+                    var createdAt: Date? = null
 //                    var updatedAt : Date? = null
                     var original_message_id: String? = null
                     try {
@@ -294,7 +298,7 @@ class EventViewController(val mView: EventContract.ViewDetail.View): EventContra
     private val onError = Emitter.Listener { args ->
         mView.getActivity.runOnUiThread {
             val message = args[0] as String //args[0] as JSONObject
-            Toast.makeText(mView.getContext(),message, Toast.LENGTH_SHORT).show()
+            Toast.makeText(mView.getContext(), message, Toast.LENGTH_SHORT).show()
             //Log.e(TAG, message.getString("message"))
 
         }
@@ -347,40 +351,41 @@ class EventViewController(val mView: EventContract.ViewDetail.View): EventContra
         mMessages.set(position, message)
     }
 
-    override fun retrieveChatHistory() {getUserId { id ->
-        id?.let {
-            val call = mCaller.getEventHistory(
-                    Preferences(mView.getContext()!!).getPreferenceString(Constants.PrefKeys.TOKEN_KEY),
-                    mRoomId,
-                    id
-            )
-            call.enqueue(object : Callback8<RoomHistoryResponse, RoomHistoryEvent>(mEventBus) {
-                override fun onSuccess(data: RoomHistoryResponse?) {
-                    mMessages.clear()
-                    //TODO: need to add read first then unread always, but check for unread null instead.
-                    for (item in data!!.messages!!.allMessages!!) {
-                        if (item.roomId == mRoomId.toString()) {
-                            mMessages.add(item)
+    override fun retrieveChatHistory() {
+        getUserId { id ->
+            id?.let {
+                val call = mCaller.getEventHistory(
+                        Preferences(mView.getContext()!!).getPreferenceString(Constants.PrefKeys.TOKEN_KEY),
+                        mRoomId,
+                        id
+                )
+                call.enqueue(object : Callback8<RoomHistoryResponse, RoomHistoryEvent>(mEventBus) {
+                    override fun onSuccess(data: RoomHistoryResponse?) {
+                        mMessages.clear()
+                        //TODO: need to add read first then unread always, but check for unread null instead.
+                        for (item in data!!.messages!!.allMessages!!) {
+                            if (item.roomId == mRoomId.toString()) {
+                                mMessages.add(item)
+                            }
                         }
+                        var i = 0
+                        for (item in mMessages!!) {
+                            item.timeDisplayed = mView.lastTimeDisplayed(i)
+                            setMessageObject(i, item)
+                            i++
+                        }
+                        mView.updateRecycler()
+                        mView.hideProgress()
                     }
-                    var i = 0
-                    for (item in mMessages!!) {
-                        item.timeDisplayed = mView.lastTimeDisplayed(i)
-                        setMessageObject(i, item)
-                        i++
-                    }
-                    mView.updateRecycler()
-                    mView.hideProgress()
-                }
 
-                override fun onError(response: Response<RoomHistoryResponse>?) {
-                    super.onError(response)
-                    Log.e(TAG, response!!.message())
-                    mView.hideProgress()
-                }
-            })
+                    override fun onError(response: Response<RoomHistoryResponse>?) {
+                        super.onError(response)
+                        Log.e(TAG, response!!.message())
+                        mView.hideProgress()
+                    }
+                })
+            }
         }
-    }
     }
 
     override fun getMessages(): MutableList<Message> = mMessages

@@ -76,8 +76,8 @@ class ChannelCreateActivity : CoreActivity(), ChannelContract.Create.View {
     /*UI*/
     private fun setUpViews() {
         /*Toolbar & Controls*/
-        setToolbarTitle("Create a Channel")
-        showRightTextToolbar("Create")
+        setToolbarTitle(getString(R.string.create_a_channel))
+        showRightTextToolbar(getString(R.string.create))
         showBackArrow(R.drawable.ic_back)
         /*Form*/
         acc_add_to_profile_button.setOnCheckedChangeListener { compoundButton, b ->

@@ -1,7 +1,7 @@
 package com.phdlabs.sungwon.a8chat_android.api.response.createChannel
 
 import com.phdlabs.sungwon.a8chat_android.api.response.ErrorResponse
-import com.phdlabs.sungwon.a8chat_android.model.channel.ChannelExample
+import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
 
 /**
@@ -10,5 +10,5 @@ import com.phdlabs.sungwon.a8chat_android.model.room.Room
  */
 class ChannelResponse : ErrorResponse() {
     internal var room: Room? = null
-    internal var newChannelGroupOrEvent: ChannelExample? = null
+    internal var newChannelGroupOrEvent: Channel? = null
 }

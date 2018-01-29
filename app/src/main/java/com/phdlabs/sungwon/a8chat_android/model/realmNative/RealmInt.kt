@@ -1,4 +1,4 @@
-package com.phdlabs.sungwon.a8chat_android.model.channel
+package com.phdlabs.sungwon.a8chat_android.model.realmNative
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName

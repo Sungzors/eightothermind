@@ -7,7 +7,7 @@ import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.phdlabs.sungwon.a8chat_android.BuildConfig
 import com.phdlabs.sungwon.a8chat_android.api.utility.deserializers.RealmIntDeserializer
-import com.phdlabs.sungwon.a8chat_android.model.channel.RealmInt
+import com.phdlabs.sungwon.a8chat_android.model.realmNative.RealmInt
 import io.realm.RealmList
 import io.realm.RealmObject
 import okhttp3.OkHttpClient
