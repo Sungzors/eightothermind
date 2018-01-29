@@ -9,9 +9,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.phdlabs.sungwon.a8chat_android.R
-import com.phdlabs.sungwon.a8chat_android.model.Channel
+import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
 import com.phdlabs.sungwon.a8chat_android.model.EventsEight
-import com.phdlabs.sungwon.a8chat_android.model.Room
+import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.phdlabs.sungwon.a8chat_android.structure.channel.mychannel.MyChannelActivity
 import com.phdlabs.sungwon.a8chat_android.structure.chat.ChatActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreFragment
@@ -257,7 +257,7 @@ class LobbyFragment: CoreFragment(), LobbyContract.View {
             Picasso.with(context).load(data.user!!.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(eventPic)
             title.text = data.user!!.first_name + " " + data.user!!.last_name
             message.text = data.message!!.message
-            if(!data.isRead){
+            if(!data.isRead!!){ //TODO: Changed
                 eventIndicator.visibility = ImageView.VISIBLE
             } else {
                 eventIndicator.visibility = ImageView.INVISIBLE

@@ -114,7 +114,7 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
                 call.enqueue(object : Callback8<RoomResponse, PrivateChatCreateEvent>(mEventBus) {
                     override fun onSuccess(data: RoomResponse?) {
                         mEventBus.post(PrivateChatCreateEvent())
-                        mRoomId = data!!.room!!.id
+                        mRoomId = data!!.room!!.id!! //TODO: Changed
                     }
                 })
             }

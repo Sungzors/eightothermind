@@ -2,6 +2,7 @@ package com.phdlabs.sungwon.a8chat_android.model
 
 import com.phdlabs.sungwon.a8chat_android.model.user.User
 import com.phdlabs.sungwon.a8chat_android.model.user.UserNest
+import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
 import java.util.*
 
 /**

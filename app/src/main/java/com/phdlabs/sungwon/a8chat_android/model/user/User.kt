@@ -50,6 +50,7 @@ open class User() : RealmObject() {
     @Expose
     var email: String? = null
 
+    /**[LanguageSpoken] @RealmObject class*/
     @SerializedName("language_spoken")
     @Expose
     var language_spoken: RealmList<LanguageSpoken>? = null

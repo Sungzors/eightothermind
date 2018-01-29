@@ -85,7 +85,9 @@ class RegisterActivity : CoreActivity() {
                                                 hideProgress()
                                                 showError(user.message)
                                             }
-                                        })
+                                        }, { throwable ->
+                                        println("Error in Log in: " + throwable.message)
+                                })
                     }
                 } catch (e: Throwable) {
                     /*Do not leave realm transactions open*/

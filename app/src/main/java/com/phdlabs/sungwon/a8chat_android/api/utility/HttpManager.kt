@@ -4,7 +4,11 @@ import com.google.gson.ExclusionStrategy
 import com.google.gson.FieldAttributes
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.google.gson.reflect.TypeToken
 import com.phdlabs.sungwon.a8chat_android.BuildConfig
+import com.phdlabs.sungwon.a8chat_android.api.utility.deserializers.RealmIntDeserializer
+import com.phdlabs.sungwon.a8chat_android.model.channel.RealmInt
+import io.realm.RealmList
 import io.realm.RealmObject
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -31,7 +35,7 @@ class HttpManager {
     /*Singleton*/
     companion object {
         var instance: HttpManager = HttpManager()
-        private set
+            private set
     }
 
     /*Properties*/
@@ -51,7 +55,7 @@ class HttpManager {
                 .build()
 
         /*Gson serialization with RealmObject exclusion strategy*/
-        val gson: Gson = GsonBuilder()
+        val gsonBuilder: GsonBuilder = GsonBuilder()
                 .setDateFormat("yyyy-MM-dd'T'hh:mm:ssZ")
                 .setExclusionStrategies(object : ExclusionStrategy {
 
@@ -59,12 +63,15 @@ class HttpManager {
 
                     override fun shouldSkipField(f: FieldAttributes?): Boolean =
                             f?.declaredClass == RealmObject::class.java
-                }).create()
+                })
+        /*RealmList of integers deserialization*/
+        gsonBuilder.registerTypeAdapter(object : TypeToken<RealmList<RealmInt>>() {}.type, RealmIntDeserializer())
+        val gson: Gson = gsonBuilder.create()
 
         /*Retrofit Rx*/
         httpClient?.let {
 
-            retrofitRx =  Retrofit.Builder()
+            retrofitRx = Retrofit.Builder()
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .addConverterFactory(GsonConverterFactory.create(gson))
                     .baseUrl(BuildConfig.BASE_URL)

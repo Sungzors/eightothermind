@@ -2,7 +2,7 @@ package com.phdlabs.sungwon.a8chat_android.api.rest
 
 import com.phdlabs.sungwon.a8chat_android.api.data.PostChannelData
 import com.phdlabs.sungwon.a8chat_android.api.data.UserData
-import com.phdlabs.sungwon.a8chat_android.api.response.ChannelResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.createChannel.ChannelResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.MediaResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.UserDataResponse
 import com.phdlabs.sungwon.a8chat_android.api.rest.Caller.TOKEN
@@ -33,7 +33,7 @@ interface CallerRx {
 
     /*MEDIA*/
     @POST("/media")
-    fun userPostPic(@Header(TOKEN) token: String, @Body data: RequestBody): Observable<MediaResponse>
+    fun userPostPic(@Header(TOKEN) token: String, @Body data: RequestBody): Observable<MediaResponse> //TODO: Delete
 
     @Multipart
     @POST("/media")

@@ -31,6 +31,8 @@ import java.text.SimpleDateFormat
 /**
  * Created by SungWon on 12/20/2017.
  */
+
+//TODO: Refactor Channel & Room data
 class MyChannelActivity: CoreActivity(), ChannelContract.MyChannel.View{
 
     override lateinit var controller: ChannelContract.MyChannel.Controller

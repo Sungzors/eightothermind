@@ -20,7 +20,7 @@ import com.phdlabs.sungwon.a8chat_android.api.rest.Caller
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
 import com.phdlabs.sungwon.a8chat_android.api.utility.Callback8
 import com.phdlabs.sungwon.a8chat_android.db.EventBusManager
-import com.phdlabs.sungwon.a8chat_android.model.Channel
+import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
 import com.phdlabs.sungwon.a8chat_android.model.Message
 import com.phdlabs.sungwon.a8chat_android.structure.channel.ChannelContract
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
@@ -126,7 +126,7 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View): ChannelCon
         call.enqueue(object : Callback8<RoomResponse, ChannelFollowEvent>(mEventBus) {
             override fun onSuccess(data: RoomResponse?) {
                 mEventBus.post(ChannelFollowEvent())
-                mRoomId = data!!.room!!.id
+                mRoomId = data!!.room!!.id!! //TODO: Changed
             }
         })
     }

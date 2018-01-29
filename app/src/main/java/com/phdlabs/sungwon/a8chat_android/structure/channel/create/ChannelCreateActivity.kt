@@ -65,7 +65,7 @@ class ChannelCreateActivity : CoreActivity(), ChannelContract.Create.View {
 
     }
 
-    override fun finishActivity(chanId: String, chanName: String, roomId: Int) {
+    override fun finishActivity(chanId: Int?, chanName: String?, roomId: Int?) {
         val intent = Intent(this, MyChannelActivity::class.java)
         intent.putExtra(Constants.IntentKeys.CHANNEL_ID, chanId)
         intent.putExtra(Constants.IntentKeys.CHANNEL_NAME, chanName)

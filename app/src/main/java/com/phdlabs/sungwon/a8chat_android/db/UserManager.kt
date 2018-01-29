@@ -31,24 +31,26 @@ class UserManager {
         val token: Token? = Token().queryFirst()
         token?.let {
             User().queryFirst()?.let {
-                callback(true, it,token)
+                callback(true, it, token)
             } ?: run {
                 /*No available user -> try to fetch from server*/
-                val call = Rest.getInstance().getmCallerRx().getUser(it.token!!,user?.id!!)
-                call.subscribeOn(Schedulers.newThread())
+                val call = Rest.getInstance().getmCallerRx().getUser(it.token!!, user?.id!!)
+                call.subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe { response ->
-                            if(response.isSuccess) {
+                        .subscribe({ response ->
+                            if (response.isSuccess) {
                                 /*Cache user in Realm*/
                                 response.user.save()
                                 callback(true, response.user, token)
                                 print("UserManager: Success")
-                            }else if (response.isError) {
+                            } else if (response.isError) {
                                 /*Server call failed*/
                                 callback(false, null, null)
                                 print("UserManager: server call failed")
                             }
-                        }
+                        }, { throwable ->
+                            println("Error downloading user info in UserManager: " + throwable.message)
+                        })
             }
         } ?: run {
             /*No available token*/

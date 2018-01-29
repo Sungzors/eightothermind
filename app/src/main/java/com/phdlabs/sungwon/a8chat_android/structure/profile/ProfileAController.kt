@@ -79,9 +79,9 @@ class ProfileAController(val mView: ProfileContract.View) : ProfileContract.Cont
                 userData.mediaId = currentUser.mediaId!!
 
                 val call = Rest.getInstance().getmCallerRx().updateUser(token.token!!, it, userData)
-                call.subscribeOn(Schedulers.newThread())
+                call.subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe { response ->
+                        .subscribe({ response ->
                             mView.hideProgress()
                             if (response.isSuccess) {
                                 /*Update user in Realm*/
@@ -91,7 +91,11 @@ class ProfileAController(val mView: ProfileContract.View) : ProfileContract.Cont
                             } else if (response.isError) {
                                 Toast.makeText(mView.getContext(), "Unable to update", Toast.LENGTH_SHORT).show()
                             }
-                        }
+                        }, { throwable ->
+                            mView.hideProgress()
+                            println("Error updating profile: " + throwable.message)
+                            Toast.makeText(mView.getContext(), "Unable to update profile, try again later", Toast.LENGTH_SHORT).show()
+                        })
             }
         }
     }
@@ -118,9 +122,9 @@ class ProfileAController(val mView: ProfileContract.View) : ProfileContract.Cont
                 //Rx call
                 Token().queryFirst()?.let {
                     val call = Rest.getInstance().getmCallerRx().uploadMedia(it.token!!, multipartBodyPart)
-                    call.subscribeOn(Schedulers.newThread())
+                    call.subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe { response ->
+                            .subscribe({ response ->
                                 if (response.isSuccess) {
                                     response.mediaArray?.let {
                                         /*Cache media info in realm*/
@@ -132,7 +136,10 @@ class ProfileAController(val mView: ProfileContract.View) : ProfileContract.Cont
                                         }
                                     }
                                 }
-                            }
+                            }, { throwable ->
+                                mView.showError("Could not update profile picture, try again later")
+                                println("Error uploading media for profile picture: " + throwable.message)
+                            })
                 }
             }
             mView.hideProgress()
