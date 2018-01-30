@@ -7,7 +7,9 @@ import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.phdlabs.sungwon.a8chat_android.BuildConfig
 import com.phdlabs.sungwon.a8chat_android.api.utility.deserializers.RealmIntDeserializer
+import com.phdlabs.sungwon.a8chat_android.api.utility.deserializers.RealmStringDeserializer
 import com.phdlabs.sungwon.a8chat_android.model.realmNative.RealmInt
+import com.phdlabs.sungwon.a8chat_android.model.realmNative.RealmString
 import io.realm.RealmList
 import io.realm.RealmObject
 import okhttp3.OkHttpClient
@@ -66,6 +68,8 @@ class HttpManager {
                 })
         /*RealmList of integers deserialization*/
         gsonBuilder.registerTypeAdapter(object : TypeToken<RealmList<RealmInt>>() {}.type, RealmIntDeserializer())
+        /*RealmList of string deserialization*/
+        gsonBuilder.registerTypeAdapter(object : TypeToken<RealmList<RealmString>>() {}.type, RealmStringDeserializer())
         val gson: Gson = gsonBuilder.create()
 
         /*Retrofit Rx*/

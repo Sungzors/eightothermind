@@ -2,7 +2,6 @@ package com.phdlabs.sungwon.a8chat_android.api.rest;
 
 import com.phdlabs.sungwon.a8chat_android.api.data.CommentPatchData;
 import com.phdlabs.sungwon.a8chat_android.api.data.CommentPostData;
-import com.phdlabs.sungwon.a8chat_android.api.data.EventPostData;
 import com.phdlabs.sungwon.a8chat_android.api.data.FollowUserData;
 import com.phdlabs.sungwon.a8chat_android.api.data.LoginData;
 import com.phdlabs.sungwon.a8chat_android.api.data.PrivateChatCreateData;
@@ -20,7 +19,6 @@ import com.phdlabs.sungwon.a8chat_android.api.response.ChatsRetrievalResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.CommentArrayResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.CommentResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.ErrorResponse;
-import com.phdlabs.sungwon.a8chat_android.api.response.EventPostResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.PrivateChatResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.ResendResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.RoomHistoryResponse;
@@ -131,9 +129,6 @@ public interface Caller {
 
     @GET("/comments/{messageId}/user/{userId}")
     Call<CommentArrayResponse> getComments(@Header(TOKEN) String token, @Path("messageId") int messageId, @Path("userId") int userId, @Query("commentId") String commentId);
-
-    @POST("/events")
-    Call<EventPostResponse> postEvents(@Header(TOKEN) String token, @Body EventPostData data);
 
     @GET("/events/{roomId}/user/{userId}/messages")
     Call<RoomHistoryResponse> getEventHistory(@Header(TOKEN) String token, @Path("roomId") int roomId, @Path("userId") int userId);

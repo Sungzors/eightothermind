@@ -91,5 +91,6 @@
     <string name="create">Create</string>
     <string name="incomplete_information">Incomplete information</string>
     <string name="add_channel_photo">Add channel photo</string>
+    <string name="create_event">Create an Event</string>
 
 </resources>

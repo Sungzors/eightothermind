@@ -5,9 +5,9 @@ import android.Manifest
 /**
  * Created by SungWon on 9/24/2017.
  */
-object Constants{
+object Constants {
 
-    object IntentKeys{
+    object IntentKeys {
         const val LOGIN_KEY = "login_key"
         const val LOGIN_CC = "login_cc"
         const val LOGIN_PHONE = "login_phone"
@@ -22,12 +22,12 @@ object Constants{
         const val MESSAGE_ID = "message_id"
     }
 
-    object PrefKeys{
+    object PrefKeys {
         const val USER_ID = "user_id"
         const val TOKEN_KEY = "token"
     }
 
-    object SocketKeys{
+    object SocketKeys {
         const val CONNECT = "connect"
         const val UPDATE_ROOM = "update-room"
         const val UPDATE_CHAT_STRING = "update-chat-string"
@@ -39,11 +39,11 @@ object Constants{
         const val ON_ERROR = "on-error"
     }
 
-    object RequestCode{
+    object RequestCode {
         const val MY_CHANNELS_LIST = 1
     }
 
-    object ResultCode{
+    object ResultCode {
         const val SUCCESS = 0
         const val FAILURE = 1
     }
@@ -59,12 +59,15 @@ object Constants{
         val CAMERA = Manifest.permission.CAMERA
         val RECORD_AUDIO = Manifest.permission.RECORD_AUDIO
         val WRITE_EXTERNAL = Manifest.permission.WRITE_EXTERNAL_STORAGE
+        val FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION
+        val COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION
     }
 
     object PermissionsReqCode {
         val CAMERA_REQ_CODE = 0
         val RECORD_AUDIO_REQ_CODE = 1
         val WRITE_EXTERNAL_REQ_CODE = 2
+        val LOCATION_REQ_CODE = 3
     }
 
     object CameraIntents {

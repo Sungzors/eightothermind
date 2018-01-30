@@ -1,7 +1,9 @@
 package com.phdlabs.sungwon.a8chat_android.api.rest
 
-import com.phdlabs.sungwon.a8chat_android.api.data.PostChannelData
+import com.phdlabs.sungwon.a8chat_android.api.data.ChannelPostData
+import com.phdlabs.sungwon.a8chat_android.api.data.EventPostData
 import com.phdlabs.sungwon.a8chat_android.api.data.UserData
+import com.phdlabs.sungwon.a8chat_android.api.response.createEvent.EventPostResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.createChannel.ChannelResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.MediaResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.UserDataResponse
@@ -9,7 +11,6 @@ import com.phdlabs.sungwon.a8chat_android.api.rest.Caller.TOKEN
 import com.phdlabs.sungwon.a8chat_android.model.user.registration.RegistrationData
 import io.reactivex.Observable
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import retrofit2.http.*
 
 /**
@@ -32,15 +33,16 @@ interface CallerRx {
     fun getUser(@Header(TOKEN) token: String, @Path("userid") userId: Int): Observable<UserDataResponse>
 
     /*MEDIA*/
-    @POST("/media")
-    fun userPostPic(@Header(TOKEN) token: String, @Body data: RequestBody): Observable<MediaResponse> //TODO: Delete
-
     @Multipart
     @POST("/media")
     fun uploadMedia(@Header(TOKEN) token: String, @Part image: MultipartBody.Part): Observable<MediaResponse>
 
     /*CHANNEL*/
     @POST("/channels")
-    fun postChannel(@Header(TOKEN) token: String, @Body postChannelData: PostChannelData): Observable<ChannelResponse>
+    fun postChannel(@Header(TOKEN) token: String, @Body channelPostData: ChannelPostData): Observable<ChannelResponse>
+
+    /*EVENTS*/
+    @POST("/events")
+    fun postEvents(@Header(TOKEN) token: String, @Body eventPostData: EventPostData): Observable<EventPostResponse>
 
 }

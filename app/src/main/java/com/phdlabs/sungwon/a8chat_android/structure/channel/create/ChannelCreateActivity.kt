@@ -1,12 +1,9 @@
 package com.phdlabs.sungwon.a8chat_android.structure.channel.create
 
 import android.content.Intent
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.Switch
+import android.content.pm.PackageManager
 import com.phdlabs.sungwon.a8chat_android.R
-import com.phdlabs.sungwon.a8chat_android.api.data.PostChannelData
-import com.phdlabs.sungwon.a8chat_android.db.UserManager
+import com.phdlabs.sungwon.a8chat_android.api.data.ChannelPostData
 import com.phdlabs.sungwon.a8chat_android.model.media.Media
 import com.phdlabs.sungwon.a8chat_android.structure.channel.ChannelContract
 import com.phdlabs.sungwon.a8chat_android.structure.channel.mychannel.MyChannelActivity
@@ -38,7 +35,7 @@ class ChannelCreateActivity : CoreActivity(), ChannelContract.Create.View {
     /*LifeCycle*/
     override fun onStart() {
         super.onStart()
-        ChannelCreateController(this)
+        ChannelCreateAController(this)
         controller.start()
         setUpViews()
         setUpClickers()
@@ -65,7 +62,20 @@ class ChannelCreateActivity : CoreActivity(), ChannelContract.Create.View {
 
     }
 
-    override fun finishActivity(chanId: Int?, chanName: String?, roomId: Int?) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        if (requestCode == Constants.PermissionsReqCode.CAMERA_REQ_CODE) {
+            if (grantResults.size != 1 || grantResults.get(0) != PackageManager.PERMISSION_GRANTED) {
+                showError(getString(R.string.request_camera_permission))
+            } else {
+                controller.showPicture()
+            }
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        }
+    }
+
+    /*Transition*/
+    override fun onCreateChannel(chanId: Int?, chanName: String?, roomId: Int?) {
         val intent = Intent(this, MyChannelActivity::class.java)
         intent.putExtra(Constants.IntentKeys.CHANNEL_ID, chanId)
         intent.putExtra(Constants.IntentKeys.CHANNEL_NAME, chanName)
@@ -87,10 +97,14 @@ class ChannelCreateActivity : CoreActivity(), ChannelContract.Create.View {
 
     /*Set Channel Image*/
     override fun setChannelImage(filePath: String) {
-        Picasso.with(context).load("file://" + filePath).transform(CircleTransform()).into(acc_channel_picture)
+        Picasso.with(context)
+                .load("file://" + filePath)
+                .placeholder(R.drawable.addphoto)
+                .transform(CircleTransform())
+                .into(acc_channel_picture)
     }
 
-    /*Get uploaded media*/
+    /*Get uploaded media & Persist in lifecycle*/
     override fun getMedia(media: Media) {
         mMedia = media
     }
@@ -100,7 +114,7 @@ class ChannelCreateActivity : CoreActivity(), ChannelContract.Create.View {
         toolbar_right_text.setOnClickListener {
             /*Create Channel*/
             controller.createChannel(
-                    PostChannelData(
+                    ChannelPostData(
                             mMedia?.id.toString().trim(),
                             acc_channel_name.text.toString().trim(),
                             acc_unique_id.text.toString().trim(),

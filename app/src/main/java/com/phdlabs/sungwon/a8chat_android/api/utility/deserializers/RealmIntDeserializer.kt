@@ -18,9 +18,7 @@ class RealmIntDeserializer : JsonDeserializer<RealmList<RealmInt>> {
         val realmList: RealmList<RealmInt> = RealmList()
         val intList: JsonArray? = json?.asJsonArray
         intList?.let {
-            for (element in it) {
-                realmList.add(RealmInt(element.asInt))
-            }
+            it.mapTo(realmList) { RealmInt(it.asInt) }
         }
         return realmList
     }

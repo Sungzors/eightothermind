@@ -2,6 +2,7 @@ package com.phdlabs.sungwon.a8chat_android.model
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import com.phdlabs.sungwon.a8chat_android.model.realmNative.RealmString
 import io.realm.RealmList
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
@@ -12,24 +13,24 @@ import io.realm.annotations.RealmClass
  */
 
 @RealmClass
-open class EventsEight(): RealmObject(){
+open class EventsEight() : RealmObject() {
 
     @PrimaryKey
     @SerializedName("id")
     @Expose
-    var id : String? = null
+    var id: String? = null
 
     @SerializedName("name")
     @Expose
     var name: String? = null
 
-    @SerializedName("user_creator_id")
-    @Expose
-    var user_creator_id: String? = null
-
     @SerializedName("distribution")
     @Expose
     var distribution: String? = null
+
+    @SerializedName("user_creator_id")
+    @Expose
+    var user_creator_id: String? = null
 
     @SerializedName("locks_after_24_hours")
     @Expose
@@ -37,11 +38,15 @@ open class EventsEight(): RealmObject(){
 
     @SerializedName("location")
     @Expose
-    var location: RealmList<String>? = null
+    var location: RealmList<RealmString>? = null
 
     @SerializedName("location_name")
     @Expose
     var location_name: String? = null
+
+    @SerializedName("profile_picture_string")
+    @Expose
+    var profile_picture_string: String? = null
 
     @SerializedName("room_id")
     @Expose

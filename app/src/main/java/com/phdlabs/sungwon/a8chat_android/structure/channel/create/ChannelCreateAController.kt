@@ -2,9 +2,12 @@ package com.phdlabs.sungwon.a8chat_android.structure.channel.create
 
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import android.widget.Toast
 import com.phdlabs.sungwon.a8chat_android.R
-import com.phdlabs.sungwon.a8chat_android.api.data.PostChannelData
+import com.phdlabs.sungwon.a8chat_android.api.data.ChannelPostData
 import com.phdlabs.sungwon.a8chat_android.api.rest.Caller
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
 import com.phdlabs.sungwon.a8chat_android.db.UserManager
@@ -13,6 +16,7 @@ import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.phdlabs.sungwon.a8chat_android.model.user.User
 import com.phdlabs.sungwon.a8chat_android.model.user.registration.Token
 import com.phdlabs.sungwon.a8chat_android.structure.channel.ChannelContract
+import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
 import com.vicpin.krealmextensions.queryFirst
 import com.vicpin.krealmextensions.save
@@ -27,19 +31,19 @@ import java.io.File
  * Created by SungWon on 11/30/2017.
  * Updated by jpam on 01/25/2018
  */
-class ChannelCreateController(val mView: ChannelContract.Create.View) : ChannelContract.Create.Controller {
+class ChannelCreateAController(val mView: ChannelContract.Create.View) : ChannelContract.Create.Controller {
 
     /*Properties*/
-    private lateinit var mCaller: Caller
+    private var mCaller: Caller
 
     /*Initialization*/
     init {
         mView.controller = this
+        mCaller = Rest.getInstance().caller
     }
 
     /*LifeCycle*/
     override fun start() {
-        mCaller = Rest.getInstance().caller
     }
 
     override fun resume() {
@@ -54,24 +58,25 @@ class ChannelCreateController(val mView: ChannelContract.Create.View) : ChannelC
     /**
      * [channelDataValidation] used for data form error handling
      * on [ChannelCreateActivity]
-     * @return [PostChannelData][Token] for @Posting new channel
+     * @return [Token] [ChannelPostData] [User] for @Posting new channel
      * */
-    private fun channelDataValidation(postChannelData: PostChannelData): Triple<Token?, PostChannelData?, User?> {
+    private fun channelDataValidation(channelPostData: ChannelPostData): Triple<Token?, ChannelPostData?, User?> {
+
 
         //Data to be returned
         var mToken: Token? = null
-        val mPostChannelData: PostChannelData?
+        val mChannelPostData: ChannelPostData?
         var currentUser: User? = null
 
         /*Info Validation*/
-        if (postChannelData.name.isNullOrBlank() ||
-                postChannelData.unique_id.isNullOrBlank() ||
-                postChannelData.description.isNullOrBlank()) {
+        if (channelPostData.name.isNullOrBlank() ||
+                channelPostData.unique_id.isNullOrBlank() ||
+                channelPostData.description.isNullOrBlank()) {
 
             Toast.makeText(mView.getContext(), mView.getContext()?.getString(R.string.incomplete_information), Toast.LENGTH_SHORT).show()
             return Triple(null, null, null)
 
-        } else if (postChannelData.mediaId.isNullOrBlank() || postChannelData.mediaId == "null") {
+        } else if (channelPostData.mediaId.isNullOrBlank() || channelPostData.mediaId == "null") {
 
             //Channel picture missing
             Toast.makeText(mView.getContext(), mView.getContext()?.getString(R.string.add_channel_photo), Toast.LENGTH_SHORT).show()
@@ -80,7 +85,7 @@ class ChannelCreateController(val mView: ChannelContract.Create.View) : ChannelC
         }
 
         /*Media Validation*/
-        mPostChannelData = postChannelData
+        mChannelPostData = channelPostData
 
         //Finish Building Data to create channel
         UserManager.instance.getCurrentUser { success, user, token ->
@@ -88,20 +93,20 @@ class ChannelCreateController(val mView: ChannelContract.Create.View) : ChannelC
                 //Available data
                 mToken = token
                 currentUser = user
-                mPostChannelData.user_creator_id = user?.id
+                mChannelPostData.user_creator_id = user?.id
             }
         }
 
-        return Triple(mToken, mPostChannelData, currentUser)
+        return Triple(mToken, mChannelPostData, currentUser)
     }
 
     /**
      * [createChannel] defined in Controller interface to @Post channel
      * */
-    override fun createChannel(postChannelData: PostChannelData) {
+    override fun createChannel(channelPostData: ChannelPostData) {
         //Data Validation
-        val info: Triple<Token?, PostChannelData?, User?> = channelDataValidation(postChannelData)
-        if (info.first?.token != null && info.second != null) {
+        val info: Triple<Token?, ChannelPostData?, User?> = channelDataValidation(channelPostData)
+        if (info.first?.token != null && info.second != null && info.third != null) {
 
             mView.showProgress()
             /*Local channel data*/
@@ -139,7 +144,7 @@ class ChannelCreateController(val mView: ChannelContract.Create.View) : ChannelC
 
                                     /*Transition*/
                                     mView.hideProgress()
-                                    mView.finishActivity(currentChannel.id, currentChannel.name, currentChannel.room_id)
+                                    mView.onCreateChannel(currentChannel.id, currentChannel.name, currentChannel.room_id)
 
                                 } else if (response.isError) {
                                     mView.hideProgress()
@@ -165,6 +170,14 @@ class ChannelCreateController(val mView: ChannelContract.Create.View) : ChannelC
      * handles image picker intent using [CameraControl]
      * */
     override fun showPicture() {
+        mView.getContext()?.let {
+            if (ActivityCompat.checkSelfPermission(
+                    it, Constants.AppPermissions.CAMERA) != PackageManager.PERMISSION_GRANTED
+                    ) {
+                requestCameraPermissions()
+                return
+            }
+        }
         CameraControl.instance.pickImage(mView.getActivity,
                 "Choose a channel picture",
                 CameraControl.instance.requestCode(),
@@ -204,7 +217,7 @@ class ChannelCreateController(val mView: ChannelContract.Create.View) : ChannelC
 
                                 if (response.isSuccess) {
                                     response.mediaArray?.let {
-                                        //Save temporry media
+                                        //Save temporary media
                                         mView.getMedia(it[0])
                                         mView.hideProgress()
                                     }
@@ -232,4 +245,20 @@ class ChannelCreateController(val mView: ChannelContract.Create.View) : ChannelC
             }
         }
     }
+
+    /**
+     * [requestCameraPermissions]
+     * requests camera permissions so the camera option can be
+     * added to the intent
+     * Callback handled in Activitie's [onRequestPermissionsResult]
+     * */
+    private fun requestCameraPermissions() {
+        val whatPermissions = arrayOf(Constants.AppPermissions.CAMERA)
+        mView.getContext()?.let {
+            if (ContextCompat.checkSelfPermission(it, whatPermissions.get(0)) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(mView.getActivity, whatPermissions, Constants.PermissionsReqCode.CAMERA_REQ_CODE)
+            }
+        }
+    }
+
 }
