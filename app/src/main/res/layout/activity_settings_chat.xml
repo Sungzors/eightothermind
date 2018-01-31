@@ -291,6 +291,7 @@
                             android:src="@drawable/ic_setting_favemsg" />
 
                         <TextView
+                            android:id="@+id/asc_favemsg_tv"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_margin="20dp"
@@ -338,7 +339,7 @@
                             android:layout_height="wrap_content"
                             android:layout_margin="20dp"
                             android:layout_toEndOf="@id/asc_share_icon"
-                            android:text="@string/notification" />
+                            android:text="@string/share" />
                     </RelativeLayout>
 
                     <View
@@ -350,7 +351,7 @@
 
                     <RelativeLayout
                         android:id="@+id/asc_close_container"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
                         <ImageView
