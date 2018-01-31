@@ -118,16 +118,15 @@
                         android:layout_marginTop="20dp"
                         android:text="@string/friends_of_friends" />
 
-                    <TextView
+                    <CheckBox
+                        android:id="@+id/aec_friend_of_friends_checkbox"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
                         android:layout_marginEnd="20dp"
-                        android:scaleY="3"
-                        android:text=">"
-                        android:textColor="@color/colorAccent"
-                        android:textSize="14sp" />
+                        android:layout_marginTop="14dp"
+                        android:buttonTint="@color/colorAccent" />
+
                 </RelativeLayout>
 
                 <View
@@ -150,16 +149,14 @@
                         android:layout_marginTop="20dp"
                         android:text="@string/only_friends" />
 
-                    <TextView
+                    <CheckBox
+                        android:id="@+id/aec_only_friends_checkbox"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
                         android:layout_marginEnd="20dp"
-                        android:scaleY="3"
-                        android:text=">"
-                        android:textColor="@color/colorAccent"
-                        android:textSize="14sp" />
+                        android:layout_marginTop="14dp"
+                        android:buttonTint="@color/colorAccent"/>
                 </RelativeLayout>
 
             </LinearLayout>

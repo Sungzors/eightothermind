@@ -75,5 +75,10 @@ object Constants {
         val LENS_FACING = "lens_facing"
     }
 
+    object EventPrivacy {
+        val ONLY_FRIENDS = "only my friends"
+        var FRIENDS_OF_FRIENDS = "friends of friends"
+    }
+
 
 }

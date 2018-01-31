@@ -2,13 +2,12 @@ package com.phdlabs.sungwon.a8chat_android.model.user
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
-import com.phdlabs.sungwon.a8chat_android.model.user.languages.LanguageSpoken
-import com.phdlabs.sungwon.a8chat_android.model.user.location.Position
+import com.phdlabs.sungwon.a8chat_android.model.realmNative.RealmString
 import io.realm.RealmList
 import io.realm.RealmObject
+import io.realm.annotations.Ignore
 import io.realm.annotations.PrimaryKey
 import io.realm.annotations.RealmClass
-import java.util.*
 
 /**
  * Created by JPAM on 12/18/2017
@@ -51,9 +50,9 @@ open class User() : RealmObject() {
     var email: String? = null
 
     /**[LanguageSpoken] @RealmObject class*/
-    @SerializedName("language_spoken")
+    @SerializedName("languages_spoken")
     @Expose
-    var language_spoken: RealmList<LanguageSpoken>? = null
+    var languages_spoken: RealmList<RealmString>? = null
 
     @SerializedName("country")
     @Expose
@@ -67,9 +66,18 @@ open class User() : RealmObject() {
     @Expose
     var avatar: String? = null
 
+    /**
+     * [position] legacy database
+     * Not used in current model
+     * */
     @SerializedName("position")
     @Expose
-    var position: RealmList<Position>? = null //TODO: subject to change to drawer_location
+    @Ignore
+    var position: RealmList<RealmString>? = null
+
+    @SerializedName("facebook_token")
+    @Expose
+    var facebook_token: String? = null
 
     @SerializedName("verified")
     @Expose
@@ -81,7 +89,7 @@ open class User() : RealmObject() {
 
     @SerializedName("passcode_expiration")
     @Expose
-    var passcode_expiration: Date? = null
+    var passcode_expiration: String? = null
 
     @SerializedName("socket_id")
     @Expose
@@ -110,6 +118,18 @@ open class User() : RealmObject() {
     @SerializedName("translation_services")
     @Expose
     var translation_services: Boolean? = null
+
+    @SerializedName("createdAt")
+    @Expose
+    var createdAt: String? = null
+
+    @SerializedName("updatedAt")
+    @Expose
+    var updatedAt: String? = null
+
+    @SerializedName("fcm_token")
+    @Expose
+    var fcm_token: String? = null
 
 
 }

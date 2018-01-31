@@ -2,8 +2,10 @@ package com.phdlabs.sungwon.a8chat_android.structure.event.create
 
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.view.View
 import com.phdlabs.sungwon.a8chat_android.R
-import com.phdlabs.sungwon.a8chat_android.api.response.createEvent.EventPostResponse
+import com.phdlabs.sungwon.a8chat_android.api.data.EventPostData
+import com.phdlabs.sungwon.a8chat_android.model.event.EventsEight
 import com.phdlabs.sungwon.a8chat_android.model.media.Media
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.structure.event.EventContract
@@ -19,12 +21,20 @@ import kotlinx.android.synthetic.main.toolbar.*
  * Created by SungWon on 1/2/2018.
  * Updated by JPAM on 1/29/2018
  */
-class EventCreateActivity : CoreActivity(), EventContract.Create.View {
+class EventCreateActivity : CoreActivity(), EventContract.Create.View, View.OnClickListener {
 
     /*Properties*/
-    private var isLocked: Boolean = false
+    private var isLockedAfter24Hours: Boolean = false
 
     private var mMedia: Media? = null
+
+    private var mLocation: Pair<String?, String?>? = null
+
+    /**
+     * [mPrivacy] default value
+     * [Constants.EventPrivacy.ONLY_FRIENDS]
+     * */
+    private var mPrivacy: String = Constants.EventPrivacy.ONLY_FRIENDS
 
     /*UI*/
     override fun layoutId(): Int = R.layout.activity_event_create
@@ -42,7 +52,6 @@ class EventCreateActivity : CoreActivity(), EventContract.Create.View {
         EventCreateController(this)
         controller.start()
         setUpViews()
-        setUpClickers()
     }
 
     override fun onResume() {
@@ -81,26 +90,55 @@ class EventCreateActivity : CoreActivity(), EventContract.Create.View {
 
     /*User Interface*/
     private fun setUpViews() {
+        /*Toolbar*/
         setToolbarTitle(getString(R.string.create_event))
         showRightTextToolbar(getString(R.string.create))
         showBackArrow(R.drawable.ic_back)
+        /*Locked after 24 hours*/
         aec_lock_switch.setOnCheckedChangeListener { compoundButton, b ->
-            isLocked = b
+            isLockedAfter24Hours = b
         }
+        /*Click listeners*/
+        toolbar_right_text.setOnClickListener(this)
+        aec_event_picture.setOnClickListener(this)
+        aec_friend_of_friends_checkbox.setOnClickListener(this)
+        aec_only_friends_checkbox.setOnClickListener(this)
     }
 
     /*On Click*/
-    private fun setUpClickers() {
-
+    override fun onClick(p0: View?) {
+        when (p0) {
         /*Create Event*/
-        toolbar_right_text.setOnClickListener {
-            //controller.createEvent(aec_event_name.text.toString(), isLocked, aec_location_et.text.toString())
-            //TODO: CreateEventPostData
-        }
-
+            toolbar_right_text -> {
+                controller.createEvent(EventPostData(
+                        mMedia?.id.toString().trim(),
+                        mLocation?.first,
+                        mLocation?.second,
+                        null,
+                        aec_event_name.text.toString().trim(),
+                        mPrivacy,
+                        aec_location_et.text.toString().trim(),
+                        isLockedAfter24Hours))
+            }
         /*Set Event picture*/
-        aec_event_picture.setOnClickListener {
-            controller.showPicture()
+            aec_event_picture -> {
+                controller.showPicture()
+            }
+        /*Privacy*/
+            aec_friend_of_friends_checkbox -> {
+                if (aec_friend_of_friends_checkbox.isChecked) {
+                    aec_only_friends_checkbox.isChecked = false
+                    mPrivacy = Constants.EventPrivacy.FRIENDS_OF_FRIENDS
+                }
+
+            }
+            aec_only_friends_checkbox -> {
+                if (aec_only_friends_checkbox.isChecked) {
+                    aec_friend_of_friends_checkbox.isChecked = false
+                    mPrivacy = Constants.EventPrivacy.ONLY_FRIENDS
+                }
+            }
+
         }
     }
 
@@ -118,15 +156,18 @@ class EventCreateActivity : CoreActivity(), EventContract.Create.View {
         mMedia = media
     }
 
+    /*Get updated user location -> lat, lng*/
+    override fun getLocation(location: Pair<String?, String?>?) {
+        mLocation = location
+    }
+
     /*Transition*/
-    override fun onCreateEvent(data: EventPostResponse) {
-        val a = data
+    override fun onCreateEvent(event: EventsEight?) {
         val intent = Intent(this, EventViewActivity::class.java)
-        //TODO: Refactor intents
-//        intent.putExtra(Constants.IntentKeys.EVENT_ID, data.event!!.newChannelGroupOrEvent!!.id)
-//        intent.putExtra(Constants.IntentKeys.EVENT_NAME, data.event!!.newChannelGroupOrEvent!!.name)
-//        intent.putExtra(Constants.IntentKeys.EVENT_LOCATION, data.event!!.newChannelGroupOrEvent!!.location_name)
-//        intent.putExtra(Constants.IntentKeys.ROOM_ID, data.event!!.room!!.id)
+        intent.putExtra(Constants.IntentKeys.EVENT_ID, event?.id)
+        intent.putExtra(Constants.IntentKeys.EVENT_NAME, event?.name)
+        intent.putExtra(Constants.IntentKeys.EVENT_LOCATION, event?.location_name)
+        intent.putExtra(Constants.IntentKeys.ROOM_ID, event?.room_id)
         startActivity(intent)
     }
 

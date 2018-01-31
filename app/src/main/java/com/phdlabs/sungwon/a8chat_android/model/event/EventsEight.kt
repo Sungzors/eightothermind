@@ -1,7 +1,8 @@
-package com.phdlabs.sungwon.a8chat_android.model
+package com.phdlabs.sungwon.a8chat_android.model.event
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import com.phdlabs.sungwon.a8chat_android.model.LocationEight
 import com.phdlabs.sungwon.a8chat_android.model.realmNative.RealmString
 import io.realm.RealmList
 import io.realm.RealmObject
@@ -10,6 +11,7 @@ import io.realm.annotations.RealmClass
 
 /**
  * Created by SungWon on 11/21/2017.
+ * Updated by JPAM on 01/30/2017
  */
 
 @RealmClass
@@ -18,7 +20,7 @@ open class EventsEight() : RealmObject() {
     @PrimaryKey
     @SerializedName("id")
     @Expose
-    var id: String? = null
+    var id: Int? = null
 
     @SerializedName("name")
     @Expose
@@ -30,7 +32,7 @@ open class EventsEight() : RealmObject() {
 
     @SerializedName("user_creator_id")
     @Expose
-    var user_creator_id: String? = null
+    var user_creator_id: Int? = null
 
     @SerializedName("locks_after_24_hours")
     @Expose
@@ -38,7 +40,7 @@ open class EventsEight() : RealmObject() {
 
     @SerializedName("location")
     @Expose
-    var location: RealmList<RealmString>? = null
+    var location: LocationEight? = null
 
     @SerializedName("location_name")
     @Expose
@@ -50,7 +52,7 @@ open class EventsEight() : RealmObject() {
 
     @SerializedName("room_id")
     @Expose
-    var room_id: String? = null
+    var room_id: Int? = null
 
     @SerializedName("isRead")
     @Expose
@@ -59,5 +61,22 @@ open class EventsEight() : RealmObject() {
     @SerializedName("avatar")
     @Expose
     var avatar: String? = null
+
+    @SerializedName("updatedAt")
+    @Expose
+    var updatedAt: String? = null
+
+    @SerializedName("createdAt")
+    @Expose
+    var createdAt: String? = null
+
+    @SerializedName("read_only_participants")
+    @Expose
+    var read_only_participants: Boolean? = null
+
+    @SerializedName("notification")
+    @Expose
+    var notification: Boolean = false
+
 }
 

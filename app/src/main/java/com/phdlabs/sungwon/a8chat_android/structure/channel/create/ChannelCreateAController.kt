@@ -78,15 +78,13 @@ class ChannelCreateAController(val mView: ChannelContract.Create.View) : Channel
 
         } else if (channelPostData.mediaId.isNullOrBlank() || channelPostData.mediaId == "null") {
 
-            //Channel picture missing
+            /*Media Validation*/
             Toast.makeText(mView.getContext(), mView.getContext()?.getString(R.string.add_channel_photo), Toast.LENGTH_SHORT).show()
             return Triple(null, null, null)
 
         }
 
-        /*Media Validation*/
         mChannelPostData = channelPostData
-
         //Finish Building Data to create channel
         UserManager.instance.getCurrentUser { success, user, token ->
             if (success) {
@@ -109,12 +107,6 @@ class ChannelCreateAController(val mView: ChannelContract.Create.View) : Channel
         if (info.first?.token != null && info.second != null && info.third != null) {
 
             mView.showProgress()
-            /*Local channel data*/
-            val currentChannel = Channel()
-            var currentRoom = Room()
-            currentChannel.unique_id = info.second?.unique_id
-            currentChannel.description = info.second?.description
-            currentChannel.add_to_profile = info.second?.add_to_profile
 
             /*Upload New Channel Info -> media is available*/
             val call = Rest.getInstance().getmCallerRx().postChannel(info.first?.token!!, info.second!!)
@@ -125,26 +117,28 @@ class ChannelCreateAController(val mView: ChannelContract.Create.View) : Channel
 
                                 if (response.isSuccess) {
 
-                                    //Save Room to Realm
+                                    /**
+                                     * Save new [Room] to
+                                     * @see Realm
+                                     * */
                                     response.room?.let {
-                                        currentRoom = it
-                                        currentRoom.user = info.third
-                                        currentRoom.save()
+                                        it.user = info.third
+                                        it.save()
                                     }
 
-                                    //Create & Save Channel to Realm
-                                    currentChannel.id = response.newChannelGroupOrEvent?.id
-                                    currentChannel.name = response.newChannelGroupOrEvent?.name
-                                    currentChannel.room_id = response.newChannelGroupOrEvent?.room_id
-                                    currentChannel.user_creator_id = response.newChannelGroupOrEvent?.user_creator_id
-                                    currentChannel.profile_picture_string = response.newChannelGroupOrEvent?.profile_picture_string
-                                    currentChannel.avatar = response.newChannelGroupOrEvent?.avatar
-                                    currentChannel.createdAt = response.newChannelGroupOrEvent?.createdAt
-                                    currentChannel.save()
+                                    /**
+                                     * save new [Channel] to
+                                     * @see Realm
+                                     * */
+                                    response.newChannelGroupOrEvent?.save()
 
                                     /*Transition*/
                                     mView.hideProgress()
-                                    mView.onCreateChannel(currentChannel.id, currentChannel.name, currentChannel.room_id)
+                                    mView.onCreateChannel(
+                                            response.newChannelGroupOrEvent?.id,
+                                            response.newChannelGroupOrEvent?.name,
+                                            response.newChannelGroupOrEvent?.room_id
+                                    )
 
                                 } else if (response.isError) {
                                     mView.hideProgress()

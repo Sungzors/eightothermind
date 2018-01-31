@@ -3,8 +3,8 @@ package com.phdlabs.sungwon.a8chat_android.structure.event
 import android.content.Intent
 import android.widget.EditText
 import com.phdlabs.sungwon.a8chat_android.api.data.EventPostData
-import com.phdlabs.sungwon.a8chat_android.api.response.createEvent.EventPostResponse
 import com.phdlabs.sungwon.a8chat_android.model.Message
+import com.phdlabs.sungwon.a8chat_android.model.event.EventsEight
 import com.phdlabs.sungwon.a8chat_android.model.media.Media
 import com.phdlabs.sungwon.a8chat_android.structure.application.Application
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseController
@@ -14,6 +14,7 @@ import com.phdlabs.sungwon.a8chat_android.structure.event.view.EventViewActivity
 
 /**
  * Created by SungWon on 1/2/2018.
+ * Updated by JPAM on 1/30/2018
  */
 interface EventContract {
     interface Create {
@@ -27,8 +28,11 @@ interface EventContract {
             /*Media*/
             fun getMedia(media: Media)
 
+            /*Location*/
+            fun getLocation(location: Pair<String?, String?>?)
+
             /*Transition*/
-            fun onCreateEvent(data: EventPostResponse)
+            fun onCreateEvent(event: EventsEight?)
         }
 
         interface Controller : BaseController {
@@ -36,8 +40,6 @@ interface EventContract {
             fun onPictureResult(requestCode: Int, resultCode: Int, data: Intent?)
 
             fun showPicture()
-            /*Location*/
-            fun getCurrentLocation()
 
             /*Create Event*/
             fun createEvent(eventPostData: EventPostData)

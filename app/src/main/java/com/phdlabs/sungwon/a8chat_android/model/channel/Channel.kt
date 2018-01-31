@@ -67,4 +67,8 @@ open class Channel : RealmObject() {
     @Expose
     var createdAt: String? = null
 
+    @SerializedName("notification")
+    @Expose
+    var notification: Boolean = false
+
 }

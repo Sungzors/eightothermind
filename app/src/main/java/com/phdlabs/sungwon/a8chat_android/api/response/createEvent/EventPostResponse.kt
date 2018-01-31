@@ -1,7 +1,7 @@
 package com.phdlabs.sungwon.a8chat_android.api.response.createEvent
 
 import com.phdlabs.sungwon.a8chat_android.api.response.ErrorResponse
-import com.phdlabs.sungwon.a8chat_android.model.EventsEight
+import com.phdlabs.sungwon.a8chat_android.model.event.EventsEight
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
 
 /**

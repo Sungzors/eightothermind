@@ -28,15 +28,16 @@ import java.text.SimpleDateFormat
 
 /**
  * Created by SungWon on 1/8/2018.
+ * Updated by JPAM on 1/30/2018
  */
-class EventViewActivity: CoreActivity(), EventContract.ViewDetail.View{
+class EventViewActivity : CoreActivity(), EventContract.ViewDetail.View {
     override lateinit var controller: EventContract.ViewDetail.Controller
 
     override fun layoutId(): Int = R.layout.activity_chat
 
     override fun contentContainerId(): Int = 0
 
-    private lateinit var mEventId: String
+    private var mEventId: Int? = 0
     private lateinit var mEventName: String
     private var mEventLocation: String? = null
     private var mRoomId: Int = 0
@@ -47,7 +48,7 @@ class EventViewActivity: CoreActivity(), EventContract.ViewDetail.View{
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         EventViewController(this)
-        mEventId = intent.getStringExtra(Constants.IntentKeys.EVENT_ID)
+        mEventId = intent.getIntExtra(Constants.IntentKeys.EVENT_ID, 0)
         mEventName = intent.getStringExtra(Constants.IntentKeys.EVENT_NAME)
         mEventLocation = intent.getStringExtra(Constants.IntentKeys.EVENT_LOCATION)
         mRoomId = intent.getIntExtra(Constants.IntentKeys.ROOM_ID, 0)
@@ -97,15 +98,15 @@ class EventViewActivity: CoreActivity(), EventContract.ViewDetail.View{
 //        val m = controller.getMessages()
         mAdapter.setItems(controller.getMessages())
         mAdapter.notifyDataSetChanged()
-        if(controller.getMessages().size>1){
-            ac_floating_cascade_of_parchments.smoothScrollToPosition(controller.getMessages().size-1)
+        if (controller.getMessages().size > 1) {
+            ac_floating_cascade_of_parchments.smoothScrollToPosition(controller.getMessages().size - 1)
         }
     }
 
-    private fun setUpRecycler(){
-        mAdapter = object : BaseRecyclerAdapter<Message, BaseViewHolder>(){
+    private fun setUpRecycler() {
+        mAdapter = object : BaseRecyclerAdapter<Message, BaseViewHolder>() {
             override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: Message?, position: Int, type: Int) {
-                when(data!!.type){
+                when (data!!.type) {
                     Message.TYPE_STRING -> bindMessageViewHolder(viewHolder, data)
                     Message.TYPE_CONTACT -> bindContactViewHolder(viewHolder, data)
                     Message.TYPE_LOCATION -> bindLocationViewHolder(viewHolder, data)
@@ -116,7 +117,7 @@ class EventViewActivity: CoreActivity(), EventContract.ViewDetail.View{
             }
 
             override fun getItemType(t: Message?): Int {
-                if (t!!.userId == mUserId?.toString()){
+                if (t!!.userId == mUserId?.toString()) {
                     return 0
                 } else {
                     return 1
@@ -124,14 +125,14 @@ class EventViewActivity: CoreActivity(), EventContract.ViewDetail.View{
             }
 
             override fun viewHolder(inflater: LayoutInflater?, parent: ViewGroup?, type: Int): BaseViewHolder {
-                if(type == 0){
-                    return object : BaseViewHolder(R.layout.card_view_chat_right, inflater!!, parent){
+                if (type == 0) {
+                    return object : BaseViewHolder(R.layout.card_view_chat_right, inflater!!, parent) {
                         override fun addClicks(views: ViewMap?) {
                             super.addClicks(views)
                         }
                     }
                 } else {
-                    return object : BaseViewHolder(R.layout.card_view_chat, inflater!!, parent){
+                    return object : BaseViewHolder(R.layout.card_view_chat, inflater!!, parent) {
                         override fun addClicks(views: ViewMap?) {
                             super.addClicks(views)
                         }
@@ -146,14 +147,14 @@ class EventViewActivity: CoreActivity(), EventContract.ViewDetail.View{
         ac_floating_cascade_of_parchments.adapter = mAdapter
     }
 
-    override fun lastTimeDisplayed(position: Int): Boolean{
-        if (position == 0){
+    override fun lastTimeDisplayed(position: Int): Boolean {
+        if (position == 0) {
             return true
         }
-        for (i in position-1 downTo 0){
+        for (i in position - 1 downTo 0) {
 //            i
 //            val x = controller.getMessages()[i].timeDisplayed
-            if(controller.getMessages()[i].timeDisplayed){
+            if (controller.getMessages()[i].timeDisplayed) {
 //                val a = mAdapter.getItem(i)
 //                val b = mAdapter.getItem(position)
 //                val c = controller.getMessages()[position].createdAt!!.time.minus(controller.getMessages()[i].createdAt!!.time)
@@ -163,23 +164,23 @@ class EventViewActivity: CoreActivity(), EventContract.ViewDetail.View{
         return true
     }
 
-    override fun lastTimeDisplayed(message: Message): Boolean{
-        if (controller.getMessages().size == 0){
+    override fun lastTimeDisplayed(message: Message): Boolean {
+        if (controller.getMessages().size == 0) {
             return true
         }
-        for (i in controller.getMessages().size -1 downTo 0){
-            if(controller.getMessages()[i].timeDisplayed){
+        for (i in controller.getMessages().size - 1 downTo 0) {
+            if (controller.getMessages()[i].timeDisplayed) {
 //                val a = mAdapter.getItem(i)
 //                val b = mAdapter.getItem(position)
 //                val c = controller.getMessages()[position].createdAt!!.time.minus(controller.getMessages()[i].createdAt!!.time)
                 val a = message.createdAt!!.time.minus(controller.getMessages()[i].createdAt!!.time)
-                return (message.createdAt!!.time.minus(controller.getMessages()[i].createdAt!!.time)>= 5 * 60 * 1000 )
+                return (message.createdAt!!.time.minus(controller.getMessages()[i].createdAt!!.time) >= 5 * 60 * 1000)
             }
         }
         return true
     }
 
-    private fun bindMessageViewHolder(viewHolder: BaseViewHolder?, message: Message?){
+    private fun bindMessageViewHolder(viewHolder: BaseViewHolder?, message: Message?) {
         val date = viewHolder!!.get<TextView>(R.id.cvc_message_date)
         val messagetv = viewHolder.get<TextView>(R.id.cvc_message)
         val profPic = viewHolder.get<ImageView>(R.id.cvc_profile_pic)
@@ -197,12 +198,12 @@ class EventViewActivity: CoreActivity(), EventContract.ViewDetail.View{
 
         controller.getUserId { id ->
             id?.let {
-                if(message!!.userId!!.toInt() != it){
+                if (message!!.userId!!.toInt() != it) {
                     Picasso.with(this).load(message.user!!.avatar).into(profPic)
                 }
                 messagetv.setTextColor(ContextCompat.getColor(this, R.color.black))
                 messagetv.text = message.message
-                if(message.timeDisplayed){
+                if (message.timeDisplayed) {
                     date.visibility = TextView.VISIBLE
                     val formatter = SimpleDateFormat("EEE - h:mm aaa")
                     date.text = formatter.format(message.createdAt)
@@ -211,7 +212,7 @@ class EventViewActivity: CoreActivity(), EventContract.ViewDetail.View{
         }
     }
 
-    private fun bindContactViewHolder(viewHolder: BaseViewHolder?, message: Message?){
+    private fun bindContactViewHolder(viewHolder: BaseViewHolder?, message: Message?) {
         val date = viewHolder!!.get<TextView>(R.id.cvc_message_date)
         val messagetv = viewHolder.get<TextView>(R.id.cvc_message)
         val profPic = viewHolder.get<ImageView>(R.id.cvc_profile_pic)
@@ -231,19 +232,19 @@ class EventViewActivity: CoreActivity(), EventContract.ViewDetail.View{
         Picasso.with(this).load(message.contactInfo!!.avatar).into(profPic)
         controller.getUserId { id ->
             id?.let {
-                if(message.userId!!.toInt() != it){
+                if (message.userId!!.toInt() != it) {
                     Picasso.with(this).load(message.user!!.avatar).into(profPic)
                 }
             }
         }
-        if(message.timeDisplayed){
+        if (message.timeDisplayed) {
             date.visibility = TextView.VISIBLE
             val formatter = SimpleDateFormat("EEE - h:mm aaa")
             date.text = formatter.format(message.createdAt)
         }
     }
 
-    private fun bindLocationViewHolder(viewHolder: BaseViewHolder?, message: Message?){
+    private fun bindLocationViewHolder(viewHolder: BaseViewHolder?, message: Message?) {
         val date = viewHolder!!.get<TextView>(R.id.cvc_message_date)
         val messagetv = viewHolder.get<TextView>(R.id.cvc_message)
         val profPic = viewHolder.get<ImageView>(R.id.cvc_profile_pic)
@@ -262,19 +263,19 @@ class EventViewActivity: CoreActivity(), EventContract.ViewDetail.View{
         messagetv.setTextColor(ContextCompat.getColor(this, R.color.confirmText))
         controller.getUserId { id ->
             id?.let {
-                if(message.userId!!.toInt() != id){
+                if (message.userId!!.toInt() != id) {
                     Picasso.with(this).load(message.user!!.avatar).into(profPic)
                 }
             }
         }
-        if(message.timeDisplayed){
+        if (message.timeDisplayed) {
             date.visibility = TextView.VISIBLE
             val formatter = SimpleDateFormat("EEE - h:mm aaa")
             date.text = formatter.format(message.createdAt)
         }
     }
 
-    private fun bindFileViewHolder(viewHolder: BaseViewHolder?, message: Message?){
+    private fun bindFileViewHolder(viewHolder: BaseViewHolder?, message: Message?) {
         val date = viewHolder!!.get<TextView>(R.id.cvc_message_date)
         val messagetv = viewHolder.get<TextView>(R.id.cvc_message)
         val profPic = viewHolder.get<ImageView>(R.id.cvc_profile_pic)
@@ -297,19 +298,19 @@ class EventViewActivity: CoreActivity(), EventContract.ViewDetail.View{
         })
         controller.getUserId { id ->
             id?.let {
-                if(message.userId!!.toInt() != it) {
+                if (message.userId!!.toInt() != it) {
                     Picasso.with(this).load(message.user!!.avatar).into(profPic)
                 }
             }
         }
-        if(message.timeDisplayed){
+        if (message.timeDisplayed) {
             date.visibility = TextView.VISIBLE
             val formatter = SimpleDateFormat("EEE - h:mm aaa")
             date.text = formatter.format(message.createdAt)
         }
     }
 
-    private fun bindMediaViewHolder(viewHolder: BaseViewHolder?, message: Message?){
+    private fun bindMediaViewHolder(viewHolder: BaseViewHolder?, message: Message?) {
         val date = viewHolder!!.get<TextView>(R.id.cvc_message_date)
         val messagetv = viewHolder.get<TextView>(R.id.cvc_message)
         val profPic = viewHolder.get<ImageView>(R.id.cvc_profile_pic)
@@ -328,19 +329,19 @@ class EventViewActivity: CoreActivity(), EventContract.ViewDetail.View{
         messagetv.setTextColor(ContextCompat.getColor(this, R.color.confirmText))
         controller.getUserId { id ->
             id?.let {
-                if(message.userId!!.toInt() != id){
+                if (message.userId!!.toInt() != id) {
                     Picasso.with(this).load(message.user!!.avatar).into(profPic)
                 }
             }
         }
-        if(message.timeDisplayed){
+        if (message.timeDisplayed) {
             date.visibility = TextView.VISIBLE
             val formatter = SimpleDateFormat("EEE - h:mm aaa")
             date.text = formatter.format(message.createdAt)
         }
     }
 
-    private fun bindChannelViewHolder(viewHolder: BaseViewHolder?, message: Message?){
+    private fun bindChannelViewHolder(viewHolder: BaseViewHolder?, message: Message?) {
         val date = viewHolder!!.get<TextView>(R.id.cvc_message_date)
         val messagetv = viewHolder.get<TextView>(R.id.cvc_message)
         val profPic = viewHolder.get<ImageView>(R.id.cvc_profile_pic)
@@ -363,19 +364,19 @@ class EventViewActivity: CoreActivity(), EventContract.ViewDetail.View{
         })
         controller.getUserId { id ->
             id?.let {
-                if(message.userId!!.toInt() != it){
+                if (message.userId!!.toInt() != it) {
                     Picasso.with(this).load(message.user!!.avatar).into(profPic)
                 }
             }
         }
-        if(message.timeDisplayed){
+        if (message.timeDisplayed) {
             date.visibility = TextView.VISIBLE
             val formatter = SimpleDateFormat("EEE - h:mm aaa")
             date.text = formatter.format(message.createdAt)
         }
     }
 
-    private fun setUpDrawer(){
+    private fun setUpDrawer() {
         ac_the_daddy_drawer.isClipPanel = false
         ac_the_daddy_drawer.panelHeight = 150
         ac_the_daddy_drawer.coveredFadeColor = ContextCompat.getColor(this, R.color.transparent)
@@ -383,13 +384,13 @@ class EventViewActivity: CoreActivity(), EventContract.ViewDetail.View{
         ac_drawer_money_filler.visibility = View.GONE
     }
 
-    private fun setUpClickers(){
+    private fun setUpClickers() {
         ac_emitting_button_of_green_arrow.setOnClickListener {
             controller.sendMessage()
         }
         ac_conjuring_conduit_of_messages.setOnClickListener {
             val layoutManager = ac_floating_cascade_of_parchments.layoutManager as LinearLayoutManager
-            layoutManager.scrollToPositionWithOffset(controller.getMessages().size -1, 0)
+            layoutManager.scrollToPositionWithOffset(controller.getMessages().size - 1, 0)
             ac_conjuring_conduit_of_messages.isFocusableInTouchMode = true
 
             ac_conjuring_conduit_of_messages.post({
@@ -399,14 +400,14 @@ class EventViewActivity: CoreActivity(), EventContract.ViewDetail.View{
             })
         }
         ac_conjuring_conduit_of_messages.setOnFocusChangeListener({ view, b ->
-            if (!b){
+            if (!b) {
                 ac_conjuring_conduit_of_messages.isFocusableInTouchMode = false
                 val imm = this.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.hideSoftInputFromWindow(ac_conjuring_conduit_of_messages.windowToken, 0)
             }
         })
         ac_drawer_summoner.setOnClickListener {
-            if(ac_the_daddy_drawer.panelState == SlidingUpPanelLayout.PanelState.COLLAPSED){
+            if (ac_the_daddy_drawer.panelState == SlidingUpPanelLayout.PanelState.COLLAPSED) {
                 ac_the_daddy_drawer.panelState = SlidingUpPanelLayout.PanelState.EXPANDED
             } else {
                 ac_the_daddy_drawer.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED
@@ -446,7 +447,7 @@ class EventViewActivity: CoreActivity(), EventContract.ViewDetail.View{
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         showProgress()
-        when(requestCode){
+        when (requestCode) {
             Constants.RequestCode.MY_CHANNELS_LIST -> {
                 controller.sendChannel(data!!.getIntExtra(Constants.IntentKeys.CHANNEL_ID, 0))
                 controller.retrieveChatHistory()
