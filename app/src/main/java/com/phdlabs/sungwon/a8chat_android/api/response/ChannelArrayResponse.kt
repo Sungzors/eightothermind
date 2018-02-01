@@ -1,6 +1,6 @@
 package com.phdlabs.sungwon.a8chat_android.api.response
 
-import com.phdlabs.sungwon.a8chat_android.model.Channel
+import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
 
 /**
  * Created by SungWon on 12/6/2017.

@@ -87,5 +87,12 @@
     <string name="camera_send">cameraSend</string>
     <string name="camerarollimage">CameraRollImage</string>
     <string name="share">Share</string>
+    <string name="channel_image">channelImage</string>
+    <string name="create_a_channel">Create a Channel</string>
+    <string name="create">Create</string>
+    <string name="incomplete_information">Incomplete information</string>
+    <string name="add_channel_photo">Add channel photo</string>
+    <string name="add_event_photo">Add event photo</string>
+    <string name="create_event">Create an Event</string>
 
 </resources>

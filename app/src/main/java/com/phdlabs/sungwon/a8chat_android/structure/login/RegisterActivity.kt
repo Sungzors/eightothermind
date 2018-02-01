@@ -74,18 +74,26 @@ class RegisterActivity : CoreActivity() {
                         call.subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(
-                                        { user ->
-                                            if (user.isSuccess) {
+                                        { response ->
+                                            if (response.isSuccess) {
                                                 /*Save to Realm*/
                                                 registrationData.save()
-                                                user.user.save()
+                                                response.user.save()
                                                 /*Transition to Confirm Activity*/
                                                 confirmation()
-                                            } else if (user.isError) {
+                                            } else if (response.isError) {
                                                 hideProgress()
-                                                showError(user.message)
+                                                showError(response.message)
                                             }
-                                        })
+                                        }, { throwable ->
+                                    hideProgress()
+                                    if (isRegister) {
+                                        showError("Could not create account, try again later")
+                                    } else {
+                                        showError("Could not sign in, try again later")
+                                    }
+                                    println("Error in Log in: " + throwable.message)
+                                })
                     }
                 } catch (e: Throwable) {
                     /*Do not leave realm transactions open*/

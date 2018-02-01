@@ -5,9 +5,12 @@ import android.Manifest
 /**
  * Created by SungWon on 9/24/2017.
  */
-object Constants{
+object Constants {
 
-    object IntentKeys{
+    /**
+     * [IntentKeys]
+     * */
+    object IntentKeys {
         const val LOGIN_KEY = "login_key"
         const val LOGIN_CC = "login_cc"
         const val LOGIN_PHONE = "login_phone"
@@ -17,18 +20,25 @@ object Constants{
         const val EVENT_NAME = "event_name"
         const val EVENT_LOCATION = "event_location"
         const val CHAT_NAME = "chat_name"
-        const val PARTICIPANT_ID = "dunga"
+        const val PARTICIPANT_ID = "dunga" //todo: what is this?
         const val ROOM_ID = "room_id"
         const val MESSAGE_ID = "message_id"
         const val OWNER_ID = "owner_id"
     }
 
-    object PrefKeys{
+    /**
+     * [PrefKeys]
+     * //TODO: Remove after refactoring all preferences with Realm
+     * */
+    object PrefKeys {
         const val USER_ID = "user_id"
         const val TOKEN_KEY = "token"
     }
 
-    object SocketKeys{
+    /**
+     * [SocketKeys]
+     * */
+    object SocketKeys {
         const val CONNECT = "connect"
         const val UPDATE_ROOM = "update-room"
         const val UPDATE_CHAT_STRING = "update-chat-string"
@@ -40,37 +50,80 @@ object Constants{
         const val ON_ERROR = "on-error"
     }
 
-    object RequestCode{
+    /**
+     * [ChannelRequestCodes]
+     * */
+    object ChannelRequestCodes {
         const val MY_CHANNELS_LIST = 1
     }
 
-    object ResultCode{
+    /**
+     * [ResultCode]
+     * */
+    object ResultCode {
         const val SUCCESS = 0
         const val FAILURE = 1
     }
 
-    /*Camera*/
+    /**
+     * [CameraPager] constants
+     * to control the camera state
+     * */
     object CameraPager {
         const val CAMERA_ROLL = 0
         const val NORMAL = 1
         const val HANDS_FREE = 2
     }
 
+    /**
+     * [AppPermissions] used for permission check management
+     * */
     object AppPermissions {
         val CAMERA = Manifest.permission.CAMERA
         val RECORD_AUDIO = Manifest.permission.RECORD_AUDIO
         val WRITE_EXTERNAL = Manifest.permission.WRITE_EXTERNAL_STORAGE
+        val FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION
+        val COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION
     }
 
+    /**
+     * [PermissionsReqCode] used for permission request & result
+     * */
     object PermissionsReqCode {
         val CAMERA_REQ_CODE = 0
         val RECORD_AUDIO_REQ_CODE = 1
         val WRITE_EXTERNAL_REQ_CODE = 2
+        val LOCATION_REQ_CODE = 3
     }
 
+    /**
+     * [CameraIntents] used to control camera hardware & file management
+     * */
     object CameraIntents {
         val IMAGE_FILE_PATH = "img_file_path"
         val LENS_FACING = "lens_facing"
+    }
+
+    /**
+     * [EventPrivacy] used to control event privacy at [EventsEight] creation
+     * */
+    object EventPrivacy {
+        val ONLY_FRIENDS = "only my friends"
+        var FRIENDS_OF_FRIENDS = "friends of friends"
+    }
+
+    /**
+     * [MessageTypes] used to select single message type on [Message]
+     * */
+    object MessageTypes {
+        val TYPE_STRING = "string"
+        val TYPE_MEDIA = "media"
+        val TYPE_CONTACT = "contact"
+        val TYPE_LOCATION = "location"
+        val TYPE_FILE = "file"
+        val TYPE_CHANNEL = "channel"
+        val TYPE_MONEY = "money"
+        val TYPE_POST = "post"
     }
 
 

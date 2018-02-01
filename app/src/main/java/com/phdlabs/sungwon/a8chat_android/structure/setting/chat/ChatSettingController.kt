@@ -7,15 +7,15 @@ import com.phdlabs.sungwon.a8chat_android.api.rest.Caller
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
 import com.phdlabs.sungwon.a8chat_android.api.utility.Callback8
 import com.phdlabs.sungwon.a8chat_android.db.EventBusManager
+import com.phdlabs.sungwon.a8chat_android.db.UserManager
 import com.phdlabs.sungwon.a8chat_android.structure.setting.SettingContract
-import com.phdlabs.sungwon.a8chat_android.utility.Constants
-import com.phdlabs.sungwon.a8chat_android.utility.Preferences
 import org.greenrobot.eventbus.EventBus
 
 /**
  * Created by SungWon on 1/22/2018.
+ * Updated by JPAM on 1/31/2018
  */
-class ChatSettingController(val mView: SettingContract.Chat.View) : SettingContract.Chat.Controller{
+class ChatSettingController(val mView: SettingContract.Chat.View) : SettingContract.Chat.Controller {
 
     private var mCaller: Caller
     private var mEventBus: EventBus
@@ -41,18 +41,22 @@ class ChatSettingController(val mView: SettingContract.Chat.View) : SettingContr
     }
 
     override fun favoriteChat() {
-        val call = mCaller.favoritePrivateChatRoom(
-                Preferences(mView.getContext()!!).getPreferenceString(Constants.PrefKeys.TOKEN_KEY),
-                mRoomID,
-                PrivateChatPatchData(
-                        Preferences(mView.getContext()!!).getPreferenceString(Constants.PrefKeys.USER_ID)!!,
-                        !mFavorited
+        UserManager.instance.getCurrentUser { success, user, token ->
+            if (success) {
+                val call = mCaller.favoritePrivateChatRoom(
+                        token?.token,
+                        mRoomID,
+                        PrivateChatPatchData(
+                                user?.id,
+                                !mFavorited
+                        )
                 )
-        )
-        call.enqueue(object : Callback8<RoomResponse, Event>(mEventBus){
-            override fun onSuccess(data: RoomResponse?) {
+                call.enqueue(object : Callback8<RoomResponse, Event>(mEventBus) {
+                    override fun onSuccess(data: RoomResponse?) {
+                    }
+                })
             }
-        })
+        }
     }
 
     override fun setRoomId(roomId: Int) {

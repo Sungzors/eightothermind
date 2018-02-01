@@ -19,10 +19,9 @@ import com.phdlabs.sungwon.a8chat_android.api.utility.Callback8
 import com.phdlabs.sungwon.a8chat_android.api.utility.GsonHolder
 import com.phdlabs.sungwon.a8chat_android.db.EventBusManager
 import com.phdlabs.sungwon.a8chat_android.db.UserManager
-import com.phdlabs.sungwon.a8chat_android.model.Message
+import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.structure.event.EventContract
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
-import com.phdlabs.sungwon.a8chat_android.utility.Preferences
 import org.greenrobot.eventbus.EventBus
 import org.json.JSONException
 import org.json.JSONObject
@@ -31,7 +30,7 @@ import retrofit2.Response
 /**
  * Created by SungWon on 1/8/2018.
  */
-class EventViewController(val mView: EventContract.ViewDetail.View): EventContract.ViewDetail.Controller{
+class EventViewController(val mView: EventContract.ViewDetail.View) : EventContract.ViewDetail.Controller {
 
     private val TAG = "EventViewController"
 
@@ -309,7 +308,7 @@ class EventViewController(val mView: EventContract.ViewDetail.View): EventContra
     private val onError = Emitter.Listener { args ->
         mView.getActivity.runOnUiThread {
             val message = args[0] as String //args[0] as JSONObject
-            Toast.makeText(mView.getContext(),message, Toast.LENGTH_SHORT).show()
+            Toast.makeText(mView.getContext(), message, Toast.LENGTH_SHORT).show()
             //Log.e(TAG, message.getString("message"))
 
         }
@@ -318,16 +317,20 @@ class EventViewController(val mView: EventContract.ViewDetail.View): EventContra
     override fun sendMessage() {
         getUserId { id ->
             id?.let {
-                val call = mCaller.sendMessageString(
-                        Preferences(mView.getContext()!!).getPreferenceString(Constants.PrefKeys.TOKEN_KEY),
-                        SendMessageStringData(id.toString(), mView.getMessageET, mRoomId.toString())
-                )
-                call.enqueue(object : Callback8<ErrorResponse, MessageSentEvent>(mEventBus) {
-                    override fun onSuccess(data: ErrorResponse?) {
-                        mEventBus.post(MessageSentEvent())
-                        mView.getMessageETObject.setText("")
+                UserManager.instance.getCurrentUser { success, _, token ->
+                    if (success) {
+                        val call = mCaller.sendMessageString(
+                                token?.token,
+                                SendMessageStringData(id, mView.getMessageET, mRoomId)
+                        )
+                        call.enqueue(object : Callback8<ErrorResponse, MessageSentEvent>(mEventBus) {
+                            override fun onSuccess(data: ErrorResponse?) {
+                                mEventBus.post(MessageSentEvent())
+                                mView.getMessageETObject.setText("")
+                            }
+                        })
                     }
-                })
+                }
             }
         }
     }
@@ -335,16 +338,20 @@ class EventViewController(val mView: EventContract.ViewDetail.View): EventContra
     override fun sendChannel(channelId: Int) {
         getUserId { id ->
             id?.let {
-                val call = mCaller.sendMessageChannel(
-                        Preferences(mView.getContext()!!).getPreferenceString(Constants.PrefKeys.TOKEN_KEY),
-                        SendMessageChannelData(id.toString(), mRoomId.toString(), channelId.toString())
-                )
-                call.enqueue(object : Callback8<ErrorResponse, MessageSentEvent>(mEventBus) {
-                    override fun onSuccess(data: ErrorResponse?) {
-                        mEventBus.post(MessageSentEvent())
-                        mView.getMessageETObject.setText("")
+                UserManager.instance.getCurrentUser { success, _, token ->
+                    if (success) {
+                        val call = mCaller.sendMessageChannel(
+                                token?.token,
+                                SendMessageChannelData(id.toString(), mRoomId.toString(), channelId.toString())
+                        )
+                        call.enqueue(object : Callback8<ErrorResponse, MessageSentEvent>(mEventBus) {
+                            override fun onSuccess(data: ErrorResponse?) {
+                                mEventBus.post(MessageSentEvent())
+                                mView.getMessageETObject.setText("")
+                            }
+                        })
                     }
-                })
+                }
             }
         }
     }
@@ -358,15 +365,19 @@ class EventViewController(val mView: EventContract.ViewDetail.View): EventContra
     override fun sendLocation() {
         getUserId { id ->
             id?.let {
-                val call = mCaller.sendMessageLocation(
-                        Preferences(mView.getContext()!!).getPreferenceString(Constants.PrefKeys.TOKEN_KEY),
-                        SendMessageGeneralData(id.toString(), mRoomId.toString())
-                )
-                call.enqueue(object : Callback8<ErrorResponse, MessageLocationSentEvent>(mEventBus) {
-                    override fun onSuccess(data: ErrorResponse?) {
-                        mEventBus.post(MessageLocationSentEvent())
+                UserManager.instance.getCurrentUser { success, _, token ->
+                    if (success) {
+                        val call = mCaller.sendMessageLocation(
+                                token?.token,
+                                SendMessageGeneralData(id.toString(), mRoomId.toString())
+                        )
+                        call.enqueue(object : Callback8<ErrorResponse, MessageLocationSentEvent>(mEventBus) {
+                            override fun onSuccess(data: ErrorResponse?) {
+                                mEventBus.post(MessageLocationSentEvent())
+                            }
+                        })
                     }
-                })
+                }
             }
         }
     }
@@ -393,39 +404,44 @@ class EventViewController(val mView: EventContract.ViewDetail.View): EventContra
     override fun retrieveChatHistory() {
         isConnected = true
         getUserId { id ->
-        id?.let {
-            val call = mCaller.getEventHistory(
-                    Preferences(mView.getContext()!!).getPreferenceString(Constants.PrefKeys.TOKEN_KEY),
-                    mRoomId,
-                    id
-            )
-            call.enqueue(object : Callback8<RoomHistoryResponse, RoomHistoryEvent>(mEventBus) {
-                override fun onSuccess(data: RoomHistoryResponse?) {
-                    mMessages.clear()
-                    //TODO: need to add read first then unread always, but check for unread null instead.
-                    for (item in data!!.messages!!.allMessages!!) {
-                        if (item.roomId == mRoomId.toString()) {
-                            mMessages.add(item)
-                        }
-                    }
-                    var i = 0
-                    for (item in mMessages!!) {
-                        item.timeDisplayed = mView.lastTimeDisplayed(i)
-                        setMessageObject(i, item)
-                        i++
-                    }
-                    mView.updateRecycler()
-                    mView.hideProgress()
-                }
+            id?.let {
+                UserManager.instance.getCurrentUser { success, _, token ->
+                    if (success) {
+                        val call = mCaller.getEventHistory(
+                                token?.token,
+                                mRoomId,
+                                id
+                        )
+                        call.enqueue(object : Callback8<RoomHistoryResponse, RoomHistoryEvent>(mEventBus) {
+                            override fun onSuccess(data: RoomHistoryResponse?) {
+                                mMessages.clear()
+                                //TODO: need to add read first then unread always, but check for unread null instead.
+                                for (item in data!!.messages!!.allMessages!!) {
+                                    if (item.roomId == mRoomId) {
+                                        mMessages.add(item)
 
-                override fun onError(response: Response<RoomHistoryResponse>?) {
-                    super.onError(response)
-                    Log.e(TAG, response!!.message())
-                    mView.hideProgress()
+                                    }
+                                    var i = 0
+                                    for (item in mMessages!!) {
+                                        item.timeDisplayed = mView.lastTimeDisplayed(i)
+                                        setMessageObject(i, item)
+                                        i++
+                                    }
+                                    mView.updateRecycler()
+                                    mView.hideProgress()
+                                }
+                            }
+
+                            override fun onError(response: Response<RoomHistoryResponse>?) {
+                                super.onError(response)
+                                Log.e(TAG, response!!.message())
+                                mView.hideProgress()
+                            }
+                        })
+                    }
                 }
-            })
+            }
         }
-    }
     }
 
     override fun getMessages(): MutableList<Message> = mMessages

@@ -1,6 +1,6 @@
 package com.phdlabs.sungwon.a8chat_android.api.response
 
-import com.phdlabs.sungwon.a8chat_android.model.EventsEight
+import com.phdlabs.sungwon.a8chat_android.model.event.EventsEight
 
 /**
  * Created by SungWon on 1/24/2018.

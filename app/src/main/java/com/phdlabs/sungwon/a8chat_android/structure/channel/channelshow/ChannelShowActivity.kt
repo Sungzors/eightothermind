@@ -7,7 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.model.ChannelShowNest
-import com.phdlabs.sungwon.a8chat_android.model.Message
+import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.structure.channel.ChannelContract
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseRecyclerAdapter
@@ -20,8 +20,9 @@ import java.text.SimpleDateFormat
 
 /**
  * Created by SungWon on 12/12/2017.
+ * Updated by JPAM on 1/31/2018
  */
-class ChannelShowActivity: CoreActivity(), ChannelContract.ChannelShow.View{
+class ChannelShowActivity : CoreActivity(), ChannelContract.ChannelShow.View {
     override lateinit var controller: ChannelContract.ChannelShow.Controller
 
     override fun layoutId(): Int = R.layout.activity_channel
@@ -56,18 +57,18 @@ class ChannelShowActivity: CoreActivity(), ChannelContract.ChannelShow.View{
         controller.stop()
     }
 
-    override fun setUpTopRecycler(){
-        mChannelAdapter = object : BaseRecyclerAdapter<ChannelShowNest, BaseViewHolder>(){
+    override fun setUpTopRecycler() {
+        mChannelAdapter = object : BaseRecyclerAdapter<ChannelShowNest, BaseViewHolder>() {
             override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: ChannelShowNest?, position: Int, type: Int) {
                 bindTopViewHolder(viewHolder!!, data!!)
             }
 
             override fun viewHolder(inflater: LayoutInflater?, parent: ViewGroup?, type: Int): BaseViewHolder {
-                return object: BaseViewHolder(R.layout.card_view_channel_list, inflater!!, parent){
+                return object : BaseViewHolder(R.layout.card_view_channel_list, inflater!!, parent) {
                     override fun addClicks(views: ViewMap?) {
                         views!!.click({ view ->
                             val a = getItem(adapterPosition)
-                            controller.loadChannel(getItem(adapterPosition).channels[0].room_id.toInt())
+                            controller.loadChannel(getItem(adapterPosition).channels[0].room_id!!)
                         })
                     }
                 }
@@ -78,9 +79,8 @@ class ChannelShowActivity: CoreActivity(), ChannelContract.ChannelShow.View{
         ac_channel_list_recycler.adapter = mChannelAdapter
     }
 
-    
 
-    private fun bindTopViewHolder(viewHolder: BaseViewHolder, data: ChannelShowNest){
+    private fun bindTopViewHolder(viewHolder: BaseViewHolder, data: ChannelShowNest) {
         val pic = viewHolder.get<ImageView>(R.id.cvcl_channel_pic)
         val text = viewHolder.get<TextView>(R.id.cvcl_channel_text)
         Picasso.with(this).load(data.channels[0].avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(pic)
@@ -98,13 +98,13 @@ class ChannelShowActivity: CoreActivity(), ChannelContract.ChannelShow.View{
     }
 
     override fun setUpPostRecycler() {
-        mPostAdapter = object : BaseRecyclerAdapter<Message, BaseViewHolder>(){
+        mPostAdapter = object : BaseRecyclerAdapter<Message, BaseViewHolder>() {
             override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: Message?, position: Int, type: Int) {
                 bindPostHolder(viewHolder!!, data!!)
             }
 
             override fun viewHolder(inflater: LayoutInflater?, parent: ViewGroup?, type: Int): BaseViewHolder {
-                return object : BaseViewHolder(R.layout.card_view_post_media, inflater!!, parent){
+                return object : BaseViewHolder(R.layout.card_view_post_media, inflater!!, parent) {
 
                 }
             }
@@ -114,7 +114,7 @@ class ChannelShowActivity: CoreActivity(), ChannelContract.ChannelShow.View{
         ac_post_list.adapter = mPostAdapter
     }
 
-    private fun bindPostHolder(viewHolder: BaseViewHolder, data: Message){
+    private fun bindPostHolder(viewHolder: BaseViewHolder, data: Message) {
         val picasso = Picasso.with(this)
         val posterPic = viewHolder.get<ImageView>(R.id.cvpm_poster_pic)
         val posterName = viewHolder.get<TextView>(R.id.cvpm_poster_name)
@@ -126,27 +126,27 @@ class ChannelShowActivity: CoreActivity(), ChannelContract.ChannelShow.View{
         val likeCount = viewHolder.get<TextView>(R.id.cvpm_like_count)
         val commentCount = viewHolder.get<TextView>(R.id.cvpm_comment_count)
 
-        picasso.load(data.user!!.avatar).into(posterPic)
-        posterName.text = data.name
-        if(data.mediaArray != null){
-            picasso.load(data.mediaArray[0].media_file).transform(CircleTransform()).into(postPic)
+        picasso.load(data.user?.avatar).into(posterPic)
+        posterName.text = (data.getUserName())
+        data.mediaArray?.let {
+            picasso.load(it[0]?.media_file).transform(CircleTransform()).into(postPic)
         }
         val formatter = SimpleDateFormat("EEE - h:mm aaa")
         postDate.text = formatter.format(data.createdAt)
         likeButton.setOnClickListener {
-            controller.likePost(data.id!!)
+            controller.likePost(data.id)
         }
         commentButton.setOnClickListener {
-            controller.commentPost(data.id!!)
+            controller.commentPost(data.id)
         }
         postText.text = data.message
         likeCount.text = data.likes.toString()
         commentCount.text = data.comments.toString()
     }
 
-    override fun onLike(messageId: String) {
-        for (message in mPostList){
-            if(message.id == messageId){
+    override fun onLike(messageId: Int?) {
+        for (message in mPostList) {
+            if (message.id == messageId) {
                 message.likes = message.likes!! + 1
             }
         }

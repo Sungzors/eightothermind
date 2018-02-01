@@ -7,9 +7,8 @@ import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
 import com.phdlabs.sungwon.a8chat_android.api.utility.Callback8
 import com.phdlabs.sungwon.a8chat_android.db.EventBusManager
 import com.phdlabs.sungwon.a8chat_android.db.TemporaryManager
+import com.phdlabs.sungwon.a8chat_android.db.UserManager
 import com.phdlabs.sungwon.a8chat_android.structure.channel.ChannelContract
-import com.phdlabs.sungwon.a8chat_android.utility.Constants
-import com.phdlabs.sungwon.a8chat_android.utility.Preferences
 import org.greenrobot.eventbus.EventBus
 
 /**
@@ -39,17 +38,21 @@ class MyChannelsListController(val mView:ChannelContract.MyChannelsList.View): C
     }
 
     override fun retrieveChannels() {
-        val call = mCaller.getChannel(Preferences(mView.getContext()!!).getPreferenceString(Constants.PrefKeys.TOKEN_KEY))
-        call.enqueue(object: Callback8<ChannelArrayResponse, ChannelGetEvent>(mEventBus){
-            override fun onSuccess(data: ChannelArrayResponse?) {
-                mEventBus.post(ChannelGetEvent())
-                TemporaryManager.instance.mChannelList.clear()
-                for(channel in data!!.channels!!){
-                    mView.addChannel(channel)
-                    TemporaryManager.instance.mChannelList.add(channel)
-                }
-                mView.updateRecycler()
+        UserManager.instance.getCurrentUser { success, user, token ->
+            if (success) {
+                val call = mCaller.getChannel(token?.token)
+                call.enqueue(object: Callback8<ChannelArrayResponse, ChannelGetEvent>(mEventBus){
+                    override fun onSuccess(data: ChannelArrayResponse?) {
+                        mEventBus.post(ChannelGetEvent())
+                        TemporaryManager.instance.mChannelList.clear()
+                        for(channel in data!!.channels!!){
+                            mView.addChannel(channel)
+                            TemporaryManager.instance.mChannelList.add(channel)
+                        }
+                        mView.updateRecycler()
+                    }
+                })
             }
-        })
+        }
     }
 }

@@ -15,7 +15,7 @@ import android.widget.TextView
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.db.TemporaryManager
 import com.phdlabs.sungwon.a8chat_android.db.UserManager
-import com.phdlabs.sungwon.a8chat_android.model.Message
+import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.structure.application.Application
 import com.phdlabs.sungwon.a8chat_android.structure.channel.ChannelContract
 import com.phdlabs.sungwon.a8chat_android.structure.channel.postshow.ChannelPostShowActivity
@@ -33,6 +33,8 @@ import java.text.SimpleDateFormat
 /**
  * Created by SungWon on 12/20/2017.
  */
+
+//TODO: Refactor Channel & Room data
 class MyChannelActivity: CoreActivity(), ChannelContract.MyChannel.View{
 
     override lateinit var controller: ChannelContract.MyChannel.Controller
@@ -41,7 +43,7 @@ class MyChannelActivity: CoreActivity(), ChannelContract.MyChannel.View{
 
     override fun contentContainerId(): Int = 0
 
-    private lateinit var mChannelId: String
+    private var mChannelId: Int = 0
     private lateinit var mChannelName: String
     private var mRoomId: Int = 0
     private var mOwnerId = 0
@@ -51,7 +53,7 @@ class MyChannelActivity: CoreActivity(), ChannelContract.MyChannel.View{
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         MyChannelController(this)
-        mChannelId = intent.getStringExtra(Constants.IntentKeys.CHANNEL_ID)
+        mChannelId = intent.getIntExtra(Constants.IntentKeys.CHANNEL_ID, 0 )
         mChannelName = intent.getStringExtra(Constants.IntentKeys.CHANNEL_NAME)
         mRoomId = intent.getIntExtra(Constants.IntentKeys.ROOM_ID, 0)
         mOwnerId = intent.getIntExtra(Constants.IntentKeys.OWNER_ID, 0)
@@ -121,7 +123,7 @@ class MyChannelActivity: CoreActivity(), ChannelContract.MyChannel.View{
                 } else if(t.message == null){
                     return 1
                 } else {
-                    if(t.mediaArray.size>0){
+                    if(t.mediaArray?.size!! > 0){
                         return 2
                     } else {
                         return 0
@@ -166,7 +168,7 @@ class MyChannelActivity: CoreActivity(), ChannelContract.MyChannel.View{
 
         Picasso.with(this).load(data.user!!.avatar).transform(CircleTransform()).into(pic)
         text.text = data.message
-        posterName.text = data.name
+        posterName.text = data.getUserName()
         val formatter = SimpleDateFormat("EEE - h:mm aaa")
         postDate.text = formatter.format(data.createdAt)
     }
@@ -178,8 +180,10 @@ class MyChannelActivity: CoreActivity(), ChannelContract.MyChannel.View{
         val postDate = viewHolder.get<TextView>(R.id.cvpp_post_date)
 
         Picasso.with(this).load(data.user!!.avatar).transform(CircleTransform()).into(pic)
-        Picasso.with(this).load(data.mediaArray[0].media_file).into(postPic)
-        posterName.text = data.name
+        data.mediaArray?.let {
+            Picasso.with(this).load(it[0]?.media_file).into(postPic)
+        }
+        posterName.text = data.getUserName()
         val formatter = SimpleDateFormat("EEE - h:mm aaa")
         postDate.text = formatter.format(data.createdAt)
     }
@@ -197,8 +201,10 @@ class MyChannelActivity: CoreActivity(), ChannelContract.MyChannel.View{
         val commentCount = viewHolder.get<TextView>(R.id.cvpm_comment_count)
 
         picasso.load(data.user!!.avatar).transform(CircleTransform()).into(posterPic)
-        posterName.text = data.name
-        picasso.load(data.mediaArray[0].media_file).into(postPic)
+        posterName.text = data.getUserName()
+        data.mediaArray?.let {
+            picasso.load(it[0]?.media_file).into(postPic)
+        }
         val formatter = SimpleDateFormat("EEE - h:mm aaa")
         postDate.text = formatter.format(data.createdAt)
         postPic.setOnClickListener {
@@ -306,5 +312,5 @@ class MyChannelActivity: CoreActivity(), ChannelContract.MyChannel.View{
         get() = mRoomId
 
     override val getChannelId: Int
-        get() = mChannelId.toInt()
+        get() = mChannelId
 }

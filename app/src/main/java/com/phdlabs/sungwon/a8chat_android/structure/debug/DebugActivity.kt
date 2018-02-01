@@ -15,7 +15,6 @@ import com.phdlabs.sungwon.a8chat_android.structure.login.LoginActivity
 import com.phdlabs.sungwon.a8chat_android.structure.main.MainActivity
 import com.phdlabs.sungwon.a8chat_android.structure.profile.ProfileActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
-import com.phdlabs.sungwon.a8chat_android.utility.Preferences
 import io.realm.Realm
 import io.realm.RealmConfiguration
 import io.realm.rx.RealmObservableFactory
@@ -53,8 +52,6 @@ class DebugActivity : CoreActivity() {
                 ad_loading_text.text = "User Loaded"
                 ad_token.text = "Token: " + token?.token?.length
                 ad_user_id.text = "User ID: " + user?.id
-                Preferences(this).putPreference(Constants.PrefKeys.TOKEN_KEY, token?.token)
-                Preferences(this).putPreference(Constants.PrefKeys.USER_ID, user?.id!!)
             } else {
                 ad_loading_text.text = "User Load failed"
             }

@@ -21,10 +21,10 @@ import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
 import com.phdlabs.sungwon.a8chat_android.api.utility.Callback8
 import com.phdlabs.sungwon.a8chat_android.api.utility.GsonHolder
 import com.phdlabs.sungwon.a8chat_android.db.EventBusManager
-import com.phdlabs.sungwon.a8chat_android.model.Message
+import com.phdlabs.sungwon.a8chat_android.db.UserManager
+import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.structure.channel.ChannelContract
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
-import com.phdlabs.sungwon.a8chat_android.utility.Preferences
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -38,7 +38,7 @@ import java.io.ByteArrayOutputStream
 /**
  * Created by SungWon on 12/20/2017.
  */
-class MyChannelController(val mView: ChannelContract.MyChannel.View): ChannelContract.MyChannel.Controller{
+class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelContract.MyChannel.Controller {
 
     private val TAG = "MyChannelController"
 
@@ -62,7 +62,11 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View): ChannelCon
         mCaller = Rest.getInstance().caller
         mEventBus = EventBusManager.instance().mDataEventBus
         mRoomId = mView.getRoomId
-        mSocket.emit("connect-rooms", Preferences(mView.getContext()!!).getPreferenceInt(Constants.PrefKeys.USER_ID, 0), "channel")
+        UserManager.instance.getCurrentUser { success, user, _ ->
+            if (success) {
+                mSocket.emit("connect-rooms", user?.id, "channel")
+            }
+        }
         retrieveChatHistory()
 
 //        mSocket.on(Constants.SocketKeys.CONNECT, onConnect)
@@ -101,15 +105,19 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View): ChannelCon
     }
 
     override fun sendMessage() {
-        val call = mCaller.sendMessageString(
-                Preferences(mView.getContext()!!).getPreferenceString(Constants.PrefKeys.TOKEN_KEY),
-                SendMessageStringData(Preferences(mView.getContext()!!).getPreferenceInt(Constants.PrefKeys.USER_ID, 0).toString(), mView.getMessageET, mRoomId.toString())
-        )
-        call.enqueue(object : Callback8<ErrorResponse, MessageSentEvent>(mEventBus){
-            override fun onSuccess(data: ErrorResponse?) {
-                mView.getMessageETObject.setText("")
+        UserManager.instance.getCurrentUser { success, user, token ->
+            if (success) {
+                val call = mCaller.sendMessageString(
+                        token?.token,
+                        SendMessageStringData(user?.id!!, mView.getMessageET, mRoomId)
+                )
+                call.enqueue(object : Callback8<ErrorResponse, MessageSentEvent>(mEventBus) {
+                    override fun onSuccess(data: ErrorResponse?) {
+                        mView.getMessageETObject.setText("")
+                    }
+                })
             }
-        })
+        }
     }
 
     override fun sendPost() {
@@ -119,75 +127,87 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View): ChannelCon
     }
 
     override fun createChannelRoom() {
-        val call = mCaller.followChannel(
-                Preferences(mView.getContext()!!).getPreferenceString(Constants.PrefKeys.TOKEN_KEY),
-                mView.getChannelId,
-                FollowUserData(arrayOf(Preferences(mView.getContext()!!).getPreferenceInt(Constants.PrefKeys.USER_ID).toString()))
-        )
-        call.enqueue(object : Callback8<RoomResponse, ChannelFollowEvent>(mEventBus) {
-            override fun onSuccess(data: RoomResponse?) {
-                mEventBus.post(ChannelFollowEvent())
-                mRoomId = data!!.room!!.id
+        UserManager.instance.getCurrentUser { success, user, token ->
+            if (success) {
+                val call = mCaller.followChannel(
+                        token?.token,
+                        mView.getChannelId,
+                        FollowUserData(arrayOf(user?.id!!))
+                )
+                call.enqueue(object : Callback8<RoomResponse, ChannelFollowEvent>(mEventBus) {
+                    override fun onSuccess(data: RoomResponse?) {
+                        mEventBus.post(ChannelFollowEvent())
+                        mRoomId = data!!.room!!.id!!
+                    }
+                })
             }
-        })
+        }
     }
 
     override fun retrieveChatHistory() {
-        val call = mCaller.getChannelPosts(
-                Preferences(mView.getContext()!!).getPreferenceString(Constants.PrefKeys.TOKEN_KEY),
-                mRoomId,
-                Preferences(mView.getContext()!!).getPreferenceInt(Constants.PrefKeys.USER_ID, 0),
-                null
-        )
-        call.enqueue(object: Callback8<RoomHistoryResponse, RoomHistoryEvent>(mEventBus){
-            override fun onSuccess(data: RoomHistoryResponse?) {
-                mMessages.clear()
-                //TODO: need to add read first then unread always, but check for unread null instead.
-                for(item in data!!.messages!!.allMessages!!){
-                    if(item.roomId == mRoomId.toString()){
-                        mMessages.add(0, item)
+        UserManager.instance.getCurrentUser { success, user, token ->
+            if (success) {
+                val call = mCaller.getChannelPosts(
+                        token?.token,
+                        mRoomId,
+                        user?.id!!,
+                        null
+                )
+                call.enqueue(object : Callback8<RoomHistoryResponse, RoomHistoryEvent>(mEventBus) {
+                    override fun onSuccess(data: RoomHistoryResponse?) {
+                        mMessages.clear()
+                        //TODO: need to add read first then unread always, but check for unread null instead.
+                        for (item in data!!.messages!!.allMessages!!) {
+                            if (item.roomId == mRoomId) {
+                                mMessages.add(0, item)
+                            }
+                        }
+                        mView.updateRecycler()
+                        mView.hideProgress()
                     }
-                }
-                mView.updateRecycler()
-                mView.hideProgress()
-            }
 
-            override fun onError(response: Response<RoomHistoryResponse>?) {
-                super.onError(response)
-                Log.e(TAG, response!!.message())
-                mView.hideProgress()
+                    override fun onError(response: Response<RoomHistoryResponse>?) {
+                        super.onError(response)
+                        Log.e(TAG, response!!.message())
+                        mView.hideProgress()
+                    }
+                })
             }
-        })
+        }
     }
 
-    private val onConnect = Emitter.Listener{ args ->
-        mView.getActivity.runOnUiThread({
-            val a = isConnected
-            if (!isConnected) {
-                Log.d(TAG, "Socket Connected")
-                mSocket.emit("connect-rooms", Preferences(mView.getContext()!!).getPreferenceInt(Constants.PrefKeys.USER_ID, 0), "channel")
-                isConnected = true
+    private val onConnect = Emitter.Listener { args ->
+        UserManager.instance.getCurrentUser { success, user, _ ->
+            if (success) {
+                mView.getActivity.runOnUiThread({
+                    val a = isConnected
+                    if (!isConnected) {
+                        Log.d(TAG, "Socket Connected")
+                        mSocket.emit("connect-rooms", user?.id, "channel")
+                        isConnected = true
+                    }
+                })
             }
-        })
+        }
     }
 
     private val onUpdateRoom = Emitter.Listener { args ->
         mView.getActivity.runOnUiThread({
-            val data : JSONObject = args[0] as JSONObject
-            var userAdded : String? = null
-            var userLeaving : String? = null
+            val data: JSONObject = args[0] as JSONObject
+            var userAdded: String? = null
+            var userLeaving: String? = null
             try {
 //                mRoomId = data.getInt("roomId")
                 userAdded = data.getString("userAdded")
                 userLeaving = data.getString("userLeaving")
-            } catch (e: JSONException){
+            } catch (e: JSONException) {
                 Log.e(TAG, e.message)
             }
             retrieveChatHistory()
-            if(userAdded != null){
+            if (userAdded != null) {
 
             }
-            if(userLeaving != null){
+            if (userLeaving != null) {
 
             }
         })
@@ -195,7 +215,7 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View): ChannelCon
 
     private val onNewMessage = Emitter.Listener { args ->
         mView.getActivity.runOnUiThread({
-            val data : JSONObject = args[0] as JSONObject
+            val data: JSONObject = args[0] as JSONObject
             val message = GsonHolder.Companion.instance.get()!!.fromJson(data.toString(), Message::class.java)
             mMessages.add(0, message)
             mView.updateRecycler()
@@ -313,13 +333,15 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View): ChannelCon
 //                    mView.updateRecycler()
 //                }
 //            }
+
         })
     }
 
     private val onError = Emitter.Listener { args ->
         mView.getActivity.runOnUiThread {
-            val message = args[0] as JSONObject
-            Log.e(TAG, message.getString("message"))
+            //val message = args[0] as JSONObject
+            //Log.e(TAG, message.getString("message"))
+            mView.showError(args[0].toString())
         }
     }
 
@@ -331,23 +353,25 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View): ChannelCon
             //Upload Image
             val imageBitmap = CameraControl.instance.getImageFromResult(mView.getActivity, requestCode, resultCode, data)
             imageBitmap.let {
-                val bos = ByteArrayOutputStream()
-                it!!.compress(Bitmap.CompressFormat.PNG, 0, bos)
-                val bitmapData = bos.toByteArray()
-                val pref = Preferences(mView.getContext()!!)
-                val formBody = MultipartBody.Builder().setType(MultipartBody.FORM)
-                        .addFormDataPart("userId", pref.getPreferenceInt(Constants.PrefKeys.USER_ID, -1).toString())
-                        .addFormDataPart("roomId", mRoomId.toString())
-                        .addFormDataPart("file", "8chat" + System.currentTimeMillis(), RequestBody.create(MediaType.parse("image/png"), bitmapData))
-                        .build()
-                val call = Rest.getInstance().caller.sendMessageMedia(pref.getPreferenceString(Constants.PrefKeys.TOKEN_KEY), formBody)
-                call.enqueue(object : Callback8<ErrorResponse, MediaEvent>(EventBusManager.instance().mDataEventBus) {
-                    override fun onSuccess(data: ErrorResponse?) {
-                        mView.hideProgress()
-                        Toast.makeText(mView.getContext(), "Picture uploaded", Toast.LENGTH_SHORT).show()
+                UserManager.instance.getCurrentUser { success, user, token ->
+                    if (success) {
+                        val bos = ByteArrayOutputStream()
+                        it!!.compress(Bitmap.CompressFormat.PNG, 0, bos)
+                        val bitmapData = bos.toByteArray()
+                        val formBody = MultipartBody.Builder().setType(MultipartBody.FORM)
+                                .addFormDataPart("userId", user?.id.toString())
+                                .addFormDataPart("roomId", mRoomId.toString())
+                                .addFormDataPart("file", "8_" + System.currentTimeMillis(), RequestBody.create(MediaType.parse("image/png"), bitmapData))
+                                .build()
+                        val call = Rest.getInstance().caller.sendMessageMedia(token?.token, formBody)
+                        call.enqueue(object : Callback8<ErrorResponse, MediaEvent>(EventBusManager.instance().mDataEventBus) {
+                            override fun onSuccess(data: ErrorResponse?) {
+                                mView.hideProgress()
+                                Toast.makeText(mView.getContext(), "Picture uploaded", Toast.LENGTH_SHORT).show()
+                            }
+                        })
                     }
-                })
-
+                }
             }
             mView.hideProgress()
         }
@@ -361,28 +385,30 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View): ChannelCon
             //Upload Image
             val imageBitmap = CameraControl.instance.getImageFromResult(mView.getActivity, requestCode, resultCode, data)
             imageBitmap.let {
-                val bos = ByteArrayOutputStream()
-                it!!.compress(Bitmap.CompressFormat.PNG, 0, bos)
-                val bitmapData = bos.toByteArray()
-                val pref = Preferences(mView.getContext()!!)
-                val formBody = MultipartBody.Builder().setType(MultipartBody.FORM)
-                        .addFormDataPart("userId", pref.getPreferenceInt(Constants.PrefKeys.USER_ID, -1).toString())
-                        .addFormDataPart("roomId", mRoomId.toString())
-                        .addFormDataPart("file", "8chat" + System.currentTimeMillis(), RequestBody.create(MediaType.parse("image/png"), bitmapData))
-                        .addFormDataPart("message", mView.getMessageET)
-                        .build()
-                val call = Rest.getInstance().caller.sendMessageMedia(pref.getPreferenceString(Constants.PrefKeys.TOKEN_KEY), formBody)
-                call.enqueue(object : Callback8<ErrorResponse, MediaEvent>(EventBusManager.instance().mDataEventBus) {
-                    override fun onSuccess(data: ErrorResponse?) {
-                        mView.hideProgress()
-                        Toast.makeText(mView.getContext(), "Picture uploaded", Toast.LENGTH_SHORT).show()
+                UserManager.instance.getCurrentUser { success, user, token ->
+                    if (success) {
+                        val bos = ByteArrayOutputStream()
+                        it!!.compress(Bitmap.CompressFormat.PNG, 0, bos)
+                        val bitmapData = bos.toByteArray()
+                        val formBody = MultipartBody.Builder().setType(MultipartBody.FORM)
+                                .addFormDataPart("userId", user?.id.toString())
+                                .addFormDataPart("roomId", mRoomId.toString())
+                                .addFormDataPart("file", "8_" + System.currentTimeMillis(), RequestBody.create(MediaType.parse("image/png"), bitmapData))
+                                .addFormDataPart("message", mView.getMessageET)
+                                .build()
+                        val call = Rest.getInstance().caller.sendMessageMedia(token?.token, formBody)
+                        call.enqueue(object : Callback8<ErrorResponse, MediaEvent>(EventBusManager.instance().mDataEventBus) {
+                            override fun onSuccess(data: ErrorResponse?) {
+                                mView.hideProgress()
+                                Toast.makeText(mView.getContext(), "Picture uploaded", Toast.LENGTH_SHORT).show()
+                            }
+                        })
                     }
-                })
-
+                }
             }
             mView.hideProgress()
         }
     }
 
-    override fun getMessages() : MutableList<Message> = mMessages
+    override fun getMessages(): MutableList<Message> = mMessages
 }

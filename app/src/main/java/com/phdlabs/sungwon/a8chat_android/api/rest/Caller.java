@@ -2,10 +2,8 @@ package com.phdlabs.sungwon.a8chat_android.api.rest;
 
 import com.phdlabs.sungwon.a8chat_android.api.data.CommentPatchData;
 import com.phdlabs.sungwon.a8chat_android.api.data.CommentPostData;
-import com.phdlabs.sungwon.a8chat_android.api.data.EventPostData;
 import com.phdlabs.sungwon.a8chat_android.api.data.FollowUserData;
 import com.phdlabs.sungwon.a8chat_android.api.data.LoginData;
-import com.phdlabs.sungwon.a8chat_android.api.data.PostChannelData;
 import com.phdlabs.sungwon.a8chat_android.api.data.PrivateChatCreateData;
 import com.phdlabs.sungwon.a8chat_android.api.data.PrivateChatPatchData;
 import com.phdlabs.sungwon.a8chat_android.api.data.SendMessageChannelData;
@@ -16,13 +14,11 @@ import com.phdlabs.sungwon.a8chat_android.api.data.SendMessageStringData;
 import com.phdlabs.sungwon.a8chat_android.api.data.VerifyData;
 import com.phdlabs.sungwon.a8chat_android.api.response.ChannelArrayResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.ChannelFollowResponse;
-import com.phdlabs.sungwon.a8chat_android.api.response.ChannelResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.ChannelShowArrayResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.ChatsRetrievalResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.CommentArrayResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.CommentResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.ErrorResponse;
-import com.phdlabs.sungwon.a8chat_android.api.response.EventPostResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.EventRetrievalResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.PrivateChatResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.ResendResponse;
@@ -57,9 +53,6 @@ public interface Caller {
     @GET("/channels")
     Call<ChannelArrayResponse> getChannel(@Header(TOKEN) String token);
 
-    @POST("/channels")
-    Call<ChannelResponse> postChannel(@Header(TOKEN) String token, @Body PostChannelData postChannelData);
-
     @PATCH("/channels/{channelId}/follow")
     Call<RoomResponse> followChannel(@Header(TOKEN) String token, @Path("channelId") int channelId, @Body FollowUserData data);
 
@@ -90,9 +83,6 @@ public interface Caller {
     @GET("/privateChats/{roomId}/user/{userId}/messages")
     Call<RoomHistoryResponse> getMessageHistory(@Header(TOKEN) String token, @Path("roomId") int roomId, @Path("userId") int userId);
 
-//    @POST("/media")
-//    Call<>
-
     @POST("/messages/string")
     Call<ErrorResponse> sendMessageString(@Header(TOKEN) String token, @Body SendMessageStringData data);
 
@@ -113,9 +103,6 @@ public interface Caller {
 
     @POST("/messages/share/groupChat")
     Call<ErrorResponse> sendMessageGroupChat(@Header(TOKEN) String token, @Body SendMessageContactData data);
-
-//    @GET("/users/{userid}")
-//    Call<UserDataResponse> getUser(@Header(TOKEN) String token, @Path("userid") int userid);
 
     @GET("/users/{userId}/privateChats")
     Call<PrivateChatResponse> getPrivateChats(@Header(TOKEN) String token, @Path("userId") int userid);
@@ -146,9 +133,6 @@ public interface Caller {
 
     @GET("/comments/{messageId}/user/{userId}")
     Call<CommentArrayResponse> getComments(@Header(TOKEN) String token, @Path("messageId") int messageId, @Path("userId") int userId, @Query("commentId") String commentId);
-
-    @POST("/events")
-    Call<EventPostResponse> postEvents(@Header(TOKEN) String token, @Body EventPostData data);
 
     @GET("/events/{roomId}/user/{userId}/messages")
     Call<RoomHistoryResponse> getEventHistory(@Header(TOKEN) String token, @Path("roomId") int roomId, @Path("userId") int userId);

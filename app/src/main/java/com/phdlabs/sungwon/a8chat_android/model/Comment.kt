@@ -2,6 +2,8 @@ package com.phdlabs.sungwon.a8chat_android.model
 
 /**
  * Created by SungWon on 12/4/2017.
+ *
+ * //TODO: Create Realm Model
  */
 data class Comment(
         val comment: String,

@@ -1,6 +1,6 @@
 package com.phdlabs.sungwon.a8chat_android.api.response
 
-import com.phdlabs.sungwon.a8chat_android.model.Room
+import com.phdlabs.sungwon.a8chat_android.model.room.Room
 
 /**
  * Created by SungWon on 11/28/2017.
