@@ -95,6 +95,17 @@ class ChatSettingActivity: CoreActivity(), SettingContract.Chat.View{
         }
     }
 
+    public fun updateMenuTitle(title1: String?, title2: String?){
+        val leftTab = asc_bottomnav.menu.findItem(R.id.mst_media)
+        val rightTab = asc_bottomnav.menu.findItem(R.id.mst_file)
+        title1.let {
+            leftTab.title = it
+        }
+        title2.let {
+            rightTab.title = it
+        }
+    }
+
     override fun finishActivity() {
     }
 }
