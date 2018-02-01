@@ -86,6 +86,7 @@
     <string name="camera_save">cameraSave</string>
     <string name="camera_send">cameraSend</string>
     <string name="camerarollimage">CameraRollImage</string>
+    <string name="share">Share</string>
     <string name="channel_image">channelImage</string>
     <string name="create_a_channel">Create a Channel</string>
     <string name="create">Create</string>

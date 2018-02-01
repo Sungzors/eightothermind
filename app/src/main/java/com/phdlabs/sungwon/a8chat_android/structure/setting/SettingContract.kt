@@ -1,5 +1,6 @@
 package com.phdlabs.sungwon.a8chat_android.structure.setting
 
+import com.phdlabs.sungwon.a8chat_android.model.media.Media
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseController
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseView
 
@@ -16,6 +17,15 @@ interface SettingContract {
 
             fun setRoomId(roomId: Int)
             fun setFavorite(isFave: Boolean)
+        }
+    }
+
+    interface MediaFragment {
+        interface View: BaseView<Controller>{
+
+        }
+        interface Controller: BaseController{
+            fun getMediaList(): MutableList<Media>
         }
     }
 }
