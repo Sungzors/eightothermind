@@ -11,7 +11,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import com.phdlabs.sungwon.a8chat_android.R
-import com.phdlabs.sungwon.a8chat_android.model.Message
+import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.structure.application.Application
 import com.phdlabs.sungwon.a8chat_android.structure.channel.mychannel.MyChannelActivity
 import com.phdlabs.sungwon.a8chat_android.structure.channel.mychannels.MyChannelsListActivity
@@ -25,6 +25,7 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_chat.*
 import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  * Created by SungWon on 10/18/2017.
@@ -129,7 +130,7 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         }
         ac_drawer_channel.setOnClickListener {
             val intent = Intent(this, MyChannelsListActivity::class.java)
-            startActivityForResult(intent, Constants.RequestCode.MY_CHANNELS_LIST)
+            startActivityForResult(intent, Constants.ChannelRequestCodes.MY_CHANNELS_LIST)
         }
         ac_drawer_contact.setOnClickListener {
 
@@ -152,18 +153,18 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         mAdapter = object: BaseRecyclerAdapter<Message, BaseViewHolder>(){
             override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: Message?, position: Int, type: Int) {
                 when(data!!.type){
-                    Message.TYPE_STRING -> bindMessageViewHolder(viewHolder, data)
-                    Message.TYPE_CONTACT -> bindContactViewHolder(viewHolder, data)
-                    Message.TYPE_LOCATION -> bindLocationViewHolder(viewHolder, data)
-                    Message.TYPE_FILE -> bindFileViewHolder(viewHolder, data)
-                    Message.TYPE_MEDIA -> bindMediaViewHolder(viewHolder, data)
-                    Message.TYPE_MONEY -> bindMoneyViewHolder(viewHolder, data)
-                    Message.TYPE_CHANNEL -> bindChannelViewHolder(viewHolder, data)
+                    Constants.MessageTypes.TYPE_STRING -> bindMessageViewHolder(viewHolder, data)
+                    Constants.MessageTypes.TYPE_CONTACT -> bindContactViewHolder(viewHolder, data)
+                    Constants.MessageTypes.TYPE_LOCATION -> bindLocationViewHolder(viewHolder, data)
+                    Constants.MessageTypes.TYPE_FILE -> bindFileViewHolder(viewHolder, data)
+                    Constants.MessageTypes.TYPE_MEDIA -> bindMediaViewHolder(viewHolder, data)
+                    Constants.MessageTypes.TYPE_MONEY -> bindMoneyViewHolder(viewHolder, data)
+                    Constants.MessageTypes.TYPE_CHANNEL -> bindChannelViewHolder(viewHolder, data)
                 }
             }
 
             override fun getItemType(t: Message?): Int {
-                    if (t!!.userId == mUserId?.toString()){
+                    if (t!!.userId == mUserId){
                         return 0
                     } else {
                         return 1
@@ -206,7 +207,12 @@ class ChatActivity: CoreActivity(), ChatContract.View{
 //                val a = mAdapter.getItem(i)
 //                val b = mAdapter.getItem(position)
 //                val c = controller.getMessages()[position].createdAt!!.time.minus(controller.getMessages()[i].createdAt!!.time)
-                return (controller.getMessages()[position].createdAt!!.time.minus(controller.getMessages()[i].createdAt!!.time) >= 5 * 60 * 1000)
+                val df = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+                val createdAt: Pair<Date, Date> = Pair(
+                        df.parse(controller.getMessages()[position].createdAt),
+                        df.parse(controller.getMessages()[i].createdAt)
+                )
+                return (createdAt.first.time.minus(createdAt.second.time) >= 5 * 60 * 1000)
             }
         }
         return true
@@ -221,8 +227,9 @@ class ChatActivity: CoreActivity(), ChatContract.View{
 //                val a = mAdapter.getItem(i)
 //                val b = mAdapter.getItem(position)
 //                val c = controller.getMessages()[position].createdAt!!.time.minus(controller.getMessages()[i].createdAt!!.time)
-                val a = message.createdAt!!.time.minus(controller.getMessages()[i].createdAt!!.time)
-                return (message.createdAt!!.time.minus(controller.getMessages()[i].createdAt!!.time)>= 5 * 60 * 1000 )
+                val df = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+                val createdAt: Pair<Date, Date> = Pair(df.parse(message.createdAt), df.parse(controller.getMessages()[i].createdAt))
+                return (createdAt.first.time.minus(createdAt.second.time)>= 5 * 60 * 1000 )
             }
         }
         return true
@@ -409,7 +416,9 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         picContainer2.visibility = LinearLayout.GONE
         moneyButtonAccept.visibility = Button.GONE
         moneyButtonDecline.visibility = Button.GONE
-        messagetv.text = message!!.fileNames!![0]
+        message?.files?.let {
+            messagetv.text = it[0]?.file_string
+        }
         messagetv.setTextColor(ContextCompat.getColor(this, R.color.confirmText))
         Picasso.with(this).load(R.drawable.ic_attachment_file).into(messagePic)
         messagetv.setOnClickListener({
@@ -417,15 +426,15 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         })
         controller.getUserId { id ->
          id?.let {
-             if(message.userId!!.toInt() != it) {
+             if(message?.userId!!.toInt() != it) {
                  Picasso.with(this).load(message.user!!.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(profPic)
              }
          }
         }
-        if(message.timeDisplayed){
+        if(message!!.timeDisplayed){
             date.visibility = TextView.VISIBLE
             val formatter = SimpleDateFormat("EEE - h:mm aaa")
-            date.text = formatter.format(message.createdAt)
+            date.text = formatter.format(message?.createdAt)
         }
     }
 
@@ -444,16 +453,18 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         picContainer2.visibility = LinearLayout.VISIBLE
         moneyButtonAccept.visibility = Button.GONE
         moneyButtonDecline.visibility = Button.GONE
-        messagetv.text = message!!.fileNames!![0]
+        message?.files?.let {
+            messagetv.text = it[0]?.file_string
+        }
         messagetv.setTextColor(ContextCompat.getColor(this, R.color.confirmText))
         controller.getUserId { id ->
             id?.let {
-                if(message.userId!!.toInt() != id){
-                    Picasso.with(this).load(message.user!!.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(profPic)
+                if(message?.userId!!.toInt() != id){
+                    Picasso.with(this).load(message?.user!!.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(profPic)
                 }
             }
         }
-        if(message.timeDisplayed){
+        if(message!!.timeDisplayed){
             date.visibility = TextView.VISIBLE
             val formatter = SimpleDateFormat("EEE - h:mm aaa")
             date.text = formatter.format(message.createdAt)
@@ -475,17 +486,19 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         picContainer2.visibility = LinearLayout.GONE
         moneyButtonAccept.visibility = Button.VISIBLE
         moneyButtonDecline.visibility = Button.VISIBLE
-        messagetv.text = message!!.fileNames!![0]
+        message?.files?.let {
+            messagetv.text = it[0]?.file_string
+        }
         messagetv.setTextColor(ContextCompat.getColor(this, R.color.black))
         Picasso.with(this).load(R.drawable.ic_money).into(messagePic)
         controller.getUserId { id ->
             id?.let {
-                if(message.userId!!.toInt() != it){
+                if(message?.userId!!.toInt() != it){
                     Picasso.with(this).load(message.user!!.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(profPic)
                 }
             }
         }
-        if(message.timeDisplayed){
+        if(message!!.timeDisplayed){
             date.visibility = TextView.VISIBLE
             val formatter = SimpleDateFormat("EEE - h:mm aaa")
             date.text = formatter.format(message.createdAt)
@@ -514,7 +527,7 @@ class ChatActivity: CoreActivity(), ChatContract.View{
             val intent = Intent(this, MyChannelActivity::class.java)
             intent.putExtra(Constants.IntentKeys.CHANNEL_ID, message.channelInfo!!.id.toString())
             intent.putExtra(Constants.IntentKeys.CHANNEL_NAME, message.channelInfo!!.name)
-            intent.putExtra(Constants.IntentKeys.ROOM_ID, message.channelInfo!!.room_id.toInt())
+            intent.putExtra(Constants.IntentKeys.ROOM_ID, message.channelInfo!!.room_id)
             intent.putExtra(Constants.IntentKeys.OWNER_ID, message.channelInfo!!.user_creator_id!!.toInt())
             startActivity(intent)
         })
@@ -576,7 +589,7 @@ class ChatActivity: CoreActivity(), ChatContract.View{
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         showProgress()
         when(requestCode){
-            Constants.RequestCode.MY_CHANNELS_LIST -> {
+            Constants.ChannelRequestCodes.MY_CHANNELS_LIST -> {
                 if(data!= null){
                     controller.sendChannel(data.getIntExtra(Constants.IntentKeys.CHANNEL_ID, 0))
                 }

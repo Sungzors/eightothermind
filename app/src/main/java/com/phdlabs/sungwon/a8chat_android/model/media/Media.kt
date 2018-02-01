@@ -54,4 +54,12 @@ open class Media : RealmObject() {
     @Expose
     var originalMessageId: Int? = null
 
+    @SerializedName("updatedAt")
+    @Expose
+    var updatedAt: String? = null
+
+    @SerializedName("createdAt")
+    @Expose
+    var createdAt: String? = null
+
 }

@@ -1,6 +1,6 @@
 package com.phdlabs.sungwon.a8chat_android.api.response
 
-import com.phdlabs.sungwon.a8chat_android.model.Message
+import com.phdlabs.sungwon.a8chat_android.model.message.Message
 
 /**
  * Created by SungWon on 10/30/2017.

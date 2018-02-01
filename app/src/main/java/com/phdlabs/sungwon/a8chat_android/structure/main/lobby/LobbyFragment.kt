@@ -9,9 +9,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.phdlabs.sungwon.a8chat_android.R
-import com.phdlabs.sungwon.a8chat_android.model.Channel
-import com.phdlabs.sungwon.a8chat_android.model.EventsEight
-import com.phdlabs.sungwon.a8chat_android.model.Room
+import com.phdlabs.sungwon.a8chat_android.model.event.EventsEight
+import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
+import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.phdlabs.sungwon.a8chat_android.structure.channel.mychannel.MyChannelActivity
 import com.phdlabs.sungwon.a8chat_android.structure.chat.ChatActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreFragment
@@ -29,7 +29,7 @@ import java.util.*
 /**
  * Created by SungWon on 10/17/2017.
  */
-class LobbyFragment: CoreFragment(), LobbyContract.View {
+class LobbyFragment : CoreFragment(), LobbyContract.View {
 
     override lateinit var controller: LobbyContract.Controller
 
@@ -73,13 +73,13 @@ class LobbyFragment: CoreFragment(), LobbyContract.View {
     }
 
     override fun setUpMyChannelRecycler() {
-        mAdapterMyChannel = object: BaseRecyclerAdapter<Channel, BaseViewHolder>(){
+        mAdapterMyChannel = object : BaseRecyclerAdapter<Channel, BaseViewHolder>() {
             override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: Channel?, position: Int, type: Int) {
                 bindMyChannelViewHolder(viewHolder!!, data!!)
             }
 
             override fun viewHolder(inflater: LayoutInflater?, parent: ViewGroup?, type: Int): BaseViewHolder {
-                return object : BaseViewHolder(R.layout.card_view_lobby_channel, inflater!!, parent){
+                return object : BaseViewHolder(R.layout.card_view_lobby_channel, inflater!!, parent) {
 
                 }
             }
@@ -91,7 +91,7 @@ class LobbyFragment: CoreFragment(), LobbyContract.View {
         fl_my_channels_recycler.adapter = mAdapterMyChannel
     }
 
-    private fun bindMyChannelViewHolder(viewHolder: BaseViewHolder, data: Channel){
+    private fun bindMyChannelViewHolder(viewHolder: BaseViewHolder, data: Channel) {
         val bg = viewHolder.get<ImageView>(R.id.cvlc_background_unread)
         val profilePic = viewHolder.get<ImageView>(R.id.cvlc_picture_profile)
         val channelName = viewHolder.get<TextView>(R.id.cvlc_name_channel)
@@ -102,27 +102,27 @@ class LobbyFragment: CoreFragment(), LobbyContract.View {
             val intent = Intent(activity, MyChannelActivity::class.java)
             intent.putExtra(Constants.IntentKeys.CHANNEL_ID, data.id.toString())
             intent.putExtra(Constants.IntentKeys.CHANNEL_NAME, data.name)
-            intent.putExtra(Constants.IntentKeys.ROOM_ID, data.room_id.toInt())
+            intent.putExtra(Constants.IntentKeys.ROOM_ID, data.room_id?.toInt())
             intent.putExtra(Constants.IntentKeys.OWNER_ID, data.user_creator_id!!.toInt())
             startActivity(intent)
         }
     }
 
     override fun setUpEventsRecycler() {
-        mAdapterEvent = object : BaseRecyclerAdapter<EventsEight, BaseViewHolder>(){
+        mAdapterEvent = object : BaseRecyclerAdapter<EventsEight, BaseViewHolder>() {
             override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: EventsEight?, position: Int, type: Int) {
                 bindEventViewHolder(viewHolder!!, data!!)
             }
 
             override fun viewHolder(inflater: LayoutInflater?, parent: ViewGroup?, type: Int): BaseViewHolder {
-                return object : BaseViewHolder(R.layout.card_view_lobby_event, inflater!!, parent){
+                return object : BaseViewHolder(R.layout.card_view_lobby_event, inflater!!, parent) {
                     override fun addClicks(views: ViewMap?) {
                         views!!.click {
                             val event = getItem(adapterPosition)
                             val intent = Intent(context, EventViewActivity::class.java)
-                            intent.putExtra(Constants.IntentKeys.EVENT_ID, event.eventId)
-                            intent.putExtra(Constants.IntentKeys.EVENT_NAME, event.event_name)
-                            intent.putExtra(Constants.IntentKeys.ROOM_ID, event.roomId)
+                            intent.putExtra(Constants.IntentKeys.EVENT_ID, event.id)
+                            intent.putExtra(Constants.IntentKeys.EVENT_NAME, event.name)
+                            intent.putExtra(Constants.IntentKeys.ROOM_ID, event.room_id)
                             startActivity(intent)
                         }
                     }
@@ -130,29 +130,31 @@ class LobbyFragment: CoreFragment(), LobbyContract.View {
             }
         }
         mAdapterEvent.setItems(controller.getEvents())
-        fl_events_title.visibility = TextView.VISIBLE
+        fl_events_title.visibility = TextView.VISIBLE //TODO: Fix -> Sometimes it crashes due to visibility
         fl_events_recycler.visibility = RecyclerView.VISIBLE
         fl_events_recycler.layoutManager = LinearLayoutManager(coreActivity.context)
         fl_events_recycler.adapter = mAdapterEvent
     }
 
-    private fun bindEventViewHolder(viewHolder: BaseViewHolder, data: EventsEight){
+    private fun bindEventViewHolder(viewHolder: BaseViewHolder, data: EventsEight) {
         val eventPic = viewHolder.get<ImageView>(R.id.cvle_picture_event)
         val eventIndicator = viewHolder.get<ImageView>(R.id.cvle_read_indicator)
         val title = viewHolder.get<TextView>(R.id.cvle_title)
         val message = viewHolder.get<TextView>(R.id.cvle_message)
         val time = viewHolder.get<TextView>(R.id.cvle_time)
         Picasso.with(coreActivity.context).load(data.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(eventPic)
-        title.text = data.event_name
-        if(data.message != null){
-            when(data.message!!.type){
+        title.text = data.name
+        if (data.message != null) {
+            when (data.message!!.type) {
                 "string" -> message.text = data.message!!.message
                 "media" -> message.text = "Picture posted"
                 "contact" -> message.text = data.message!!.contactInfo!!.first_name + " " + data.message!!.contactInfo!!.last_name
                 "channel" -> message.text = data.message!!.channelInfo!!.name
                 "location" -> message.text = data.message!!.locationInfo!!.streetAddress
             }
-            if(Date().time.minus(data.message!!.createdAt!!.time)>= 24 * 60 * 60 * 1000){
+            val df = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+            val createdAt = df.parse(data.message?.createdAt)
+            if (Date().time.minus(createdAt.time) >= 24 * 60 * 60 * 1000) {
                 time.text = SimpleDateFormat("EEE").format(data.message!!.createdAt)
             } else {
                 time.text = SimpleDateFormat("h:mm aaa").format(data.message!!.createdAt)
@@ -161,7 +163,7 @@ class LobbyFragment: CoreFragment(), LobbyContract.View {
             message.text = ""
             time.text = ""
         }
-        if(!data.isRead){
+        if (!data.isRead) {
             eventIndicator.visibility = ImageView.VISIBLE
         } else {
             eventIndicator.visibility = ImageView.INVISIBLE
@@ -170,16 +172,16 @@ class LobbyFragment: CoreFragment(), LobbyContract.View {
     }
 
     override fun setUpChannelsFollowedRecycler() {
-        mAdapterFollow = object: BaseRecyclerAdapter<Channel, BaseViewHolder>(){
+        mAdapterFollow = object : BaseRecyclerAdapter<Channel, BaseViewHolder>() {
             override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: Channel?, position: Int, type: Int) {
-                when(data!!.isRead){
+                when (data!!.isRead) {
                     true -> bindReadChannelViewHolder(viewHolder!!, data)
                     false -> bindUnreadChannelViewHolder(viewHolder!!, data)
                 }
             }
 
             override fun viewHolder(inflater: LayoutInflater?, parent: ViewGroup?, type: Int): BaseViewHolder {
-                return object : BaseViewHolder(R.layout.card_view_lobby_channel, inflater!!, parent){
+                return object : BaseViewHolder(R.layout.card_view_lobby_channel, inflater!!, parent) {
 
                 }
             }
@@ -192,16 +194,16 @@ class LobbyFragment: CoreFragment(), LobbyContract.View {
     }
 
     override fun setUpChannelRecycler() {
-        mAdapterChannel = object: BaseRecyclerAdapter<Channel, BaseViewHolder>(){
+        mAdapterChannel = object : BaseRecyclerAdapter<Channel, BaseViewHolder>() {
             override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: Channel?, position: Int, type: Int) {
-                when(data!!.isRead){
+                when (data!!.isRead) {
                     true -> bindReadChannelViewHolder(viewHolder!!, data)
                     false -> bindUnreadChannelViewHolder(viewHolder!!, data)
                 }
             }
 
             override fun viewHolder(inflater: LayoutInflater?, parent: ViewGroup?, type: Int): BaseViewHolder {
-                return object : BaseViewHolder(R.layout.card_view_lobby_channel, inflater!!, parent){
+                return object : BaseViewHolder(R.layout.card_view_lobby_channel, inflater!!, parent) {
 
                 }
             }
@@ -213,7 +215,7 @@ class LobbyFragment: CoreFragment(), LobbyContract.View {
         fl_channels_recycler.adapter = mAdapterChannel
     }
 
-    private fun bindReadChannelViewHolder(viewHolder: BaseViewHolder, data: Channel){
+    private fun bindReadChannelViewHolder(viewHolder: BaseViewHolder, data: Channel) {
         val bg = viewHolder.get<ImageView>(R.id.cvlc_background_unread)
         val profilePic = viewHolder.get<ImageView>(R.id.cvlc_picture_profile)
         val channelName = viewHolder.get<TextView>(R.id.cvlc_name_channel)
@@ -224,13 +226,13 @@ class LobbyFragment: CoreFragment(), LobbyContract.View {
             val intent = Intent(activity, MyChannelActivity::class.java)
             intent.putExtra(Constants.IntentKeys.CHANNEL_ID, data.id.toString())
             intent.putExtra(Constants.IntentKeys.CHANNEL_NAME, data.name)
-            intent.putExtra(Constants.IntentKeys.ROOM_ID, data.room_id.toInt())
-            intent.putExtra(Constants.IntentKeys.OWNER_ID, data.user_creator_id!!.toInt())
+            intent.putExtra(Constants.IntentKeys.ROOM_ID, data.room_id?.toInt())
+            intent.putExtra(Constants.IntentKeys.OWNER_ID, data.user_creator_id?.toInt())
             startActivity(intent)
         }
     }
 
-    private fun bindUnreadChannelViewHolder(viewHolder: BaseViewHolder, data: Channel){
+    private fun bindUnreadChannelViewHolder(viewHolder: BaseViewHolder, data: Channel) {
         val bg = viewHolder.get<ImageView>(R.id.cvlc_background_unread)
         val profilePic = viewHolder.get<ImageView>(R.id.cvlc_picture_profile)
         val channelName = viewHolder.get<TextView>(R.id.cvlc_name_channel)
@@ -241,20 +243,20 @@ class LobbyFragment: CoreFragment(), LobbyContract.View {
             val intent = Intent(activity, MyChannelActivity::class.java)
             intent.putExtra(Constants.IntentKeys.CHANNEL_ID, data.id.toString())
             intent.putExtra(Constants.IntentKeys.CHANNEL_NAME, data.name)
-            intent.putExtra(Constants.IntentKeys.ROOM_ID, data.room_id.toInt())
-            intent.putExtra(Constants.IntentKeys.OWNER_ID, data.user_creator_id!!.toInt())
+            intent.putExtra(Constants.IntentKeys.ROOM_ID, data.room_id)
+            intent.putExtra(Constants.IntentKeys.OWNER_ID, data.user_creator_id?.toInt())
             startActivity(intent)
         }
     }
 
     override fun setUpChatRecycler() {
-        mAdapterChat = object: BaseRecyclerAdapter<Room, BaseViewHolder>(){
+        mAdapterChat = object : BaseRecyclerAdapter<Room, BaseViewHolder>() {
             override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: Room?, position: Int, type: Int) {
                 bindRoomViewHolder(viewHolder!!, data!!)
             }
 
             override fun viewHolder(inflater: LayoutInflater?, parent: ViewGroup?, type: Int): BaseViewHolder {
-                return object : BaseViewHolder(R.layout.card_view_lobby_event, inflater!!, parent){
+                return object : BaseViewHolder(R.layout.card_view_lobby_event, inflater!!, parent) {
                     override fun addClicks(views: ViewMap?) {
                         views!!.click {
                             //TODO: Add conditional for private/group
@@ -276,33 +278,38 @@ class LobbyFragment: CoreFragment(), LobbyContract.View {
         fl_chat_recycler.adapter = mAdapterChat
     }
 
-    private fun bindRoomViewHolder(viewHolder: BaseViewHolder, data: Room){
+    private fun bindRoomViewHolder(viewHolder: BaseViewHolder, data: Room) {
         val eventPic = viewHolder.get<ImageView>(R.id.cvle_picture_event)
         val eventIndicator = viewHolder.get<ImageView>(R.id.cvle_read_indicator)
         val title = viewHolder.get<TextView>(R.id.cvle_title)
         val message = viewHolder.get<TextView>(R.id.cvle_message)
         val time = viewHolder.get<TextView>(R.id.cvle_time)
-        if(data.chatType == "private"){
+        if (data.chatType == "private") {
             Picasso.with(context).load(data.user!!.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(eventPic)
             title.text = data.user!!.first_name + " " + data.user!!.last_name
-            if(data.message != null){
-                when(data.message!!.type){
+            if (data.message != null) {
+                when (data.message!!.type) {
                     "string" -> message.text = data.message!!.message
                     "media" -> message.text = "Picture posted"
                     "contact" -> message.text = data.message!!.contactInfo!!.first_name + " " + data.message!!.contactInfo!!.last_name
                     "channel" -> message.text = data.message!!.channelInfo!!.name
                     "location" -> message.text = data.message!!.locationInfo!!.streetAddress
                 }
-                if(Date().time.minus(data.message!!.createdAt!!.time)>= 24 * 60 * 60 * 1000){
-                    time.text = SimpleDateFormat("EEE").format(data.message!!.createdAt)
-                } else {
-                    time.text = SimpleDateFormat("h:mm aaa").format(data.message!!.createdAt)
+                val df = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+                data.message?.createdAt?.let {
+                    val createdAt = df.parse(it)
+                    if (Date().time.minus(createdAt.time) >= 24 * 60 * 60 * 1000) {
+                        time.text = SimpleDateFormat("EEE").format(it)
+                    } else {
+                        time.text = SimpleDateFormat("h:mm aaa").format(it)
+                    }
                 }
             } else {
                 message.text = ""
                 time.text = ""
             }
-            if(!data.isRead){
+
+            if (!data.isRead) {
                 eventIndicator.visibility = ImageView.VISIBLE
             } else {
                 eventIndicator.visibility = ImageView.INVISIBLE

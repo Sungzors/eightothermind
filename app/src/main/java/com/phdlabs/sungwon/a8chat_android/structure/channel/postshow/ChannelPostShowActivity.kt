@@ -5,10 +5,10 @@ import android.widget.Toast
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.db.TemporaryManager
 import com.phdlabs.sungwon.a8chat_android.db.UserManager
-import com.phdlabs.sungwon.a8chat_android.model.Channel
 import com.phdlabs.sungwon.a8chat_android.model.Comment
-import com.phdlabs.sungwon.a8chat_android.model.MediaDetailNest
-import com.phdlabs.sungwon.a8chat_android.model.Message
+import com.phdlabs.sungwon.a8chat_android.model.message.Message
+import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
+import com.phdlabs.sungwon.a8chat_android.model.media.Media
 import com.phdlabs.sungwon.a8chat_android.model.user.User
 import com.phdlabs.sungwon.a8chat_android.structure.channel.ChannelContract
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
@@ -30,13 +30,16 @@ class ChannelPostShowActivity: CoreActivity(), ChannelContract.PostShow.View{
     private lateinit var mChannelId: String
     private var mChannelName = ""
     private var mChannel: Channel? = null
-    private var mMessageId: String = "11"
-    private var mMessage: Message? = Message.Builder("11", "media", "1", "4").build()
+    private var mMessageId: Int = 11
+    private var mMessage: Message? = Message()
     private var mComments = mutableListOf<Comment>()
     private var mUser: User? = null
 
     init {
-        mMessage!!.mediaArray.add(MediaDetailNest("https://s3.amazonaws.com/eight-testing123/1512695725084.PNG", "https://s3.amazonaws.com/eight-testing123/1512695725084.PNG"))
+        val media = Media()
+        media.media_file_string = "https://s3.amazonaws.com/eight-testing123/1512695725084.PNG"
+        media.media_file = "https://s3.amazonaws.com/eight-testing123/1512695725084.PNG"
+        mMessage!!.mediaArray?.add(media)
         mMessage!!.message = "duck1"
         mMessage!!.likes = 2
         mMessage!!.comments = 0
@@ -58,8 +61,10 @@ class ChannelPostShowActivity: CoreActivity(), ChannelContract.PostShow.View{
 
     override fun onStart() {
         super.onStart()
-        mMessageId = intent.getStringExtra(Constants.IntentKeys.MESSAGE_ID)
-        mChannelName = intent.getStringExtra(Constants.IntentKeys.CHANNEL_NAME)
+        mMessageId = intent.getIntExtra(Constants.IntentKeys.MESSAGE_ID, 11)
+        if(intent.getStringExtra(Constants.IntentKeys.CHANNEL_NAME) != null) {
+            mChannelName = intent.getStringExtra(Constants.IntentKeys.CHANNEL_NAME)
+        }
         if(TemporaryManager.instance.getMessage(mMessageId)!= null){
             mMessage = TemporaryManager.instance.getMessage(mMessageId)
         }
@@ -96,7 +101,9 @@ class ChannelPostShowActivity: CoreActivity(), ChannelContract.PostShow.View{
     }
 
     private fun setUpViews(){
-        Picasso.with(this).load(mMessage!!.mediaArray[0].media_file).into(acps_post_pic)
+        mMessage?.mediaArray?.let {
+            Picasso.with(this).load(it[0]?.media_file).into(acps_post_pic)
+        }
         acps_post_text.text = mMessage!!.message
         acps_like_count.text = mMessage!!.likes.toString()
         acps_comment_count.text = mMessage!!.comments.toString()
@@ -107,7 +114,7 @@ class ChannelPostShowActivity: CoreActivity(), ChannelContract.PostShow.View{
         acps_like_button.setOnClickListener {
             /*User safe type for liking post*/
             mUser?.let {
-                controller.likePost(mMessageId, it.id.toString())
+                controller.likePost(mMessageId, it.id)
             }
         }
         acps_comment_button.setOnClickListener {
@@ -126,9 +133,9 @@ class ChannelPostShowActivity: CoreActivity(), ChannelContract.PostShow.View{
         acps_like_button.isEnabled = false
     }
 
-    override val getChannelId: String
-    get() = ""
+    override val getChannelId: Int?
+    get() = 0
 //        get() = mChannelId
-    override val getMessageId: String
+    override val getMessageId: Int?
         get() = mMessageId
 }

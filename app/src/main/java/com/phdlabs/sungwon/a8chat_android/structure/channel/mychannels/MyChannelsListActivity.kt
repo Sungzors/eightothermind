@@ -11,7 +11,7 @@ import android.widget.ImageView
 import android.widget.SearchView
 import android.widget.TextView
 import com.phdlabs.sungwon.a8chat_android.R
-import com.phdlabs.sungwon.a8chat_android.model.Channel
+import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
 import com.phdlabs.sungwon.a8chat_android.structure.channel.ChannelContract
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
@@ -72,10 +72,8 @@ class MyChannelsListActivity: CoreActivity(), ChannelContract.MyChannelsList.Vie
                 override fun onQueryTextSubmit(p0: String?): Boolean {
                     mFilteredList.clear()
                     for(channel in mChannelList){
-                        if(channel.name != null){
-                            if(channel.name.toLowerCase().contains(p0!!.toLowerCase())){
-                                mFilteredList.add(channel)
-                            }
+                        if(channel.name?.toLowerCase()!!.contains(p0!!.toLowerCase())){
+                            mFilteredList.add(channel)
                         }
 
                     }

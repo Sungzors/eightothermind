@@ -1,8 +1,8 @@
 package com.phdlabs.sungwon.a8chat_android.db
 
-import com.phdlabs.sungwon.a8chat_android.model.Channel
-import com.phdlabs.sungwon.a8chat_android.model.Message
-import com.phdlabs.sungwon.a8chat_android.model.Room
+import com.phdlabs.sungwon.a8chat_android.model.message.Message
+import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
+import com.phdlabs.sungwon.a8chat_android.model.room.Room
 
 /**
  * Created by SungWon on 12/4/2017.
@@ -26,7 +26,7 @@ class TemporaryManager {
 
     val mMessageList = mutableListOf<Message>()
 
-    fun getMessage(messageId: String): Message?{
+    fun getMessage(messageId: Int): Message?{
         for(message in mMessageList){
             if(message.id == messageId){
                 return message

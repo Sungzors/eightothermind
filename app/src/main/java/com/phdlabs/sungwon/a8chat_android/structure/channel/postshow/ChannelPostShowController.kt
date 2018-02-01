@@ -7,9 +7,8 @@ import com.phdlabs.sungwon.a8chat_android.api.rest.Caller
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
 import com.phdlabs.sungwon.a8chat_android.api.utility.Callback8
 import com.phdlabs.sungwon.a8chat_android.db.EventBusManager
+import com.phdlabs.sungwon.a8chat_android.db.UserManager
 import com.phdlabs.sungwon.a8chat_android.structure.channel.ChannelContract
-import com.phdlabs.sungwon.a8chat_android.utility.Constants
-import com.phdlabs.sungwon.a8chat_android.utility.Preferences
 import org.greenrobot.eventbus.EventBus
 import retrofit2.Response
 
@@ -39,18 +38,22 @@ class ChannelPostShowController(val mView: ChannelContract.PostShow.View): Chann
     override fun stop() {
     }
 
-    override fun likePost(messageId: String, userId: String) {
-        val call = mCaller.likePost(Preferences(mView.getContext()!!).getPreferenceString(Constants.PrefKeys.TOKEN_KEY), mView.getMessageId.toInt(), Preferences(mView.getContext()!!).getPreferenceInt(Constants.PrefKeys.USER_ID))
-        call.enqueue(object: Callback8<ErrorResponse, PostLikeEvent>(mEventBus){
-            override fun onSuccess(data: ErrorResponse?) {
-                mView.onLike()
-                Toast.makeText(mView.getContext()!!, "Post Liked!", Toast.LENGTH_SHORT).show()
-            }
+    override fun likePost(messageId: Int?, userId: Int?) {
+        UserManager.instance.getCurrentUser { success, user, token ->
+            if (success) {
+                val call = mCaller.likePost(token?.token, mView.getMessageId!!, user?.id!!)
+                call.enqueue(object : Callback8<ErrorResponse, PostLikeEvent>(mEventBus) {
+                    override fun onSuccess(data: ErrorResponse?) {
+                        mView.onLike()
+                        Toast.makeText(mView.getContext()!!, "Post Liked!", Toast.LENGTH_SHORT).show()
+                    }
 
-            override fun onError(response: Response<ErrorResponse>?) {
-                Toast.makeText(mView.getContext()!!, "You have already liked this post!", Toast.LENGTH_SHORT).show()
+                    override fun onError(response: Response<ErrorResponse>?) {
+                        Toast.makeText(mView.getContext()!!, "You have already liked this post!", Toast.LENGTH_SHORT).show()
+                    }
+                })
             }
-        })
+        }
     }
 
     override fun commentPost(messageId: String) {

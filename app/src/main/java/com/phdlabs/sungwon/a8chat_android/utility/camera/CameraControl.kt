@@ -480,7 +480,7 @@ class CameraControl private constructor() {
      */
     private fun decodeBitmap(context: Context, theUri: Uri): Bitmap? {
         var outputBitmap: Bitmap? = null
-        var fileDescriptor: AssetFileDescriptor? = null
+        val fileDescriptor: AssetFileDescriptor?
 
         try {
             fileDescriptor = context.contentResolver.openAssetFileDescriptor(theUri, "r")
@@ -589,7 +589,7 @@ class CameraControl private constructor() {
      * @see [ImageScaling]
      * */
     fun compressFile(filePath: String, desiredWidth: Int, desiredHeight: Int, facingLens: Int): String {
-        var scaledBitmap: Bitmap? = null
+        val scaledBitmap: Bitmap?
         var imagePath: String? = null
         try {
             //Decode image

@@ -73,7 +73,7 @@ class ProfileActivity : CoreActivity(), ProfileContract.View, AdapterView.OnItem
     override val getProfileImageView = profilePic
 
     override val getUserData: UserData
-        get() = UserData(ap_first_name.text.toString(), ap_last_name.text.toString(), language)
+        get() = UserData(ap_first_name.text.toString().trim(), ap_last_name.text.toString().trim(), language, "")
 
     override fun nullChecker(): Boolean = (ap_first_name.text.toString() == "" || ap_last_name.text.toString() == "")
 

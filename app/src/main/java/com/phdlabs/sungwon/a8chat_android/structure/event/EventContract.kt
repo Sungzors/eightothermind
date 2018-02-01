@@ -2,45 +2,65 @@ package com.phdlabs.sungwon.a8chat_android.structure.event
 
 import android.content.Intent
 import android.widget.EditText
-import com.phdlabs.sungwon.a8chat_android.api.response.EventPostResponse
-import com.phdlabs.sungwon.a8chat_android.model.Message
+import com.phdlabs.sungwon.a8chat_android.api.data.EventPostData
+import com.phdlabs.sungwon.a8chat_android.model.message.Message
+import com.phdlabs.sungwon.a8chat_android.model.event.EventsEight
+import com.phdlabs.sungwon.a8chat_android.model.media.Media
 import com.phdlabs.sungwon.a8chat_android.structure.application.Application
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseController
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseView
+import com.phdlabs.sungwon.a8chat_android.structure.event.create.EventCreateActivity
 import com.phdlabs.sungwon.a8chat_android.structure.event.view.EventViewActivity
 
 /**
  * Created by SungWon on 1/2/2018.
+ * Updated by JPAM on 1/30/2018
  */
 interface EventContract {
     interface Create {
-        interface View: BaseView<Controller>{
-            fun showPicture(url: String)
+        interface View : BaseView<Controller> {
+            /*UI*/
+            val getActivity: EventCreateActivity
 
-            val get8Application : Application
+            /*Event Image*/
+            fun setEventImage(filePath: String)
 
-            fun onCreateEvent(data: EventPostResponse)
+            /*Media*/
+            fun getMedia(media: Media)
+
+            /*Location*/
+            fun getLocation(location: Pair<String?, String?>?)
+
+            /*Transition*/
+            fun onCreateEvent(event: EventsEight?)
         }
-        interface Controller: BaseController{
+
+        interface Controller : BaseController {
+            /*Event Picture*/
             fun onPictureResult(requestCode: Int, resultCode: Int, data: Intent?)
 
-            fun createEvent(name: String, lock: Boolean, location: String)
+            fun showPicture()
+
+            /*Create Event*/
+            fun createEvent(eventPostData: EventPostData)
         }
     }
-    interface ViewDetail {
-        interface View: BaseView<Controller>{
-            val get8Application : Application
-            val getActivity : EventViewActivity
-            val getMessageET : String
-            val getMessageETObject : EditText
-            val getRoomId : Int
 
-            fun lastTimeDisplayed(position : Int) : Boolean
-            fun lastTimeDisplayed(message: Message) : Boolean
+    interface ViewDetail {
+        interface View : BaseView<Controller> {
+            val get8Application: Application
+            val getActivity: EventViewActivity
+            val getMessageET: String
+            val getMessageETObject: EditText
+            val getRoomId: Int
+
+            fun lastTimeDisplayed(position: Int): Boolean
+            fun lastTimeDisplayed(message: Message): Boolean
 
             fun updateRecycler()
         }
-        interface Controller: BaseController {
+
+        interface Controller : BaseController {
             fun sendMessage()
             fun sendChannel(channelId: Int)
             fun sendContact()
@@ -54,7 +74,7 @@ interface EventContract {
 
             fun retrieveChatHistory()
 
-            fun getMessages() : MutableList<Message>
+            fun getMessages(): MutableList<Message>
 
             fun getUserId(callback: (Int?) -> Unit)
 
