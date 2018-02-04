@@ -3,12 +3,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
-    android:orientation="vertical">
-
+    android:orientation="vertical"
+    android:layout_marginTop="10dp">
+    <!--Camera Roll Toolbar-->
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarWhite">
+        <!--White toolbar-->
+        <include layout="@layout/toolbar" />
+    </android.support.design.widget.AppBarLayout>
     <!--Camera Roll recycler view-->
     <android.support.v7.widget.RecyclerView
         android:id="@+id/cr_recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:layout_marginTop="15dp" />
 
 </LinearLayout>

@@ -2,6 +2,7 @@ package com.phdlabs.sungwon.a8chat_android.structure.camera
 
 import android.support.design.widget.TabLayout
 import android.support.v4.view.ViewPager
+import com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControls.CameraCloseView
 import com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControls.CameraControlView
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseController
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseView
@@ -12,8 +13,10 @@ import com.phdlabs.sungwon.a8chat_android.structure.core.BaseView
 interface CameraContract {
 
     interface View : BaseView<Controller> {
-        /*Control View*/
+        /*Camera Control View*/
         fun getCameraControl(): CameraControlView
+        /*Camera Close View Control*/
+        fun getCameraCloseControl(): CameraCloseView
         /*Flash UI*/
         fun flashFeedback(isFLashOn: Boolean)
     }

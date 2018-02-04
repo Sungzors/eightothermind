@@ -53,10 +53,14 @@ class AutoFitTextureView : TextureView {
         } else {
             if (width < height * mRatioWidth / mRatioHeight) {
                 //setMeasuredDimension(width, width * mRatioHeight / mRatioWidth)
-                setMeasuredDimension(width, height) //Full screen
+                //setMeasuredDimension(width, height) //Full screen
+                /*Switched to match aspect ratio*/
+                setMeasuredDimension(height * mRatioWidth / mRatioHeight, height)
             } else {
+                /*Switched to match aspect ratio*/
+                setMeasuredDimension(width, width * mRatioHeight / mRatioWidth)
                 //setMeasuredDimension(height * mRatioWidth / mRatioHeight, height)
-                setMeasuredDimension(width, height) //Full screen
+                //setMeasuredDimension(width, height) //Full screen
             }
         }
     }

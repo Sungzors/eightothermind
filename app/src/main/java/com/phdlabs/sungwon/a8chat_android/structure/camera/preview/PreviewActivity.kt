@@ -17,6 +17,8 @@ import kotlinx.android.synthetic.main.view_camera_control_save.*
 
 /**
  * Created by paix on 1/15/18.
+ * [PreviewActivity] shows the picture taken from the [NormalFragment]
+ * or the picture selected from the [CameraRollFragment]
  */
 class PreviewActivity : CoreActivity(), PreviewContract.View, View.OnClickListener {
 

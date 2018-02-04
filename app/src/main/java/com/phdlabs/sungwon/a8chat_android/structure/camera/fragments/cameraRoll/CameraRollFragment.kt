@@ -1,5 +1,6 @@
 package com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.cameraRoll
 
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Point
 import android.os.Bundle
@@ -14,6 +15,7 @@ import android.widget.ImageView
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.model.media.GalleryPhoto
 import com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.CameraBaseFragment
+import com.phdlabs.sungwon.a8chat_android.structure.camera.preview.PreviewActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseRecyclerAdapter
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseViewHolder
@@ -21,6 +23,7 @@ import com.phdlabs.sungwon.a8chat_android.utility.adapter.ViewMap
 import com.phdlabs.sungwon.a8chat_android.utility.camera.PhotoGalleryAsyncLoader
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_cameraroll.*
+import kotlinx.android.synthetic.main.toolbar.*
 import java.io.File
 
 
@@ -29,7 +32,9 @@ import java.io.File
  * [CameraRollFragment] showing available pictures sectioned by date
  * for the user to select & then preview after selection
  */
-class CameraRollFragment : CameraBaseFragment(), LoaderManager.LoaderCallbacks<List<GalleryPhoto>> {
+class CameraRollFragment : CameraBaseFragment(),
+        LoaderManager.LoaderCallbacks<List<GalleryPhoto>>,
+        View.OnClickListener {
 
     /*Properties*/
     private lateinit var mAdapter: BaseRecyclerAdapter<GalleryPhoto, BaseViewHolder>
@@ -42,13 +47,58 @@ class CameraRollFragment : CameraBaseFragment(), LoaderManager.LoaderCallbacks<L
 
     /*Initialization*/
     init {
-        //Gallery Photos
+
     }
 
     /*Required*/
     override fun cameraLayoutId(): Int = R.layout.fragment_cameraroll
 
     override fun inOnCreateView(root: View?, container: ViewGroup?, savedInstanceState: Bundle?) {
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        //Toolbar setup -> Default
+        toolbar_title_double_container.visibility = View.GONE
+        toolbar_title.visibility = View.VISIBLE
+        toolbar_title.text = getString(R.string.camera_left_tab)
+        //Toolbar left action
+        toolbar_left_action.setImageDrawable(activity?.getDrawable(R.drawable.ic_back))
+        setupClickListeners()
+        super.onViewCreated(view, savedInstanceState)
+    }
+
+    /**
+     * [setupClickListeners] on the buttons
+     * */
+    private fun setupClickListeners() {
+        toolbar_left_action_container.setOnClickListener(this)
+    }
+
+    /**
+     * [toolbarVisibility] will change depending on the amount of
+     * available pictures
+     * */
+    fun toolbarVisibility(photoCount: Int) {
+        if (photoCount > 0) {
+            //Hide original title
+            toolbar_title.visibility = View.GONE
+            //Show new Title
+            toolbar_title_double_container.visibility = View.VISIBLE
+            toolbar_title_double_top.visibility = View.VISIBLE
+            toolbar_title_double_top.text = getString(R.string.camera_left_tab)
+            //Show new Subtitle
+            val toolbarSubtitle = photoCount.toString() + " " + "Photos"
+            toolbar_title_double_bottom.visibility = View.VISIBLE
+            toolbar_title_double_bottom.text = toolbarSubtitle
+        } else {
+            //Hide subtitle
+            toolbar_title_double_container.visibility = View.GONE
+            toolbar_title_double_top.visibility = View.GONE
+            toolbar_title_double_bottom.text = ""
+            toolbar_title_double_bottom.visibility = View.GONE
+            //Show original title
+            toolbar_title.visibility = View.GONE
+        }
     }
 
     /*LifeCycle*/
@@ -102,7 +152,6 @@ class CameraRollFragment : CameraBaseFragment(), LoaderManager.LoaderCallbacks<L
                     context?.let {
                         Picasso.with(it).
                                 load(File(data?.mFullPath)).
-                                rotate(90f).
                                 centerInside().
                                 resize(imageWidth, imageHeight).
                                 into(imageView)
@@ -114,6 +163,17 @@ class CameraRollFragment : CameraBaseFragment(), LoaderManager.LoaderCallbacks<L
             override fun viewHolder(inflater: LayoutInflater?, parent: ViewGroup?, type: Int): BaseViewHolder {
                 return object : BaseViewHolder(R.layout.view_cameraroll_item, inflater!!, parent) {
                     override fun addClicks(views: ViewMap?) {
+                        /**
+                         * set listener to open [PreviewActivity]
+                         * when an image is tapped
+                         * */
+                        views?.click {
+                            val intent = Intent(activity, PreviewActivity::class.java)
+                            intent.putExtra(
+                                    Constants.CameraIntents.IMAGE_FILE_PATH,
+                                    getItem(adapterPosition).mFullPath)
+                            activity?.startActivity(intent)
+                        }
                         super.addClicks(views)
                     }
                 }
@@ -137,13 +197,14 @@ class CameraRollFragment : CameraBaseFragment(), LoaderManager.LoaderCallbacks<L
     override fun onLoadFinished(loader: Loader<List<GalleryPhoto>>?, data: List<GalleryPhoto>?) {
         mGalleryPhotos.clear()
         data?.let {
+
             for (galleryPhoto in it) {
                 mGalleryPhotos.add(galleryPhoto)
             }
-            //TODO: Remove
-            val photoCount = mGalleryPhotos.count()
-            println("Photo Count: " + photoCount)
-            //TODO: Remove
+
+            /*Picture count subtitle & toolbar swap*/
+            toolbarVisibility(mGalleryPhotos.count())
+
             /*Setup RecyclerView with fresh data*/
             setupRecycler()
         }
@@ -151,6 +212,17 @@ class CameraRollFragment : CameraBaseFragment(), LoaderManager.LoaderCallbacks<L
 
     override fun onLoaderReset(loader: Loader<List<GalleryPhoto>>?) {
         mGalleryPhotos.clear()
+    }
+
+    /*On Click action listeners*/
+    override fun onClick(p0: View?) {
+        when (p0) {
+
+        /*Back button*/
+            toolbar_left_action_container -> {
+                activity?.finish()
+            }
+        }
     }
 
 }

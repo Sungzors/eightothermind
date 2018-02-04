@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
 import android.support.v4.content.ContextCompat
+import android.util.DisplayMetrics
 import android.util.Size
 import android.util.SparseIntArray
 import android.view.*
@@ -49,7 +50,7 @@ class NormalFragment() : CameraBaseFragment() {
      * [CameraCharacteristics.LENS_FACING_BACK] -> Default
      * Two orientations supported Front || Back
      * */
-    private var mFacing: Int = CameraCharacteristics.LENS_FACING_BACK
+    private var mFacing: Int = CameraCharacteristics.LENS_FACING_FRONT
 
     /**[CameraCaptureSession] for camera preview
      */
@@ -249,7 +250,7 @@ class NormalFragment() : CameraBaseFragment() {
             //collect supported resolutions that are at least as big as the preview surface
             val bigEnough: ArrayList<Size> = ArrayList<Size>()
             //collect supported resolutions that are smaller than the preview surface
-            val smallEnough: ArrayList<Size> = ArrayList<Size>()
+            val notBigEnough: ArrayList<Size> = ArrayList<Size>()
             //Width & Height
             val width: Int = aspectRatio.width
             val height: Int = aspectRatio.height
@@ -260,14 +261,14 @@ class NormalFragment() : CameraBaseFragment() {
                                 it.height >= textureViewHeight) {
                             bigEnough.add(it)
                         } else {
-                            smallEnough.add(it)
+                            notBigEnough.add(it)
                         }
                     }
             //Pick the smallest for the smallEnough
             if (bigEnough.size > 0) {
                 return Collections.min(bigEnough, CompareSizesByArea())
-            } else if (smallEnough.size > 0) {
-                return Collections.max(smallEnough, CompareSizesByArea())
+            } else if (notBigEnough.size > 0) {
+                return Collections.max(notBigEnough, CompareSizesByArea())
             } else {
                 return choices[0]
             }
@@ -497,6 +498,7 @@ class NormalFragment() : CameraBaseFragment() {
                     }
                 }
 
+                //AutoFitTexture display size
                 val displaySize = Point()
                 activity?.windowManager?.defaultDisplay?.getSize(displaySize)
 
@@ -533,6 +535,7 @@ class NormalFragment() : CameraBaseFragment() {
                     mTextureView.setAspectRatio(
                             mPreviewSize.width, mPreviewSize.height)
                 } else {
+
                     mTextureView.setAspectRatio(
                             mPreviewSize.height, mPreviewSize.width)
                 }
@@ -545,7 +548,7 @@ class NormalFragment() : CameraBaseFragment() {
         } catch (e: NullPointerException) {
             // Currently an NPE is thrown when the Camera2API is used but not supported on the
             // device this code runs.
-            //ErrorDialog.newInstance(getString(R.string.camera_error)).show(childFragmentManager, FRAGMENT_DIALOG)
+            println("Error while setting up camera outputs: " + e.printStackTrace())
         }
 
     }

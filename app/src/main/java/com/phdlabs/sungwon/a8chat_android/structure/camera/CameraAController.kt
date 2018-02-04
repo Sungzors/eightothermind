@@ -59,6 +59,15 @@ class CameraAController(val mView: CameraContract.View) : CameraContract.Control
             } else {
                 mView.getCameraControl().visibility = View.GONE
             }
+            /**
+             * Hide close controls in the [CameraRollFragment] as they are embeded
+             * within the toolbar
+             * */
+            if (it.position.equals(Constants.CameraPager.CAMERA_ROLL)) {
+                mView.getCameraCloseControl().visibility = View.GONE
+            } else {
+                mView.getCameraCloseControl().visibility = View.VISIBLE
+            }
         }
     }
 

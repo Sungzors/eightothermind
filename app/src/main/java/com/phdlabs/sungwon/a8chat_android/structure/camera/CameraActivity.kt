@@ -3,11 +3,11 @@ package com.phdlabs.sungwon.a8chat_android.structure.camera
 import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentPagerAdapter
 import android.view.View
 import android.widget.Toast
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.structure.camera.adapters.CameraPagerAdapter
+import com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControls.CameraCloseView
 import com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControls.CameraControlView
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
@@ -113,6 +113,7 @@ class CameraActivity : CoreActivity(), CameraContract.View, TabLayout.OnTabSelec
     /*Camera Control*/
     override fun getCameraControl(): CameraControlView = cam_control
 
+    override fun getCameraCloseControl(): CameraCloseView  = cam_close_control
 
     /*Camera actions*/
     override fun onClick(p0: View?) {
@@ -152,5 +153,7 @@ class CameraActivity : CoreActivity(), CameraContract.View, TabLayout.OnTabSelec
         }
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
+
+
 
 }

@@ -93,5 +93,6 @@
     <string name="add_channel_photo">Add channel photo</string>
     <string name="add_event_photo">Add event photo</string>
     <string name="create_event">Create an Event</string>
+    <string name="next">Next</string>
 
 </resources>

@@ -64,7 +64,6 @@ class PreviewActivityController(val mView: PreviewContract.View) : PreviewContra
             } else {
                 Picasso.with(mView.getContext())
                         .load(File(it))
-                        .rotate(90f) //Full screen
                         .into(mView.getPreviewLayout())
             }
         }
