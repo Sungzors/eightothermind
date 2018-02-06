@@ -1,8 +1,6 @@
-package com.phdlabs.sungwon.a8chat_android.structure.camera.preview
+package com.phdlabs.sungwon.a8chat_android.structure.camera.editing
 
-import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Point
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.util.DisplayMetrics
@@ -17,13 +15,13 @@ import kotlinx.android.synthetic.main.view_camera_control_save.*
 
 /**
  * Created by paix on 1/15/18.
- * [PreviewActivity] shows the picture taken from the [NormalFragment]
+ * [EditingActivity] shows the picture taken from the [NormalFragment]
  * or the picture selected from the [CameraRollFragment]
  */
-class PreviewActivity : CoreActivity(), PreviewContract.View, View.OnClickListener {
+class EditingActivity : CoreActivity(), EditingContract.View, View.OnClickListener {
 
     /*Controller*/
-    override lateinit var controller: PreviewContract.Controller
+    override lateinit var controller: EditingContract.Controller
 
     /*Layout*/
     override fun layoutId(): Int = R.layout.activity_camera_preview
@@ -38,7 +36,7 @@ class PreviewActivity : CoreActivity(), PreviewContract.View, View.OnClickListen
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         /*Controller init*/
-        PreviewActivityController(this)
+        EditingActivityController(this)
         /*Load image*/
         imgFilePath = intent.extras.getString(Constants.CameraIntents.IMAGE_FILE_PATH)
         imgFilePath?.let {
@@ -88,13 +86,13 @@ class PreviewActivity : CoreActivity(), PreviewContract.View, View.OnClickListen
 
 
     /*Photo loading*/
-    override fun getPreviewLayout(): ImageView = iv_camera_preview
+    override fun getPreviewLayout(): ImageView = photo_edit_iv
 
     override fun getScreenSize(): Pair<Int, Int> {
         val displayMetrics = DisplayMetrics()
         windowManager.defaultDisplay.getMetrics(displayMetrics)
-        iv_camera_preview.maxWidth = displayMetrics.widthPixels
-        iv_camera_preview.maxHeight = displayMetrics.heightPixels
+        photo_edit_iv.maxWidth = displayMetrics.widthPixels
+        photo_edit_iv.maxHeight = displayMetrics.heightPixels
         return Pair(displayMetrics.widthPixels, displayMetrics.heightPixels)
     }
 
@@ -117,9 +115,6 @@ class PreviewActivity : CoreActivity(), PreviewContract.View, View.OnClickListen
     override fun feedback(message: String) {
         showToast(message)
     }
-
-
-    //TODO: Add camera controls on top of the image preview
 
 
 }

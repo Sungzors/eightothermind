@@ -15,7 +15,7 @@ import android.widget.ImageView
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.model.media.GalleryPhoto
 import com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.CameraBaseFragment
-import com.phdlabs.sungwon.a8chat_android.structure.camera.preview.PreviewActivity
+import com.phdlabs.sungwon.a8chat_android.structure.camera.editing.EditingActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseRecyclerAdapter
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseViewHolder
@@ -164,11 +164,11 @@ class CameraRollFragment : CameraBaseFragment(),
                 return object : BaseViewHolder(R.layout.view_cameraroll_item, inflater!!, parent) {
                     override fun addClicks(views: ViewMap?) {
                         /**
-                         * set listener to open [PreviewActivity]
+                         * set listener to open [EditingActivity]
                          * when an image is tapped
                          * */
                         views?.click {
-                            val intent = Intent(activity, PreviewActivity::class.java)
+                            val intent = Intent(activity, EditingActivity::class.java)
                             intent.putExtra(
                                     Constants.CameraIntents.IMAGE_FILE_PATH,
                                     getItem(adapterPosition).mFullPath)

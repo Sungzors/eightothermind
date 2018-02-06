@@ -1,4 +1,4 @@
-package com.phdlabs.sungwon.a8chat_android.structure.camera.preview
+package com.phdlabs.sungwon.a8chat_android.structure.camera.editing
 
 import android.content.pm.PackageManager
 import android.os.Build
@@ -13,7 +13,7 @@ import java.io.File
 /**
  * Created by paix on 1/15/18.
  */
-class PreviewActivityController(val mView: PreviewContract.View) : PreviewContract.Controller {
+class EditingActivityController(val mView: EditingContract.View) : EditingContract.Controller {
 
     /*LOG*/
     private val TAG = "Camera Preview"
@@ -44,7 +44,7 @@ class PreviewActivityController(val mView: PreviewContract.View) : PreviewContra
         mView.getContext()?.let {
             //Request Permissions
             if (ContextCompat.checkSelfPermission(it, whatPermissions.get(0)) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(mView.getContext() as PreviewActivity,
+                ActivityCompat.requestPermissions(mView.getContext() as EditingActivity,
                         whatPermissions, Constants.PermissionsReqCode.WRITE_EXTERNAL_REQ_CODE)
             }
         }
@@ -59,7 +59,7 @@ class PreviewActivityController(val mView: PreviewContract.View) : PreviewContra
             if (DeviceInfo.INSTANCE.isWarningDevice(Build.MODEL)) {
                 Picasso.with(mView.getContext())
                         .load(File(it))
-                        .rotate(270f) //Full screen
+                        .rotate(270f) //Full screen //TODO: Probably 90 degrees
                         .into(mView.getPreviewLayout())
             } else {
                 Picasso.with(mView.getContext())

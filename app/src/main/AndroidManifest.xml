@@ -65,7 +65,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/Camera" />
         <activity
-            android:name=".structure.camera.preview.PreviewActivity"
+            android:name=".structure.camera.editing.EditingActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Camera" />
         <activity

@@ -50,7 +50,7 @@ class NormalFragment() : CameraBaseFragment() {
      * [CameraCharacteristics.LENS_FACING_BACK] -> Default
      * Two orientations supported Front || Back
      * */
-    private var mFacing: Int = CameraCharacteristics.LENS_FACING_FRONT
+    private var mFacing: Int = CameraCharacteristics.LENS_FACING_BACK
 
     /**[CameraCaptureSession] for camera preview
      */
@@ -205,8 +205,8 @@ class NormalFragment() : CameraBaseFragment() {
         var ORIENTATIONS: SparseIntArray = SparseIntArray()
 
         fun addOrientations() {
-            ORIENTATIONS.append(Surface.ROTATION_0, 90)
-            ORIENTATIONS.append(Surface.ROTATION_90, 0)
+            ORIENTATIONS.append(Surface.ROTATION_0, 0)
+            ORIENTATIONS.append(Surface.ROTATION_90, 90)
             ORIENTATIONS.append(Surface.ROTATION_180, 270)
             ORIENTATIONS.append(Surface.ROTATION_270, 180)
         }
@@ -483,17 +483,17 @@ class NormalFragment() : CameraBaseFragment() {
 
                 /* Find out if we need to swap dimension to get the preview size relative to sensor coordinate.*/
                 val displayRotation = activity?.windowManager?.defaultDisplay?.rotation
-                val sensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION)
+                mSensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION)
                 var swappedDimensions = false
                 when (displayRotation) {
                     Surface.ROTATION_0 -> {/*Do nothing*/
                     }
-                    Surface.ROTATION_180 -> if (sensorOrientation == 90 || sensorOrientation == 270) {
+                    Surface.ROTATION_180 -> if (mSensorOrientation == 90 || mSensorOrientation == 270) {
                         swappedDimensions = true
                     }
                     Surface.ROTATION_90 -> {/*Do Nothing*/
                     }
-                    Surface.ROTATION_270 -> if (sensorOrientation == 0 || sensorOrientation == 180) {
+                    Surface.ROTATION_270 -> if (mSensorOrientation == 0 || mSensorOrientation == 180) {
                         swappedDimensions = true
                     }
                 }
@@ -819,11 +819,14 @@ class NormalFragment() : CameraBaseFragment() {
                 //The CaptureRequest.Builder used to take a picture
                 val captureBuilder: CaptureRequest.Builder? = mCameraDevice?.
                         createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE)?.apply {
+
                     addTarget(mImageReader?.surface)
+
                     /*Sensor orientation is 90 for most devices, or 270 for some devices*/
-                    val rot = (ORIENTATIONS.get(rotation) + mSensorOrientation + 270) % 360
-                    set(CaptureRequest.JPEG_ORIENTATION,
-                            rot)
+                    val rot = (ORIENTATIONS.get(rotation) + mSensorOrientation + 360) % 360
+
+                    set(CaptureRequest.JPEG_ORIENTATION, rot)
+
                     set(CaptureRequest.CONTROL_AF_MODE,
                             CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE)
                 }?.also { setAutoFlash(it) }

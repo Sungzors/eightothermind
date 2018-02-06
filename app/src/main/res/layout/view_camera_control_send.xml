@@ -5,7 +5,8 @@
     android:layout_height="75dp"
     android:layout_gravity="end|bottom"
     android:orientation="horizontal"
-    tools:background="@android:color/transparent">
+    tools:background="@android:color/transparent"
+    android:layout_marginBottom="10dp">
 
     <!--Close camera-->
     <ImageView

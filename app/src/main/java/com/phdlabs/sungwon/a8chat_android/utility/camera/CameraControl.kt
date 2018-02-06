@@ -538,7 +538,7 @@ class CameraControl private constructor() {
             val matrixMirrorY = Matrix()
             matrixMirrorY.setValues(mirrorY)
             matrixPreRotateRight.postConcat(matrixMirrorY)
-            matrixRotateRight.preRotate(270f)
+            //matrixRotateRight.preRotate(270f) //Unwanted behavior
         }
         val bm: Bitmap = BitmapFactory.decodeFile(filePath, bitmapOptions)
         return Bitmap.createBitmap(bm, 0, 0, bm.width, bm.height, matrixPreRotateRight, true)
