@@ -147,7 +147,7 @@ class CameraRollFragment : CameraBaseFragment(),
         mAdapter = object : BaseRecyclerAdapter<GalleryPhoto, BaseViewHolder>() {
 
             override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: GalleryPhoto?, position: Int, type: Int) {
-                var imageView = viewHolder?.get<ImageView>(R.id.cr_iv_photo)
+                val imageView = viewHolder?.get<ImageView>(R.id.cr_iv_photo)
                 viewHolder?.let {
                     context?.let {
                         Picasso.with(it).

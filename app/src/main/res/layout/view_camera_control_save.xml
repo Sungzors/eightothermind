@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
+    android:layout_width="230dp"
     android:layout_height="75dp"
     android:layout_gravity="start|bottom"
+    android:layout_marginBottom="10dp"
     android:orientation="horizontal"
-    tools:background="@android:color/transparent"
-    android:layout_marginBottom="10dp">
+    tools:background="@android:color/transparent">
 
     <!--SAVE-->
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginStart="0dp"
         android:orientation="vertical">
         <!--Text-->
         <ImageView
@@ -21,7 +22,7 @@
             android:layout_height="29dp"
             android:layout_gravity="start|center"
             android:layout_marginEnd="130dp"
-            android:layout_marginStart="35dp"
+            android:layout_marginStart="25dp"
             android:background="@color/transparent"
             android:contentDescription="@string/camera_save"
             android:src="@drawable/save_photo" />
@@ -31,7 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start|center"
-            android:layout_marginStart="32dp"
+            android:layout_marginStart="22dp"
             android:layout_marginTop="4dp"
             android:text="@string/save"
             android:textColor="#FFFFFF"
@@ -44,7 +45,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginStart="30dp"
+        android:layout_marginStart="10dp"
         android:orientation="vertical">
 
         <TextView
@@ -52,7 +53,7 @@
             android:layout_width="25dp"
             android:layout_height="29dp"
             android:layout_gravity="start|center"
-            android:layout_marginStart="20dp"
+            android:layout_marginStart="14dp"
             android:gravity="center"
             android:text="@string/ic_clear_all"
             android:textColor="#FFFFFF"
@@ -64,7 +65,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="start|center"
             android:layout_marginEnd="20dp"
-            android:layout_marginStart="5dp"
+            android:layout_marginStart="-2dp"
             android:layout_marginTop="4dp"
             android:text="@string/clear_all"
             android:textColor="#FFFFFF"
@@ -74,29 +75,35 @@
 
     <!--UNDO-->
     <LinearLayout
+        android:id="@+id/vccs_undo_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginStart="90dp"
-        android:orientation="vertical">
+        android:layout_marginStart="105dp"
+        android:orientation="vertical"
+        android:visibility="gone">
 
-        <TextView
-            android:id="@+id/undo_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:gravity="center"
-            android:text="@string/ic_clear_all"
-            android:textColor="#FFFFFF"
-            android:textSize="25sp"
+        <ImageView
+            android:id="@+id/iv_undo"
+            android:layout_width="20dp"
+            android:layout_height="24dp"
+            android:layout_gravity="start|center"
+            android:layout_marginEnd="130dp"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="3dp"
+            android:background="@color/transparent"
+            android:contentDescription="@string/camera_save"
+            android:src="@drawable/t"
             android:visibility="gone" />
+
 
         <TextView
             android:id="@+id/undo_text_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="20dp"
-            android:layout_marginStart="5dp"
+            android:layout_marginStart="19dp"
+            android:layout_marginTop="6dp"
             android:text="@string/undo"
             android:textColor="#FFFFFF"
             android:textSize="15sp"

@@ -1,9 +1,11 @@
 package com.phdlabs.sungwon.a8chat_android.structure.camera.editing
 
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.os.Build
 import android.support.v13.app.ActivityCompat
 import android.support.v4.content.ContextCompat
+import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.DeviceInfo
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
@@ -78,5 +80,65 @@ class EditingActivityController(val mView: EditingContract.View) : EditingContra
             }
         }
     }
+
+    /*Collect Editing colors resources*/
+    override fun collectEditingColors(): ArrayList<Int> {
+        val colorPickerColors: ArrayList<Int> = arrayListOf()
+        mView.activity?.let {
+            colorPickerColors.add(it.resources.getColor(R.color.black))
+            colorPickerColors.add(it.resources.getColor(R.color.white))
+            colorPickerColors.add(it.resources.getColor(R.color.blue_color_picker))
+            colorPickerColors.add(it.resources.getColor(R.color.brown_color_picker))
+            colorPickerColors.add(it.resources.getColor(R.color.green_color_picker))
+            colorPickerColors.add(it.resources.getColor(R.color.orange_color_picker))
+            colorPickerColors.add(it.resources.getColor(R.color.red_color_picker))
+            colorPickerColors.add(it.resources.getColor(R.color.red_orange_color_picker))
+            colorPickerColors.add(it.resources.getColor(R.color.sky_blue_color_picker))
+            colorPickerColors.add(it.resources.getColor(R.color.violet_color_picker))
+            colorPickerColors.add(it.resources.getColor(R.color.yellow_color_picker))
+            colorPickerColors.add(it.resources.getColor(R.color.yellow_green_color_picker))
+        }
+        return colorPickerColors
+    }
+
+    /*PHOTO EDITOR Controller*/
+
+    /**
+     * [addImageToPhotoSDK] adds image to [photoEditorSDK]
+     * for editing & rendering
+     * */
+    override fun addImageToPhotoSDK(image: Bitmap) {
+        mView.getPhotoEditor().addImage(image)
+    }
+
+    /**
+     * [addTextToPhotoSDK] adds text o image managed by
+     * [photoEditorSDK] for editing & rendering
+     * */
+    override fun addTextToPhotoSDK(string: String, colorCodeTextView: Int) {
+        mView.getPhotoEditor().addText(string, colorCodeTextView)
+    }
+
+    /**
+     * [clearAllViews] in [photoEditorSDK]
+     * */
+    override fun clearAllViews() {
+        mView.getPhotoEditor().clearAllViews()
+    }
+
+    /**
+     * [undoViews] in [photoEditorSDK]
+     * */
+    override fun undoViews() {
+        mView.getPhotoEditor().viewUndo()
+    }
+
+    /**
+     * [eraseDrawing] in [photoEditorSDK]
+     * */
+    override fun eraseDrawing() {
+        mView.getPhotoEditor().brushEraser()
+    }
+
 
 }

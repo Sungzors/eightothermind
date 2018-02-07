@@ -7,198 +7,180 @@
     android:layout_height="match_parent"
     tools:context=".structure.camera.editing.EditingActivity">
 
-    <!--Editing sliding panel-->
-    <com.sothree.slidinguppanel.SlidingUpPanelLayout
-        android:id="@+id/sliding_layout"
+    <!--General Layout-->
+    <RelativeLayout
+        android:id="@+id/parent_image_rl"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="bottom"
-        app:umanoDragView="@+id/dragView"
-        app:umanoOverlay="true"
-        app:umanoShadowHeight="4dp">
+        android:layout_centerInParent="true"
+        android:gravity="center">
 
-        <RelativeLayout
+        <!--Full Screen Image-->
+        <ImageView
+            android:id="@+id/photo_edit_iv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#000000"
-            android:gravity="center">
+            android:layout_centerInParent="true"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/photo_editing"
+            android:scaleType="centerCrop" />
 
-            <RelativeLayout
-                android:id="@+id/parent_image_rl"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_centerInParent="true">
-
-                <ImageView
-                    android:id="@+id/photo_edit_iv"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_centerInParent="true"
-                    android:adjustViewBounds="true"
-                    android:contentDescription="@string/photo_editing"
-                    android:scaleType="centerCrop" />
-
-
-                <com.ahmedadeltito.photoeditorsdk.BrushDrawingView
-                    android:id="@+id/drawing_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignBottom="@+id/photo_edit_iv"
-                    android:layout_alignTop="@+id/photo_edit_iv"
-                    android:layout_centerInParent="true"
-                    android:visibility="visible" />
-
-            </RelativeLayout>
-
-            <TextView
-                android:id="@+id/done_drawing_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_marginEnd="20dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="10dp"
-                android:padding="10dp"
-                android:shadowColor="#000000"
-                android:shadowDx="1"
-                android:shadowDy="1"
-                android:shadowRadius="2"
-                android:text="@string/done"
-                android:textColor="#FFFFFF"
-                android:textSize="20sp"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/erase_drawing_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="20dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="10dp"
-                android:layout_toStartOf="@+id/done_drawing_tv"
-                android:padding="10dp"
-                android:shadowColor="#000000"
-                android:shadowDx="1"
-                android:shadowDy="1"
-                android:shadowRadius="2"
-                android:text="@string/erase"
-                android:textColor="#FFFFFF"
-                android:textSize="20sp"
-                android:visibility="gone" />
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/drawing_view_color_picker_recycler_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true" />
-
-            <View
-                android:id="@+id/top_shadow"
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:layout_alignParentTop="true"
-                android:background="@drawable/fading_shadow" />
-
-            <!--Top controls-->
-            <RelativeLayout
-                android:id="@+id/top_parent_rl"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/top_shadow"
-                android:layout_alignTop="@+id/top_shadow"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp">
-
-                <!--Back control-->
-                <com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControls.CameraCloseView
-                    android:id="@+id/cam_close_control"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:visibility="visible" />
-
-                <!--Editing conrols-->
-                <com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControls.CameraEditingView
-                    android:id="@+id/cam_edit_control"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_gravity="end"
-                    android:visibility="visible" />
-
-            </RelativeLayout>
-
-
-            <View
-                android:id="@+id/bottom_shadow"
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:layout_alignParentBottom="true"
-                android:background="@drawable/below_shadow" />
-
-            <RelativeLayout
-                android:id="@+id/bottom_parent_rl"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/bottom_shadow"
-                android:layout_alignTop="@+id/bottom_shadow"
-                android:background="@color/transparent">
-
-
-                <!--Save control-->
-                <com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControls.CameraSaveView
-                    android:id="@+id/cam_save_control"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:visibility="visible" />
-
-                <!--Send control-->
-                <com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControls.CameraSendView
-                    android:id="@+id/cam_send_control"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_gravity="end"
-                    android:visibility="visible" />
-
-            </RelativeLayout>
-
-        </RelativeLayout>
-
-        <!--Emoji & Stickers TODO: Change visibility-->
-        <RelativeLayout
-            android:id="@+id/image_emoji_bottom_sheet"
+        <!--Brush Drawing-->
+        <com.ahmedadeltito.photoeditorsdk.BrushDrawingView
+            android:id="@+id/drawing_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone">
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/photo_edit_iv"
+            android:layout_alignTop="@+id/photo_edit_iv"
+            android:layout_centerInParent="true"
+            android:visibility="visible" />
 
-            <com.phdlabs.sungwon.a8chat_android.structure.camera.editing.widget.RealtimeBlurView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:realtimeBlurRadius="10dp"
-                app:realtimeOverlayColor="#33ffffff" />
+    </RelativeLayout>
 
-            <com.viewpagerindicator.CirclePageIndicator
-                android:id="@+id/image_emoji_indicator"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_gravity="center_horizontal"
-                android:padding="12dp"
-                app:fillColor="#999999"
-                app:pageColor="#e7e7e7" />
+    <!--Drawing controls-->
+    <TextView
+        android:id="@+id/done_drawing_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="110dp"
+        android:background="@drawable/rounded_border_text_view"
+        android:padding="10dp"
+        android:shadowColor="#000000"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="2"
+        android:text="@string/done"
+        android:textColor="#FFFFFF"
+        android:textSize="12sp"
+        android:visibility="gone" />
 
-            <android.support.v4.view.ViewPager
-                android:id="@+id/image_emoji_view_pager"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@+id/image_emoji_indicator" />
+    <TextView
+        android:id="@+id/erase_drawing_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="110dp"
+        android:layout_toStartOf="@+id/done_drawing_tv"
+        android:background="@drawable/rounded_border_text_view"
+        android:padding="10dp"
+        android:shadowColor="#000000"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="2"
+        android:text="@string/erase"
+        android:textColor="#FFFFFF"
+        android:textSize="12sp"
+        android:visibility="gone" />
 
-        </RelativeLayout>
+    <!--Color picker-->
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/drawing_view_color_picker_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true" />
 
-    </com.sothree.slidinguppanel.SlidingUpPanelLayout>
+    <!--Shadow so top controls are visible-->
+    <View
+        android:id="@+id/top_shadow"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/fading_shadow" />
+
+    <!--Top controls-->
+    <RelativeLayout
+        android:id="@+id/top_parent_rl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/top_shadow"
+        android:layout_alignTop="@+id/top_shadow"
+        android:layout_marginTop="15dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp">
+
+        <!--Back control-->
+        <com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControls.CameraCloseView
+            android:id="@+id/cam_close_control"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:visibility="visible" />
+
+        <!--Editing conrols-->
+        <com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControls.CameraEditingView
+            android:id="@+id/cam_edit_control"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:layout_gravity="end"
+            android:visibility="visible" />
+
+    </RelativeLayout>
+
+    <!--Shadow so bottom controls are visible-->
+    <View
+        android:id="@+id/bottom_shadow"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/below_shadow" />
+
+    <!--Center delete option-->
+    <RelativeLayout
+        android:id="@+id/delete_rl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:padding="20dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/delete_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:background="@drawable/rounded_border_text_view"
+            android:padding="10dp"
+            android:text="@string/ic_delete"
+            android:textColor="#FFFFFF"
+            android:textSize="30sp"
+            android:visibility="gone" />
+
+    </RelativeLayout>
+
+    <!--Bottom controls-->
+    <RelativeLayout
+        android:id="@+id/bottom_parent_rl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/bottom_shadow"
+        android:layout_alignTop="@+id/bottom_shadow"
+        android:background="@color/transparent">
+
+
+        <!--Save control-->
+        <com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControls.CameraSaveView
+            android:id="@+id/cam_save_control"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:visibility="visible" />
+
+        <!--Send control-->
+        <com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControls.CameraSendView
+            android:id="@+id/cam_send_control"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:layout_gravity="end"
+            android:visibility="visible" />
+
+    </RelativeLayout>
 
 </RelativeLayout>
