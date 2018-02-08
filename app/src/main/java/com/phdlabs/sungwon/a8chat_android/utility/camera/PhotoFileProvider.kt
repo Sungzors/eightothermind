@@ -35,7 +35,8 @@ class PhotoFileProvider : FileProvider() {
                 MediaStore.Images.Media.DATA,
                 MediaStore.Images.Media._ID,
                 MediaStore.Images.Media.DATE_TAKEN,
-                MediaStore.Images.Media.DATE_ADDED
+                MediaStore.Images.Media.DATE_ADDED,
+                MediaStore.Images.Media.ORIENTATION //TODO: Added
         )
         val cursor = context.contentResolver.query(
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI, // Directory
@@ -50,11 +51,12 @@ class PhotoFileProvider : FileProvider() {
         if (cursor.moveToFirst()) {
             do {
                 //Full Image
-                val fullImageUri = uriToFullImage(cursor, context)//cursor.getString(imageId)
+                val fullImageUri = uriToFullImage(cursor, context)
                 //Date
                 val dateTaken = retrieveDateTaken(cursor, context)
                 //Instantiate GalleryPhoto
-                val galleryPhoto = GalleryPhoto(fullImageUri.toString(), null, dateTaken)
+                val imageOrientation = retrieveOrientation(cursor, context)
+                val galleryPhoto = GalleryPhoto(fullImageUri.toString(), null, dateTaken, imageOrientation)
                 result.add(galleryPhoto)
             } while (cursor.moveToNext())
         }
@@ -90,19 +92,21 @@ class PhotoFileProvider : FileProvider() {
     }
 
     /**
-     * [retrieveDateTaken] retrieve infor
+     * [retrieveDateTaken] retrieve date information for the image
      * */
-    fun retrieveDateTaken(cursor: Cursor, context: Context): String {
-        var imageId = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media._ID))
+    private fun retrieveDateTaken(cursor: Cursor, context: Context): String {
+        val imageId = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media._ID))
         //Request Date
         val dateColumn = arrayOf(MediaStore.Images.Media.DATE_TAKEN)
-        val dateCursor = context.contentResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+        val dateCursor = context.contentResolver.query(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                 dateColumn,
                 MediaStore.Images.Media._ID + "=?",
                 arrayOf(imageId),
-                null)
+                null
+        )
         if (dateCursor != null && dateCursor.moveToFirst()) {
-            val columnIndex = dateCursor.getColumnIndex(dateColumn.get(0))
+            val columnIndex = dateCursor.getColumnIndex(dateColumn[0])
             val date = dateCursor.getLong(columnIndex)
             dateCursor.close()
             return date.toString()
@@ -112,4 +116,28 @@ class PhotoFileProvider : FileProvider() {
         }
     }
 
+    /**
+     * [retrieveOrientation] retrieve orientation information for the image
+     * */
+    private fun retrieveOrientation(cursor: Cursor, context: Context): String? {
+        val imageId = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media._ID))
+        //Orientation
+        val orientationColumn = arrayOf(MediaStore.Images.Media.ORIENTATION)
+        val orientationCursor = context.contentResolver.query(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                orientationColumn,
+                MediaStore.Images.Media._ID + "=?",
+                arrayOf(imageId),
+                null
+        )
+        if (orientationCursor != null && orientationCursor.moveToFirst()) {
+            val columnIndex = orientationCursor.getColumnIndex(orientationColumn[0])
+            val orientation = orientationCursor.getString(columnIndex)
+            orientationCursor.close()
+            return orientation
+        } else {
+            orientationCursor.close()
+            return null
+        }
+    }
 }

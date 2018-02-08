@@ -1,7 +1,6 @@
 package com.phdlabs.sungwon.a8chat_android.structure.camera.adapters
 
 import android.content.Context
-import android.hardware.camera2.CameraCharacteristics
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
@@ -21,12 +20,13 @@ class CameraPagerAdapter(val fm: FragmentManager, val context: Context) : Fragme
 
     /*Properties*/
     var normalFragment: NormalFragment = NormalFragment.create()
+    var cameraRollFragment: CameraRollFragment = CameraRollFragment.create()
 
     /*Return desired camera fragment*/
     override fun getItem(position: Int): Fragment =
             when (position) {
                 Constants.CameraPager.CAMERA_ROLL ->
-                    CameraRollFragment.create()
+                    cameraRollFragment
 
                 Constants.CameraPager.NORMAL ->
                     normalFragment
@@ -69,4 +69,8 @@ class CameraPagerAdapter(val fm: FragmentManager, val context: Context) : Fragme
                     ""
                 }
             }
+
+    fun refreshCameraRoll() {
+        cameraRollFragment.refreshRecycler()
+    }
 }

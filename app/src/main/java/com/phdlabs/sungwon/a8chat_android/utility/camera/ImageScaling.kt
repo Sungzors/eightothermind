@@ -70,7 +70,7 @@ class ImageScaling {
      * @param scaling scaling logic to avoid image stretching
      * @return optimal down-scaling sample size that will be used for decoding
      * */
-    private fun calculateSampleSize(srcWidth: Int, srcHeight: Int, dstWidth: Int, dstHeight: Int, scaling: ScalingLogic): Int {
+    fun calculateSampleSize(srcWidth: Int, srcHeight: Int, dstWidth: Int, dstHeight: Int, scaling: ScalingLogic): Int {
         /*Ratio*/
         val srcRatio: Float = (srcWidth / srcHeight.toFloat())
         val dstRatio: Float = (dstWidth / dstHeight.toFloat())
