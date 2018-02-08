@@ -111,6 +111,8 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
         mMessages.set(position, message)
     }
 
+    override fun getRoomId() = mRoomId
+
     override fun createPrivateChatRoom() {
         getUserId { id ->
             id?.let {

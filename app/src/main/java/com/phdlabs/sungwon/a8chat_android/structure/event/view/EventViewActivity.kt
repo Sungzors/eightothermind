@@ -160,8 +160,8 @@ class EventViewActivity : CoreActivity(), EventContract.ViewDetail.View {
 //                val c = controller.getMessages()[position].createdAt!!.time.minus(controller.getMessages()[i].createdAt!!.time)
                 val df = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
                 val createdAt: Pair<Date, Date> = Pair(
-                        df.parse(controller.getMessages()[position].createdAt),
-                        df.parse(controller.getMessages()[i].createdAt)
+                        controller.getMessages()[position].createdAt!!,
+                        controller.getMessages()[i].createdAt!!
                 )
                 return (createdAt.first.time.minus(createdAt.second.time) >= 5 * 60 * 1000)
             }
@@ -178,8 +178,7 @@ class EventViewActivity : CoreActivity(), EventContract.ViewDetail.View {
 //                val a = mAdapter.getItem(i)
 //                val b = mAdapter.getItem(position)
 //                val c = controller.getMessages()[position].createdAt!!.time.minus(controller.getMessages()[i].createdAt!!.time)
-                val df = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-                val createdAt: Pair<Date, Date> = Pair(df.parse(message.createdAt), df.parse(controller.getMessages()[i].createdAt))
+                val createdAt: Pair<Date, Date> = Pair(message.createdAt!!, controller.getMessages()[i].createdAt!!)
                 return (createdAt.first.time.minus(createdAt.second.time) >= 5 * 60 * 1000)
             }
         }

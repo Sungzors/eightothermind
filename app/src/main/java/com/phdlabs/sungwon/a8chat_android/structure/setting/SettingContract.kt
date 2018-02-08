@@ -1,7 +1,5 @@
 package com.phdlabs.sungwon.a8chat_android.structure.setting
 
-import android.widget.ImageView
-import com.phdlabs.sungwon.a8chat_android.model.media.Media
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseController
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseView
 
@@ -26,8 +24,8 @@ interface SettingContract {
 
         }
         interface Controller: BaseController{
-            fun getMediaList(): MutableList<Media>
-            fun getIVList(): MutableList<ImageView>
+//            fun getMediaList(): MutableList<Media>
+//            fun getIVList(): MutableList<ImageView>
         }
     }
 }

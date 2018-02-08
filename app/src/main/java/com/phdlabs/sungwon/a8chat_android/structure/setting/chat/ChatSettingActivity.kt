@@ -5,6 +5,8 @@ import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.model.user.User
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.structure.setting.SettingContract
+import com.phdlabs.sungwon.a8chat_android.structure.setting.bottomtabfragments.MediaSettingFragment
+import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import kotlinx.android.synthetic.main.activity_settings_chat.*
 
 /**
@@ -18,6 +20,8 @@ class ChatSettingActivity: CoreActivity(), SettingContract.Chat.View{
 
     override fun contentContainerId(): Int = R.id.asc_fragment_container
 
+    private var mChatName = ""
+    private var mRoomId = 0
     private var mUserId = 0
     private var mUser : User?
 
@@ -28,6 +32,9 @@ class ChatSettingActivity: CoreActivity(), SettingContract.Chat.View{
     override fun onStart() {
         super.onStart()
         ChatSettingController(this)
+        mChatName = intent.getStringExtra(Constants.IntentKeys.CHAT_NAME)
+        mRoomId = intent.getIntExtra(Constants.IntentKeys.ROOM_ID, 0)
+        mUserId = intent.getIntExtra(Constants.IntentKeys.PARTICIPANT_ID, 0)
         controller.start()
         setUpViews()
         setUpTabs()
@@ -50,7 +57,7 @@ class ChatSettingActivity: CoreActivity(), SettingContract.Chat.View{
     }
 
     private fun setUpViews(){
-        setToolbarTitle("asdfgh"/*mUser.name*/)
+        setToolbarTitle(mChatName)
         showBackArrow(R.drawable.ic_back)
     }
 
@@ -58,7 +65,7 @@ class ChatSettingActivity: CoreActivity(), SettingContract.Chat.View{
         asc_bottomnav.setOnNavigationItemSelectedListener { item ->
             when (item.itemId){
                 R.id.mst_media -> {
-                    Toast.makeText(this, "gurp", Toast.LENGTH_SHORT).show()
+                    replaceFragment(MediaSettingFragment.newInstance(), false)
                 }
                 R.id.mst_file -> {
                     Toast.makeText(this, "gurp", Toast.LENGTH_SHORT).show()
@@ -66,6 +73,7 @@ class ChatSettingActivity: CoreActivity(), SettingContract.Chat.View{
             }
             true
         }
+        asc_bottomnav.selectedItemId = R.id.mst_media
     }
 
     private fun setUpClickers(){
@@ -95,7 +103,7 @@ class ChatSettingActivity: CoreActivity(), SettingContract.Chat.View{
         }
     }
 
-    public fun updateMenuTitle(title1: String?, title2: String?){
+    fun updateMenuTitle(title1: String?, title2: String?){
         val leftTab = asc_bottomnav.menu.findItem(R.id.mst_media)
         val rightTab = asc_bottomnav.menu.findItem(R.id.mst_file)
         title1.let {

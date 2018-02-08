@@ -13,6 +13,7 @@ import io.realm.RealmList
 import io.realm.RealmObject
 import io.realm.annotations.Ignore
 import io.realm.annotations.RealmClass
+import java.util.*
 
 /**
  * Created by JPAM on 1/31/2018
@@ -135,7 +136,7 @@ open class Message : RealmObject() {
 
     @SerializedName("createdAt")
     @Expose
-    var createdAt: String? = null
+    var createdAt: Date? = null
 
     @SerializedName("post")
     @Expose
