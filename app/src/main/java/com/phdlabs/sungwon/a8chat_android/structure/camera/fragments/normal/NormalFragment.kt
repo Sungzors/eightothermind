@@ -843,6 +843,7 @@ class NormalFragment() : CameraBaseFragment() {
                             val displaySize: Pair<Int, Int> = CameraControl.instance.getScreenSize(activity!!)
                             val compressedFile = File(CameraControl.instance.compressFile(mFile.absolutePath, displaySize.first, displaySize.second, mFacing))
                             activity?.getImageFilePath(compressedFile.absolutePath)
+                            System.gc()
                         }
                         unlockFocus()
                     }

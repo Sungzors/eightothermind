@@ -1,5 +1,7 @@
 package com.phdlabs.sungwon.a8chat_android.structure.camera.editing
 
+import android.app.Activity
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.os.Build
@@ -8,12 +10,15 @@ import android.support.v4.content.ContextCompat
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.DeviceInfo
+import com.phdlabs.sungwon.a8chat_android.utility.SuffixDetector
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
 import com.squareup.picasso.Picasso
 import java.io.File
 
 /**
  * Created by paix on 1/15/18.
+ * [EditingActivityController] manages business logic
+ * for [EditingActivity], including [PhotoEditorSDK]
  */
 class EditingActivityController(val mView: EditingContract.View) : EditingContract.Controller {
 
@@ -57,6 +62,7 @@ class EditingActivityController(val mView: EditingContract.View) : EditingContra
     override fun loadImagePreview(filePath: String?) {
 
         filePath?.let {
+            //Load Image Preview
             imageFilePath = it
             if (DeviceInfo.INSTANCE.isWarningDevice(Build.MODEL)) {
                 Picasso.with(mView.getContext())
@@ -74,9 +80,16 @@ class EditingActivityController(val mView: EditingContract.View) : EditingContra
     /*Save file*/
     override fun saveImageToGallery() {
         imageFilePath.let {
-            mView.getContext()?.let {
-                CameraControl.instance.addToGallery(it, imageFilePath)
-                mView.feedback("photo saved to gallery")
+            mView.activity?.let {
+                CameraControl.instance.addToGallery(
+                        it,
+                        mView.getPhotoEditor().saveImageWithSuffix(
+                                "8",
+                                CameraControl.instance.mediaFileNaming())
+                )
+                it.setResult(Activity.RESULT_OK)
+                //Finish Activity
+                it.finish()
             }
         }
     }

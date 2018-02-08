@@ -1,5 +1,7 @@
 package com.phdlabs.sungwon.a8chat_android.structure.camera
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
@@ -33,6 +35,8 @@ class CameraActivity : CoreActivity(), CameraContract.View, TabLayout.OnTabSelec
 
     /*Properties*/
     var currentFragment: Fragment? = null
+
+    override var activity: CameraActivity = this
 
     /*LifeCycle*/
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -113,13 +117,12 @@ class CameraActivity : CoreActivity(), CameraContract.View, TabLayout.OnTabSelec
     /*Camera Control*/
     override fun getCameraControl(): CameraControlView = cam_control
 
-    override fun getCameraCloseControl(): CameraCloseView  = cam_close_control
+    override fun getCameraCloseControl(): CameraCloseView = cam_close_control
 
     /*Camera actions*/
     override fun onClick(p0: View?) {
         when (p0) {
             iv_camera_action -> {
-                //Toast.makeText(this, "Take photo", Toast.LENGTH_SHORT).show()
                 showProgress()
                 controller.takePhoto(cam_view_pager)
             }
@@ -155,5 +158,18 @@ class CameraActivity : CoreActivity(), CameraContract.View, TabLayout.OnTabSelec
     }
 
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == Constants.CameraIntents.EDITING_REQUEST_CODE) {
+                if (cam_view_pager.adapter != null) {
+                    val adapter = cam_view_pager.adapter as CameraPagerAdapter
+                    adapter.refreshCameraRoll()
+                }
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data)
+        }
+    }
 
 }

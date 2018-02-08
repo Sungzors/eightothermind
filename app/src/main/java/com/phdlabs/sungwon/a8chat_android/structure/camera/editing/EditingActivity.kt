@@ -1,6 +1,8 @@
 package com.phdlabs.sungwon.a8chat_android.structure.camera.editing
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.Rect
@@ -8,7 +10,9 @@ import android.graphics.Typeface
 import android.graphics.drawable.LayerDrawable
 import android.graphics.drawable.ShapeDrawable
 import android.graphics.drawable.shapes.OvalShape
+import android.net.Uri
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -18,10 +22,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.PopupWindow
-import android.widget.TextView
+import android.widget.*
 import com.ahmedadeltito.photoeditorsdk.OnPhotoEditorSDKListener
 import com.ahmedadeltito.photoeditorsdk.PhotoEditorSDK
 import com.ahmedadeltito.photoeditorsdk.ViewType
@@ -30,11 +31,15 @@ import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseRecyclerAdapter
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseViewHolder
+import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
+import com.theartofdev.edmodo.cropper.CropImage
 import kotlinx.android.synthetic.main.activity_camera_preview.*
 import kotlinx.android.synthetic.main.view_camera_control_close.*
 import kotlinx.android.synthetic.main.view_camera_control_editing.*
 import kotlinx.android.synthetic.main.view_camera_control_save.*
 import kotlinx.android.synthetic.main.view_camera_control_send.*
+import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  * Created by paix on 1/15/18.
@@ -107,6 +112,25 @@ class EditingActivity : CoreActivity(),
         } else {
 
             super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            val result: CropImage.ActivityResult = CropImage.getActivityResult(data)
+            if (resultCode == Activity.RESULT_OK) {
+                //Complete filepath
+                imgFilePath = result.uri.toString()
+                //File path for displaying image with picasso
+                val resultUri = result.uri.toString().substring(7)
+                //Load image in UI
+                controller.loadImagePreview(resultUri)
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                //Error
+                showError(result.error.localizedMessage)
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data)
         }
     }
 
@@ -333,7 +357,21 @@ class EditingActivity : CoreActivity(),
                                 Constants.AppPermissions.WRITE_EXTERNAL) != PackageManager.PERMISSION_GRANTED) {
                     controller.requestStoragePermissions()
                 } else {
-                    controller.saveImageToGallery()
+                    //Wrap image with content
+                    updateView(View.GONE)
+                    val layoutParams: RelativeLayout.LayoutParams = RelativeLayout.LayoutParams(
+                            RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT)
+                    layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE)
+                    var time = object : CountDownTimer(1000, 500) {
+                        override fun onFinish() {
+                            controller.saveImageToGallery()
+                        }
+
+                        override fun onTick(p0: Long) {
+                            //TODO: Show progress
+                        }
+
+                    }.start()
                 }
             }
         /*Add Text*/
@@ -342,7 +380,9 @@ class EditingActivity : CoreActivity(),
             }
         /*Crop Image*/
             ll_camera_crop -> {
-                //todo: crop image
+                CropImage
+                        .activity(Uri.parse("file://" + imgFilePath))
+                        .start(this)
             }
         /*Add Drawing*/
             ll_camera_draw -> {
@@ -421,14 +461,6 @@ class EditingActivity : CoreActivity(),
     }
 
     /*Utilities*/
-    override fun getScreenSize(): Pair<Int, Int> {
-        val displayMetrics = DisplayMetrics()
-        windowManager.defaultDisplay.getMetrics(displayMetrics)
-        photo_edit_iv.maxWidth = displayMetrics.widthPixels
-        photo_edit_iv.maxHeight = displayMetrics.heightPixels
-        return Pair(displayMetrics.widthPixels, displayMetrics.heightPixels)
-    }
-
     override fun feedback(message: String) {
         showToast(message)
     }

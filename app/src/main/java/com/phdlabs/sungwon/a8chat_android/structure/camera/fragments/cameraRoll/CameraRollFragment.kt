@@ -37,7 +37,7 @@ class CameraRollFragment : CameraBaseFragment(),
         View.OnClickListener {
 
     /*Properties*/
-    private lateinit var mAdapter: BaseRecyclerAdapter<GalleryPhoto, BaseViewHolder>
+    private var mAdapter: BaseRecyclerAdapter<GalleryPhoto, BaseViewHolder>? = null
     private var mGalleryPhotos: ArrayList<GalleryPhoto> = ArrayList()
 
     /*Companion*/
@@ -179,12 +179,17 @@ class CameraRollFragment : CameraBaseFragment(),
                 }
             }
         }
-        mAdapter.setItems(mGalleryPhotos)
-        //mAdapter.notifyDataSetChanged()
+        mAdapter?.setItems(mGalleryPhotos)
         val gridLayoutManager = GridLayoutManager(context, 3)
         cr_recyclerView.layoutManager = gridLayoutManager
         cr_recyclerView.adapter = mAdapter
 
+    }
+
+    fun refreshRecycler() {
+        if(!loaderManager.hasRunningLoaders()) {
+            loaderManager.initLoader(0, null, this).forceLoad()
+        }
     }
 
     /**

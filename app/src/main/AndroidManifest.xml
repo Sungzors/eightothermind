@@ -83,6 +83,10 @@
         <activity
             android:name=".structure.setting.chat.ChatSettingActivity"
             android:screenOrientation="portrait"/>
+
+        <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:theme="@style/Base.Theme.AppCompat"/>
+
         <!--Photos & Images File Provider-->
         <provider
             android:name=".utility.camera.PhotoFileProvider"

@@ -19,6 +19,8 @@ interface CameraContract {
         fun getCameraCloseControl(): CameraCloseView
         /*Flash UI*/
         fun flashFeedback(isFLashOn: Boolean)
+        /*Activity*/
+        var activity:CameraActivity
     }
 
     interface Controller : BaseController {

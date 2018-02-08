@@ -18,9 +18,6 @@ interface EditingContract {
         fun getPreviewLayout(): ImageView
         fun getPhotoEditor(): PhotoEditorSDK
 
-        /*Window manager screen size*/
-        fun getScreenSize(): Pair<Int, Int>
-
         /*Toast*/
         fun feedback(message: String)
 

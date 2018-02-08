@@ -117,6 +117,7 @@ dependencies {
 
     //Camera
     compile 'fr.avianey.com.viewpagerindicator:library:2.4.1@aar'
+    compile 'com.theartofdev.edmodo:android-image-cropper:2.6.0'
     compile project(':photoeditorsdk')
 
     //Wearables

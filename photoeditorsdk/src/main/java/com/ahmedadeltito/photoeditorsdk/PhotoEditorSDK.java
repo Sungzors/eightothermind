@@ -195,6 +195,8 @@ public class PhotoEditorSDK implements MultiTouchListener.OnMultiTouchListener {
                     Log.d("PhotoEditorSDK", "Failed to create directory");
                 }
             }
+            //Check for Suffix
+
             // Create a media file name
             selectedOutputPath = mediaStorageDir.getPath() + File.separator + imageName;
             Log.d("PhotoEditorSDK", "selected camera path " + selectedOutputPath);
@@ -211,6 +213,42 @@ public class PhotoEditorSDK implements MultiTouchListener.OnMultiTouchListener {
                 e.printStackTrace();
             }
         }
+
+
+        return selectedOutputPath;
+    }
+
+    public String saveImageWithSuffix(String folderName, String imageName) {
+        String selectedOutputPath = "";
+        if (isSDCARDMounted()) {
+            File mediaStorageDir = new File(
+                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), folderName);
+            // Create a storage directory if it does not exist
+            if (!mediaStorageDir.exists()) {
+                if (!mediaStorageDir.mkdirs()) {
+                    Log.d("PhotoEditorSDK", "Failed to create directory");
+                }
+            }
+            //Check for Suffix
+
+            // Create a media file name
+            selectedOutputPath = mediaStorageDir.getPath() + File.separator + imageName + ".jpeg";
+            Log.d("PhotoEditorSDK", "selected camera path " + selectedOutputPath);
+            File file = new File(selectedOutputPath);
+            try {
+                FileOutputStream out = new FileOutputStream(file);
+                if (parentView != null) {
+                    parentView.setDrawingCacheEnabled(true);
+                    parentView.getDrawingCache().compress(Bitmap.CompressFormat.JPEG, 80, out);
+                }
+                out.flush();
+                out.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+
         return selectedOutputPath;
     }
 
