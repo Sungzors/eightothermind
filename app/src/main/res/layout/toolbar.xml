@@ -1,22 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.Toolbar
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/toolbar"
     android:layout_width="match_parent"
     android:layout_height="40dp"
     android:background="@color/halftransparent"
     tools:ignore="MissingPrefix">
 
-    <!--Profile Picture View-->
-    <ImageView
-        android:id="@+id/toolbar_left_action"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginEnd="15dp"
-        android:layout_marginStart="15dp"
-        android:textColor="@color/white"/>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:id="@+id/toolbar_left_action_container">
+        <!--Profile Picture View-->
+        <ImageView
+            android:id="@+id/toolbar_left_action"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginStart="15dp"
+            android:layout_gravity="center"
+            android:textColor="@color/white" />
+    </LinearLayout>
+
 
     <!--Toolbar title-->
     <TextView
@@ -24,10 +30,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:textColor="@color/black"
-        android:textSize="14sp"
+        android:text="Title"
         android:textAlignment="center"
-        android:text="Title"/>
+        android:textColor="@color/black"
+        android:textSize="14sp" />
 
     <LinearLayout
         android:id="@+id/toolbar_title_double_container"
@@ -36,24 +42,26 @@
         android:layout_gravity="center"
         android:orientation="vertical"
         android:visibility="gone">
+
         <TextView
             android:id="@+id/toolbar_title_double_top"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:textColor="@color/black"
+            android:layout_marginTop="2dp"
             android:text="asdfasdf"
-            android:textAlignment="center"/>
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="14sp" />
+
         <TextView
             android:id="@+id/toolbar_title_double_bottom"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="10sp"
-            android:textColor="@color/black"
             android:text="asdfasdfasdfasdf"
-            android:textAlignment="center"/>
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="10sp" />
     </LinearLayout>
-
 
 
     <TextView
@@ -62,8 +70,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical|end"
         android:layout_marginEnd="15dp"
-        android:textColor="@color/colorPrimary"
-        android:visibility="gone"/>
+        android:textColor="@color/black"
+        android:visibility="gone"
+        android:layout_marginBottom="3dp"/>
 
     <ImageView
         android:id="@+id/toolbar_right_picture"
@@ -71,7 +80,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical|end"
         android:layout_marginEnd="15dp"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
 
 </android.support.v7.widget.Toolbar>

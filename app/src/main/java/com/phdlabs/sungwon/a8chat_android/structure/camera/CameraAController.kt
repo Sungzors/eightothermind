@@ -4,9 +4,8 @@ import android.content.Intent
 import android.support.design.widget.TabLayout
 import android.support.v4.view.ViewPager
 import android.view.View
-import com.phdlabs.sungwon.a8chat_android.structure.camera.adapters.CameraPagerAdapter
 import com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.normal.NormalFragment
-import com.phdlabs.sungwon.a8chat_android.structure.camera.preview.PreviewActivity
+import com.phdlabs.sungwon.a8chat_android.structure.camera.editing.EditingActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 
 /**
@@ -59,6 +58,15 @@ class CameraAController(val mView: CameraContract.View) : CameraContract.Control
             } else {
                 mView.getCameraControl().visibility = View.GONE
             }
+            /**
+             * Hide close controls in the [CameraRollFragment] as they are embeded
+             * within the toolbar
+             * */
+            if (it.position.equals(Constants.CameraPager.CAMERA_ROLL)) {
+                mView.getCameraCloseControl().visibility = View.GONE
+            } else {
+                mView.getCameraCloseControl().visibility = View.VISIBLE
+            }
         }
     }
 
@@ -90,11 +98,11 @@ class CameraAController(val mView: CameraContract.View) : CameraContract.Control
         }
     }
 
-    /*Start PreviewActivity*/
+    /*Start EditingActivity*/
     override fun startPreviewActivity(imageFilePath: String?) {
-        val intent = Intent(mView.getContext(), PreviewActivity::class.java)
+        val intent = Intent(mView.getContext(), EditingActivity::class.java)
         intent.putExtra(Constants.CameraIntents.IMAGE_FILE_PATH, imageFilePath)
-        mView.getContext()?.startActivity(intent)
+        mView.activity.startActivityForResult(intent, Constants.CameraIntents.EDITING_REQUEST_CODE)
     }
 
 }

@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
 import android.support.v4.content.ContextCompat
+import android.util.DisplayMetrics
 import android.util.Size
 import android.util.SparseIntArray
 import android.view.*
@@ -204,8 +205,8 @@ class NormalFragment() : CameraBaseFragment() {
         var ORIENTATIONS: SparseIntArray = SparseIntArray()
 
         fun addOrientations() {
-            ORIENTATIONS.append(Surface.ROTATION_0, 90)
-            ORIENTATIONS.append(Surface.ROTATION_90, 0)
+            ORIENTATIONS.append(Surface.ROTATION_0, 0)
+            ORIENTATIONS.append(Surface.ROTATION_90, 90)
             ORIENTATIONS.append(Surface.ROTATION_180, 270)
             ORIENTATIONS.append(Surface.ROTATION_270, 180)
         }
@@ -249,7 +250,7 @@ class NormalFragment() : CameraBaseFragment() {
             //collect supported resolutions that are at least as big as the preview surface
             val bigEnough: ArrayList<Size> = ArrayList<Size>()
             //collect supported resolutions that are smaller than the preview surface
-            val smallEnough: ArrayList<Size> = ArrayList<Size>()
+            val notBigEnough: ArrayList<Size> = ArrayList<Size>()
             //Width & Height
             val width: Int = aspectRatio.width
             val height: Int = aspectRatio.height
@@ -260,14 +261,14 @@ class NormalFragment() : CameraBaseFragment() {
                                 it.height >= textureViewHeight) {
                             bigEnough.add(it)
                         } else {
-                            smallEnough.add(it)
+                            notBigEnough.add(it)
                         }
                     }
             //Pick the smallest for the smallEnough
             if (bigEnough.size > 0) {
                 return Collections.min(bigEnough, CompareSizesByArea())
-            } else if (smallEnough.size > 0) {
-                return Collections.max(smallEnough, CompareSizesByArea())
+            } else if (notBigEnough.size > 0) {
+                return Collections.max(notBigEnough, CompareSizesByArea())
             } else {
                 return choices[0]
             }
@@ -482,21 +483,22 @@ class NormalFragment() : CameraBaseFragment() {
 
                 /* Find out if we need to swap dimension to get the preview size relative to sensor coordinate.*/
                 val displayRotation = activity?.windowManager?.defaultDisplay?.rotation
-                val sensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION)
+                mSensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION)
                 var swappedDimensions = false
                 when (displayRotation) {
                     Surface.ROTATION_0 -> {/*Do nothing*/
                     }
-                    Surface.ROTATION_180 -> if (sensorOrientation == 90 || sensorOrientation == 270) {
+                    Surface.ROTATION_180 -> if (mSensorOrientation == 90 || mSensorOrientation == 270) {
                         swappedDimensions = true
                     }
                     Surface.ROTATION_90 -> {/*Do Nothing*/
                     }
-                    Surface.ROTATION_270 -> if (sensorOrientation == 0 || sensorOrientation == 180) {
+                    Surface.ROTATION_270 -> if (mSensorOrientation == 0 || mSensorOrientation == 180) {
                         swappedDimensions = true
                     }
                 }
 
+                //AutoFitTexture display size
                 val displaySize = Point()
                 activity?.windowManager?.defaultDisplay?.getSize(displaySize)
 
@@ -533,6 +535,7 @@ class NormalFragment() : CameraBaseFragment() {
                     mTextureView.setAspectRatio(
                             mPreviewSize.width, mPreviewSize.height)
                 } else {
+
                     mTextureView.setAspectRatio(
                             mPreviewSize.height, mPreviewSize.width)
                 }
@@ -545,7 +548,7 @@ class NormalFragment() : CameraBaseFragment() {
         } catch (e: NullPointerException) {
             // Currently an NPE is thrown when the Camera2API is used but not supported on the
             // device this code runs.
-            //ErrorDialog.newInstance(getString(R.string.camera_error)).show(childFragmentManager, FRAGMENT_DIALOG)
+            println("Error while setting up camera outputs: " + e.printStackTrace())
         }
 
     }
@@ -816,11 +819,14 @@ class NormalFragment() : CameraBaseFragment() {
                 //The CaptureRequest.Builder used to take a picture
                 val captureBuilder: CaptureRequest.Builder? = mCameraDevice?.
                         createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE)?.apply {
+
                     addTarget(mImageReader?.surface)
+
                     /*Sensor orientation is 90 for most devices, or 270 for some devices*/
-                    val rot = (ORIENTATIONS.get(rotation) + mSensorOrientation + 270) % 360
-                    set(CaptureRequest.JPEG_ORIENTATION,
-                            rot)
+                    val rot = (ORIENTATIONS.get(rotation) + mSensorOrientation + 360) % 360
+
+                    set(CaptureRequest.JPEG_ORIENTATION, rot)
+
                     set(CaptureRequest.CONTROL_AF_MODE,
                             CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE)
                 }?.also { setAutoFlash(it) }
@@ -837,6 +843,7 @@ class NormalFragment() : CameraBaseFragment() {
                             val displaySize: Pair<Int, Int> = CameraControl.instance.getScreenSize(activity!!)
                             val compressedFile = File(CameraControl.instance.compressFile(mFile.absolutePath, displaySize.first, displaySize.second, mFacing))
                             activity?.getImageFilePath(compressedFile.absolutePath)
+                            System.gc()
                         }
                         unlockFocus()
                     }

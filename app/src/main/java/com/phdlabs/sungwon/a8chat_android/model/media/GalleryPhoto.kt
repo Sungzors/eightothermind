@@ -12,15 +12,17 @@ import android.os.Parcelable
 class GalleryPhoto() : Parcelable {
 
     /*Properties*/
-    var mFullPath:String? = null
+    var mFullPath: String? = null
     var mThumbnailPath: String? = null
     var mDate: String? = null
+    var mOrientation: String? = null
 
     /*Constructors*/
-    constructor(fullPath: String, thumbnailPath: String?, date: String?): this() {
+    constructor(fullPath: String, thumbnailPath: String?, date: String?, orientation: String?) : this() {
         mFullPath = fullPath
         mThumbnailPath = thumbnailPath
         mDate = date
+        mOrientation = orientation
     }
 
     protected constructor(parcel: Parcel) : this() {
@@ -38,6 +40,10 @@ class GalleryPhoto() : Parcelable {
         mDate?.let {
             parcel.writeString(it)
         }
+        //Orientation path
+        mOrientation?.let {
+            parcel.writeString(it)
+        }
     }
 
     override fun describeContents(): Int = 0
@@ -45,12 +51,11 @@ class GalleryPhoto() : Parcelable {
     /*Companion object*/
     companion object CREATOR : Parcelable.Creator<GalleryPhoto> {
 
-        fun create(thumbnailPath: String?,fullPath: String, date: String): GalleryPhoto = GalleryPhoto(fullPath, thumbnailPath, date)
+        fun create(thumbnailPath: String?, fullPath: String, date: String, orientation: String?):
+                GalleryPhoto = GalleryPhoto(fullPath, thumbnailPath, date, orientation)
 
         override fun createFromParcel(parcel: Parcel): GalleryPhoto = GalleryPhoto(parcel)
 
-        override fun newArray(size: Int): Array<GalleryPhoto?> {
-            return arrayOfNulls(size)
-        }
+        override fun newArray(size: Int): Array<GalleryPhoto?> = arrayOfNulls(size)
     }
 }

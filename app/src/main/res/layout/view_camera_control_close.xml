@@ -1,35 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cc_close_back"
     android:layout_width="80dp"
     android:layout_height="75dp"
     android:layout_gravity="top"
     android:orientation="horizontal"
-    tools:background="@android:color/black"
-    android:id="@+id/cc_close_back">
+    tools:background="@android:color/transparent">
 
     <!--Close camera-->
     <ImageView
         android:id="@+id/iv_camera_close"
-        android:layout_width="15dp"
-        android:layout_height="15dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_gravity="start|center"
         android:layout_marginEnd="10dp"
-        android:layout_marginStart="35dp"
+        android:layout_marginStart="15dp"
         android:background="@color/transparent"
         android:contentDescription="@string/camera_flash"
+        android:scaleType="center"
         android:src="@drawable/camera_close" />
 
     <!--Back-->
     <ImageView
         android:id="@+id/iv_camera_back"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_gravity="start|center"
         android:layout_marginEnd="10dp"
-        android:layout_marginStart="31dp"
+        android:layout_marginStart="15dp"
         android:background="@color/transparent"
         android:contentDescription="@string/camera_flash"
+        android:scaleType="center"
         android:src="@drawable/camera_back"
         android:visibility="gone" />
 

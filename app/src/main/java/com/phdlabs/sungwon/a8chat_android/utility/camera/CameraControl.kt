@@ -538,7 +538,7 @@ class CameraControl private constructor() {
             val matrixMirrorY = Matrix()
             matrixMirrorY.setValues(mirrorY)
             matrixPreRotateRight.postConcat(matrixMirrorY)
-            matrixRotateRight.preRotate(270f)
+            //matrixRotateRight.preRotate(270f) //Unwanted behavior
         }
         val bm: Bitmap = BitmapFactory.decodeFile(filePath, bitmapOptions)
         return Bitmap.createBitmap(bm, 0, 0, bm.width, bm.height, matrixPreRotateRight, true)
@@ -629,15 +629,19 @@ class CameraControl private constructor() {
      * the current photo taken by the user
      * */
     fun temporaryFile(): File {
-        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-        val imageFileName = "JPEG_" + timeStamp + "_"
         val storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
         val file = File.createTempFile(
-                imageFileName,
-                ".jpg",
+                mediaFileNaming(),
+                ".jpeg",
                 storageDir
         )
         return file
+    }
+
+    fun mediaFileNaming(): String {
+        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val imageFileName = "JPEG_" + timeStamp + "_"
+        return imageFileName
     }
 
     /**
