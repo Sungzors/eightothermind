@@ -8,21 +8,12 @@
     android:background="@color/halftransparent"
     tools:ignore="MissingPrefix">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:id="@+id/toolbar_left_action_container">
-        <!--Profile Picture View-->
-        <ImageView
-            android:id="@+id/toolbar_left_action"
-            android:layout_width="15dp"
-            android:layout_height="15dp"
-            android:layout_marginEnd="15dp"
-            android:layout_marginStart="15dp"
-            android:layout_gravity="center"
-            android:textColor="@color/white" />
-    </LinearLayout>
-
+    <!--Profile Picture View-->
+    <ImageView
+        android:id="@+id/toolbar_left_action"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="15dp"/>
 
     <!--Toolbar title-->
     <TextView
@@ -30,10 +21,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Title"
+        android:text="Titl"
         android:textAlignment="center"
         android:textColor="@color/black"
         android:textSize="14sp" />
+
 
     <LinearLayout
         android:id="@+id/toolbar_title_double_container"
@@ -76,11 +68,12 @@
 
     <ImageView
         android:id="@+id/toolbar_right_picture"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:layout_gravity="center_vertical|end"
         android:layout_marginEnd="15dp"
         android:visibility="gone" />
+
 
 
 </android.support.v7.widget.Toolbar>

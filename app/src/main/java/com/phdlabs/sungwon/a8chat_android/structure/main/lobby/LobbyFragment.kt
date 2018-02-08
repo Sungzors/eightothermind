@@ -9,8 +9,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.phdlabs.sungwon.a8chat_android.R
-import com.phdlabs.sungwon.a8chat_android.model.event.EventsEight
 import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
+import com.phdlabs.sungwon.a8chat_android.model.event.EventsEight
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.phdlabs.sungwon.a8chat_android.structure.channel.mychannel.MyChannelActivity
 import com.phdlabs.sungwon.a8chat_android.structure.chat.ChatActivity
@@ -152,12 +152,10 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
                 "channel" -> message.text = data.message!!.channelInfo!!.name
                 "location" -> message.text = data.message!!.locationInfo!!.streetAddress
             }
-            val df = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-            val createdAt = df.parse(data.message?.createdAt)
-            if (Date().time.minus(createdAt.time) >= 24 * 60 * 60 * 1000) {
-                time.text = SimpleDateFormat("EEE").format(data.message!!.createdAt)
+            if (Date().time.minus(data.last_activity!!.time) >= 24 * 60 * 60 * 1000) {
+                time.text = SimpleDateFormat("EEE").format(data.last_activity)
             } else {
-                time.text = SimpleDateFormat("h:mm aaa").format(data.message!!.createdAt)
+                time.text = SimpleDateFormat("h:mm aaa").format(data.last_activity)
             }
         } else {
             message.text = ""
@@ -265,6 +263,7 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
                             intent.putExtra(Constants.IntentKeys.CHAT_NAME, room.user!!.first_name + " " + room.user!!.last_name)
                             intent.putExtra(Constants.IntentKeys.PARTICIPANT_ID, room.user!!.userRooms!!.userId)
                             intent.putExtra(Constants.IntentKeys.ROOM_ID, room.id)
+                            intent.putExtra(Constants.IntentKeys.CHAT_PIC, room.user!!.avatar)
                             startActivity(intent)
                         }
                     }
@@ -295,10 +294,8 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
                     "channel" -> message.text = data.message!!.channelInfo!!.name
                     "location" -> message.text = data.message!!.locationInfo!!.streetAddress
                 }
-                val df = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-                data.message?.createdAt?.let {
-                    val createdAt = df.parse(it)
-                    if (Date().time.minus(createdAt.time) >= 24 * 60 * 60 * 1000) {
+                data.last_activity?.let {
+                    if (Date().time.minus(it.time) >= 24 * 60 * 60 * 1000) {
                         time.text = SimpleDateFormat("EEE").format(it)
                     } else {
                         time.text = SimpleDateFormat("h:mm aaa").format(it)

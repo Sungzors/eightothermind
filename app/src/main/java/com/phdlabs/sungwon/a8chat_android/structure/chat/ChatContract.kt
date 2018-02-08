@@ -30,7 +30,7 @@ interface ChatContract {
         fun destroy()
 
         fun getMessages() : MutableList<Message>
-
+        fun getRoomId() : Int
         fun getUserId(callback: (Int?) -> Unit)
 
         fun setMessageObject(position: Int, message: Message)

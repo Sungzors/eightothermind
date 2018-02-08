@@ -16,6 +16,7 @@ import com.phdlabs.sungwon.a8chat_android.structure.application.Application
 import com.phdlabs.sungwon.a8chat_android.structure.channel.mychannel.MyChannelActivity
 import com.phdlabs.sungwon.a8chat_android.structure.channel.mychannels.MyChannelsListActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
+import com.phdlabs.sungwon.a8chat_android.structure.setting.chat.ChatSettingActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseRecyclerAdapter
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseViewHolder
@@ -24,6 +25,7 @@ import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_chat.*
+import kotlinx.android.synthetic.main.toolbar_main.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -35,7 +37,9 @@ class ChatActivity: CoreActivity(), ChatContract.View{
 
     override lateinit var controller: ChatContract.Controller
     private lateinit var mAdapter: BaseRecyclerAdapter<Message, BaseViewHolder>
-    private var mUserId: Int? = null
+    private var mChatPic: String = ""
+    private var mChatName: String = ""
+    private var mUserId: Int = -1
     private var mParticipantId: Int = 8
 
     override fun layoutId() = R.layout.activity_chat
@@ -46,10 +50,12 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         super.onCreate(savedInstanceState)
         showProgress()
         ChatController(this)
-        val chatName = intent.getStringExtra(Constants.IntentKeys.CHAT_NAME)
+        mChatPic = intent.getStringExtra(Constants.IntentKeys.CHAT_PIC)
+        mChatName = intent.getStringExtra(Constants.IntentKeys.CHAT_NAME)
         mParticipantId = intent.getIntExtra(Constants.IntentKeys.PARTICIPANT_ID, 8)
-        setToolbarTitle(chatName)
+        setToolbarTitle(mChatName)
         showBackArrow(R.drawable.ic_back)
+        showRightImageToolbar(mChatPic)
         controller.start()
         controller.getUserId { id ->
             id?.let {
@@ -69,6 +75,14 @@ class ChatActivity: CoreActivity(), ChatContract.View{
     override fun onResume() {
         super.onResume()
         controller.resume()
+
+        toolbar_right_picture.setOnClickListener {
+            val intent = Intent(this, ChatSettingActivity::class.java)
+            intent.putExtra(Constants.IntentKeys.CHAT_NAME, mChatName)
+            intent.putExtra(Constants.IntentKeys.PARTICIPANT_ID, mParticipantId)
+            intent.putExtra(Constants.IntentKeys.ROOM_ID, controller.getRoomId())
+            startActivity(intent)
+        }
     }
 
     override fun onPause() {
@@ -207,10 +221,9 @@ class ChatActivity: CoreActivity(), ChatContract.View{
 //                val a = mAdapter.getItem(i)
 //                val b = mAdapter.getItem(position)
 //                val c = controller.getMessages()[position].createdAt!!.time.minus(controller.getMessages()[i].createdAt!!.time)
-                val df = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
                 val createdAt: Pair<Date, Date> = Pair(
-                        df.parse(controller.getMessages()[position].createdAt),
-                        df.parse(controller.getMessages()[i].createdAt)
+                        controller.getMessages()[position].createdAt!!,
+                        controller.getMessages()[i].createdAt!!
                 )
                 return (createdAt.first.time.minus(createdAt.second.time) >= 5 * 60 * 1000)
             }
@@ -228,7 +241,7 @@ class ChatActivity: CoreActivity(), ChatContract.View{
 //                val b = mAdapter.getItem(position)
 //                val c = controller.getMessages()[position].createdAt!!.time.minus(controller.getMessages()[i].createdAt!!.time)
                 val df = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-                val createdAt: Pair<Date, Date> = Pair(df.parse(message.createdAt), df.parse(controller.getMessages()[i].createdAt))
+                val createdAt: Pair<Date, Date> = Pair(message.createdAt!!, controller.getMessages()[i].createdAt!!)
                 return (createdAt.first.time.minus(createdAt.second.time)>= 5 * 60 * 1000 )
             }
         }

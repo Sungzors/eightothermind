@@ -62,4 +62,12 @@ open class Media : RealmObject() {
     @Expose
     var createdAt: String? = null
 
+    class Builder(private val media_file: String){
+        fun build(): Media{
+            val media = Media()
+            media.media_file = media_file
+            return media
+        }
+    }
+
 }

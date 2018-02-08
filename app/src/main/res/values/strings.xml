@@ -26,7 +26,9 @@
     <string name="channels_i_follow">Channels I follow</string>
     <string name="my_channels">My Channels</string>
     <string name="type_something">Type Something…</string>
-    <string name="fave_messages">Favorite Messages (%1$)</string>
+    <string name="fave_messages">Favorite Messages (%1$s)</string>
+    <string name="medianum">Media (%1$s)</string>
+    <string name="filenum">File (%1$s)</string>
 
     <!--Camera Control-->
     <string name="pick_image_intent_text">Choose an image</string>
