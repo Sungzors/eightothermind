@@ -37,7 +37,6 @@ class MainActivity: CoreActivity(), MainContract.View{
 
     override fun onResume() {
         super.onResume()
-//        replaceFragment(LobbyFragment.newInstance(), false)
         controller.resume()
     }
 

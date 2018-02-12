@@ -24,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.phdlabs.sungwon.a8chat_android.R;
+import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -111,7 +112,13 @@ public abstract class CoreActivity extends AppCompatActivity {
     public void showRightImageToolbar(int resId) {
         ImageView view = findById(R.id.toolbar_right_picture);
         view.setVisibility(ImageView.VISIBLE);
-        Picasso.with(this).load(resId).into(view);
+        Picasso.with(this).load(resId).transform(new CircleTransform()).into(view);
+    }
+
+    public void showRightImageToolbar(String url){
+        ImageView view = findById(R.id.toolbar_right_picture);
+        view.setVisibility(ImageView.VISIBLE);
+        Picasso.with(this).load(url).transform(new CircleTransform()).placeholder(R.drawable.addphoto).into(view);
     }
 
     public Toolbar getToolbar() {

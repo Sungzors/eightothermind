@@ -45,7 +45,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
 
     //Kotlin
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
     //Android support libraries
     compile "com.android.support:support-annotations:${rootProject.ext.supportLibVersion}"
@@ -101,6 +101,8 @@ dependencies {
     //Data Binding
     kapt 'com.android.databinding:compiler:3.0.1'
 
+
+//    compile 'io.realm:realm-gradle-plugin:4.3.1'
     //Realm Annotations
     kapt "io.realm:realm-annotations:4.3.1"
     kapt "io.realm:realm-annotations-processor:4.3.1"
@@ -122,6 +124,10 @@ dependencies {
 
     //Wearables
     //compile 'com.google.android.gms:play-services-wearable:11.6.2'
+
+    //stetho
+    compile 'com.facebook.stetho:stetho:1.5.0'
+    compile 'com.uphyca:stetho_realm:2.1.0'
 }
 
 //Realm Annotations

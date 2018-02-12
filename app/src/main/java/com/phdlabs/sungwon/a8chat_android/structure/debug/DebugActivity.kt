@@ -1,6 +1,7 @@
 package com.phdlabs.sungwon.a8chat_android.structure.debug
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.db.UserManager
@@ -19,6 +20,7 @@ import io.realm.Realm
 import io.realm.RealmConfiguration
 import io.realm.rx.RealmObservableFactory
 import kotlinx.android.synthetic.main.activity_debug.*
+import java.io.File
 
 /**
  * Created by SungWon on 10/2/2017.
@@ -29,12 +31,14 @@ class DebugActivity : CoreActivity() {
 
     override fun contentContainerId() = 0
 
+    private lateinit var realmConfig: RealmConfiguration
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         /*Realm*/ //TODO: Remove for production, this should be in Application()
         Realm.init(this)
-        val realmConfig: RealmConfiguration = RealmConfiguration.Builder().rxFactory(RealmObservableFactory())
+        realmConfig = RealmConfiguration.Builder().rxFactory(RealmObservableFactory())
                 .deleteRealmIfMigrationNeeded()
                 .build()
         Realm.setDefaultConfiguration(realmConfig)
@@ -86,7 +90,25 @@ class DebugActivity : CoreActivity() {
             startActivity(Intent(this, ChannelShowActivity::class.java))
         }
         ad_sandbox_button.setOnClickListener({
-            //TODO: build sandbox
+            var realm = Realm.getInstance(realmConfig)
+            var exportFile : File? = null
+            try{
+                exportFile = File(this.externalCacheDir, "export.realm")
+                exportFile.delete()
+                realm.writeCopyTo(exportFile)
+            } catch (e : io.realm.internal.IOException){
+                e.printStackTrace()
+            }
+
+            val intent = Intent(Intent.ACTION_SEND)
+            intent.type = "plain/text"
+            intent.putExtra(Intent.EXTRA_EMAIL, "sung@phdlabs.com")
+            intent.putExtra(Intent.EXTRA_SUBJECT, "Hello me duckduckducks")
+            intent.putExtra(Intent.EXTRA_TEXT, "Ducks")
+            val u = Uri.fromFile(exportFile)
+            intent.putExtra(Intent.EXTRA_STREAM, u)
+
+            startActivity(Intent.createChooser(intent, "wut"))
         })
         ad_camera_button.setOnClickListener({
             startActivity(Intent(this, CameraActivity::class.java))

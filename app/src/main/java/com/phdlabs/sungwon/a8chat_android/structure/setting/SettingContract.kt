@@ -18,4 +18,14 @@ interface SettingContract {
             fun setFavorite(isFave: Boolean)
         }
     }
+
+    interface MediaFragment {
+        interface View: BaseView<Controller>{
+
+        }
+        interface Controller: BaseController{
+//            fun getMediaList(): MutableList<Media>
+//            fun getIVList(): MutableList<ImageView>
+        }
+    }
 }

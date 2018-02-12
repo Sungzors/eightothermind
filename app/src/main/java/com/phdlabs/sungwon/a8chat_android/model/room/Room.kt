@@ -10,6 +10,7 @@ import io.realm.RealmObject
 import io.realm.annotations.Ignore
 import io.realm.annotations.PrimaryKey
 import io.realm.annotations.RealmClass
+import java.util.*
 
 /**
  * Created by SungWon on 10/30/2017.
@@ -57,7 +58,7 @@ open class Room() : RealmObject() {
 
     @SerializedName("last_activity")
     @Expose
-    var last_activity: String? = null
+    var last_activity: Date? = null
 
     /*Local Properties*/
     var isRead: Boolean = true
