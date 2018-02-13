@@ -80,6 +80,7 @@ class CameraActivity : CoreActivity(), CameraContract.View, TabLayout.OnTabSelec
     override fun onStop() {
         super.onStop()
         controller.stop()
+        setResult(Activity.RESULT_OK)
     }
 
     /*User Interface*/
