@@ -41,6 +41,14 @@
     <string name="request_camera_permission">Camera permission needed</string>
     <string name="request_write_external_permission">Storage permission needed</string>
     <string name="camera_error">This device doesn\'t support Camera</string>
+    <string name="camera_action">camera_action</string>
+    <string name="camera_flash">camera_flash</string>
+    <string name="camera_flip">camera_flip</string>
+    <string name="camera_preview">cameraPreview</string>
+    <string name="camera_save">cameraSave</string>
+    <string name="camera_send">cameraSend</string>
+    <string name="camerarollimage">CameraRollImage</string>
+    <string name="cameraroll_saved_photo">Saved to gallery</string>
     <!--Camera Editing-->
     <string name="photo_editing">photo editing</string>
     <string name="done">Done</string>
@@ -92,13 +100,6 @@
     <string name="send_money">Send Money</string>
     <string name="clear_conversation">Clear Conversation</string>
     <string name="block_contact">Block Contact</string>
-    <string name="camera_action">camera_action</string>
-    <string name="camera_flash">camera_flash</string>
-    <string name="camera_flip">camera_flip</string>
-    <string name="camera_preview">cameraPreview</string>
-    <string name="camera_save">cameraSave</string>
-    <string name="camera_send">cameraSend</string>
-    <string name="camerarollimage">CameraRollImage</string>
     <string name="share">Share</string>
     <string name="channel_image">channelImage</string>
     <string name="create_a_channel">Create a Channel</string>
