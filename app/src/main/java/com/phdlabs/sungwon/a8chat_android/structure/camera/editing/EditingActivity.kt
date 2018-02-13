@@ -357,21 +357,7 @@ class EditingActivity : CoreActivity(),
                                 Constants.AppPermissions.WRITE_EXTERNAL) != PackageManager.PERMISSION_GRANTED) {
                     controller.requestStoragePermissions()
                 } else {
-                    //Wrap image with content
-                    updateView(View.GONE)
-                    val layoutParams: RelativeLayout.LayoutParams = RelativeLayout.LayoutParams(
-                            RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT)
-                    layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE)
-                    var time = object : CountDownTimer(1000, 500) {
-                        override fun onFinish() {
-                            controller.saveImageToGallery()
-                        }
-
-                        override fun onTick(p0: Long) {
-                            //TODO: Show progress
-                        }
-
-                    }.start()
+                    controller.saveImageToGallery()
                 }
             }
         /*Add Text*/

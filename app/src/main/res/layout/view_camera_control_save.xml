@@ -6,7 +6,7 @@
     android:layout_gravity="start|bottom"
     android:layout_marginBottom="10dp"
     android:orientation="horizontal"
-    tools:background="@android:color/transparent">
+    tools:background="@android:color/black">
 
     <!--SAVE-->
     <LinearLayout
@@ -18,8 +18,8 @@
         <!--Text-->
         <ImageView
             android:id="@+id/iv_camera_save"
-            android:layout_width="25dp"
-            android:layout_height="29dp"
+            android:layout_width="20dp"
+            android:layout_height="24dp"
             android:layout_gravity="start|center"
             android:layout_marginEnd="130dp"
             android:layout_marginStart="25dp"
@@ -32,11 +32,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start|center"
-            android:layout_marginStart="22dp"
+            android:layout_marginStart="23dp"
             android:layout_marginTop="4dp"
             android:text="@string/save"
             android:textColor="#FFFFFF"
-            android:textSize="15sp" />
+            android:textSize="12sp" />
 
     </LinearLayout>
 
@@ -50,14 +50,14 @@
 
         <TextView
             android:id="@+id/clear_all_tv"
-            android:layout_width="25dp"
-            android:layout_height="29dp"
+            android:layout_width="20dp"
+            android:layout_height="24dp"
             android:layout_gravity="start|center"
             android:layout_marginStart="14dp"
             android:gravity="center"
             android:text="@string/ic_clear_all"
             android:textColor="#FFFFFF"
-            android:textSize="25sp" />
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/clear_all_text_tv"
@@ -65,11 +65,11 @@
             android:layout_height="wrap_content"
             android:layout_gravity="start|center"
             android:layout_marginEnd="20dp"
-            android:layout_marginStart="-2dp"
+            android:layout_marginStart="1dp"
             android:layout_marginTop="4dp"
             android:text="@string/clear_all"
             android:textColor="#FFFFFF"
-            android:textSize="15sp" />
+            android:textSize="12sp" />
 
     </LinearLayout>
 
@@ -85,8 +85,8 @@
 
         <ImageView
             android:id="@+id/iv_undo"
-            android:layout_width="20dp"
-            android:layout_height="24dp"
+            android:layout_width="16dp"
+            android:layout_height="20dp"
             android:layout_gravity="start|center"
             android:layout_marginEnd="130dp"
             android:layout_marginStart="25dp"
@@ -102,11 +102,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="20dp"
-            android:layout_marginStart="19dp"
+            android:layout_marginStart="20dp"
             android:layout_marginTop="6dp"
             android:text="@string/undo"
             android:textColor="#FFFFFF"
-            android:textSize="15sp"
+            android:textSize="12sp"
             android:visibility="gone" />
     </LinearLayout>
 

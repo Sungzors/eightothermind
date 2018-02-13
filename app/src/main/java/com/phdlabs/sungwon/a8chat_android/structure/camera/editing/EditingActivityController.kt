@@ -88,8 +88,10 @@ class EditingActivityController(val mView: EditingContract.View) : EditingContra
                                 CameraControl.instance.mediaFileNaming())
                 )
                 it.setResult(Activity.RESULT_OK)
-                //Finish Activity
-                it.finish()
+                //User feedback
+                mView.activity?.resources?.let {
+                    mView.feedback(it.getString(R.string.cameraroll_saved_photo))
+                }
             }
         }
     }

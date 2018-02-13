@@ -9,7 +9,7 @@ import com.phdlabs.sungwon.a8chat_android.structure.core.BaseView
 interface MainContract {
 
     interface View: BaseView<Controller>{
-
+        val activity: MainActivity
     }
 
     interface Controller: BaseController{

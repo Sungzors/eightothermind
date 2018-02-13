@@ -71,7 +71,7 @@ class CameraRollFragment : CameraBaseFragment(),
      * [setupClickListeners] on the buttons
      * */
     private fun setupClickListeners() {
-        toolbar_left_action_container.setOnClickListener(this)
+        toolbar_left_action.setOnClickListener(this)
     }
 
     /**
@@ -224,7 +224,7 @@ class CameraRollFragment : CameraBaseFragment(),
         when (p0) {
 
         /*Back button*/
-            toolbar_left_action_container -> {
+            toolbar_left_action -> {
                 activity?.finish()
             }
         }
