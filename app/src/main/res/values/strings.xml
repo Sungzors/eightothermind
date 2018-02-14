@@ -40,6 +40,7 @@
     <string name="camera_right_tab">Hands Free</string>
     <string name="request_camera_permission">Camera permission needed</string>
     <string name="request_write_external_permission">Storage permission needed</string>
+    <string name="request_read_contacts_permissions">Reading contacts permission needed</string>
     <string name="camera_error">This device doesn\'t support Camera</string>
     <string name="camera_action">camera_action</string>
     <string name="camera_flash">camera_flash</string>
@@ -109,6 +110,8 @@
     <string name="add_event_photo">Add event photo</string>
     <string name="create_event">Create an Event</string>
     <string name="next">Next</string>
+    <string name="my_contacts">My Contacts</string>
+    <string name="contacts">Contacts</string>
 
 
 </resources>

@@ -45,7 +45,7 @@ class PhotoFileProvider : FileProvider() {
                 null,
                 null// Ordered by Date Taken
         )
-        //Extract propper columns
+        //Extract proper columns
         val result: ArrayList<GalleryPhoto> = ArrayList<GalleryPhoto>(cursor.count)
 
         if (cursor.moveToFirst()) {
@@ -81,7 +81,7 @@ class PhotoFileProvider : FileProvider() {
                 null
         )
         if (imageCursor != null && imageCursor.moveToFirst()) {
-            val columnIndex = imageCursor.getColumnIndex(filepathColumn.get(0))
+            val columnIndex = imageCursor.getColumnIndex(filepathColumn[0])
             val filePath = imageCursor.getString(columnIndex)
             imageCursor.close()
             return Uri.parse(filePath)
