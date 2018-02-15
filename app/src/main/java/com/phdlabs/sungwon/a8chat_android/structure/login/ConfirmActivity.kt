@@ -18,6 +18,7 @@ import com.phdlabs.sungwon.a8chat_android.db.EventBusManager
 import com.phdlabs.sungwon.a8chat_android.model.user.User
 import com.phdlabs.sungwon.a8chat_android.model.user.registration.Token
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
+import com.phdlabs.sungwon.a8chat_android.structure.main.MainActivity
 import com.phdlabs.sungwon.a8chat_android.structure.profile.ProfileActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.vicpin.krealmextensions.queryFirst
@@ -62,7 +63,12 @@ class ConfirmActivity : CoreActivity() {
     public fun onEventUIThread(event: ConfirmEvent) {
         if (event.isSuccess) {
             hideProgress()
-            startActivity(Intent(this, ProfileActivity::class.java))
+            if(isRegister){
+                startActivity(Intent(this, ProfileActivity::class.java))
+            } else {
+                startActivity(Intent(this, MainActivity::class.java))
+            }
+
         } else {
             hideProgress()
             Toast.makeText(this, event.errorMessage, Toast.LENGTH_SHORT).show()
