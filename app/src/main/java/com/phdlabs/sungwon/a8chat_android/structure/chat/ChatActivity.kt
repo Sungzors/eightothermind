@@ -50,12 +50,15 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         super.onCreate(savedInstanceState)
         showProgress()
         ChatController(this)
-        mChatPic = intent.getStringExtra(Constants.IntentKeys.CHAT_PIC)
+        intent?.getStringExtra(Constants.IntentKeys.CHAT_PIC)?.let {
+            mChatPic = it
+            showRightImageToolbar(mChatPic)
+        }
         mChatName = intent.getStringExtra(Constants.IntentKeys.CHAT_NAME)
         mParticipantId = intent.getIntExtra(Constants.IntentKeys.PARTICIPANT_ID, 8)
         setToolbarTitle(mChatName)
         showBackArrow(R.drawable.ic_back)
-        showRightImageToolbar(mChatPic)
+        //showRightImageToolbar(mChatPic)
         controller.start()
         controller.getUserId { id ->
             id?.let {
