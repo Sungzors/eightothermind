@@ -10,6 +10,7 @@ import android.view.WindowManager
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.structure.contacts.ContactsActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
+import com.phdlabs.sungwon.a8chat_android.structure.createnew.CreateNewActivity
 import com.phdlabs.sungwon.a8chat_android.structure.main.lobby.LobbyFragment
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import kotlinx.android.synthetic.main.activity_main.*
@@ -103,6 +104,7 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
         }
     }
 
+
     /*On Click*/
     override fun onClick(p0: View?) {
         when (p0) {
@@ -115,8 +117,11 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
         }
     }
 
-    fun setupClickers() {
+    private fun setupClickers() {
         toolbar_left_action.setOnClickListener(this)
+        toolbar_right_picture.setOnClickListener {
+            startActivity(Intent(this, CreateNewActivity::class.java))
+        }
     }
 
 }

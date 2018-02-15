@@ -4,9 +4,9 @@ import android.content.Intent
 import android.widget.EditText
 import com.phdlabs.sungwon.a8chat_android.api.data.ChannelPostData
 import com.phdlabs.sungwon.a8chat_android.model.ChannelShowNest
-import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
 import com.phdlabs.sungwon.a8chat_android.model.media.Media
+import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.structure.application.Application
 import com.phdlabs.sungwon.a8chat_android.structure.channel.create.ChannelCreateActivity
 import com.phdlabs.sungwon.a8chat_android.structure.channel.mychannel.MyChannelActivity
@@ -28,10 +28,11 @@ interface ChannelContract {
             /*Media*/
             fun getMedia(media: Media)
             /*LifeCycle*/
-            fun onCreateChannel(chanId: Int?, chanName: String?, roomId: Int?)
+            fun onCreateChannel(chanId: Int?, chanName: String?, roomId: Int?, ownerId: Int?)
         }
 
         interface Controller : BaseController {
+            fun getUserId(callback: (Int?) -> Unit)
             fun createChannel(channelPostData: ChannelPostData)
             fun onPictureResult(requestCode: Int, resultCode: Int, data: Intent?)
             fun showPicture()

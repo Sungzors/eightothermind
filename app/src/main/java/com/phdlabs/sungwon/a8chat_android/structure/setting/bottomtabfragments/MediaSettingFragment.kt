@@ -49,7 +49,8 @@ class MediaSettingFragment : CoreFragment(), SettingContract.MediaFragment.View 
         mMediaList.add(Media.Builder("https://i.imgur.com/s4YOwgB.jpg").build())
         mMediaList.add(Media.Builder("https://i.imgur.com/kxPCoac.jpg").build())
         mMediaList.add(Media.Builder("https://i.imgur.com/UG8En2q.jpg").build())
-        //enddummy
+        mMediaList.add(Media.Builder("https://i.imgur.com/xXtH5C4.jpg").build())
+        //enddummy https://i.imgur.com/xXtH5C4.jpg
         val csa = activity as ChatSettingActivity
         csa.updateMenuTitle(String.format(getString(R.string.medianum, mMediaList.size.toString())), String.format(getString(R.string.filenum, mFileList.size.toString())))
         fcsm_container1.viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {

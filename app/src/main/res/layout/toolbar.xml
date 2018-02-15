@@ -9,11 +9,18 @@
     tools:ignore="MissingPrefix">
 
     <!--Profile Picture View-->
-    <ImageView
-        android:id="@+id/toolbar_leftoolbart_action"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginStart="15dp"/>
+
+    <LinearLayout
+        android:id="@+id/toolbar_left_action_container"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="15dp">
+        <ImageView
+            android:id="@+id/toolbar_leftoolbart_action"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="15dp"/>
+    </LinearLayout>
 
     <!--Toolbar title-->
     <TextView

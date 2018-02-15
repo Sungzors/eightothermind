@@ -137,7 +137,8 @@ class ChannelCreateAController(val mView: ChannelContract.Create.View) : Channel
                                     mView.onCreateChannel(
                                             response.newChannelGroupOrEvent?.id,
                                             response.newChannelGroupOrEvent?.name,
-                                            response.newChannelGroupOrEvent?.room_id
+                                            response.newChannelGroupOrEvent?.room_id,
+                                            response.newChannelGroupOrEvent?.user_creator_id
                                     )
 
                                 } else if (response.isError) {
@@ -255,4 +256,13 @@ class ChannelCreateAController(val mView: ChannelContract.Create.View) : Channel
         }
     }
 
+    override fun getUserId(callback: (Int?) -> Unit) {
+        UserManager.instance.getCurrentUser { success, user, _ ->
+            if (success) {
+                user?.id.let {
+                    callback(it)
+                }
+            }
+        }
+    }
 }
