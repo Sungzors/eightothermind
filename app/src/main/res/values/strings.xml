@@ -40,7 +40,16 @@
     <string name="camera_right_tab">Hands Free</string>
     <string name="request_camera_permission">Camera permission needed</string>
     <string name="request_write_external_permission">Storage permission needed</string>
+    <string name="request_read_contacts_permissions">Reading contacts permission needed</string>
     <string name="camera_error">This device doesn\'t support Camera</string>
+    <string name="camera_action">camera_action</string>
+    <string name="camera_flash">camera_flash</string>
+    <string name="camera_flip">camera_flip</string>
+    <string name="camera_preview">cameraPreview</string>
+    <string name="camera_save">cameraSave</string>
+    <string name="camera_send">cameraSend</string>
+    <string name="camerarollimage">CameraRollImage</string>
+    <string name="cameraroll_saved_photo">Saved to gallery</string>
     <!--Camera Editing-->
     <string name="photo_editing">photo editing</string>
     <string name="done">Done</string>
@@ -92,13 +101,6 @@
     <string name="send_money">Send Money</string>
     <string name="clear_conversation">Clear Conversation</string>
     <string name="block_contact">Block Contact</string>
-    <string name="camera_action">camera_action</string>
-    <string name="camera_flash">camera_flash</string>
-    <string name="camera_flip">camera_flip</string>
-    <string name="camera_preview">cameraPreview</string>
-    <string name="camera_save">cameraSave</string>
-    <string name="camera_send">cameraSend</string>
-    <string name="camerarollimage">CameraRollImage</string>
     <string name="share">Share</string>
     <string name="channel_image">channelImage</string>
     <string name="create_a_channel">Create a Channel</string>
@@ -114,6 +116,10 @@
     <string name="favorites">Favorites</string>
     <string name="all_contacts">All Contacts</string>
     <string name="searchcontacthint">Search by Contact or Channel</string>
+    <string name="my_contacts">My Contacts</string>
+    <string name="contacts">Contacts</string>
+    <string name="friend_profile_picture">Friend Profile Picture</string>
+    <string name="no_contacts">No Contacts</string>
 
 
 </resources>

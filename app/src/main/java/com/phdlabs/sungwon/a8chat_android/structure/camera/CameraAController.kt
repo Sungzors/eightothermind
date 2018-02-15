@@ -86,7 +86,7 @@ class CameraAController(val mView: CameraContract.View) : CameraContract.Control
         }
     }
 
-    /*Turn on or off manual flash*/
+    /*Turn on or off manual flash_off*/
     override fun manualFlash(viewPager: ViewPager) {
         /*NormalCamera Fragment*/
         if (viewPager.currentItem == Constants.CameraPager.NORMAL) {

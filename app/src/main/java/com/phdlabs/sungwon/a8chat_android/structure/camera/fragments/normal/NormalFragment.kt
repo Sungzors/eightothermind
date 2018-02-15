@@ -50,7 +50,7 @@ class NormalFragment() : CameraBaseFragment() {
      * [CameraCharacteristics.LENS_FACING_BACK] -> Default
      * Two orientations supported Front || Back
      * */
-    private var mFacing: Int = CameraCharacteristics.LENS_FACING_BACK
+    private var mFacing: Int = CameraCharacteristics.LENS_FACING_FRONT
 
     /**[CameraCaptureSession] for camera preview
      */
@@ -99,10 +99,10 @@ class NormalFragment() : CameraBaseFragment() {
      */
     private val mCameraOpenCloseLock: Semaphore = Semaphore(1)
 
-    /*Whether the current camera supports flash or not */
+    /*Whether the current camera supports flash_off or not */
     private var mFlashSupported: Boolean = false
 
-    /*Acitve or Inavtive flash*/
+    /*Acitve or Inavtive flash_off*/
     private var isFlashOn: Boolean = false
 
     /*Orientation for the caemra sensor*/
@@ -733,7 +733,7 @@ class NormalFragment() : CameraBaseFragment() {
     }
 
     /**
-     * Set automatic flash
+     * Set automatic flash_off
      * [setAutoFlahs]
      * @param CaptureRequest.Builder
      * */
@@ -750,7 +750,7 @@ class NormalFragment() : CameraBaseFragment() {
     }
 
     /**
-     * [manualFlashSelection]Set manual flash mode
+     * [manualFlashSelection]Set manual flash_off mode
      * */
     fun manualFlashSelection() {
         isFlashOn = !isFlashOn

@@ -59,10 +59,11 @@ class CameraRollFragment : CameraBaseFragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         //Toolbar setup -> Default
         toolbar_title_double_container.visibility = View.GONE
+        toolbar_title_double_container
         toolbar_title.visibility = View.VISIBLE
         toolbar_title.text = getString(R.string.camera_left_tab)
         //Toolbar left action
-        toolbar_left_action.setImageDrawable(activity?.getDrawable(R.drawable.ic_back))
+        toolbar_leftoolbart_action.setImageDrawable(activity?.getDrawable(R.drawable.ic_back))
         setupClickListeners()
         super.onViewCreated(view, savedInstanceState)
     }
@@ -71,7 +72,7 @@ class CameraRollFragment : CameraBaseFragment(),
      * [setupClickListeners] on the buttons
      * */
     private fun setupClickListeners() {
-        toolbar_left_action_container.setOnClickListener(this)
+        toolbar_leftoolbart_action.setOnClickListener(this)
     }
 
     /**
@@ -107,7 +108,6 @@ class CameraRollFragment : CameraBaseFragment(),
         if (ContextCompat.checkSelfPermission(activity!!, Constants.AppPermissions.WRITE_EXTERNAL) != PackageManager.PERMISSION_GRANTED) {
             requestExternalStoragePermissions()
         } else {
-            //loaderManager.initLoader(0, null, this)
             loaderManager.initLoader(0, null, this).forceLoad()
         }
     }
@@ -224,7 +224,7 @@ class CameraRollFragment : CameraBaseFragment(),
         when (p0) {
 
         /*Back button*/
-            toolbar_left_action_container -> {
+            toolbar_leftoolbart_action -> {
                 activity?.finish()
             }
         }

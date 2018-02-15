@@ -67,6 +67,9 @@ dependencies {
     //Sliding up panel
     compile 'com.sothree.slidinguppanel:library:3.4.0'
 
+    //Segmented Control
+    compile 'info.hoang8f:android-segmented:1.0.6'
+
     //Country code picker
     compile 'com.hbb20:ccp:1.7.4'
 
@@ -128,6 +131,9 @@ dependencies {
     //stetho
     compile 'com.facebook.stetho:stetho:1.5.0'
     compile 'com.uphyca:stetho_realm:2.1.0'
+
+    //Phone Number
+    compile 'io.michaelrocks:libphonenumber-android:8.8.5'
 }
 
 //Realm Annotations
