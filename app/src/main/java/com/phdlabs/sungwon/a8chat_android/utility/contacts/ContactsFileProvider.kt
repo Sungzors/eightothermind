@@ -37,8 +37,7 @@ class ContactsFileProvider : FileProvider() {
         //Contacts Query Projection
         val projection = arrayOf(
                 ContactsContract.Contacts._ID,
-                ContactsContract.Contacts.LOOKUP_KEY,
-                ContactsContract.Contacts.DISPLAY_NAME_PRIMARY,
+                //ContactsContract.Contacts.DISPLAY_NAME_PRIMARY, //Not used currently
                 ContactsContract.Contacts.HAS_PHONE_NUMBER
         )
         val contentResolver: ContentResolver = context.contentResolver
@@ -53,33 +52,10 @@ class ContactsFileProvider : FileProvider() {
         if (cursor.moveToFirst()) {
             do {
                 //Retrieve contact Name
-                val contactName = loadLocalContactsName(cursor, context)
-
-//                /**TEST TO FORMAT PHONE NUMBER KNOWING THE COUNTRY*/
-//                //Retrieve contact Phone Number
-                var contactPhoneNumber = loadLocalContactsPhoneNumber(cursor, context)
-//                //Build local contact
-//                var phoneNumUtil = PhoneNumberUtil.createInstance(context)
-//                try {
-//                 var phone =  phoneNumUtil.parse(contactPhoneNumber,"EUA")
-//                    println("PARSED PHONE: " + phone)
-//                }catch (e:NumberParseException){
-//                    println("PHONE NUMBER ERROR: " + e.errorType)
-//                    println("PHONE NUMBER ERROR DESCRIPTION: " + e.localizedMessage)
-//                }
-//
-//                /**TEST TO FORMAT PHONE NUMBER */
-//                try {
-//                    var phoneTwo = phoneNumUtil.getExampleNumberForNonGeoEntity(contactPhoneNumber.toInt())
-//                }catch (e:NumberParseException) {
-//                    println("PHONE NUMBER ERROR: " + e.errorType)
-//                    println("PHONE NUMBER ERROR DESCRIPTION: " + e.localizedMessage)
-//                }finally {
-//
-//                }
-//                //var lengthOfGeoArea = phoneNumUtil.getLengthOfGeographicalAreaCode()
-
-                val contact: LocalContact = LocalContact(contactName, PhoneNumberUtils.normalizeNumber(contactPhoneNumber))
+                //val contactName = loadLocalContactsName(cursor, context) //Not used currently
+                //Retrieve contact Phone Number
+                val contactPhoneNumber = loadLocalContactsPhoneNumber(cursor, context)
+                val contact: LocalContact = LocalContact(PhoneNumberUtils.normalizeNumber(contactPhoneNumber))
                 //Only add contacts with phone
                 if (!contact.phone.isNullOrBlank()) {
                     result.add(contact)

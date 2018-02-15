@@ -4,8 +4,12 @@ import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.view.View
 import android.view.WindowManager
+import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.RadioButton
 import com.phdlabs.sungwon.a8chat_android.R
+import com.phdlabs.sungwon.a8chat_android.structure.contacts.fragments.ChannelsFragment
+import com.phdlabs.sungwon.a8chat_android.structure.contacts.fragments.ContactsFragment
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import kotlinx.android.synthetic.main.activity_contacts.*
 import kotlinx.android.synthetic.main.toolbar.*
@@ -54,7 +58,7 @@ class ContactsActivity : CoreActivity(), ContactsAContract.View, View.OnClickLis
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        if(!controller.permissionResults(requestCode, permissions, grantResults)){
+        if (!controller.permissionResults(requestCode, permissions, grantResults)) {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }
     }
@@ -78,6 +82,35 @@ class ContactsActivity : CoreActivity(), ContactsAContract.View, View.OnClickLis
         ac_button_channels.isChecked = false
     }
 
+    override fun updateContactSelector(string: String, contactCount: Int) {
+        if (contactCount > 0) {
+            //Visible container
+            ac_fragment_container.visibility = View.VISIBLE
+            //Invisible zero state
+            ac_textView_zero_state.visibility = View.GONE
+            //Update UI
+            ac_button_contacts.text = string
+            //Set contacts fragment
+            replaceFragment(ContactsFragment(), false)
+        } else {
+            //Visible Container
+            ac_fragment_container.visibility = View.VISIBLE
+            //Visible Zero State
+            ac_textView_zero_state.visibility = View.VISIBLE
+        }
+
+    }
+
+    override fun updateChannelsSelector(string: String, channelCount: Int) {
+        if (channelCount > 0) {
+            //TODO: Retrieve & show channels
+        } else {
+            //Visible Container
+            ac_fragment_container.visibility = View.VISIBLE
+            replaceFragment(ChannelsFragment(), false)
+        }
+    }
+
     /*On Click*/
     override fun onClick(p0: View?) {
 
@@ -91,8 +124,8 @@ class ContactsActivity : CoreActivity(), ContactsAContract.View, View.OnClickLis
          * Contacts
          * */
             ac_button_contacts -> {
-                //TODO: Load contacts
                 // - set contacts fragment
+                updateContactSelector("Contacts", 0)
                 controller.loadContacts()
 
             }
@@ -102,6 +135,7 @@ class ContactsActivity : CoreActivity(), ContactsAContract.View, View.OnClickLis
             ac_button_channels -> {
                 //TODO: Load channels
                 // - set channels fragment
+                updateChannelsSelector("Channels", 0)
 
             }
         }

@@ -13,8 +13,7 @@
         <include layout="@layout/toolbar" />
 
         <!--Contacts/Channels Navigation-->
-        <info.hoang8f.android.segmented.SegmentedGroup
-            xmlns:segmentedgroup="http://schemas.android.com/apk/res-auto"
+        <info.hoang8f.android.segmented.SegmentedGroup xmlns:segmentedgroup="http://schemas.android.com/apk/res-auto"
             android:id="@+id/segmented2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -48,8 +47,21 @@
         android:id="@+id/ac_fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="10dp">
+        android:padding="10dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/ac_textView_zero_state"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center|top"
+            android:paddingTop="55dp"
+            android:text="@string/no_contacts"
+            android:visibility="gone" />
 
     </FrameLayout>
+
+    <include layout="@layout/progress_view" />
 
 </LinearLayout>

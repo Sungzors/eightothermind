@@ -1,18 +1,22 @@
 package com.phdlabs.sungwon.a8chat_android.structure.contacts
 
 import android.app.LoaderManager
-import android.content.ContentResolver
 import android.content.Loader
 import android.content.pm.PackageManager
-import android.database.Cursor
 import android.os.Bundle
-import android.provider.ContactsContract
 import android.support.v4.app.ActivityCompat.requestPermissions
 import android.support.v4.content.ContextCompat
 import com.phdlabs.sungwon.a8chat_android.R
+import com.phdlabs.sungwon.a8chat_android.api.data.ContactsPostData
+import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
+import com.phdlabs.sungwon.a8chat_android.db.UserManager
+import com.phdlabs.sungwon.a8chat_android.model.contacts.Contact
 import com.phdlabs.sungwon.a8chat_android.model.contacts.LocalContact
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.contacts.LocalContactsAsyncLoader
+import com.vicpin.krealmextensions.saveAll
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 
 /**
  * Created by paix on 2/13/18.
@@ -35,10 +39,11 @@ class ContactsAController(val mView: ContactsAContract.View) :
 
     /*LifeCycle*/
     override fun onCreate() {
-        //TODO: Check for permissions
+        //Contact permissions
         if (ContextCompat.checkSelfPermission(mView.activity, Constants.AppPermissions.CONTACTS) != PackageManager.PERMISSION_GRANTED) {
             requestReadingContactsPermissions()
         } else {
+            mView.showProgress()
             mView.activity.loaderManager.initLoader(0, null, this).forceLoad()
         }
     }
@@ -56,14 +61,20 @@ class ContactsAController(val mView: ContactsAContract.View) :
     }
 
     /*CONTRACT*/
-    override fun loadContacts() {
-        //TODO: load local contacts
-        //loadLocalContacts()
 
+    override fun loadContacts() {
+        //Check permissions
+        if (ContextCompat.checkSelfPermission(mView.activity, Constants.AppPermissions.CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+            requestReadingContactsPermissions()
+        } else {
+            mView.showProgress()
+            //Load manager will inhibit if it's already going on
+            mView.activity.loaderManager.initLoader(0, null, this).forceLoad()
+        }
     }
 
     override fun loadChannels() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     /*PERMISSIONS*/
@@ -85,6 +96,7 @@ class ContactsAController(val mView: ContactsAContract.View) :
             if (grantResults.size != 1 || grantResults.get(0) != PackageManager.PERMISSION_GRANTED) {
                 mView.showError(mView.activity.getString(R.string.request_read_contacts_permissions))
             } else {
+                mView.showProgress()
                 mView.activity.loaderManager.initLoader(0, null, this).forceLoad()
             }
             return true
@@ -105,17 +117,129 @@ class ContactsAController(val mView: ContactsAContract.View) :
             for (contact in it) {
                 mLocalContacts.add(contact)
             }
-            //TODO: Get count to display in Selector
+            mView.hideProgress()
+            //Dev
             println(" CONTACT COUNT: " + mLocalContacts.count())
-
-            //TODO: Process
-
-            //TODO: setupRecycler()
+            //Process contacts with API
+            if (mLocalContacts.count() > 0) {
+                getEightContacts(mLocalContacts)
+            }
         }
     }
 
     override fun onLoaderReset(p0: Loader<List<LocalContact>>?) {
         mLocalContacts.clear()
+    }
+
+    /*NETWORK-API*/
+
+    /**
+     * [getEightContacts]
+     * Retrieves the contacts that are related with Eight through the API
+     * */
+    private fun getEightContacts(localContacts: ArrayList<LocalContact>) {
+        mView.showProgress()
+        UserManager.instance.getCurrentUser { success, user, token ->
+            if (success) {
+                token?.token?.let {
+                    user?.id?.let {
+                        val contactsPostData = ContactsPostData(localContacts.toArray())
+                        val call = Rest.getInstance().getmCallerRx().getEightContactsPhoneNumbers(
+                                token.token!!,
+                                user.id!!,
+                                contactsPostData.contactsArray
+                        )
+                        call.subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(
+                                        { response ->
+                                            if (response.isSuccess) { //Success
+                                                //Successfull Accounts
+
+                                                response.userContactsWithEightAccount?.let {
+                                                    val validContacts: ArrayList<String> = ArrayList()
+                                                    for (phone in it) {
+                                                        validContacts.add(phone)
+                                                    }
+                                                    //Get friends info
+                                                    if (validContacts.count() > 0) {
+                                                        getEightFriends()
+                                                    }
+                                                    //Dev
+                                                    println("Successfull number of accounts: " + validContacts.count())
+                                                }
+
+                                                //Unsuccessfull accounts
+                                                response.undeterminedPhoneNumbers?.let {
+                                                    val invalidContacts: ArrayList<String> = ArrayList()
+                                                    for (phone in it) {
+                                                        invalidContacts.add(phone)
+                                                    }
+                                                    //Dev
+                                                    println("Unsuccessfull number of accounts: " + invalidContacts.count())
+                                                }
+
+                                                getEightFriends()
+
+                                                mView.hideProgress()
+                                            } else if (response.isError) { //Error
+                                                mView.hideProgress()
+                                                mView.showError(response.message)
+                                            }
+                                        },
+                                        //On error implementation
+                                        { throwable ->
+                                            println("Error downloading contacts: " + throwable.message)
+                                        })
+                    }
+                }
+            }
+        }
+
+    }
+
+    private fun getEightFriends() {
+        UserManager.instance.getCurrentUser { success, user, token ->
+            if (success) {
+                token?.token?.let {
+                    user?.id?.let {
+                        var call = Rest.getInstance().getmCallerRx().getUserFriends(token.token!!, user.id!!)
+                        call.subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(
+                                        { response ->
+
+                                            if (response.isSuccess) { //Success
+
+                                                response.users?.let {
+
+                                                    /**
+                                                     * Cache Friends or Eight[Contact] in
+                                                     * @see Realm
+                                                     * */
+                                                    it.saveAll()
+
+                                                    /*Update UI*/
+                                                    mView.updateContactSelector("Contacts (" + it.count() + ")",
+                                                            it.count())
+                                                }
+
+                                            } else if (response.isError) { //Error
+                                                mView.hideProgress()
+                                                mView.showError(response.message)
+                                            }
+
+                                        },
+
+                                        //On error implementation
+                                        { throwable ->
+                                            println("Error downloading friends: " + throwable.message)
+                                        })
+
+                    }
+                }
+            }
+        }
     }
 
 

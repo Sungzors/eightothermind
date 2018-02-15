@@ -1,13 +1,17 @@
 package com.phdlabs.sungwon.a8chat_android.api.rest
 
 import com.phdlabs.sungwon.a8chat_android.api.data.ChannelPostData
+import com.phdlabs.sungwon.a8chat_android.api.data.ContactsPostData
 import com.phdlabs.sungwon.a8chat_android.api.data.EventPostData
 import com.phdlabs.sungwon.a8chat_android.api.data.UserData
 import com.phdlabs.sungwon.a8chat_android.api.response.createEvent.EventPostResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.createChannel.ChannelResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.MediaResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.UserDataResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.contacts.ContactsPostResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.contacts.UserFriendsResponse
 import com.phdlabs.sungwon.a8chat_android.api.rest.Caller.TOKEN
+import com.phdlabs.sungwon.a8chat_android.model.contacts.Contact
 import com.phdlabs.sungwon.a8chat_android.model.user.registration.RegistrationData
 import io.reactivex.Observable
 import okhttp3.MultipartBody
@@ -32,6 +36,9 @@ interface CallerRx {
     @GET("/users/{userid}")
     fun getUser(@Header(TOKEN) token: String, @Path("userid") userId: Int): Observable<UserDataResponse>
 
+    @GET("/users/{userId}/friends")
+    fun getUserFriends(@Header(TOKEN) token: String, @Path("userId") userId: Int): Observable<UserFriendsResponse>
+
     /*MEDIA*/
     @Multipart
     @POST("/media")
@@ -44,5 +51,17 @@ interface CallerRx {
     /*EVENTS*/
     @POST("/events")
     fun postEvents(@Header(TOKEN) token: String, @Body eventPostData: EventPostData): Observable<EventPostResponse>
+
+    /*CONTACTS*/
+
+    /**
+     * [getEightContactsPhoneNumbers]
+     * @Body Array of [LocalContact]
+     * */
+    @POST("/users/{userId}/check_contacts_use_eight")
+    fun getEightContactsPhoneNumbers(@Header(TOKEN) token: String,
+                                     @Path("userId") userId: Int,
+                                     @Body contactPostData: Array<out Any>): Observable<ContactsPostResponse>
+
 
 }

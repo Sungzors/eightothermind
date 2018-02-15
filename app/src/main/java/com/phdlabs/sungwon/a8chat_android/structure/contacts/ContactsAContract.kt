@@ -1,5 +1,6 @@
 package com.phdlabs.sungwon.a8chat_android.structure.contacts
 
+import android.widget.RadioButton
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseController
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseView
 
@@ -14,10 +15,16 @@ interface ContactsAContract {
         /*Activity*/
         var activity: ContactsActivity
 
+        /*UI*/
+        fun updateContactSelector(string: String, contactCount: Int)
+
+        fun updateChannelsSelector(string: String, channelCount: Int)
+
     }
 
     interface Controller : BaseController {
 
+        /*LifeCycle*/
         fun onCreate()
 
         /*load contacts*/

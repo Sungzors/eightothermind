@@ -14,4 +14,6 @@ class ChannelsFragment : CoreFragment() {
     /*Layout*/
     override fun layoutId(): Int = R.layout.fragment_channels
 
+    //TODO: Channels Fragment
+
 }
