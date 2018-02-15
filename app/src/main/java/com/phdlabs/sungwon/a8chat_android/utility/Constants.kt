@@ -28,15 +28,6 @@ object Constants {
     }
 
     /**
-     * [PrefKeys]
-     * //TODO: Remove after refactoring all preferences with Realm
-     * */
-    object PrefKeys {
-        const val USER_ID = "user_id"
-        const val TOKEN_KEY = "token"
-    }
-
-    /**
      * [SocketKeys]
      * */
     object SocketKeys {
@@ -85,6 +76,7 @@ object Constants {
         val WRITE_EXTERNAL = Manifest.permission.WRITE_EXTERNAL_STORAGE
         val FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION
         val COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION
+        val CONTACTS = Manifest.permission.READ_CONTACTS
     }
 
     /**
@@ -95,6 +87,7 @@ object Constants {
         val RECORD_AUDIO_REQ_CODE = 1
         val WRITE_EXTERNAL_REQ_CODE = 2
         val LOCATION_REQ_CODE = 3
+        val CONTACTS_REQ_CODE = 4
     }
 
     /**
@@ -105,6 +98,13 @@ object Constants {
         val LENS_FACING = "lens_facing"
         val EDITING_REQUEST_CODE = 7
         val CAMERA_REQUEST_CODE = 8
+    }
+
+    /**
+     * [ContactIntents]
+     * */
+    object ContactIntens {
+        val CONTACTS_REQ_CODE = 9
     }
 
     /**

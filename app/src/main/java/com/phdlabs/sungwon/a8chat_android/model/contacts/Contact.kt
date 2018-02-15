@@ -22,7 +22,7 @@ open class Contact : RealmObject() {
     @PrimaryKey
     @SerializedName("id")
     @Expose
-    var id: Int? = null
+    var id: Int = -1
 
     @SerializedName("first_name")
     @Expose
