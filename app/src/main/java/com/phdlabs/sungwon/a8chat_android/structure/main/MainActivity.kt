@@ -48,7 +48,6 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
     override fun onStart() {
         super.onStart()
         MainAController(this)
-        setUpClickers()
         controller.start()
     }
 
