@@ -87,6 +87,10 @@
         <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat"/>
 
+        <activity
+            android:name=".structure.createnew.CreateNewActivity"
+            android:screenOrientation="portrait"/>
+
         <!--Photos & Images File Provider-->
         <provider
             android:name=".utility.camera.PhotoFileProvider"

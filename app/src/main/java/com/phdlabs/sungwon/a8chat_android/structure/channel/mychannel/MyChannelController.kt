@@ -217,8 +217,10 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
         mView.getActivity.runOnUiThread({
             val data: JSONObject = args[0] as JSONObject
             val message = GsonHolder.Companion.instance.get()!!.fromJson(data.toString(), Message::class.java)
-            mMessages.add(0, message)
-            mView.updateRecycler()
+            if(message.roomId == mRoomId){
+                mMessages.add(0, message)
+                mView.updateRecycler()
+            }
 //            var id : String? = null
 //            var message : String? = null
 //            var roomId : String? = null

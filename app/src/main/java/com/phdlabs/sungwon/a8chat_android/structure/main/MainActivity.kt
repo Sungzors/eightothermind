@@ -1,13 +1,16 @@
 package com.phdlabs.sungwon.a8chat_android.structure.main
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.view.MenuItem
 import android.view.WindowManager
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
+import com.phdlabs.sungwon.a8chat_android.structure.createnew.CreateNewActivity
 import com.phdlabs.sungwon.a8chat_android.structure.main.lobby.LobbyFragment
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.toolbar_main.*
 
 /**
  * Created by SungWon on 10/13/2017.
@@ -32,6 +35,7 @@ class MainActivity: CoreActivity(), MainContract.View{
     override fun onStart() {
         super.onStart()
         MainAController(this)
+        setUpClickers()
         controller.start()
     }
 
@@ -63,6 +67,12 @@ class MainActivity: CoreActivity(), MainContract.View{
             R.id.mmt_home -> replaceFragment(LobbyFragment.newInstance(), false)
             R.id.mmt_camera -> controller.showCamera()
             R.id.mmt_profile -> controller.showProfile()
+        }
+    }
+
+    private fun setUpClickers(){
+        toolbar_right_picture.setOnClickListener {
+            startActivity(Intent(this, CreateNewActivity::class.java))
         }
     }
 

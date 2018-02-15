@@ -75,11 +75,12 @@ class ChannelCreateActivity : CoreActivity(), ChannelContract.Create.View {
     }
 
     /*Transition*/
-    override fun onCreateChannel(chanId: Int?, chanName: String?, roomId: Int?) {
+    override fun onCreateChannel(chanId: Int?, chanName: String?, roomId: Int?, ownerId: Int?) {
         val intent = Intent(this, MyChannelActivity::class.java)
         intent.putExtra(Constants.IntentKeys.CHANNEL_ID, chanId)
         intent.putExtra(Constants.IntentKeys.CHANNEL_NAME, chanName)
         intent.putExtra(Constants.IntentKeys.ROOM_ID, roomId)
+        intent.putExtra(Constants.IntentKeys.OWNER_ID, ownerId)
         startActivity(intent)
     }
 
@@ -114,16 +115,19 @@ class ChannelCreateActivity : CoreActivity(), ChannelContract.Create.View {
     private fun setUpClickers() {
         toolbar_right_text.setOnClickListener {
             /*Create Channel*/
-            controller.createChannel(
-                    ChannelPostData(
-                            mMedia?.id.toString().trim(),
-                            acc_channel_name.text.toString().trim(),
-                            acc_unique_id.text.toString().trim(),
-                            acc_short_description.text.toString().trim(),
-                            isCheckedAddToProf,
-                            null
-                    )
-            )
+            controller.getUserId { id ->
+                controller.createChannel(
+                        ChannelPostData(
+                                mMedia?.id.toString().trim(),
+                                acc_channel_name.text.toString().trim(),
+                                acc_unique_id.text.toString().trim(),
+                                acc_short_description.text.toString().trim(),
+                                isCheckedAddToProf,
+                                id
+                        )
+                )
+            }
+
         }
         /*Profile picture*/
         acc_channel_picture.setOnClickListener {

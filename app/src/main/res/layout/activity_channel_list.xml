@@ -26,17 +26,18 @@
         android:layout_marginStart="15dp"
         android:layout_marginEnd="15dp"
         android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp">
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/bg_15dp_curve_shadow_greybg">
         <SearchView
             android:id="@+id/acl_searchview"
-            android:layout_width="match_parent"
+            android:layout_width="1000dp"
             android:layout_height="30dp"
             android:layout_gravity="center_vertical"
             android:padding="0dp"
+            android:queryHint="Search Channel Name"
             android:inputType="text"
             android:maxLines="1"
-            android:imeOptions="actionSearch"
-            android:background="@drawable/bg_15dp_curve_shadow_greybg"/>
+            android:imeOptions="actionSearch"/>
     </LinearLayout>
 
     <LinearLayout

@@ -108,6 +108,12 @@
     <string name="add_event_photo">Add event photo</string>
     <string name="create_event">Create an Event</string>
     <string name="next">Next</string>
+    <string name="new_group">New Group</string>
+    <string name="new_channel">New Channel</string>
+    <string name="new_event">New Event</string>
+    <string name="favorites">Favorites</string>
+    <string name="all_contacts">All Contacts</string>
+    <string name="searchcontacthint">Search by Contact or Channel</string>
 
 
 </resources>

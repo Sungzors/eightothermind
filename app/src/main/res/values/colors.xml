@@ -8,6 +8,8 @@
     <color name="confirmText">#4a90e2</color>
     <color name="gradientLeft">#495fff</color>
     <color name="gradientRight">#0ccafe</color>
+    <color name="gradientUp">#357fff</color>
+    <color name="gradientDown">#08a4ff</color>
     <color name="settingBlue">#08a4ff</color>
     <color name="settingLime">#7ed321</color>
     <color name="settingPurple">#9013fe</color>

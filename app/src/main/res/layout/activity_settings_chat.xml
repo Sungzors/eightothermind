@@ -266,14 +266,15 @@
                             android:text="@string/send_money" />
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
                             android:layout_centerVertical="true"
                             android:layout_marginEnd="20dp"
-                            android:scaleY="3"
-                            android:text=">"
+                            android:scaleY="2"
+                            android:text="> "
                             android:textColor="@color/colorAccent"
+                            android:textAlignment="textEnd"
                             android:textSize="14sp" />
                     </RelativeLayout>
 
@@ -305,14 +306,15 @@
                             android:text="@string/fave_messages" />
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
                             android:layout_centerVertical="true"
                             android:layout_marginEnd="20dp"
-                            android:scaleY="3"
-                            android:text=">"
+                            android:scaleY="2"
+                            android:text="> "
                             android:textColor="@color/colorAccent"
+                            android:textAlignment="textEnd"
                             android:textSize="14sp" />
                     </RelativeLayout>
                 </LinearLayout>
