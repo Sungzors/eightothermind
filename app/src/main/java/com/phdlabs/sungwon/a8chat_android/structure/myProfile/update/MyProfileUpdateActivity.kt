@@ -1,6 +1,7 @@
-package com.phdlabs.sungwon.a8chat_android.structure.profile
+package com.phdlabs.sungwon.a8chat_android.structure.myProfile.update
 
 import android.content.Intent
+import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -9,33 +10,40 @@ import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.api.data.UserData
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.structure.main.MainActivity
+import com.phdlabs.sungwon.a8chat_android.structure.myProfile.ProfileContract
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.activity_profile.*
+import kotlinx.android.synthetic.main.activity_my_profile_update.*
 
 /**
  * Created by SungWon on 10/2/2017.
  */
-class ProfileActivity : CoreActivity(), ProfileContract.View, AdapterView.OnItemSelectedListener {
+class MyProfileUpdateActivity : CoreActivity(), ProfileContract.Update.View, AdapterView.OnItemSelectedListener {
 
     /*Properties*/
     private var profilePic: ImageView? = null
     private var language: String = "english"
 
     /*UI*/
-    override fun layoutId() = R.layout.activity_profile
+    override fun layoutId() = R.layout.activity_my_profile_update
 
     override fun contentContainerId() = 0
 
     /*Controller*/
-    override lateinit var controller: ProfileContract.Controller
-    override val getActivity = this
+    override lateinit var controller: ProfileContract.Update.Controller
+    override val getUpdateActivityMy = this
 
     /*LifeCycle*/
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        //Controller init
+        MyProfileUpdateAController(this)
+    }
+
     override fun onStart() {
         super.onStart()
         setToolbarTitle("Tell Us About Yourself")
-        ProfileAController(this)
         profilePic = ap_profile_pic
         val spinnerAdapter = ArrayAdapter.createFromResource(this, R.array.language_array, android.R.layout.simple_spinner_item)
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)

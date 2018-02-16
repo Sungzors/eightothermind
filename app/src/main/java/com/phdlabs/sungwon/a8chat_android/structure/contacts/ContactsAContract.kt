@@ -10,6 +10,8 @@ import com.phdlabs.sungwon.a8chat_android.structure.core.BaseView
  */
 interface ContactsAContract {
 
+    /*Contacts Activity*/
+
     interface View : BaseView<Controller> {
 
         /*Activity*/
@@ -37,5 +39,6 @@ interface ContactsAContract {
         fun permissionResults(requestCode: Int, permissions: Array<out String>, grantResults: IntArray):Boolean
 
     }
+
 
 }

@@ -1,4 +1,4 @@
-package com.phdlabs.sungwon.a8chat_android.structure.profile
+package com.phdlabs.sungwon.a8chat_android.structure.myProfile.update
 
 import android.app.Activity
 import android.content.Intent
@@ -7,6 +7,7 @@ import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
 import com.phdlabs.sungwon.a8chat_android.model.user.User
 import com.phdlabs.sungwon.a8chat_android.model.user.registration.Token
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
+import com.phdlabs.sungwon.a8chat_android.structure.myProfile.ProfileContract
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
 import com.vicpin.krealmextensions.queryFirst
 import com.vicpin.krealmextensions.save
@@ -22,7 +23,7 @@ import java.io.File
  * Created by SungWon on 10/2/2017.
  * Updated by JPAM on 12/21/2017
  */
-class ProfileAController(val mView: ProfileContract.View) : ProfileContract.Controller {
+class MyProfileUpdateAController(val mView: ProfileContract.Update.View) : ProfileContract.Update.Controller {
 
     /*Initialization*/
     init {
@@ -44,7 +45,7 @@ class ProfileAController(val mView: ProfileContract.View) : ProfileContract.Cont
 
     /*Camera Intent*/
     override fun showPicture(activity: CoreActivity) {
-        CameraControl.instance.pickImage(mView.getActivity,
+        CameraControl.instance.pickImage(mView.getUpdateActivityMy,
                 "Choose a profile picture",
                 CameraControl.instance.requestCode(),
                 false)
@@ -102,13 +103,13 @@ class ProfileAController(val mView: ProfileContract.View) : ProfileContract.Cont
 
     /**@Post Media
      * Profile picture
-     * [onPictureResult] handled in onActivityResult in ProfileActivity*/
+     * [onPictureResult] handled in onActivityResult in MyProfileUpdateActivity*/
     override fun onPictureResult(requestCode: Int, resultCode: Int, data: Intent?) {
         //Change image if available
         if (resultCode != Activity.RESULT_CANCELED) {
             mView.showProgress()
             //Set image in UI
-            val imageUrl = CameraControl.instance.getImagePathFromResult(mView.getActivity, requestCode, resultCode, data)
+            val imageUrl = CameraControl.instance.getImagePathFromResult(mView.getUpdateActivityMy, requestCode, resultCode, data)
             imageUrl?.let {
                 //Set image in UI
                 mView.setProfileImageView(it)

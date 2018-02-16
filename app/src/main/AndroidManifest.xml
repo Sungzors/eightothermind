@@ -45,7 +45,7 @@
             android:name=".structure.login.ConfirmActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".structure.profile.ProfileActivity"
+            android:name=".structure.myProfile.update.MyProfileUpdateActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".structure.main.MainActivity"
@@ -96,6 +96,9 @@
 
         <activity
             android:name=".structure.createnew.CreateNewActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".structure.myProfile.detail.MyProfileActivity"
             android:screenOrientation="portrait"/>
 
         <!--Photos & Images File Provider-->

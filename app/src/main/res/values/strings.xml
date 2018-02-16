@@ -122,6 +122,14 @@
     <string name="no_contacts">No Contacts</string>
     <string name="contacts_selector_default_text">Contacts</string>
     <string name="channels_selector_default_text">Channels</string>
+    <string name="my_language">Current language</string>
+    <string name="my_calendars">Calendars</string>
+    <string name="detail_view"><![CDATA[>]]></string>
+    <string name="payments">Payments</string>
+    <string name="notification_settings">Notification Settings</string>
+    <string name="my_account">Account</string>
+    <string name="terms_support">Terms and Support</string>
+    <string name="invite_friends">Invite Friends</string>
 
 
 </resources>
