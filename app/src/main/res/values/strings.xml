@@ -130,6 +130,8 @@
     <string name="my_account">Account</string>
     <string name="terms_support">Terms and Support</string>
     <string name="invite_friends">Invite Friends</string>
+    <string name="my_profile">My Profile</string>
+    <string name="my_profile_edit">Edit</string>
 
 
 </resources>

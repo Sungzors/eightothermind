@@ -4,9 +4,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <!--Toolbar-->
-    <include layout="@layout/toolbar" />
-
     <!--Loading-->
     <include layout="@layout/progress_view" />
 

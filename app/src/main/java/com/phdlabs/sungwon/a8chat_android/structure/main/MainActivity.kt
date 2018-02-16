@@ -12,8 +12,10 @@ import com.phdlabs.sungwon.a8chat_android.structure.contacts.ContactsActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.structure.createnew.CreateNewActivity
 import com.phdlabs.sungwon.a8chat_android.structure.main.lobby.LobbyFragment
+import com.phdlabs.sungwon.a8chat_android.structure.myProfile.detail.MyProfileFragment
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.toolbar.view.*
 import kotlinx.android.synthetic.main.toolbar_main.*
 
 /**
@@ -36,9 +38,9 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
     /*LifeCycle*/
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-        window.statusBarColor = ContextCompat.getColor(this, R.color.gradientRight)
+        //Default toolbar
+        setupToolbars()
+        toolbarControl(true)
         //Click listeners
         setupClickers()
         //Tabs
@@ -95,12 +97,20 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
 
     private fun onTabSelected(item: MenuItem) {
         when (item.itemId) {
+        /*Home*/
             R.id.mmt_home -> {
                 super.onPostResume()
+                toolbarControl(true)
                 replaceFragment(LobbyFragment.newInstance(), false)
             }
+        /*Camera*/
             R.id.mmt_camera -> controller.showCamera()
-            R.id.mmt_profile -> controller.showProfile()
+        /*Profile*/
+            R.id.mmt_profile -> {
+                super.onPostResume()
+                toolbarControl(false)
+                replaceFragment(MyProfileFragment.newInstance(), false)
+            }
         }
     }
 
@@ -121,6 +131,31 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
         toolbar_left_action.setOnClickListener(this)
         toolbar_right_picture.setOnClickListener {
             startActivity(Intent(this, CreateNewActivity::class.java))
+        }
+    }
+
+    /*Toolbar Control*/
+
+    private fun setupToolbars() {
+        //Status bar flags
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        //Profile Toolbar setup
+        profile_toolbar.toolbar_title.text = getString(R.string.my_profile)
+        profile_toolbar.toolbar_right_text.text = getString(R.string.my_profile_edit)
+        profile_toolbar.toolbar_right_text.visibility = View.VISIBLE
+        profile_toolbar.toolbar_right_text.setTextColor(ContextCompat.getColor(this, R.color.confirmText))
+    }
+
+    private fun toolbarControl(homeToolbar: Boolean) {
+        if (homeToolbar) {
+            window.statusBarColor = ContextCompat.getColor(this, R.color.gradientRight)
+            home_toolbar.visibility = View.VISIBLE
+            profile_toolbar.visibility = View.GONE
+        } else {
+            window.statusBarColor = ContextCompat.getColor(this, R.color.grey)
+            home_toolbar.visibility = View.GONE
+            profile_toolbar.visibility = View.VISIBLE
         }
     }
 

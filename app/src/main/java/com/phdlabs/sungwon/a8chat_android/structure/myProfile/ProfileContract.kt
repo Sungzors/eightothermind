@@ -10,6 +10,7 @@ import com.phdlabs.sungwon.a8chat_android.structure.myProfile.update.MyProfileUp
 
 /**
  * Created by SungWon on 10/2/2017.
+ * Updated by JPAM on 12/16/2018
  */
 interface ProfileContract {
 
@@ -45,17 +46,4 @@ interface ProfileContract {
 
     }
 
-    /*MY PROFILE*/
-
-    interface MyProfile {
-
-        interface View: BaseView<Controller> {
-
-        }
-
-        interface Controller: BaseController {
-
-        }
-
-    }
 }

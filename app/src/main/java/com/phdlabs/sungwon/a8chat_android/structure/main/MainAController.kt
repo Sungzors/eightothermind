@@ -40,6 +40,4 @@ class MainAController(val mView: MainContract.View) : MainContract.Controller {
         }
     }
 
-    override fun showProfile() {
-    }
 }
