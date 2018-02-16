@@ -14,6 +14,7 @@ import com.phdlabs.sungwon.a8chat_android.model.contacts.Contact
 import com.phdlabs.sungwon.a8chat_android.model.contacts.LocalContact
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.contacts.LocalContactsAsyncLoader
+import com.vicpin.krealmextensions.queryAll
 import com.vicpin.krealmextensions.saveAll
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -38,20 +39,13 @@ class ContactsAController(val mView: ContactsAContract.View) :
     }
 
     /*LifeCycle*/
-    override fun onCreate() {
-        //Contact permissions
-        if (ContextCompat.checkSelfPermission(mView.activity, Constants.AppPermissions.CONTACTS) != PackageManager.PERMISSION_GRANTED) {
-            requestReadingContactsPermissions()
-        } else {
-            mView.showProgress()
-            mView.activity.loaderManager.initLoader(0, null, this).forceLoad()
-        }
-    }
 
     override fun start() {
+
     }
 
     override fun resume() {
+        loadContactsCheckCache()
     }
 
     override fun pause() {
@@ -62,13 +56,39 @@ class ContactsAController(val mView: ContactsAContract.View) :
 
     /*CONTRACT*/
 
-    override fun loadContacts() {
+    /**
+     * [loadContactsCheckCache]
+     * - This function will check for permission & cached contacts before making an API call
+     * */
+    override fun loadContactsCheckCache() {
         //Check permissions
         if (ContextCompat.checkSelfPermission(mView.activity, Constants.AppPermissions.CONTACTS) != PackageManager.PERMISSION_GRANTED) {
             requestReadingContactsPermissions()
+        } else {  //Check for cached contacts
+            val mEightFriends = Contact().queryAll()
+            if (mEightFriends.count() > 0) {
+                mView.updateContactSelector(
+                        "Contacts (" + mEightFriends.count() + ")",
+                        mEightFriends.count()
+                )
+            } else { //Load contacts from API
+                //Load manager will inhibit if it's already going on
+                mView.showProgress()
+                mView.activity.loaderManager.initLoader(0, null, this).forceLoad()
+            }
+        }
+    }
+
+    /**
+     * [loadContactsFromApi]
+     * - This method will check for permissions & load contacts from API
+     * */
+    override fun loadContactsFromApi() {
+        if (ContextCompat.checkSelfPermission(mView.activity, Constants.AppPermissions.CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+            requestReadingContactsPermissions()
         } else {
-            mView.showProgress()
             //Load manager will inhibit if it's already going on
+            mView.showProgress()
             mView.activity.loaderManager.initLoader(0, null, this).forceLoad()
         }
     }
@@ -117,13 +137,12 @@ class ContactsAController(val mView: ContactsAContract.View) :
             for (contact in it) {
                 mLocalContacts.add(contact)
             }
-            mView.hideProgress()
             //Dev
             println(" CONTACT COUNT: " + mLocalContacts.count())
             //Process contacts with API
             if (mLocalContacts.count() > 0) {
                 getEightContacts(mLocalContacts)
-            }
+            } //TODO: Here the progressView might not stop in rare cases
         }
     }
 
@@ -138,7 +157,6 @@ class ContactsAController(val mView: ContactsAContract.View) :
      * Retrieves the contacts that are related with Eight through the API
      * */
     private fun getEightContacts(localContacts: ArrayList<LocalContact>) {
-        mView.showProgress()
         UserManager.instance.getCurrentUser { success, user, token ->
             if (success) {
                 token?.token?.let {
@@ -164,6 +182,9 @@ class ContactsAController(val mView: ContactsAContract.View) :
                                                     //Get friends info
                                                     if (validContacts.count() > 0) {
                                                         getEightFriends()
+                                                    } else {
+                                                        mView.hideProgress()
+                                                        mView.stopRefreshing()
                                                     }
                                                     //Dev
                                                     println("Successfull number of accounts: " + validContacts.count())
@@ -179,16 +200,16 @@ class ContactsAController(val mView: ContactsAContract.View) :
                                                     println("Unsuccessfull number of accounts: " + invalidContacts.count())
                                                 }
 
-                                                getEightFriends()
-
-                                                mView.hideProgress()
                                             } else if (response.isError) { //Error
+                                                mView.stopRefreshing()
                                                 mView.hideProgress()
                                                 mView.showError(response.message)
                                             }
                                         },
                                         //On error implementation
                                         { throwable ->
+                                            mView.hideProgress()
+                                            mView.stopRefreshing()
                                             println("Error downloading contacts: " + throwable.message)
                                         })
                     }
@@ -222,17 +243,25 @@ class ContactsAController(val mView: ContactsAContract.View) :
                                                     /*Update UI*/
                                                     mView.updateContactSelector("Contacts (" + it.count() + ")",
                                                             it.count())
+
+                                                    mView.stopRefreshing()
+                                                    mView.hideProgress()
                                                 }
 
                                             } else if (response.isError) { //Error
+
+                                                mView.stopRefreshing()
                                                 mView.hideProgress()
                                                 mView.showError(response.message)
+
                                             }
 
                                         },
 
                                         //On error implementation
                                         { throwable ->
+                                            mView.stopRefreshing()
+                                            mView.hideProgress()
                                             println("Error downloading friends: " + throwable.message)
                                         })
 

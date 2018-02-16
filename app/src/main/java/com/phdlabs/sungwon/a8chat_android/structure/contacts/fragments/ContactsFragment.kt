@@ -10,6 +10,7 @@ import android.widget.TextView
 import android.widget.Toast
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.model.contacts.Contact
+import com.phdlabs.sungwon.a8chat_android.structure.contacts.ContactsActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreFragment
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseRecyclerAdapter
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseViewHolder
@@ -36,6 +37,7 @@ class ContactsFragment : CoreFragment() {
     private var mAdapter: BaseRecyclerAdapter<Contact, BaseViewHolder>? = null
     private lateinit var recyclerSections: List<String>
 
+    /*LifeCycle*/
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         loadAndGroupContacts()
@@ -88,6 +90,8 @@ class ContactsFragment : CoreFragment() {
                         /*load profile picture*/
                         Picasso.with(it)
                                 .load(data?.avatar)
+                                .resize(45, 45)
+                                .centerCrop()
                                 .placeholder(R.drawable.addphoto)
                                 .transform(CircleTransform())
                                 .into(contactProfilePicture)

@@ -20,16 +20,16 @@ interface ContactsAContract {
 
         fun updateChannelsSelector(string: String, channelCount: Int)
 
+        /*Refresh data*/
+        fun stopRefreshing()
+
     }
 
     interface Controller : BaseController {
 
-        /*LifeCycle*/
-        fun onCreate()
-
         /*load contacts*/
-        fun loadContacts()
-
+        fun loadContactsCheckCache()
+        fun loadContactsFromApi()
         /*load channels*/
         fun loadChannels()
 

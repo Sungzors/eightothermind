@@ -2,11 +2,11 @@ package com.phdlabs.sungwon.a8chat_android.structure.contacts
 
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
+import android.support.v4.widget.SwipeRefreshLayout
 import android.view.View
+import android.view.ViewTreeObserver
 import android.view.WindowManager
-import android.widget.ImageButton
 import android.widget.ImageView
-import android.widget.RadioButton
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.structure.contacts.fragments.ChannelsFragment
 import com.phdlabs.sungwon.a8chat_android.structure.contacts.fragments.ContactsFragment
@@ -20,7 +20,9 @@ import kotlinx.android.synthetic.main.toolbar.*
  * user contacts & user channels
  */
 
-class ContactsActivity : CoreActivity(), ContactsAContract.View, View.OnClickListener {
+class ContactsActivity : CoreActivity(), ContactsAContract.View, View.OnClickListener,
+        SwipeRefreshLayout.OnRefreshListener {
+
 
     /*Controller*/
     override lateinit var controller: ContactsAContract.Controller
@@ -39,7 +41,6 @@ class ContactsActivity : CoreActivity(), ContactsAContract.View, View.OnClickLis
         ContactsAController(this)
         /*Toolbar*/
         setupToolbar()
-        controller.onCreate()
     }
 
     override fun onStart() {
@@ -72,17 +73,26 @@ class ContactsActivity : CoreActivity(), ContactsAContract.View, View.OnClickLis
         toolbar_title.text = getString(R.string.my_contacts)
         toolbar_leftoolbart_action.setImageDrawable(getDrawable(R.drawable.ic_back))
         toolbar_leftoolbart_action.scaleType = ImageView.ScaleType.CENTER
-        toolbar_leftoolbart_action.setOnClickListener(this)
+        toolbar_left_action_container.setOnClickListener(this)
+        //Refresh fragment
+        ac_swipe_refresh.setOnRefreshListener(this)
+        ac_swipe_refresh.setColorSchemeResources(R.color.blue_color_picker, R.color.sky_blue_color_picker)
         //Segmented control default state
-        ac_button_contacts.text = "Contacts" //TODO: Add contacts number
-        ac_button_channels.text = "Channels" //TODO: Add channel number
+        ac_button_contacts.text = getString(R.string.contacts_selector_default_text)
+        ac_button_channels.text = getString(R.string.channels_selector_default_text)
         ac_button_contacts.setOnClickListener(this)
         ac_button_channels.setOnClickListener(this)
-        ac_button_contacts.isChecked = true
+        ac_button_contacts.isChecked = true //Start loading contacts
         ac_button_channels.isChecked = false
     }
 
     override fun updateContactSelector(string: String, contactCount: Int) {
+        /**
+         * First loading happens with [shwoProgress] @progress_view
+         * After the first load we switch to @ac_swipe_refresh
+         * */
+        ac_swipe_refresh.visibility = View.VISIBLE
+
         if (contactCount > 0) {
             //Visible container
             ac_fragment_container.visibility = View.VISIBLE
@@ -118,7 +128,7 @@ class ContactsActivity : CoreActivity(), ContactsAContract.View, View.OnClickLis
         /**
          * Back to [MainActivity]
          * */
-            toolbar_leftoolbart_action -> onBackPressed()
+            toolbar_left_action_container -> onBackPressed()
 
         /**
          * Contacts
@@ -126,19 +136,32 @@ class ContactsActivity : CoreActivity(), ContactsAContract.View, View.OnClickLis
             ac_button_contacts -> {
                 // - set contacts fragment
                 updateContactSelector("Contacts", 0)
-                controller.loadContacts()
+                controller.loadContactsCheckCache()
 
             }
         /**
          * Channels
          * */
             ac_button_channels -> {
-                //TODO: Load channels
                 // - set channels fragment
                 updateChannelsSelector("Channels", 0)
-
+                //TODO: Load channels
             }
         }
+    }
+
+    /*Refresh current screen*/
+    override fun onRefresh() {
+        if (ac_button_contacts.isChecked && !ac_button_channels.isChecked) {
+            //Todo: refresh contacts
+            controller.loadContactsFromApi()
+        } else if (ac_button_channels.isChecked && !ac_button_contacts.isChecked) {
+            //Todo: refresh channels
+        }
+    }
+
+    override fun stopRefreshing() {
+        ac_swipe_refresh.isRefreshing = false
     }
 
 }
