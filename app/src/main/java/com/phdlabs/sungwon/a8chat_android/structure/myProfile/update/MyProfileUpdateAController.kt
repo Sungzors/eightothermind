@@ -87,7 +87,9 @@ class MyProfileUpdateAController(val mView: ProfileContract.Update.View) : Profi
                             if (response.isSuccess) {
                                 /*Update user in Realm*/
                                 response.user.save()
-                                mView.startApp()
+                                if (!mView.isUpdating) {
+                                    mView.startApp()
+                                }
                                 Toast.makeText(mView.getContext(), "Profile updated", Toast.LENGTH_SHORT).show()
                             } else if (response.isError) {
                                 Toast.makeText(mView.getContext(), "Unable to update", Toast.LENGTH_SHORT).show()

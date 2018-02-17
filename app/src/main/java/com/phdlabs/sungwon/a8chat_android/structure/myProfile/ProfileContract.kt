@@ -28,6 +28,8 @@ interface ProfileContract {
 
             val getUpdateActivityMy: MyProfileUpdateActivity
 
+            var isUpdating: Boolean
+
             fun startApp()
 
 

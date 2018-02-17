@@ -15,11 +15,13 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginStart="15dp">
+
         <ImageView
             android:id="@+id/toolbar_leftoolbart_action"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_marginStart="15dp"/>
+            android:layout_marginStart="15dp"
+            android:scaleType="center"/>
     </LinearLayout>
 
     <!--Toolbar title-->
@@ -62,25 +64,33 @@
             android:textSize="10sp" />
     </LinearLayout>
 
-
-    <TextView
-        android:id="@+id/toolbar_right_text"
+    <LinearLayout
+        android:id="@+id/toolbar_right_container"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical|end"
-        android:layout_marginEnd="15dp"
-        android:textColor="@color/black"
-        android:visibility="gone"
-        android:layout_marginBottom="3dp"/>
+        android:layout_height="match_parent"
+        android:layout_gravity="end|center"
+        android:orientation="vertical"
+        android:visibility="visible">
 
-    <ImageView
-        android:id="@+id/toolbar_right_picture"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_gravity="center_vertical|end"
-        android:layout_marginEnd="15dp"
-        android:visibility="gone" />
+        <TextView
+            android:id="@+id/toolbar_right_text"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center|end"
+            android:layout_marginEnd="15dp"
+            android:gravity="center|end"
+            android:textColor="@color/black"
+            android:visibility="gone" />
 
+        <ImageView
+            android:id="@+id/toolbar_right_picture"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center_vertical|end"
+            android:layout_marginEnd="15dp"
+            android:foregroundGravity="center|center_horizontal"
+            android:visibility="gone" />
 
+    </LinearLayout>
 
 </android.support.v7.widget.Toolbar>

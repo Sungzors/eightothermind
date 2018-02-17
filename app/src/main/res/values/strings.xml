@@ -19,7 +19,7 @@
     <string name="first_name">First Name</string>
     <string name="last_name">Last Name</string>
     <string name="what_languages_do_you_speak">WHAT LANGUAGES DO YOU SPEAK?</string>
-    <string name="starto">Get Started</string>
+    <string name="get_started">Get Started</string>
     <string name="english">English</string>
     <string name="channels">Channels</string>
     <string name="events">Events</string>
@@ -132,6 +132,7 @@
     <string name="invite_friends">Invite Friends</string>
     <string name="my_profile">My Profile</string>
     <string name="my_profile_edit">Edit</string>
+    <string name="update_profile">Update</string>
 
 
 </resources>

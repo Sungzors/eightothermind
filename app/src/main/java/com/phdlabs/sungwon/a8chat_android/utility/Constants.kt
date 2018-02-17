@@ -108,6 +108,14 @@ object Constants {
     }
 
     /**
+     * [ProfileIntents]
+     * */
+    object ProfileIntents {
+        val WILL_EDIT_PROFILE = "edit_profile"
+        val EDIT_MY_PROFIILE = 10
+    }
+
+    /**
      * [EventPrivacy] used to control event privacy at [EventsEight] creation
      * */
     object EventPrivacy {

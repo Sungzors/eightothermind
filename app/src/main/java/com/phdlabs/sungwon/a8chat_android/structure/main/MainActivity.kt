@@ -13,8 +13,10 @@ import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.structure.createnew.CreateNewActivity
 import com.phdlabs.sungwon.a8chat_android.structure.main.lobby.LobbyFragment
 import com.phdlabs.sungwon.a8chat_android.structure.myProfile.detail.MyProfileFragment
+import com.phdlabs.sungwon.a8chat_android.structure.myProfile.update.MyProfileUpdateActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.toolbar.*
 import kotlinx.android.synthetic.main.toolbar.view.*
 import kotlinx.android.synthetic.main.toolbar_main.*
 
@@ -72,13 +74,12 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
 
         if (resultCode == Activity.RESULT_OK || resultCode == Activity.RESULT_CANCELED) {
 
-            /*Camera*/
-            if (requestCode == Constants.CameraIntents.CAMERA_REQUEST_CODE) {
+            if (requestCode == Constants.CameraIntents.CAMERA_REQUEST_CODE) { //Camera
                 am_bottom_tab_nav.selectedItemId = R.id.mmt_home
-
-                /*Contacts*/
-            } else if (requestCode == Constants.ContactIntens.CONTACTS_REQ_CODE) {
-                //todo: required contacts action
+            } else if (requestCode == Constants.ContactIntens.CONTACTS_REQ_CODE) { //Contacts
+                //todo: required contacts action if needed
+            } else if (requestCode == Constants.ProfileIntents.EDIT_MY_PROFIILE) { //Profile
+                //todo: required profile action if needed
             }
 
         } else {
@@ -124,14 +125,26 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
                 startActivityForResult(Intent(this, ContactsActivity::class.java),
                         Constants.ContactIntens.CONTACTS_REQ_CODE)
             }
+
+        /**Edit Profile -> [MyProfileFragment]*/
+            profile_toolbar.toolbar_right_container -> {
+                val editIntent = Intent(this, MyProfileUpdateActivity::class.java)
+                editIntent.putExtra(Constants.ProfileIntents.WILL_EDIT_PROFILE, true)
+                startActivityForResult(editIntent,
+                        Constants.ProfileIntents.EDIT_MY_PROFIILE)
+            }
+        /*Create New*/
+            home_toolbar.toolbar_right_picture -> {
+                startActivity(Intent(this, CreateNewActivity::class.java))
+
+            }
         }
     }
 
     private fun setupClickers() {
         toolbar_left_action.setOnClickListener(this)
-        toolbar_right_picture.setOnClickListener {
-            startActivity(Intent(this, CreateNewActivity::class.java))
-        }
+        profile_toolbar.toolbar_right_container.setOnClickListener(this)
+        home_toolbar.toolbar_right_picture.setOnClickListener(this)
     }
 
     /*Toolbar Control*/
@@ -153,7 +166,7 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
             home_toolbar.visibility = View.VISIBLE
             profile_toolbar.visibility = View.GONE
         } else {
-            window.statusBarColor = ContextCompat.getColor(this, R.color.grey)
+            window.statusBarColor = ContextCompat.getColor(this, R.color.colorPrimary)
             home_toolbar.visibility = View.GONE
             profile_toolbar.visibility = View.VISIBLE
         }
