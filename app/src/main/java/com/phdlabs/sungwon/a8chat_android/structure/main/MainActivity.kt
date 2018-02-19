@@ -76,10 +76,12 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
 
             if (requestCode == Constants.CameraIntents.CAMERA_REQUEST_CODE) { //Camera
                 am_bottom_tab_nav.selectedItemId = R.id.mmt_home
-            } else if (requestCode == Constants.ContactIntens.CONTACTS_REQ_CODE) { //Contacts
+            } else if (requestCode == Constants.ContactIntens.CONTACTS_REQ_CODE) { //Contacts-Eight Friends
                 //todo: required contacts action if needed
             } else if (requestCode == Constants.ProfileIntents.EDIT_MY_PROFIILE) { //Profile
                 //todo: required profile action if needed
+            } else if(requestCode == Constants.ContactIntens.INVITE_CONTACTS_REQ_CODE) { //Invite Contact
+                //todo: required invite contact action if needed
             }
 
         } else {

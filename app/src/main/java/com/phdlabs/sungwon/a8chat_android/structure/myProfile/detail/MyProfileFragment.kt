@@ -1,11 +1,15 @@
 package com.phdlabs.sungwon.a8chat_android.structure.myProfile.detail
 
+import android.content.Intent
 import android.os.Bundle
 import android.telephony.PhoneNumberUtils
 import android.view.View
+import android.widget.Toast
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.db.UserManager
+import com.phdlabs.sungwon.a8chat_android.structure.contacts.invite.InviteContactsActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreFragment
+import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_my_profile.*
@@ -16,7 +20,7 @@ import java.util.*
  * [MyProfileFragment]
  * managed from MainActivity Tab Bar
  */
-class MyProfileFragment : CoreFragment() {
+class MyProfileFragment : CoreFragment(), View.OnClickListener {
 
     /*Layout*/
     override fun layoutId(): Int = R.layout.fragment_my_profile
@@ -50,14 +54,14 @@ class MyProfileFragment : CoreFragment() {
                             .transform(CircleTransform())
                             .into(fmp_picture)
                     //Display Info
-                    val fullName:Pair<Boolean,String?> = it.hasFullName()
-                    if (fullName.first){
-                       fmp_name.text = fullName.second
-                    }else {
-                        fmp_name.text = it.first_name?: "n/a"
+                    val fullName: Pair<Boolean, String?> = it.hasFullName()
+                    if (fullName.first) {
+                        fmp_name.text = fullName.second
+                    } else {
+                        fmp_name.text = it.first_name ?: "n/a"
                     }
-                    fmp_phone_number.text = PhoneNumberUtils.formatNumber(it.phone, Locale.getDefault().country)?:"n/a"
-                    fmp_language.text = "Language: " + it.languages_spoken?.get(0)?.stringValue?: "n/a"
+                    fmp_phone_number.text = PhoneNumberUtils.formatNumber(it.phone, Locale.getDefault().country) ?: "n/a"
+                    fmp_language.text = "Language: " + it.languages_spoken?.get(0)?.stringValue ?: "n/a"
                 }
             }
         }
@@ -65,7 +69,53 @@ class MyProfileFragment : CoreFragment() {
 
     /*Clickable UI*/
     private fun setClickers() {
+        fmp_container_calendars.setOnClickListener(this)
+        fmp_payment_container.setOnClickListener(this)
+        fmp_container_notifications_settings.setOnClickListener(this)
+        fmp_container_fav_messages.setOnClickListener(this)
+        fmp_container_account.setOnClickListener(this)
+        fmp_container_terms_support.setOnClickListener(this)
+        fmp_fav_notif_container.setOnClickListener(this)
+    }
 
+    override fun onClick(p0: View?) {
+        when (p0) {
+        /*Calendars*/
+            fmp_container_calendars -> {
+                //Todo: Transition to calendars
+                Toast.makeText(context, "In progress", Toast.LENGTH_SHORT).show()
+            }
+        /*Payments*/
+            fmp_payment_container -> {
+                //Todo: Transition to payments
+                Toast.makeText(context, "In progress", Toast.LENGTH_SHORT).show()
+            }
+        /*Notification Settings*/
+            fmp_container_notifications_settings -> {
+                //Todo: Notification settings
+                Toast.makeText(context, "In progress", Toast.LENGTH_SHORT).show()
+            }
+        /*Favorite Messages*/
+            fmp_container_fav_messages -> {
+                //Todo: Favorite messages
+                Toast.makeText(context, "In progress", Toast.LENGTH_SHORT).show()
+            }
+        /*Account*/
+            fmp_container_account -> {
+                //Todo: Access Account settings
+                Toast.makeText(context, "In progress", Toast.LENGTH_SHORT).show()
+            }
+        /*Terms & Support*/
+            fmp_container_terms_support -> {
+                //Todo: Access Terms & support
+                Toast.makeText(context, "In progress", Toast.LENGTH_SHORT).show()
+            }
+        /*Invite friends*/
+            fmp_fav_notif_container -> {
+                activity?.startActivityForResult(Intent(context, InviteContactsActivity::class.java),
+                        Constants.ContactIntens.INVITE_CONTACTS_REQ_CODE)
+            }
+        }
     }
 
 }

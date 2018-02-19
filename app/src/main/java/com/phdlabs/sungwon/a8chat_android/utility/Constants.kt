@@ -105,6 +105,7 @@ object Constants {
      * */
     object ContactIntens {
         val CONTACTS_REQ_CODE = 9
+        val INVITE_CONTACTS_REQ_CODE = 11
     }
 
     /**

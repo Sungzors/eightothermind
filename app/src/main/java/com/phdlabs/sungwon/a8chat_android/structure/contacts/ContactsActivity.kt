@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v4.widget.SwipeRefreshLayout
 import android.view.View
-import android.view.ViewTreeObserver
 import android.view.WindowManager
 import android.widget.ImageView
 import com.phdlabs.sungwon.a8chat_android.R
@@ -20,12 +19,12 @@ import kotlinx.android.synthetic.main.toolbar.*
  * user contacts & user channels
  */
 
-class ContactsActivity : CoreActivity(), ContactsAContract.View, View.OnClickListener,
+class ContactsActivity : CoreActivity(), ContactsContract.EightFriends.View, View.OnClickListener,
         SwipeRefreshLayout.OnRefreshListener {
 
 
     /*Controller*/
-    override lateinit var controller: ContactsAContract.Controller
+    override lateinit var controller: ContactsContract.EightFriends.Controller
 
     /*Layout*/
     override fun layoutId(): Int = R.layout.activity_contacts
@@ -51,6 +50,11 @@ class ContactsActivity : CoreActivity(), ContactsAContract.View, View.OnClickLis
     override fun onResume() {
         super.onResume()
         controller.resume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        controller.pause()
     }
 
     override fun onStop() {

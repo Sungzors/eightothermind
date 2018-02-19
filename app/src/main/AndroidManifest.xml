@@ -98,6 +98,9 @@
             android:name=".structure.createnew.CreateNewActivity"
             android:screenOrientation="portrait"/>
 
+        <activity android:name=".structure.contacts.invite.InviteContactsActivity"
+            android:screenOrientation="portrait"/>
+
 
         <!--Photos & Images File Provider-->
         <provider

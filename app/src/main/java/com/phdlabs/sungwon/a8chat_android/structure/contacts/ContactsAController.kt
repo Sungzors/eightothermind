@@ -23,8 +23,8 @@ import io.reactivex.schedulers.Schedulers
  * Created by paix on 2/13/18.
  * ContractsActivityController for [ContactsActivity]
  */
-class ContactsAController(val mView: ContactsAContract.View) :
-        ContactsAContract.Controller,
+class ContactsAController(val mView: ContactsContract.EightFriends.View) :
+        ContactsContract.EightFriends.Controller,
         LoaderManager.LoaderCallbacks<List<LocalContact>> {
 
     /*Properties*/
