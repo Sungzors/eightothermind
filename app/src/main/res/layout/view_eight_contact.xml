@@ -2,26 +2,41 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:orientation="vertical">
 
-    <!--Friend Profile picture-->
-    <ImageView
-        android:id="@+id/fc_friend_profile_picture"
-        android:layout_width="45sp"
-        android:layout_height="45dp"
-        android:layout_margin="10dp"
-        android:contentDescription="@string/friend_profile_picture" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
 
-    <!--Friend Full Name-->
-    <TextView
-        android:id="@+id/fc_friend_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="15dp"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="15dp"
-        android:padding="5dp"
-        android:textColor="@color/grey"
-        android:textSize="15sp" />
+        <!--Friend Profile picture-->
+        <ImageView
+            android:id="@+id/fc_friend_profile_picture"
+            android:layout_width="45sp"
+            android:layout_height="45dp"
+            android:layout_margin="10dp"
+            android:contentDescription="@string/friend_profile_picture" />
+
+        <!--Friend Full Name-->
+        <TextView
+            android:id="@+id/fc_friend_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="15dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="15dp"
+            android:padding="5dp"
+            android:textColor="@color/grey"
+            android:textSize="15sp" />
+
+    </LinearLayout>
+
+    <!--Separator-->
+    <View
+        android:layout_height="1dp"
+        android:layout_width="match_parent"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:background="@color/separator" />
 
 </LinearLayout>

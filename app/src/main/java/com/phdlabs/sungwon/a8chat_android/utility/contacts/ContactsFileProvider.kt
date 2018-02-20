@@ -37,7 +37,7 @@ class ContactsFileProvider : FileProvider() {
         //Contacts Query Projection
         val projection = arrayOf(
                 ContactsContract.Contacts._ID,
-                //ContactsContract.Contacts.DISPLAY_NAME_PRIMARY, //Not used currently
+                ContactsContract.Contacts.DISPLAY_NAME_PRIMARY,
                 ContactsContract.Contacts.HAS_PHONE_NUMBER
         )
         val contentResolver: ContentResolver = context.contentResolver
@@ -52,12 +52,12 @@ class ContactsFileProvider : FileProvider() {
         if (cursor.moveToFirst()) {
             do {
                 //Retrieve contact Name
-                //val contactName = loadLocalContactsName(cursor, context) //Not used currently
+                val contactName = loadLocalContactsName(cursor, context) //Not used currently
                 //Retrieve contact Phone Number
                 val contactPhoneNumber = loadLocalContactsPhoneNumber(cursor, context)
-                val contact: LocalContact = LocalContact(PhoneNumberUtils.normalizeNumber(contactPhoneNumber))
+                val contact = LocalContact(PhoneNumberUtils.normalizeNumber(contactPhoneNumber), contactName)
                 //Only add contacts with phone
-                if (!contact.phone.isNullOrBlank()) {
+                if (!contact.phone.isBlank()) {
                     result.add(contact)
                 }
             } while (cursor.moveToNext())

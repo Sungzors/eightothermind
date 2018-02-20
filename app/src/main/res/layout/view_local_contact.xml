@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <!--Local Contact Full Name-->
+    <TextView
+        android:id="@+id/vlc_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="15dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="15dp"
+        android:textColor="@color/my_profile_name"
+        android:textSize="15sp"
+        android:gravity="center"
+        android:layout_gravity="start|center"
+        android:layout_margin="15dp"/>
+
+    <!--Separator-->
+    <View
+        android:layout_height="1dp"
+        android:layout_width="match_parent"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:background="@color/separator" />
+
+</LinearLayout>

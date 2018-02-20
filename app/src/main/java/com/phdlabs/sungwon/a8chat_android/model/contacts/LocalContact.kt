@@ -9,4 +9,4 @@ import io.realm.RealmObject
  * [LocalContact] represents the local phone contact query used for the [ContactsFileProvider]
  * - Only the phone number is required, but the [ContactsFileProvider] can return number & name
  */
-data class LocalContact(val phone: String)
+data class LocalContact(val phone: String, val displayName: String?)
