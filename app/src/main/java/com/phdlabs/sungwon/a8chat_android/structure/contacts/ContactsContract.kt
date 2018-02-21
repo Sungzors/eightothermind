@@ -57,6 +57,10 @@ interface ContactsContract {
             fun stopRefreshing()
             /*Deliver contacts*/
             fun deliverLocalContacts(localContacts: ArrayList<LocalContact>)
+            /*Feedback*/
+            fun feedback(message: String)
+            /*Clear Recycler View selections*/
+            fun doneInvitingContacts()
         }
 
         interface Controller: BaseController {
@@ -64,6 +68,8 @@ interface ContactsContract {
             fun loadLocalContacts()
             /*Permissions*/
             fun permissionResults(requestCode: Int, permissions: Array<out String>, grantResults: IntArray):Boolean
+            /*Notify Contacts*/
+            fun notifyContacts(invitedContacts: ArrayList<LocalContact>)
         }
 
     }

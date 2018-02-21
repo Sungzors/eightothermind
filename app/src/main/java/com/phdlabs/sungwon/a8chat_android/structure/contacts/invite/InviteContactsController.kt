@@ -7,10 +7,15 @@ import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import com.phdlabs.sungwon.a8chat_android.R
+import com.phdlabs.sungwon.a8chat_android.api.data.ContactsPostData
+import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
+import com.phdlabs.sungwon.a8chat_android.db.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.contacts.LocalContact
 import com.phdlabs.sungwon.a8chat_android.structure.contacts.ContactsContract
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.contacts.LocalContactsAsyncLoader
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 
 
 /**
@@ -41,6 +46,7 @@ class InviteContactsController(val mView: ContactsContract.InviteContacts.View) 
     }
 
     override fun stop() {
+        mView.doneInvitingContacts()
     }
 
     /**
@@ -104,12 +110,68 @@ class InviteContactsController(val mView: ContactsContract.InviteContacts.View) 
                 mView.deliverLocalContacts(mLocalContacts)
                 mView.hideProgress()
                 mView.stopRefreshing()
-            } //TODO: Here the progressView might not stop in rare cases
+            }
         }
     }
 
     override fun onLoaderReset(p0: Loader<List<LocalContact>>?) {
         mLocalContacts.clear()
+    }
+
+    /**
+     * Notify Contacts
+     * */
+    override fun notifyContacts(invitedContacts: ArrayList<LocalContact>) {
+        mView.showProgress()
+        UserManager.instance.getCurrentUser { success, user, token ->
+            if (success) {
+                token?.token?.let {
+                    user?.id?.let {
+                        val contactsPostData = ContactsPostData(invitedContacts.toArray())
+                        val call = Rest.getInstance().getmCallerRx().inviteContactsToEight(
+                                token.token!!,
+                                user.id!!,
+                                contactsPostData.contactsArray
+                        )
+                        call.subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(
+                                        { response ->
+                                            if (response.isSuccess) {//Success
+                                                //Invited
+                                                response.successfullySentSMS?.let {
+                                                    if (it.count() > 0){
+                                                        mView.feedback(
+                                                                "Successfully invited your contacts"
+                                                        )
+                                                        mView.hideProgress()
+                                                        mView.doneInvitingContacts()
+                                                    }
+                                                }
+                                                //Couldn't invite
+                                                response.unsuccessfullySentSMS?.let {
+                                                    if (it.count() > 0){
+                                                        mView.showError(
+                                                                "Check the phone numbers, Eight couldn't invite some of your contacts"
+                                                        )
+                                                        mView.hideProgress()
+                                                        mView.doneInvitingContacts()
+                                                    }
+                                                }
+                                            }else if(response.isError) {//Error
+
+                                            }
+                                        },
+                                        //On error implementation
+                                        { throwable ->
+                                            mView.hideProgress()
+                                            mView.doneInvitingContacts()
+                                            println("Error inviting contacts: " + throwable.message)
+                                        })
+                    }
+                }
+            }
+        }
     }
 
 }

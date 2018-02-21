@@ -16,7 +16,6 @@ import com.phdlabs.sungwon.a8chat_android.structure.myProfile.detail.MyProfileFr
 import com.phdlabs.sungwon.a8chat_android.structure.myProfile.update.MyProfileUpdateActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.toolbar.*
 import kotlinx.android.synthetic.main.toolbar.view.*
 import kotlinx.android.synthetic.main.toolbar_main.*
 
@@ -168,7 +167,7 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
             home_toolbar.visibility = View.VISIBLE
             profile_toolbar.visibility = View.GONE
         } else {
-            window.statusBarColor = ContextCompat.getColor(this, R.color.colorPrimary)
+            window.statusBarColor = ContextCompat.getColor(this, R.color.eight_status_bar)
             home_toolbar.visibility = View.GONE
             profile_toolbar.visibility = View.VISIBLE
         }

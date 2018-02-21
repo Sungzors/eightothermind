@@ -7,11 +7,6 @@
     <!--Loading-->
     <include layout="@layout/progress_view" />
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/fmp_swipe_refresh"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
         <!--Screen scrollable content-->
         <ScrollView
             android:layout_width="match_parent"
@@ -382,8 +377,5 @@
             </LinearLayout>
 
         </ScrollView>
-
-    </android.support.v4.widget.SwipeRefreshLayout>
-
 
 </LinearLayout>

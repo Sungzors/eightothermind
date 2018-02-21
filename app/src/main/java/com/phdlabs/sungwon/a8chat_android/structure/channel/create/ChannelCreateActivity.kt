@@ -2,6 +2,9 @@ package com.phdlabs.sungwon.a8chat_android.structure.channel.create
 
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Bundle
+import android.support.v4.content.ContextCompat
+import android.view.WindowManager
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.api.data.ChannelPostData
 import com.phdlabs.sungwon.a8chat_android.model.media.Media
@@ -30,7 +33,6 @@ class ChannelCreateActivity : CoreActivity(), ChannelContract.Create.View {
     //UI form
     private var isCheckedAddToProf: Boolean = false
     private var mMedia: Media? = null
-
 
     /*LifeCycle*/
     override fun onStart() {

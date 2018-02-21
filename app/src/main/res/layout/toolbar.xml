@@ -21,7 +21,8 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginStart="15dp"
-            android:scaleType="center"/>
+            android:scaleType="center"
+            android:layout_gravity="center"/>
     </LinearLayout>
 
     <!--Toolbar title-->

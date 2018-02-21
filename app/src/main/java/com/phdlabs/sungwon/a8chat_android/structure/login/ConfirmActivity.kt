@@ -1,8 +1,11 @@
 package com.phdlabs.sungwon.a8chat_android.structure.login
 
 import android.content.Intent
+import android.os.Bundle
+import android.support.v4.content.ContextCompat
 import android.text.SpannableString
 import android.text.style.UnderlineSpan
+import android.view.WindowManager
 import android.widget.Toast
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.api.data.LoginData
