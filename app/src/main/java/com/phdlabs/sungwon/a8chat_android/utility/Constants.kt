@@ -105,6 +105,15 @@ object Constants {
      * */
     object ContactIntens {
         val CONTACTS_REQ_CODE = 9
+        val INVITE_CONTACTS_REQ_CODE = 11
+    }
+
+    /**
+     * [ProfileIntents]
+     * */
+    object ProfileIntents {
+        val WILL_EDIT_PROFILE = "edit_profile"
+        val EDIT_MY_PROFIILE = 10
     }
 
     /**

@@ -18,7 +18,7 @@ class RealmStringDeserializer : JsonDeserializer<RealmList<RealmString>> {
         val realmList: RealmList<RealmString> = RealmList()
         val stringList: JsonArray? = json?.asJsonArray
         stringList?.let {
-            it.mapTo(realmList) { RealmString(it.asString) }
+            it.mapTo(realmList) { RealmString(it.toString()) }
         }
         return realmList
     }

@@ -1,8 +1,11 @@
 package com.phdlabs.sungwon.a8chat_android.structure.login
 
 import android.content.Intent
+import android.os.Bundle
+import android.support.v4.content.ContextCompat
 import android.text.SpannableString
 import android.text.style.UnderlineSpan
+import android.view.WindowManager
 import android.widget.Toast
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.api.data.LoginData
@@ -19,7 +22,7 @@ import com.phdlabs.sungwon.a8chat_android.model.user.User
 import com.phdlabs.sungwon.a8chat_android.model.user.registration.Token
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.structure.main.MainActivity
-import com.phdlabs.sungwon.a8chat_android.structure.profile.ProfileActivity
+import com.phdlabs.sungwon.a8chat_android.structure.myProfile.update.MyProfileUpdateActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.vicpin.krealmextensions.queryFirst
 import com.vicpin.krealmextensions.save
@@ -64,7 +67,7 @@ class ConfirmActivity : CoreActivity() {
         if (event.isSuccess) {
             hideProgress()
             if(isRegister){
-                startActivity(Intent(this, ProfileActivity::class.java))
+                startActivity(Intent(this, MyProfileUpdateActivity::class.java))
             } else {
                 startActivity(Intent(this, MainActivity::class.java))
             }

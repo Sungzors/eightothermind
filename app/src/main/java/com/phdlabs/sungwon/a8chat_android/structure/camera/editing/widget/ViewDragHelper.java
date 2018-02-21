@@ -581,7 +581,7 @@ public class ViewDragHelper {
         final int dy = finalTop - startTop;
 
         if (dx == 0 && dy == 0) {
-            // Nothing to do. Send callbacks, be done.
+            // Nothing to do. Send callbacks, be doneInvitingContacts.
             mScroller.abortAnimation();
             setDragState(STATE_IDLE);
             return false;
@@ -890,7 +890,7 @@ public class ViewDragHelper {
      */
     boolean tryCaptureViewForDrag(View toCapture, int pointerId) {
         if (toCapture == mCapturedView && mActivePointerId == pointerId) {
-            // Already done!
+            // Already doneInvitingContacts!
             return true;
         }
         if (toCapture != null && mCallback.tryCaptureView(toCapture, pointerId)) {

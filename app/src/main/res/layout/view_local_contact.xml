@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <!--Local Contact Full Name-->
+        <TextView
+            android:id="@+id/vlc_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_gravity="start|center"
+            android:layout_margin="23dp"
+            android:layout_toStartOf="@+id/vlc_checkbox"
+            android:gravity="start|center"
+            android:textColor="@color/my_profile_name"
+            android:textSize="15sp" />
+
+        <CheckBox
+            android:id="@+id/vlc_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="15dp"
+            android:buttonTint="@color/colorAccent"
+            android:foregroundGravity="center"
+            android:gravity="end|center" />
+
+    </RelativeLayout>
+
+    <!--Separator-->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:background="@color/separator" />
+
+</LinearLayout>

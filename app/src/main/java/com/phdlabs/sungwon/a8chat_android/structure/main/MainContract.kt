@@ -15,6 +15,5 @@ interface MainContract {
     interface Controller: BaseController{
         fun showHome()
         fun showCamera()
-        fun showProfile()
     }
 }

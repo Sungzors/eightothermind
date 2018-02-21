@@ -8,6 +8,7 @@ import com.phdlabs.sungwon.a8chat_android.api.response.createEvent.EventPostResp
 import com.phdlabs.sungwon.a8chat_android.api.response.createChannel.ChannelResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.MediaResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.UserDataResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.contacts.ContactsInvitedResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.contacts.ContactsPostResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.contacts.UserFriendsResponse
 import com.phdlabs.sungwon.a8chat_android.api.rest.Caller.TOKEN
@@ -62,6 +63,15 @@ interface CallerRx {
     fun getEightContactsPhoneNumbers(@Header(TOKEN) token: String,
                                      @Path("userId") userId: Int,
                                      @Body contactPostData: Array<out Any>): Observable<ContactsPostResponse>
+
+    /**
+     * [inviteContactsToEight]
+     * @Body Array of [LocalContact]
+     * */
+    @POST("/users/{userId}/invite_to_eight")
+    fun inviteContactsToEight(@Header(TOKEN) token: String,
+                              @Path("userId") userId: Int,
+                              @Body contactsPostData: Array<out Any>): Observable<ContactsInvitedResponse>
 
 
 }

@@ -24,6 +24,12 @@
     <color name="grey">#bdbdbd</color>
     <color name="searchGrey">#ebeef2</color>
     <color name="activityBackgroundGrey">#f9f9f9</color>
+    <color name="my_profile_name">#233b5a</color>
+    <color name="my_language_color">#8b95a0</color>
+    <color name="my_profile_settings_text">#112c4c</color>
+    <color name="separator">#f1f2f5</color>
+    <color name="white_smoke">#F5F5F5</color>
+    <color name="eight_status_bar">#4786ff</color>
 
     <!--Camera Editing Colors-->
     <color name="black">#000000</color>

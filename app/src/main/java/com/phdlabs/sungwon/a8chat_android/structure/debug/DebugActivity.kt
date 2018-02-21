@@ -3,6 +3,8 @@ package com.phdlabs.sungwon.a8chat_android.structure.debug
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.support.v4.content.ContextCompat
+import android.view.WindowManager
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.db.UserManager
 import com.phdlabs.sungwon.a8chat_android.structure.camera.CameraActivity
@@ -14,7 +16,7 @@ import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.structure.event.create.EventCreateActivity
 import com.phdlabs.sungwon.a8chat_android.structure.login.LoginActivity
 import com.phdlabs.sungwon.a8chat_android.structure.main.MainActivity
-import com.phdlabs.sungwon.a8chat_android.structure.profile.ProfileActivity
+import com.phdlabs.sungwon.a8chat_android.structure.myProfile.update.MyProfileUpdateActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import io.realm.Realm
 import io.realm.RealmConfiguration
@@ -70,7 +72,7 @@ class DebugActivity : CoreActivity() {
             startActivity(Intent(this, LoginActivity::class.java))
         })
         ad_profile_button.setOnClickListener({
-            startActivity(Intent(this, ProfileActivity::class.java))
+            startActivity(Intent(this, MyProfileUpdateActivity::class.java))
         })
         ad_main_button.setOnClickListener({
             startActivity(Intent(this, MainActivity::class.java))

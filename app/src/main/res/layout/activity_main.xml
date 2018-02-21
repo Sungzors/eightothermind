@@ -9,12 +9,25 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:theme="@style/AppTheme.AppBarWhite">
-            <include layout="@layout/toolbar_main"/>
+
+            <!--Home Toolbar-->
+            <include layout="@layout/toolbar_main"
+                android:id="@+id/home_toolbar"
+                android:visibility="visible"/>
+
+            <!--Profile Toolbar-->
+            <include layout="@layout/toolbar"
+                android:id="@+id/profile_toolbar"
+                android:visibility="gone"/>
+
         </android.support.design.widget.AppBarLayout>
+
+        <!--Fragment Container-->
         <FrameLayout
             android:id="@+id/am_content_frame"
             android:layout_width="match_parent"

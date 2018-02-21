@@ -2,7 +2,10 @@ package com.phdlabs.sungwon.a8chat_android.structure.event.create
 
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Bundle
+import android.support.v4.content.ContextCompat
 import android.view.View
+import android.view.WindowManager
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.api.data.EventPostData
 import com.phdlabs.sungwon.a8chat_android.model.event.EventsEight

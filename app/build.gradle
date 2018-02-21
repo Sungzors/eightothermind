@@ -67,6 +67,9 @@ dependencies {
     //Sliding up panel
     compile 'com.sothree.slidinguppanel:library:3.4.0'
 
+    //Animations
+    compile "com.andkulikov:transitionseverywhere:1.7.8"
+
     //Segmented Control
     compile 'info.hoang8f:android-segmented:1.0.6'
 
@@ -104,8 +107,6 @@ dependencies {
     //Data Binding
     kapt 'com.android.databinding:compiler:3.0.1'
 
-
-//    compile 'io.realm:realm-gradle-plugin:4.3.1'
     //Realm Annotations
     kapt "io.realm:realm-annotations:4.3.1"
     kapt "io.realm:realm-annotations-processor:4.3.1"
@@ -125,10 +126,7 @@ dependencies {
     compile 'com.theartofdev.edmodo:android-image-cropper:2.6.0'
     compile project(':photoeditorsdk')
 
-    //Wearables
-    //compile 'com.google.android.gms:play-services-wearable:11.6.2'
-
-    //stetho
+    //stetho-realm-windows
     compile 'com.facebook.stetho:stetho:1.5.0'
     compile 'com.uphyca:stetho_realm:2.1.0'
 

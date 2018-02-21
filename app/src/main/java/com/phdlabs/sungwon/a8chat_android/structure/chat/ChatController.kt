@@ -342,14 +342,14 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
     }
 
 //    private val onDisconnect = Emitter.Listener { args ->
-//        mRoot.getActivity.runOnUiThread({
+//        mRoot.getUpdateActivityMy.runOnUiThread({
 //            Log.d(TAG, "Socket Disconnected")
 //            isConnected = false
 //        })
 //    }
 //
 //    private val onConnectError = Emitter.Listener { args ->
-//        mRoot.getActivity.runOnUiThread({
+//        mRoot.getUpdateActivityMy.runOnUiThread({
 //            Log.e(TAG, "Error Connecting")
 //        })
 //    }
