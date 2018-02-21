@@ -1,4 +1,4 @@
-package com.phdlabs.sungwon.a8chat_android.structure.chat
+package com.phdlabs.sungwon.a8chat_android.structure.groupchat
 
 import android.content.Context
 import android.content.Intent
@@ -12,47 +12,60 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
+import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.phdlabs.sungwon.a8chat_android.structure.application.Application
 import com.phdlabs.sungwon.a8chat_android.structure.channel.mychannel.MyChannelActivity
 import com.phdlabs.sungwon.a8chat_android.structure.channel.mychannels.MyChannelsListActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
-import com.phdlabs.sungwon.a8chat_android.structure.setting.chat.ChatSettingActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseRecyclerAdapter
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseViewHolder
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.ViewMap
+import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.squareup.picasso.Picasso
+import com.vicpin.krealmextensions.queryFirst
 import kotlinx.android.synthetic.main.activity_chat.*
-import kotlinx.android.synthetic.main.toolbar_main.*
 import java.text.SimpleDateFormat
 import java.util.*
 
 /**
- * Created by SungWon on 10/18/2017.
- * Updated by JPAM on 12/27/2017
+ * Created by SungWon on 2/19/2018.
  */
-class ChatActivity: CoreActivity(), ChatContract.View{
+class GroupChatActivity: CoreActivity(), GroupChatContract.View{
+    override fun layoutId(): Int = R.layout.activity_chat
 
-    override lateinit var controller: ChatContract.Controller
+    override fun contentContainerId() = 0
+
+    override lateinit var controller: GroupChatContract.Controller
+
+    init {
+        GroupChatController(this)
+    }
+
     private lateinit var mAdapter: BaseRecyclerAdapter<Message, BaseViewHolder>
     private var mChatPic: String = ""
     private var mChatName: String = ""
     private var mUserId: Int = -1
-    private var mParticipantId: Int = 8
-
-    override fun layoutId() = R.layout.activity_chat
-
-    override fun contentContainerId() = 0
+    private var mParticipantId = mutableListOf<Int>()
+    private var mRoomId: Int = -1
+    private lateinit var mRoom: Room
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         showProgress()
-        ChatController(this)
         mChatPic = intent.getStringExtra(Constants.IntentKeys.CHAT_PIC)
         mChatName = intent.getStringExtra(Constants.IntentKeys.CHAT_NAME)
-        mParticipantId = intent.getIntExtra(Constants.IntentKeys.PARTICIPANT_ID, 8)
+        mRoomId = intent.getIntExtra(Constants.IntentKeys.ROOM_ID, -1)
+        Room().queryFirst { query ->
+            query.equalTo("id", mRoomId) }?.
+                let {
+                    mRoom = it
+                }
+        for(participants in mRoom.participantsId!!){
+            mParticipantId.add(participants.intValue!!)
+        }
         setToolbarTitle(mChatName)
         showBackArrow(R.drawable.ic_back)
         showRightImageToolbar(mChatPic)
@@ -62,12 +75,10 @@ class ChatActivity: CoreActivity(), ChatContract.View{
                 mUserId = it
             }
         }
-        controller.createPrivateChatRoom()
         setupDrawer()
         setupClickers()
         setupRecycler()
     }
-
     override fun onStart() {
         super.onStart()
     }
@@ -76,13 +87,13 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         super.onResume()
         controller.resume()
 
-        toolbar_right_picture.setOnClickListener {
-            val intent = Intent(this, ChatSettingActivity::class.java)
-            intent.putExtra(Constants.IntentKeys.CHAT_NAME, mChatName)
-            intent.putExtra(Constants.IntentKeys.PARTICIPANT_ID, mParticipantId)
-            intent.putExtra(Constants.IntentKeys.ROOM_ID, controller.getRoomId())
-            startActivity(intent)
-        }
+//        toolbar_right_picture.setOnClickListener {
+//            val intent = Intent(this, ChatSettingActivity::class.java)
+//            intent.putExtra(Constants.IntentKeys.CHAT_NAME, mChatName)
+//            intent.putExtra(Constants.IntentKeys.PARTICIPANT_ID, mParticipantId)
+//            intent.putExtra(Constants.IntentKeys.ROOM_ID, controller.getRoomId())
+//            startActivity(intent)
+//        }
     }
 
     override fun onPause() {
@@ -156,14 +167,14 @@ class ChatActivity: CoreActivity(), ChatContract.View{
             controller.sendLocation()
         }
         ac_drawer_media.setOnClickListener {
-            controller.sendMedia()
+
         }
         ac_drawer_money.setOnClickListener {
 
         }
     }
 
-    private fun setupRecycler(){
+    fun setupRecycler(){
         mAdapter = object: BaseRecyclerAdapter<Message, BaseViewHolder>(){
             override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: Message?, position: Int, type: Int) {
                 when(data!!.type){
@@ -178,11 +189,11 @@ class ChatActivity: CoreActivity(), ChatContract.View{
             }
 
             override fun getItemType(t: Message?): Int {
-                    if (t!!.userId == mUserId){
-                        return 0
-                    } else {
-                        return 1
-                    }
+                if (t!!.userId == mUserId){
+                    return 0
+                } else {
+                    return 1
+                }
             }
 
             override fun viewHolder(inflater: LayoutInflater?, parent: ViewGroup?, type: Int): BaseViewHolder {
@@ -438,11 +449,11 @@ class ChatActivity: CoreActivity(), ChatContract.View{
             Toast.makeText(this, "this needs to dl", Toast.LENGTH_SHORT).show()
         })
         controller.getUserId { id ->
-         id?.let {
-             if(message?.userId!!.toInt() != it) {
-                 Picasso.with(this).load(message.user!!.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(profPic)
-             }
-         }
+            id?.let {
+                if(message?.userId!!.toInt() != it) {
+                    Picasso.with(this).load(message.user!!.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(profPic)
+                }
+            }
         }
         if(message!!.timeDisplayed){
             date.visibility = TextView.VISIBLE
@@ -561,17 +572,20 @@ class ChatActivity: CoreActivity(), ChatContract.View{
     override val get8Application: Application
         get() = application as Application
 
-    override val getActivity: ChatActivity
+    override val getActivity: GroupChatActivity
         get() = this
 
-    override val getChatParticipant: Int
-        get() = mParticipantId //TODO: grab id from Intent
+    override val getChatParticipant: List<Int>
+        get() = mParticipantId
 
     override val getMessageET: String
         get() = ac_conjuring_conduit_of_messages.text.toString()
 
     override val getMessageETObject: EditText
         get() = ac_conjuring_conduit_of_messages
+
+    override val getRoomId: Int
+        get() = mRoomId
 
     override fun hideDrawer() {
         ac_the_daddy_drawer.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED
@@ -608,6 +622,9 @@ class ChatActivity: CoreActivity(), ChatContract.View{
                 }
                 controller.retrieveChatHistory()
                 ac_the_daddy_drawer.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED
+            }
+            CameraControl.instance.requestCode() -> {
+                controller.onPictureResult(requestCode, resultCode, data)
             }
         }
         super.onActivityResult(requestCode, resultCode, data)

@@ -453,6 +453,10 @@ class EventViewActivity : CoreActivity(), EventContract.ViewDetail.View {
         }
     }
 
+    override fun hideDrawer() {
+        ac_the_daddy_drawer.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED
+    }
+
     override val getRoomId: Int
         get() = mRoomId
     override val get8Application: Application

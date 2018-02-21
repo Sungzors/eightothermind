@@ -1,6 +1,14 @@
 package com.phdlabs.sungwon.a8chat_android.structure.event.view
 
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
+import android.os.Bundle
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import android.util.Log
 import android.widget.Toast
 import com.github.nkzawa.emitter.Emitter
@@ -45,11 +53,15 @@ class EventViewController(val mView: EventContract.ViewDetail.View) : EventContr
 
     private var isConnected: Boolean = false
 
+    private val mLocationManager: LocationManager
+    private var mLocation: Pair<String?, String?>? = null
+
     init {
         mView.controller = this
         mSocket = mView.get8Application.getSocket()
         mCaller = Rest.getInstance().caller
         mEventBus = EventBusManager.instance().mDataEventBus
+        mLocationManager = mView.getContext()?.getSystemService(Context.LOCATION_SERVICE) as LocationManager
     }
 
     override fun start() {
@@ -62,6 +74,23 @@ class EventViewController(val mView: EventContract.ViewDetail.View) : EventContr
         retrieveChatHistory()
 //        mSocket.on(Constants.SocketKeys.CONNECT, onConnect)
 //        mSocket.connect()
+        mView.getContext()?.let {
+            /*Location permissions*/
+            if (ActivityCompat.checkSelfPermission(
+                            it, Constants.AppPermissions.FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(
+                            it, Constants.AppPermissions.COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+            ) {
+                mView.hideProgress()
+                requestLocationPermissions()
+                return
+            }
+        }
+        try{
+            mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0L, 0f, locationListener)
+        } catch (ex: SecurityException){
+            println("No location available: " + ex.message)
+        }
     }
 
     override fun resume() {
@@ -363,19 +392,26 @@ class EventViewController(val mView: EventContract.ViewDetail.View) : EventContr
     }
 
     override fun sendLocation() {
-        getUserId { id ->
-            id?.let {
-                UserManager.instance.getCurrentUser { success, _, token ->
-                    if (success) {
-                        val call = mCaller.sendMessageLocation(
-                                token?.token,
-                                SendMessageGeneralData(id.toString(), mRoomId.toString())
-                        )
-                        call.enqueue(object : Callback8<ErrorResponse, MessageLocationSentEvent>(mEventBus) {
-                            override fun onSuccess(data: ErrorResponse?) {
-                                mEventBus.post(MessageLocationSentEvent())
-                            }
-                        })
+        if(mLocation == null){
+            Toast.makeText(mView.getContext()!!, "Failed to get location (Try enabling location permissions)", Toast.LENGTH_SHORT).show()
+        } else {
+            getUserId { id ->
+                mView.showProgress()
+                id?.let {
+                    UserManager.instance.getCurrentUser { success, _, token ->
+                        if (success) {
+                            val call = mCaller.sendMessageLocation(
+                                    token?.token,
+                                    SendMessageGeneralData(id.toString(), mRoomId.toString(),mLocation!!.first!!, mLocation!!.second!!)
+                            )
+                            call.enqueue(object : Callback8<ErrorResponse, MessageLocationSentEvent>(mEventBus) {
+                                override fun onSuccess(data: ErrorResponse?) {
+                                    mEventBus.post(MessageLocationSentEvent())
+                                    mView.hideProgress()
+                                    mView.hideDrawer()
+                                }
+                            })
+                        }
                     }
                 }
             }
@@ -457,5 +493,35 @@ class EventViewController(val mView: EventContract.ViewDetail.View) : EventContr
     }
 
     override fun onPictureResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    }
+    private fun requestLocationPermissions() {
+        val whatPermissions = arrayOf(Constants.AppPermissions.FINE_LOCATION,
+                Constants.AppPermissions.COARSE_LOCATION)
+        mView.getContext()?.let {
+            //Request Permissions
+            if (ContextCompat.checkSelfPermission(it, whatPermissions.get(0)) != PackageManager.PERMISSION_GRANTED &&
+                    ContextCompat.checkSelfPermission(it, whatPermissions.get(1)) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(mView.getActivity, whatPermissions, Constants.PermissionsReqCode.LOCATION_REQ_CODE)
+            }
+        }
+    }
+
+    private val locationListener: LocationListener = object : LocationListener {
+        /*Current Location*/
+        override fun onLocationChanged(location: Location) {
+            mLocation = (Pair(
+                    location.longitude.toString().trim(),
+                    location.latitude.toString().trim())
+                    )
+        }
+
+        /*Not necessary to handle on single location update*/
+        override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {}
+
+        /*Not necessary to handle on single location update*/
+        override fun onProviderEnabled(provider: String) {}
+
+        /*Not necessary to handle on single location update*/
+        override fun onProviderDisabled(provider: String) {}
     }
 }
