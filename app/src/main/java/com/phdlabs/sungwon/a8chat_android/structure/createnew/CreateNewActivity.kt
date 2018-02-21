@@ -3,14 +3,24 @@ package com.phdlabs.sungwon.a8chat_android.structure.createnew
 import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
+import android.view.LayoutInflater
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.ImageView
 import android.widget.SearchView
+import android.widget.TextView
 import android.widget.Toast
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.model.contacts.Contact
 import com.phdlabs.sungwon.a8chat_android.structure.channel.create.ChannelCreateActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.structure.event.create.EventCreateActivity
+import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseRecyclerAdapter
+import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseViewHolder
+import com.phdlabs.sungwon.a8chat_android.utility.adapter.ViewMap
+import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform
+import com.squareup.picasso.Picasso
+import com.vicpin.krealmextensions.queryAll
 import kotlinx.android.synthetic.main.activity_create_new.*
 import kotlinx.android.synthetic.main.toolbar_create_new.*
 
@@ -23,10 +33,11 @@ class CreateNewActivity: CoreActivity(){
 
     override fun contentContainerId(): Int = 0
 
-    private val mContactList = mutableListOf<Contact>()
+    private lateinit var mContactList : List<Contact>
     private val mFilteredContactList = mutableListOf<Contact>()
     private val mFavoriteList = mutableListOf<Contact>()
     private val mFilteredFavoriteList = mutableListOf<Contact>()
+    private var mContactAdapter: BaseRecyclerAdapter<Contact, BaseViewHolder>? = null
 
     override fun onStart() {
         super.onStart()
@@ -34,6 +45,7 @@ class CreateNewActivity: CoreActivity(){
         callContacts()
         setUpClickers()
         setUpSearchers()
+        setUpContactsAdapter(mContactList)
     }
 
     override fun onResume() {
@@ -49,7 +61,7 @@ class CreateNewActivity: CoreActivity(){
     }
 
     private fun callContacts(){
-
+        mContactList = Contact().queryAll()
     }
 
     private fun setUpClickers(){
@@ -96,6 +108,39 @@ class CreateNewActivity: CoreActivity(){
                     override fun onQueryTextChange(p0: String?): Boolean = false
                 }
         )
+    }
+
+    private fun setUpContactsAdapter(list: List<Contact>){
+        mContactAdapter = object : BaseRecyclerAdapter<Contact, BaseViewHolder>(){
+            override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: Contact?, position: Int, type: Int) {
+                val contactProfilePicture = viewHolder?.get<ImageView>(R.id.fc_friend_profile_picture)
+                val contactFullName = viewHolder?.get<TextView>(R.id.fc_friend_name)
+                viewHolder?.let {
+                    context?.let {
+                        /*load profile picture*/
+                        Picasso.with(it)
+                                .load(data?.avatar)
+                                .placeholder(R.drawable.addphoto)
+                                .transform(CircleTransform())
+                                .into(contactProfilePicture)
+                        /*load name*/
+                        contactFullName?.text = data?.first_name + " " + data?.last_name
+                    }
+                }
+            }
+
+            override fun viewHolder(inflater: LayoutInflater?, parent: ViewGroup?, type: Int): BaseViewHolder {
+                return object : BaseViewHolder(R.layout.view_eight_contact, inflater!!, parent) {
+                    override fun addClicks(views: ViewMap?) {
+                        views?.click {
+
+                        }
+                        super.addClicks(views)
+                    }
+                }
+            }
+        }
+        mContactAdapter?.setItems(list)
     }
 
 }

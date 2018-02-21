@@ -3,9 +3,9 @@ package com.phdlabs.sungwon.a8chat_android.structure.event
 import android.content.Intent
 import android.widget.EditText
 import com.phdlabs.sungwon.a8chat_android.api.data.EventPostData
-import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.model.event.EventsEight
 import com.phdlabs.sungwon.a8chat_android.model.media.Media
+import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.structure.application.Application
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseController
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseView
@@ -58,6 +58,7 @@ interface EventContract {
             fun lastTimeDisplayed(message: Message): Boolean
 
             fun updateRecycler()
+            fun hideDrawer()
         }
 
         interface Controller : BaseController {

@@ -16,6 +16,7 @@ import com.phdlabs.sungwon.a8chat_android.structure.channel.mychannel.MyChannelA
 import com.phdlabs.sungwon.a8chat_android.structure.chat.ChatActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreFragment
 import com.phdlabs.sungwon.a8chat_android.structure.event.view.EventViewActivity
+import com.phdlabs.sungwon.a8chat_android.structure.groupchat.GroupChatActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseRecyclerAdapter
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseViewHolder
@@ -257,14 +258,21 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
                 return object : BaseViewHolder(R.layout.card_view_lobby_event, inflater!!, parent) {
                     override fun addClicks(views: ViewMap?) {
                         views!!.click {
-                            //TODO: Add conditional for private/group
                             val room = getItem(adapterPosition)
-                            val intent = Intent(context, ChatActivity::class.java)
-                            intent.putExtra(Constants.IntentKeys.CHAT_NAME, room.user!!.first_name + " " + room.user!!.last_name)
-                            intent.putExtra(Constants.IntentKeys.PARTICIPANT_ID, room.user!!.userRooms!!.userId)
-                            intent.putExtra(Constants.IntentKeys.ROOM_ID, room.id)
-                            intent.putExtra(Constants.IntentKeys.CHAT_PIC, room.user!!.avatar)
-                            startActivity(intent)
+                            if(room.chatType== "private"){
+                                val intent = Intent(context, ChatActivity::class.java)
+                                intent.putExtra(Constants.IntentKeys.CHAT_NAME, room.user!!.first_name + " " + room.user!!.last_name)
+                                intent.putExtra(Constants.IntentKeys.PARTICIPANT_ID, room.user!!.userRooms!!.userId)
+                                intent.putExtra(Constants.IntentKeys.ROOM_ID, room.id)
+                                intent.putExtra(Constants.IntentKeys.CHAT_PIC, room.user!!.avatar as String)
+                                startActivity(intent)
+                            } else if (room.chatType == "group"){
+                                val intent = Intent(context, GroupChatActivity::class.java)
+                                intent.putExtra(Constants.IntentKeys.CHAT_NAME, room.groupChatInfo!!.name)
+                                intent.putExtra(Constants.IntentKeys.ROOM_ID, room.id)
+                                intent.putExtra(Constants.IntentKeys.CHAT_PIC, room.groupChatInfo!!.avatar as String)
+                            }
+
                         }
                     }
                 }
@@ -311,8 +319,28 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
             } else {
                 eventIndicator.visibility = ImageView.INVISIBLE
             }
-        } else {
-            title.text = "group chat in progress"
+        } else if (data.chatType == "group"){
+            Picasso.with(context).load(data.groupChatInfo!!.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(eventPic)
+            title.text = data.groupChatInfo!!.name
+            if (data.message != null) {
+                when (data.message!!.type) {
+                    "string" -> message.text = data.message!!.message
+                    "media" -> message.text = "Picture posted"
+                    "contact" -> message.text = data.message!!.contactInfo!!.first_name + " " + data.message!!.contactInfo!!.last_name
+                    "channel" -> message.text = data.message!!.channelInfo!!.name
+                    "location" -> message.text = data.message!!.locationInfo!!.streetAddress
+                }
+                data.last_activity?.let {
+                    if (Date().time.minus(it.time) >= 24 * 60 * 60 * 1000) {
+                        time.text = SimpleDateFormat("EEE").format(it)
+                    } else {
+                        time.text = SimpleDateFormat("h:mm aaa").format(it)
+                    }
+                }
+            } else {
+                message.text = ""
+                time.text = ""
+            }
         }
 
     }

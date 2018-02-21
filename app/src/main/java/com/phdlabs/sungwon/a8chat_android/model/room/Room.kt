@@ -60,6 +60,10 @@ open class Room() : RealmObject() {
     @Expose
     var last_activity: Date? = null
 
+    @SerializedName("groupChatInfo")
+    @Expose
+    var groupChatInfo: GroupChatInfo? = null
+
     /*Local Properties*/
     var isRead: Boolean = true
 
