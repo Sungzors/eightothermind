@@ -69,7 +69,7 @@
         android:id="@+id/toolbar_right_container"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_gravity="end|center"
+        android:layout_gravity="center_vertical|end"
         android:orientation="vertical"
         android:visibility="visible">
 
@@ -89,7 +89,6 @@
             android:layout_height="30dp"
             android:layout_gravity="center_vertical|end"
             android:layout_marginEnd="15dp"
-            android:foregroundGravity="center|center_horizontal"
             android:visibility="gone" />
 
     </LinearLayout>

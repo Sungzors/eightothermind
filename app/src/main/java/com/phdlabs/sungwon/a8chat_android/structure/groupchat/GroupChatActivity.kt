@@ -40,9 +40,6 @@ class GroupChatActivity: CoreActivity(), GroupChatContract.View{
 
     override lateinit var controller: GroupChatContract.Controller
 
-    init {
-        GroupChatController(this)
-    }
 
     private lateinit var mAdapter: BaseRecyclerAdapter<Message, BaseViewHolder>
     private var mChatPic: String = ""
@@ -55,6 +52,7 @@ class GroupChatActivity: CoreActivity(), GroupChatContract.View{
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         showProgress()
+        GroupChatController(this)
         mChatPic = intent.getStringExtra(Constants.IntentKeys.CHAT_PIC)
         mChatName = intent.getStringExtra(Constants.IntentKeys.CHAT_NAME)
         mRoomId = intent.getIntExtra(Constants.IntentKeys.ROOM_ID, -1)

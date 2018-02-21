@@ -35,6 +35,7 @@ import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
 import org.greenrobot.eventbus.EventBus
 import org.json.JSONException
 import org.json.JSONObject
+import retrofit2.Call
 import retrofit2.Response
 
 
@@ -267,6 +268,24 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
                             call.enqueue(object : Callback8<ErrorResponse, MessageLocationSentEvent>(mEventBus) {
                                 override fun onSuccess(data: ErrorResponse?) {
                                     mEventBus.post(MessageLocationSentEvent())
+                                    mView.hideProgress()
+                                    mView.hideDrawer()
+                                }
+
+                                override fun onResponse(call: Call<ErrorResponse>?, response: Response<ErrorResponse>?) {
+                                    super.onResponse(call, response)
+                                    mView.hideProgress()
+                                    mView.hideDrawer()
+                                }
+
+                                override fun onError(response: Response<ErrorResponse>?) {
+                                    super.onError(response)
+                                    mView.hideProgress()
+                                    mView.hideDrawer()
+                                }
+
+                                override fun onFailure(call: Call<ErrorResponse>?, t: Throwable?) {
+                                    super.onFailure(call, t)
                                     mView.hideProgress()
                                     mView.hideDrawer()
                                 }

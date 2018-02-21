@@ -3,6 +3,7 @@ package com.phdlabs.sungwon.a8chat_android.structure.createnew
 import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
+import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
@@ -13,8 +14,10 @@ import android.widget.Toast
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.model.contacts.Contact
 import com.phdlabs.sungwon.a8chat_android.structure.channel.create.ChannelCreateActivity
+import com.phdlabs.sungwon.a8chat_android.structure.chat.ChatActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.structure.event.create.EventCreateActivity
+import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseRecyclerAdapter
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseViewHolder
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.ViewMap
@@ -133,7 +136,11 @@ class CreateNewActivity: CoreActivity(){
                 return object : BaseViewHolder(R.layout.view_eight_contact, inflater!!, parent) {
                     override fun addClicks(views: ViewMap?) {
                         views?.click {
-
+                            val contact = getItem(adapterPosition)
+                            val intent = Intent(context, ChatActivity::class.java)
+                            intent.putExtra(Constants.IntentKeys.CHAT_NAME, contact.first_name + " " + contact.last_name)
+                            intent.putExtra(Constants.IntentKeys.PARTICIPANT_ID, contact.id)
+                            intent.putExtra(Constants.IntentKeys.CHAT_PIC, contact.avatar)
                         }
                         super.addClicks(views)
                     }
@@ -141,6 +148,8 @@ class CreateNewActivity: CoreActivity(){
             }
         }
         mContactAdapter?.setItems(list)
+        acn_contacts_recycler.layoutManager = LinearLayoutManager(this)
+        acn_contacts_recycler.adapter = mContactAdapter
     }
 
 }

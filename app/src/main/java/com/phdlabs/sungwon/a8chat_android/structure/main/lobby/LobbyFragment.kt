@@ -271,6 +271,7 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
                                 intent.putExtra(Constants.IntentKeys.CHAT_NAME, room.groupChatInfo!!.name)
                                 intent.putExtra(Constants.IntentKeys.ROOM_ID, room.id)
                                 intent.putExtra(Constants.IntentKeys.CHAT_PIC, room.groupChatInfo!!.avatar as String)
+                                startActivity(intent)
                             }
 
                         }
