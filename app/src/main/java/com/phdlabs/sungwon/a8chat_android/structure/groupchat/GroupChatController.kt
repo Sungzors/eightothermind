@@ -1,6 +1,7 @@
-package com.phdlabs.sungwon.a8chat_android.structure.chat
+package com.phdlabs.sungwon.a8chat_android.structure.groupchat
 
-import android.content.Context.LOCATION_SERVICE
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
@@ -12,17 +13,14 @@ import android.util.Log
 import android.widget.Toast
 import com.github.nkzawa.emitter.Emitter
 import com.github.nkzawa.socketio.client.Socket
-import com.phdlabs.sungwon.a8chat_android.api.data.PrivateChatCreateData
 import com.phdlabs.sungwon.a8chat_android.api.data.SendMessageChannelData
 import com.phdlabs.sungwon.a8chat_android.api.data.SendMessageGeneralData
 import com.phdlabs.sungwon.a8chat_android.api.data.SendMessageStringData
 import com.phdlabs.sungwon.a8chat_android.api.event.MessageLocationSentEvent
 import com.phdlabs.sungwon.a8chat_android.api.event.MessageSentEvent
-import com.phdlabs.sungwon.a8chat_android.api.event.PrivateChatCreateEvent
 import com.phdlabs.sungwon.a8chat_android.api.event.RoomHistoryEvent
 import com.phdlabs.sungwon.a8chat_android.api.response.ErrorResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.RoomHistoryResponse
-import com.phdlabs.sungwon.a8chat_android.api.response.RoomResponse
 import com.phdlabs.sungwon.a8chat_android.api.rest.Caller
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
 import com.phdlabs.sungwon.a8chat_android.api.utility.Callback8
@@ -31,59 +29,49 @@ import com.phdlabs.sungwon.a8chat_android.db.EventBusManager
 import com.phdlabs.sungwon.a8chat_android.db.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
-import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
 import org.greenrobot.eventbus.EventBus
 import org.json.JSONException
 import org.json.JSONObject
 import retrofit2.Response
 
-
 /**
- * Created by SungWon on 10/18/2017.
- * Updated by JPAM on 1/31/2018
+ * Created by SungWon on 2/19/2018.
  */
-class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
+class GroupChatController(val mView: GroupChatContract.View): GroupChatContract.Controller {
 
-    private val TAG = "ChatController"
+    private val TAG = "GroupChatController"
 
     private var mSocket: Socket
 
     private var mRoomId: Int = 0
     private lateinit var mRoomName: String
-    private lateinit var mRoomType: String
+    private val mRoomType = "groupChat"
 
     private var mMessages = mutableListOf<Message>()
 
-    private lateinit var mCaller: Caller
-    private lateinit var mEventBus: EventBus
+    private val mCaller: Caller
+    private val mEventBus: EventBus
 
     private var isConnected: Boolean = false
 
     private val mLocationManager: LocationManager
     private var mLocation: Pair<String?, String?>? = null
-//    private lateinit var mFusedLocationClient: FusedLocationProviderClient
 
     init {
         mView.controller = this
         mSocket = mView.get8Application.getSocket()
-        mLocationManager = mView.getContext()?.getSystemService(LOCATION_SERVICE) as LocationManager
-    }
-
-    //lc
-    override fun start() {
         mCaller = Rest.getInstance().caller
         mEventBus = EventBusManager.instance().mDataEventBus
+        mLocationManager = mView.getContext()?.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    }
 
-        // TODO: requires dynamic room name
-        mRoomName = "testRoom1"
-        mRoomType = "privateChat"
-
+    override fun start() {
         getUserId { id ->
             Log.d(TAG, "Socket Connected")
             mSocket.emit("connect-rooms", id, mRoomType)
             isConnected = true
         }
-
+        mRoomId = mView.getRoomId
         mView.getContext()?.let {
             /*Location permissions*/
             if (ActivityCompat.checkSelfPermission(
@@ -126,11 +114,9 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
     }
 
     override fun stop() {
-//        mSocket.off(Constants.SocketKeys.CONNECT)
     }
 
     override fun destroy() {
-//        mSocket.disconnect()
     }
 
     override fun setMessageObject(position: Int, message: Message) {
@@ -139,33 +125,12 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
 
     override fun getRoomId() = mRoomId
 
-    override fun createPrivateChatRoom() {
-        getUserId { id ->
-            id?.let {
-                UserManager.instance.getCurrentUser { success, _, token ->
-                    if (success) {
-                        val call = mCaller.createPrivateChatRoom(
-                                token?.token,
-                                PrivateChatCreateData(mutableListOf(it, mView.getChatParticipant))
-                        )
-                        call.enqueue(object : Callback8<RoomResponse, PrivateChatCreateEvent>(mEventBus) {
-                            override fun onSuccess(data: RoomResponse?) {
-                                mEventBus.post(PrivateChatCreateEvent())
-                                mRoomId = data!!.room!!.id!! //TODO: Changed
-                            }
-                        })
-                    }
-                }
-            }
-        }
-    }
-
     override fun retrieveChatHistory() {
         getUserId { id ->
             id?.let {
                 UserManager.instance.getCurrentUser { success, _, token ->
                     if (success) {
-                        val call = mCaller.getMessageHistory(
+                        val call = mCaller.getGCMessageHistory(
                                 token?.token,
                                 mRoomId,
                                 id
@@ -276,21 +241,10 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
                 }
             }
         }
+
     }
 
-    override fun sendMedia(){
-        mView.getContext()?.let {
-            if (ActivityCompat.checkSelfPermission(
-                            it, Constants.AppPermissions.CAMERA) != PackageManager.PERMISSION_GRANTED
-            ) {
-                requestCameraPermissions()
-                return
-            }
-        }
-        CameraControl.instance.pickImage(mView.getActivity,
-                "Choose an event picture",
-                CameraControl.instance.requestCode(),
-                false)
+    override fun sendMedia() {
     }
 
     override fun getMessages(): MutableList<Message> = mMessages
@@ -341,198 +295,15 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
         })
     }
 
-//    private val onDisconnect = Emitter.Listener { args ->
-//        mRoot.getUpdateActivityMy.runOnUiThread({
-//            Log.d(TAG, "Socket Disconnected")
-//            isConnected = false
-//        })
-//    }
-//
-//    private val onConnectError = Emitter.Listener { args ->
-//        mRoot.getUpdateActivityMy.runOnUiThread({
-//            Log.e(TAG, "Error Connecting")
-//        })
-//    }
 
     private val onNewMessage = Emitter.Listener { args ->
         mView.getActivity.runOnUiThread({
             val data: JSONObject = args[0] as JSONObject
-//            var id: String? = null
-//            var message: String? = null
-//            var roomId: String? = null
-//            var userId: String? = null
-//            var type: String? = null
-//            try {
-//                message = data.getString("message")
-//            } catch (e: JSONException) {
-//                Log.e(TAG, e.message)
-//            }
             val message = GsonHolder.Companion.instance.get()!!.fromJson(data.toString(), Message::class.java)
             message.timeDisplayed = mView.lastTimeDisplayed(message)
             mMessages.add(message)
             mView.updateRecycler(mMessages.size)
 
-//            try {
-//                id = data.getString("id")
-//                roomId = data.getString("roomId")
-//                userId = data.getString("userId")
-//                type = data.getString("type")
-//            } catch (e: JSONException) {
-//                Log.e(TAG, e.message)
-//            }
-//            if (type == null) {
-//                Log.e(TAG, "Message's type is null")
-//                return@runOnUiThread
-//            }
-//            val builder = Message.Builder(id!!, type, userId!!, roomId!!)
-//            when (type) {
-//                Message.TYPE_STRING -> {
-//                    val message = builder.message(message!!).build()
-//                    var name : String? = null
-//                    var userAvatar : String? = null
-//                    var createdAt : Date? = null
-////                    var updatedAt : Date? = null
-//                    var original_message_id: String? = null
-//                    try {
-//                        name = data.getString("name")
-//                        userAvatar = data.getString("userAvatar")
-//                        val createdAtString = data.getString("createdAt")
-//                        val df = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-//                        createdAt = df.parse(createdAtString)
-////                        val updatedAtString = data.getString("updatedAt")
-////                        updatedAt = df.parse(updatedAtString)
-//                        original_message_id = data.getString("original_message_id")
-//                        message.name = name
-//                        message.userAvatar = userAvatar
-//                        message.createdAt = createdAt
-////                        message.updatedAt = updatedAt
-//                        message.original_message_id = original_message_id
-//                    } catch (e: JSONException) {
-//                        Log.e(TAG, e.message)
-//                    }
-//                    message.timeDisplayed = mView.lastTimeDisplayed(message)
-//                    mMessages!!.add(message)
-//                    mView.updateRecycler(mMessages!!.size)
-//                }
-//                Message.TYPE_CHANNEL -> {
-//                    val channelInfo: JSONObject
-//                    var id: Int? = null
-//                    var name: String? = null
-//                    var unique_id: String? = null
-//                    var description: String? = null
-//                    var color: String? = null
-//                    var background: String? = null
-//                    var add_to_profile: Boolean? = null
-//                    var user_creator_id: String? = null
-//                    var room_id: String? = null
-//                    var channel: Channel? = null
-//                    try {
-//                        channelInfo = data.getJSONObject("channelInfo")
-//                        id = channelInfo.getInt("id")
-//                        name = channelInfo.getString("name")
-//                        unique_id = channelInfo.getString("unique_id")
-//                        description = channelInfo.getString("description")
-//                        color = channelInfo.getString("color")
-//                        background = channelInfo.getString("background")
-//                        add_to_profile = channelInfo.getBoolean("add_to_profile")
-//                        user_creator_id = channelInfo.getString("user_creator_id")
-//                        room_id = channelInfo.getString("room_id")
-//                        channel = Channel(id, name, unique_id, room_id)
-//                        channel.description = description
-//                        channel.color = color
-//                        channel.background = background
-//                        channel.add_to_profile = add_to_profile
-//                        channel.user_creator_id = user_creator_id
-//                    } catch (e: JSONException) {
-//                        Log.e(TAG, e.message)
-//                        return@runOnUiThread
-//                    }
-//                    mMessages!!.add(builder.message(message).channel(channel).build())
-//                    mView.updateRecycler(mMessages!!.size)
-//                }
-//                Message.TYPE_CONTACT -> {
-//                    val contactInfo: JSONObject
-//                    var id: Int? = null
-//                    var first_name: String? = null
-//                    var last_name: String? = null
-//                    var phone: String? = null
-//                    var country_code: String? = null
-//                    var email: String? = null
-//                    val language_spoken = mutableListOf<String>()
-//                    var country: String? = null
-//                    var profile_picture_string: String? = null
-//                    var avatar: String? = null
-////                    var position : JSONObject
-//                    var verified: Boolean? = null
-//                    var socket_id: String? = null
-//                    var contact: User? = null
-//                    try {
-//                        contactInfo = data.getJSONObject("contactInfo")
-//                        id = contactInfo.getInt("id")
-//                        first_name = contactInfo.getString("first_name")
-//                        last_name = contactInfo.getString("last_name")
-//                        phone = contactInfo.getString("phone")
-//                        country_code = contactInfo.getString("country_code")
-//                        email = contactInfo.getString("email")
-//                        val contacts = contactInfo.getJSONArray("language_spoken")
-//                        for (i in 0..(contacts.length() - 1)) {
-//                            language_spoken.add(contacts.get(i) as String)
-//                        }
-//                        country = contactInfo.getString("country")
-//                        profile_picture_string = contactInfo.getString("profile_picture_string")
-//                        avatar = contactInfo.getString("avatar")
-////                        position = contactInfo.getJSONObject("room_id")
-//                        verified = contactInfo.getBoolean("verified")
-//                        socket_id = contactInfo.getString("socket_id")
-//                        contact = User()
-//                        contact.id = id
-//                        contact.first_name = first_name
-//                        contact.last_name = last_name
-//                        contact.phone = phone
-//                        contact.country_code = country_code
-//                        contact.email = email
-//                        contact.country = country
-//                        contact.profile_picture_string = profile_picture_string
-//                        contact.avatar = avatar
-//                        contact.verified = verified
-//                        contact.socket_id = socket_id
-//                    } catch (e: JSONException) {
-//                        Log.e(TAG, e.message)
-//                        return@runOnUiThread
-//                    }
-//                    mMessages.add(builder.message(message).contact(contact).build())
-//                    mView.updateRecycler(mMessages.size)
-//                }
-//                Message.TYPE_LOCATION -> {
-//                    val message = builder.message(message!!).build()
-//                    var name : String? = null
-//                    var userAvatar : String? = null
-//                    var createdAt : Date? = null
-////                    var updatedAt : Date? = null
-//                    var original_message_id: String? = null
-//                    try {
-//                        name = data.getString("name")
-//                        userAvatar = data.getString("userAvatar")
-//                        val createdAtString = data.getString("createdAt")
-//                        val df = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-//                        createdAt = df.parse(createdAtString)
-////                        val updatedAtString = data.getString("updatedAt")
-////                        updatedAt = df.parse(updatedAtString)
-//                        original_message_id = data.getString("original_message_id")
-//                        message.name = name
-//                        message.userAvatar = userAvatar
-//                        message.createdAt = createdAt
-////                        message.updatedAt = updatedAt
-//                        message.original_message_id = original_message_id
-//                    } catch (e: JSONException) {
-//                        Log.e(TAG, e.message)
-//                    }
-//                    message.timeDisplayed = mView.lastTimeDisplayed(message)
-//                    mMessages.add(message)
-//                    mView.updateRecycler(mMessages.size)
-//                }
-//
-//            }
         })
     }
 
@@ -563,7 +334,7 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
             mLocation = (Pair(
                     location.longitude.toString().trim(),
                     location.latitude.toString().trim())
-            )
+                    )
         }
 
         /*Not necessary to handle on single location update*/
@@ -576,12 +347,6 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
         override fun onProviderDisabled(provider: String) {}
     }
 
-    private fun requestCameraPermissions() {
-        val whatPermissions = arrayOf(Constants.AppPermissions.CAMERA)
-        mView.getContext()?.let {
-            if (ContextCompat.checkSelfPermission(it, whatPermissions.get(0)) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(mView.getActivity, whatPermissions, Constants.PermissionsReqCode.CAMERA_REQ_CODE)
-            }
-        }
+    override fun onPictureResult(requestCode: Int, resultCode: Int, data: Intent?) {
     }
 }

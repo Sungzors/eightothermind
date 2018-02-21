@@ -1,5 +1,6 @@
-package com.phdlabs.sungwon.a8chat_android.structure.chat
+package com.phdlabs.sungwon.a8chat_android.structure.groupchat
 
+import android.content.Intent
 import android.widget.EditText
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.structure.application.Application
@@ -7,15 +8,16 @@ import com.phdlabs.sungwon.a8chat_android.structure.core.BaseController
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseView
 
 /**
- * Created by SungWon on 10/18/2017.
+ * Created by SungWon on 2/19/2018.
  */
-interface ChatContract {
+interface GroupChatContract {
     interface View: BaseView<Controller>{
         val get8Application : Application
-        val getActivity : ChatActivity
-        val getChatParticipant : Int
+        val getActivity : GroupChatActivity
+        val getChatParticipant : List<Int>
         val getMessageET : String
         val getMessageETObject : EditText
+        val getRoomId: Int
 
         fun hideDrawer()
 
@@ -25,8 +27,7 @@ interface ChatContract {
         fun updateRecycler()
         fun updateRecycler(position: Int)
     }
-
-    interface Controller: BaseController{
+    interface Controller: BaseController {
         fun destroy()
 
         fun getMessages() : MutableList<Message>
@@ -35,7 +36,7 @@ interface ChatContract {
 
         fun setMessageObject(position: Int, message: Message)
 
-        fun createPrivateChatRoom()
+        fun onPictureResult(requestCode: Int, resultCode: Int, data: Intent?)
 
         fun retrieveChatHistory()
 

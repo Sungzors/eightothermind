@@ -83,6 +83,9 @@ public interface Caller {
     @GET("/privateChats/{roomId}/user/{userId}/messages")
     Call<RoomHistoryResponse> getMessageHistory(@Header(TOKEN) String token, @Path("roomId") int roomId, @Path("userId") int userId);
 
+    @GET("/groupChats/{roomId}/user/{userId}/messages")
+    Call<RoomHistoryResponse> getGCMessageHistory(@Header(TOKEN) String token, @Path("roomId") int roomId, @Path("userId") int userId);
+
     @POST("/messages/string")
     Call<ErrorResponse> sendMessageString(@Header(TOKEN) String token, @Body SendMessageStringData data);
 

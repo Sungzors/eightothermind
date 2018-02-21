@@ -101,6 +101,9 @@
         <activity android:name=".structure.contacts.invite.InviteContactsActivity"
             android:screenOrientation="portrait"/>
 
+        <activity
+            android:name=".structure.groupchat.GroupChatActivity"
+            android:screenOrientation="portrait"/>
 
         <!--Photos & Images File Provider-->
         <provider
