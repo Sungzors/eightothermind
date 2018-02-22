@@ -141,6 +141,7 @@ class CreateNewActivity: CoreActivity(){
                             intent.putExtra(Constants.IntentKeys.CHAT_NAME, contact.first_name + " " + contact.last_name)
                             intent.putExtra(Constants.IntentKeys.PARTICIPANT_ID, contact.id)
                             intent.putExtra(Constants.IntentKeys.CHAT_PIC, contact.avatar)
+                            startActivity(intent)
                         }
                         super.addClicks(views)
                     }
