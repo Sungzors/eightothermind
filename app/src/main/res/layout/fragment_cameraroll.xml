@@ -2,9 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginTop="10dp"
     android:background="@android:color/white"
-    android:orientation="vertical"
-    android:layout_marginTop="10dp">
+    android:orientation="vertical">
+
     <!--Camera Roll Toolbar-->
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -13,11 +14,18 @@
         <!--White toolbar-->
         <include layout="@layout/toolbar" />
     </android.support.design.widget.AppBarLayout>
+
     <!--Camera Roll recycler view-->
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/cr_recyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="15dp" />
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/fcr_refresh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/cr_recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="15dp" />
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 </LinearLayout>

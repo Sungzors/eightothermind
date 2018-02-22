@@ -63,10 +63,10 @@ class LobbyController(val mView: LobbyContract.View) : LobbyContract.Controller 
                             mMyChannel.addAll(channel.channels)
                         }
                         if (mMyChannel.size > 0) {
-                            for(channel in mMyChannel){
+                            for (channel in mMyChannel) {
                                 channel.save()
+                                mView.setUpMyChannelRecycler()
                             }
-                            mView.setUpMyChannelRecycler()
                         }
                     }
                 })
@@ -83,10 +83,12 @@ class LobbyController(val mView: LobbyContract.View) : LobbyContract.Controller 
                     override fun onSuccess(data: EventRetrievalResponse?) {
                         mEvents.addAll(data!!.events!!)
                         if (mEvents.size > 0) {
-                            for(event in mEvents){
+                            for (event in mEvents) {
                                 event.save()
                             }
-                            mView.setUpEventsRecycler()
+                            if (mEvents.size > 0) {
+                                mView.setUpEventsRecycler()
+                            }
                         }
                     }
                 })
@@ -113,7 +115,7 @@ class LobbyController(val mView: LobbyContract.View) : LobbyContract.Controller 
                             mChannelsFollowed.addAll(channel.channels)
                         }
                         if (mChannelsFollowed.size > 0) {
-                            for (channel in mChannelsFollowed){
+                            for (channel in mChannelsFollowed) {
                                 channel.save()
                             }
                             mView.setUpChannelsFollowedRecycler()
@@ -133,7 +135,7 @@ class LobbyController(val mView: LobbyContract.View) : LobbyContract.Controller 
                     override fun onSuccess(data: ChannelArrayResponse?) {
                         mChannel.addAll(data!!.channels!!)
                         if (mChannel.size > 0) {
-                            for(channel in mChannel){
+                            for (channel in mChannel) {
                                 channel.save()
                             }
                             mView.setUpChannelRecycler()
@@ -152,7 +154,7 @@ class LobbyController(val mView: LobbyContract.View) : LobbyContract.Controller 
                     override fun onSuccess(data: ChatsRetrievalResponse?) {
                         mChat.addAll(data!!.chats!!)
                         if (mChat.size > 0) {
-                            for(room in mChat){
+                            for (room in mChat) {
                                 room.save()
                             }
                             mView.setUpChatRecycler()

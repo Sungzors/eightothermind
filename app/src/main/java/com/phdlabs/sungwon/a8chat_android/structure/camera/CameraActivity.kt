@@ -137,7 +137,7 @@ class CameraActivity : CoreActivity(), CameraContract.View, TabLayout.OnTabSelec
             }
             cc_close_back -> {
                 /*Finish camera activity*/
-                this.finish()
+                onBackPressed()
             }
         }
     }

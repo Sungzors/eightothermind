@@ -45,7 +45,7 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
         //Click listeners
         setupClickers()
         //Tabs
-        showTabs()
+        showTabs(true)
     }
 
     override fun onStart() {
@@ -74,12 +74,12 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
         if (resultCode == Activity.RESULT_OK || resultCode == Activity.RESULT_CANCELED) {
 
             if (requestCode == Constants.CameraIntents.CAMERA_REQUEST_CODE) { //Camera
-                am_bottom_tab_nav.selectedItemId = R.id.mmt_home
+                showTabs(false)
             } else if (requestCode == Constants.ContactIntens.CONTACTS_REQ_CODE) { //Contacts-Eight Friends
                 //todo: required contacts action if needed
             } else if (requestCode == Constants.ProfileIntents.EDIT_MY_PROFIILE) { //Profile
                 //todo: required profile action if needed
-            } else if(requestCode == Constants.ContactIntens.INVITE_CONTACTS_REQ_CODE) { //Invite Contact
+            } else if (requestCode == Constants.ContactIntens.INVITE_CONTACTS_REQ_CODE) { //Invite Contact
                 //todo: required invite contact action if needed
             }
 
@@ -89,12 +89,15 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
     }
 
     /*Tab Control*/
-    private fun showTabs() {
+    private fun showTabs(isLaunch: Boolean) {
         am_bottom_tab_nav.setOnNavigationItemSelectedListener { item ->
             onTabSelected(item)
             true
         }
-        am_bottom_tab_nav.selectedItemId = R.id.mmt_home
+        //Launch Lobby 1st time
+        if (isLaunch) {
+            am_bottom_tab_nav.selectedItemId = R.id.mmt_home
+        }
     }
 
     private fun onTabSelected(item: MenuItem) {
@@ -102,6 +105,7 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
         /*Home*/
             R.id.mmt_home -> {
                 super.onPostResume()
+                setupToolbars()
                 toolbarControl(true)
                 replaceFragment(LobbyFragment.newInstance(), false)
             }

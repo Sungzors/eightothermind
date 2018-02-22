@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.support.v4.app.LoaderManager
 import android.support.v4.content.ContextCompat
 import android.support.v4.content.Loader
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.GridLayoutManager
 import android.view.LayoutInflater
 import android.view.View
@@ -73,6 +74,13 @@ class CameraRollFragment : CameraBaseFragment(),
      * */
     private fun setupClickListeners() {
         toolbar_leftoolbart_action.setOnClickListener(this)
+        fcr_refresh.setOnRefreshListener(object: SwipeRefreshLayout.OnRefreshListener{
+            override fun onRefresh() {
+                //Refresh pictures
+                requestExternalStoragePermissions()
+            }
+
+        })
     }
 
     /**
@@ -209,6 +217,7 @@ class CameraRollFragment : CameraBaseFragment(),
 
             /*Picture count subtitle & toolbar swap*/
             toolbarVisibility(mGalleryPhotos.count())
+
 
             /*Setup RecyclerView with fresh data*/
             setupRecycler()

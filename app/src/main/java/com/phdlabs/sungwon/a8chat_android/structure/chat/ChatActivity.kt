@@ -59,6 +59,11 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         setToolbarTitle(mChatName)
         showBackArrow(R.drawable.ic_back)
         //showRightImageToolbar(mChatPic)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        //showRightImageToolbar(mChatPic)
         controller.start()
         controller.getUserId { id ->
             id?.let {
@@ -69,10 +74,6 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         setupDrawer()
         setupClickers()
         setupRecycler()
-    }
-
-    override fun onStart() {
-        super.onStart()
     }
 
     override fun onResume() {

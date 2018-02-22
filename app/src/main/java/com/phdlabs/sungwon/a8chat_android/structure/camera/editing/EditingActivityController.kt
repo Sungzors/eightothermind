@@ -67,7 +67,7 @@ class EditingActivityController(val mView: EditingContract.View) : EditingContra
             if (DeviceInfo.INSTANCE.isWarningDevice(Build.MODEL)) {
                 Picasso.with(mView.getContext())
                         .load(File(it))
-                        .rotate(270f) //Full screen //TODO: Probably 90 degrees
+                        .rotate(90f) //Full screen //TODO: Probably 90 degrees
                         .into(mView.getPreviewLayout())
             } else {
                 Picasso.with(mView.getContext())

@@ -1,6 +1,9 @@
 package com.phdlabs.sungwon.a8chat_android.structure.contacts
 
+import android.app.AlertDialog
+import android.app.Dialog
 import android.app.LoaderManager
+import android.content.DialogInterface
 import android.content.Loader
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -29,6 +32,13 @@ class ContactsAController(val mView: ContactsContract.EightFriends.View) :
 
     /*Properties*/
     private var mLocalContacts: ArrayList<LocalContact> = ArrayList()
+
+    /**
+     * Loader manager gets called twice for contacts
+     * This is a useful flag to avoid double network calls.
+     * */
+    private var hasRepeatedMethodCall: Boolean = false
+    private var hasAskedToRetry: Boolean = false
 
     /*Initializer*/
     init {
@@ -134,15 +144,40 @@ class ContactsAController(val mView: ContactsContract.EightFriends.View) :
     override fun onLoadFinished(p0: Loader<List<LocalContact>>?, p1: List<LocalContact>?) {
         mLocalContacts.clear()
         p1?.let {
+
             for (contact in it) {
                 mLocalContacts.add(contact)
             }
+
             //Dev
             println(" CONTACT COUNT: " + mLocalContacts.count())
+
             //Process contacts with API
-            if (mLocalContacts.count() > 0) {
+            if (mLocalContacts.count() == 0 && !hasRepeatedMethodCall && !hasAskedToRetry) {
+
+                val dialogBuilder = AlertDialog.Builder(mView.activity)
+                hasRepeatedMethodCall = !hasRepeatedMethodCall
+                hasAskedToRetry = !hasAskedToRetry
+                dialogBuilder.setMessage("You don't have any more Eight contacts")
+                        .setPositiveButton("ok") { _, _ ->
+                            /*Update UI*/
+                            mView.updateContactSelector("Contacts",
+                                    0)
+                            /*Dismiss alert*/
+                        }
+                        .setNegativeButton("retry", { _, _ ->
+                            loadContactsFromApi()
+                        })
+                dialogBuilder.create().show()
+                mView.stopRefreshing()
+                mView.hideProgress()
+
+            } else if (mLocalContacts.count() > 0 && hasRepeatedMethodCall) {
+                hasRepeatedMethodCall = !hasRepeatedMethodCall
                 getEightContacts(mLocalContacts)
-            } //TODO: Here the progressView might not stop in rare cases
+                mView.stopRefreshing()
+                mView.hideProgress()
+            }
         }
     }
 
@@ -239,6 +274,8 @@ class ContactsAController(val mView: ContactsContract.EightFriends.View) :
                                                      * @see Realm
                                                      * */
                                                     it.saveAll()
+                                                    hasAskedToRetry = !hasAskedToRetry
+                                                    hasRepeatedMethodCall = !hasRepeatedMethodCall
 
                                                     /*Update UI*/
                                                     mView.updateContactSelector("Contacts (" + it.count() + ")",
