@@ -128,7 +128,7 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
             }
 
         /**Edit Profile -> [MyProfileFragment]*/
-            profile_toolbar.toolbar_right_container -> {
+            profile_toolbar.toolbar_right_picture -> {
                 val editIntent = Intent(this, MyProfileUpdateActivity::class.java)
                 editIntent.putExtra(Constants.ProfileIntents.WILL_EDIT_PROFILE, true)
                 startActivityForResult(editIntent,
@@ -144,7 +144,7 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
 
     private fun setupClickers() {
         toolbar_left_action.setOnClickListener(this)
-        profile_toolbar.toolbar_right_container.setOnClickListener(this)
+        profile_toolbar.toolbar_right_picture.setOnClickListener(this)
         home_toolbar.toolbar_right_picture.setOnClickListener(this)
     }
 
