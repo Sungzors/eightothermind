@@ -84,13 +84,13 @@ class InviteContactsActivity : CoreActivity(), ContactsContract.InviteContacts.V
 
             override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: LocalContact?, position: Int, type: Int) {
                 val contactFullName = viewHolder?.get<TextView>(R.id.vlc_name)
+                val contactCheckBox = viewHolder?.get<CheckBox>(R.id.vlc_checkbox)
                 viewHolder?.let {
                     //Display Name
                     contactFullName?.text = data?.displayName
                     //Keep selection & avoid recycling on selected items
                     it.itemView?.tag = position
-                    it.itemView?.findViewById<CheckBox>(R.id.vlc_checkbox)?.isChecked =
-                            mSelectedRecyclerPositions.contains(position)
+                    contactCheckBox?.isChecked = mSelectedRecyclerPositions.contains(position)
                 }
             }
 
