@@ -132,6 +132,7 @@ class ContactsFragment : CoreFragment() {
                             val intent = Intent(context, ChatSettingActivity::class.java)
                             intent.putExtra(Constants.IntentKeys.CHAT_NAME, contact.first_name + " " + contact.last_name)
                             intent.putExtra(Constants.IntentKeys.PARTICIPANT_ID, contact.id)
+                            intent.putExtra(Constants.IntentKeys.FROM_CONTACTS, true)
                             var roomId: Int? = 0
                             val availableRooms = Room().query { it.findAll() }
                             for (roomElement in availableRooms) {

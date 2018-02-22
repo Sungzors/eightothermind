@@ -77,11 +77,11 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
             if (requestCode == Constants.CameraIntents.CAMERA_REQUEST_CODE) { //Camera
                 am_bottom_tab_nav.setOnNavigationItemSelectedListener(null)
                 showTabs(false, true)
-            } else if (requestCode == Constants.ContactIntens.CONTACTS_REQ_CODE) { //Contacts-Eight Friends
+            } else if (requestCode == Constants.ContactItems.CONTACTS_REQ_CODE) { //Contacts-Eight Friends
                 //todo: required contacts action if needed
             } else if (requestCode == Constants.ProfileIntents.EDIT_MY_PROFIILE) { //Profile
                 //todo: required profile action if needed
-            } else if (requestCode == Constants.ContactIntens.INVITE_CONTACTS_REQ_CODE) { //Invite Contact
+            } else if (requestCode == Constants.ContactItems.INVITE_CONTACTS_REQ_CODE) { //Invite Contact
                 //todo: required invite contact action if needed
             }
 
@@ -139,7 +139,7 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
         /*Contacts -> top left action*/
             toolbar_left_action -> {
                 startActivityForResult(Intent(this, ContactsActivity::class.java),
-                        Constants.ContactIntens.CONTACTS_REQ_CODE)
+                        Constants.ContactItems.CONTACTS_REQ_CODE)
             }
 
         /**Edit Profile -> [MyProfileFragment]*/

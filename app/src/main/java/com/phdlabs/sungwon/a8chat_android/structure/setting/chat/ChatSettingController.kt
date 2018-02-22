@@ -8,7 +8,10 @@ import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
 import com.phdlabs.sungwon.a8chat_android.api.utility.Callback8
 import com.phdlabs.sungwon.a8chat_android.db.EventBusManager
 import com.phdlabs.sungwon.a8chat_android.db.UserManager
+import com.phdlabs.sungwon.a8chat_android.model.contacts.Contact
 import com.phdlabs.sungwon.a8chat_android.structure.setting.SettingContract
+import com.vicpin.krealmextensions.query
+import com.vicpin.krealmextensions.queryAll
 import org.greenrobot.eventbus.EventBus
 
 /**
@@ -66,4 +69,7 @@ class ChatSettingController(val mView: SettingContract.Chat.View) : SettingContr
     override fun setFavorite(isFave: Boolean) {
         mFavorited = isFave
     }
+
+    /*Get contact information from Realm*/
+    override fun getContactInfo(id: Int): Contact = Contact().query { it.equalTo("id", id) }[0]
 }

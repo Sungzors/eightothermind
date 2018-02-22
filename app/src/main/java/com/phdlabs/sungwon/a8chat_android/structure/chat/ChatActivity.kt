@@ -1,5 +1,6 @@
 package com.phdlabs.sungwon.a8chat_android.structure.chat
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -25,7 +26,7 @@ import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_chat.*
-import kotlinx.android.synthetic.main.toolbar_main.*
+import kotlinx.android.synthetic.main.toolbar.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -33,7 +34,7 @@ import java.util.*
  * Created by SungWon on 10/18/2017.
  * Updated by JPAM on 12/27/2017
  */
-class ChatActivity: CoreActivity(), ChatContract.View{
+class ChatActivity : CoreActivity(), ChatContract.View {
 
     override lateinit var controller: ChatContract.Controller
     private lateinit var mAdapter: BaseRecyclerAdapter<Message, BaseViewHolder>
@@ -58,9 +59,13 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         }
         mChatName = intent.getStringExtra(Constants.IntentKeys.CHAT_NAME)
         mParticipantId = intent.getIntExtra(Constants.IntentKeys.PARTICIPANT_ID, 8)
+        //Toolbar
         setToolbarTitle(mChatName)
-        showBackArrow(R.drawable.ic_back)
-        //showRightImageToolbar(mChatPic)
+        toolbar_leftoolbart_action.setImageDrawable(getDrawable(R.drawable.ic_back))
+        toolbar_left_action_container.setOnClickListener {
+            setResult(Activity.RESULT_OK)
+            onBackPressed()
+        }
     }
 
     override fun onStart() {
@@ -120,7 +125,7 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         })
         ac_conjuring_conduit_of_messages.setOnClickListener({
             val layoutManager = ac_floating_cascade_of_parchments.layoutManager as LinearLayoutManager
-            layoutManager.scrollToPositionWithOffset(controller.getMessages().size -1, 0)
+            layoutManager.scrollToPositionWithOffset(controller.getMessages().size - 1, 0)
             ac_conjuring_conduit_of_messages.isFocusableInTouchMode = true
 
             ac_conjuring_conduit_of_messages.post({
@@ -130,7 +135,7 @@ class ChatActivity: CoreActivity(), ChatContract.View{
             })
         })
         ac_conjuring_conduit_of_messages.setOnFocusChangeListener({ view, b ->
-            if (!b){
+            if (!b) {
                 ac_conjuring_conduit_of_messages.isFocusableInTouchMode = false
                 val imm = this.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.hideSoftInputFromWindow(ac_conjuring_conduit_of_messages.windowToken, 0)
@@ -138,11 +143,11 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         })
         ac_drawer_summoner.setOnClickListener {
             val view = this.currentFocus
-            if (view != null){
+            if (view != null) {
                 val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.hideSoftInputFromWindow(view.windowToken, 0)
             }
-            if(ac_the_daddy_drawer.panelState == SlidingUpPanelLayout.PanelState.COLLAPSED){
+            if (ac_the_daddy_drawer.panelState == SlidingUpPanelLayout.PanelState.COLLAPSED) {
                 ac_the_daddy_drawer.panelState = SlidingUpPanelLayout.PanelState.EXPANDED
             } else {
                 ac_the_daddy_drawer.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED
@@ -169,10 +174,10 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         }
     }
 
-    private fun setupRecycler(){
-        mAdapter = object: BaseRecyclerAdapter<Message, BaseViewHolder>(){
+    private fun setupRecycler() {
+        mAdapter = object : BaseRecyclerAdapter<Message, BaseViewHolder>() {
             override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: Message?, position: Int, type: Int) {
-                when(data!!.type){
+                when (data!!.type) {
                     Constants.MessageTypes.TYPE_STRING -> bindMessageViewHolder(viewHolder, data)
                     Constants.MessageTypes.TYPE_CONTACT -> bindContactViewHolder(viewHolder, data)
                     Constants.MessageTypes.TYPE_LOCATION -> bindLocationViewHolder(viewHolder, data)
@@ -184,22 +189,22 @@ class ChatActivity: CoreActivity(), ChatContract.View{
             }
 
             override fun getItemType(t: Message?): Int {
-                    if (t!!.userId == mUserId){
-                        return 0
-                    } else {
-                        return 1
-                    }
+                if (t!!.userId == mUserId) {
+                    return 0
+                } else {
+                    return 1
+                }
             }
 
             override fun viewHolder(inflater: LayoutInflater?, parent: ViewGroup?, type: Int): BaseViewHolder {
-                if(type == 0){
-                    return object : BaseViewHolder(R.layout.card_view_chat_right, inflater!!, parent){
+                if (type == 0) {
+                    return object : BaseViewHolder(R.layout.card_view_chat_right, inflater!!, parent) {
                         override fun addClicks(views: ViewMap?) {
                             super.addClicks(views)
                         }
                     }
                 } else {
-                    return object : BaseViewHolder(R.layout.card_view_chat, inflater!!, parent){
+                    return object : BaseViewHolder(R.layout.card_view_chat, inflater!!, parent) {
                         override fun addClicks(views: ViewMap?) {
                             super.addClicks(views)
                         }
@@ -216,14 +221,14 @@ class ChatActivity: CoreActivity(), ChatContract.View{
     }
 
     //can move to controllerlrldf
-    override fun lastTimeDisplayed(position: Int): Boolean{
-        if (position == 0){
+    override fun lastTimeDisplayed(position: Int): Boolean {
+        if (position == 0) {
             return true
         }
-        for (i in position-1 downTo 0){
+        for (i in position - 1 downTo 0) {
 //            i
 //            val x = controller.getMessages()[i].timeDisplayed
-            if(controller.getMessages()[i].timeDisplayed){
+            if (controller.getMessages()[i].timeDisplayed) {
 //                val a = mAdapter.getItem(i)
 //                val b = mAdapter.getItem(position)
 //                val c = controller.getMessages()[position].createdAt!!.time.minus(controller.getMessages()[i].createdAt!!.time)
@@ -237,24 +242,24 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         return true
     }
 
-    override fun lastTimeDisplayed(message: Message): Boolean{
-        if (controller.getMessages().size == 0){
+    override fun lastTimeDisplayed(message: Message): Boolean {
+        if (controller.getMessages().size == 0) {
             return true
         }
-        for (i in controller.getMessages().size -1 downTo 0){
-            if(controller.getMessages()[i].timeDisplayed){
+        for (i in controller.getMessages().size - 1 downTo 0) {
+            if (controller.getMessages()[i].timeDisplayed) {
 //                val a = mAdapter.getItem(i)
 //                val b = mAdapter.getItem(position)
 //                val c = controller.getMessages()[position].createdAt!!.time.minus(controller.getMessages()[i].createdAt!!.time)
                 val df = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
                 val createdAt: Pair<Date, Date> = Pair(message.createdAt!!, controller.getMessages()[i].createdAt!!)
-                return (createdAt.first.time.minus(createdAt.second.time)>= 5 * 60 * 1000 )
+                return (createdAt.first.time.minus(createdAt.second.time) >= 5 * 60 * 1000)
             }
         }
         return true
     }
 
-    private fun bindMessageViewHolder(viewHolder: BaseViewHolder?, message: Message?){
+    private fun bindMessageViewHolder(viewHolder: BaseViewHolder?, message: Message?) {
         val date = viewHolder!!.get<TextView>(R.id.cvc_message_date)
         val messagetv = viewHolder.get<TextView>(R.id.cvc_message)
         val profPic = viewHolder.get<ImageView>(R.id.cvc_profile_pic)
@@ -272,12 +277,12 @@ class ChatActivity: CoreActivity(), ChatContract.View{
 
         controller.getUserId { id ->
             id?.let {
-                if(message!!.userId!!.toInt() != it){
+                if (message!!.userId!!.toInt() != it) {
                     Picasso.with(this).load(message.user!!.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(profPic)
                 }
                 messagetv.setTextColor(ContextCompat.getColor(this, R.color.black))
                 messagetv.text = message.message
-                if(message.timeDisplayed){
+                if (message.timeDisplayed) {
                     date.visibility = TextView.VISIBLE
                     val formatter = SimpleDateFormat("EEE - h:mm aaa")
                     date.text = formatter.format(message.createdAt)
@@ -321,7 +326,7 @@ class ChatActivity: CoreActivity(), ChatContract.View{
 //        }
     }
 
-    private fun bindContactViewHolder(viewHolder: BaseViewHolder?, message: Message?){
+    private fun bindContactViewHolder(viewHolder: BaseViewHolder?, message: Message?) {
         val date = viewHolder!!.get<TextView>(R.id.cvc_message_date)
         val messagetv = viewHolder.get<TextView>(R.id.cvc_message)
         val profPic = viewHolder.get<ImageView>(R.id.cvc_profile_pic)
@@ -341,19 +346,19 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         Picasso.with(this).load(message.contactInfo!!.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(messagePic)
         controller.getUserId { id ->
             id?.let {
-                if(message.userId!!.toInt() != it){
+                if (message.userId!!.toInt() != it) {
                     Picasso.with(this).load(message.user!!.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(profPic)
                 }
             }
         }
-        if(message.timeDisplayed){
+        if (message.timeDisplayed) {
             date.visibility = TextView.VISIBLE
             val formatter = SimpleDateFormat("EEE - h:mm aaa")
             date.text = formatter.format(message.createdAt)
         }
     }
 
-    private fun bindLocationViewHolder(viewHolder: BaseViewHolder?, message: Message?){
+    private fun bindLocationViewHolder(viewHolder: BaseViewHolder?, message: Message?) {
         val date = viewHolder!!.get<TextView>(R.id.cvc_message_date)
         val messagetv = viewHolder.get<TextView>(R.id.cvc_message)
         val profPic = viewHolder.get<ImageView>(R.id.cvc_profile_pic)
@@ -373,12 +378,12 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         messagetv.setTextColor(ContextCompat.getColor(this, R.color.confirmText))
         controller.getUserId { id ->
             id?.let {
-                if(message.userId!!.toInt() != id){
+                if (message.userId!!.toInt() != id) {
                     Picasso.with(this).load(message.user!!.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(profPic)
                 }
             }
         }
-        if(message.timeDisplayed){
+        if (message.timeDisplayed) {
             date.visibility = TextView.VISIBLE
             val formatter = SimpleDateFormat("EEE - h:mm aaa")
             date.text = formatter.format(message.createdAt)
@@ -420,7 +425,7 @@ class ChatActivity: CoreActivity(), ChatContract.View{
 //        }
     }
 
-    private fun bindFileViewHolder(viewHolder: BaseViewHolder?, message: Message?){
+    private fun bindFileViewHolder(viewHolder: BaseViewHolder?, message: Message?) {
         val date = viewHolder!!.get<TextView>(R.id.cvc_message_date)
         val messagetv = viewHolder.get<TextView>(R.id.cvc_message)
         val profPic = viewHolder.get<ImageView>(R.id.cvc_profile_pic)
@@ -444,20 +449,20 @@ class ChatActivity: CoreActivity(), ChatContract.View{
             Toast.makeText(this, "this needs to dl", Toast.LENGTH_SHORT).show()
         })
         controller.getUserId { id ->
-         id?.let {
-             if(message?.userId!!.toInt() != it) {
-                 Picasso.with(this).load(message.user!!.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(profPic)
-             }
-         }
+            id?.let {
+                if (message?.userId!!.toInt() != it) {
+                    Picasso.with(this).load(message.user!!.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(profPic)
+                }
+            }
         }
-        if(message!!.timeDisplayed){
+        if (message!!.timeDisplayed) {
             date.visibility = TextView.VISIBLE
             val formatter = SimpleDateFormat("EEE - h:mm aaa")
             date.text = formatter.format(message?.createdAt)
         }
     }
 
-    private fun bindMediaViewHolder(viewHolder: BaseViewHolder?, message: Message?){
+    private fun bindMediaViewHolder(viewHolder: BaseViewHolder?, message: Message?) {
         val date = viewHolder!!.get<TextView>(R.id.cvc_message_date)
         val messagetv = viewHolder.get<TextView>(R.id.cvc_message)
         val profPic = viewHolder.get<ImageView>(R.id.cvc_profile_pic)
@@ -478,19 +483,19 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         messagetv.setTextColor(ContextCompat.getColor(this, R.color.confirmText))
         controller.getUserId { id ->
             id?.let {
-                if(message?.userId!!.toInt() != id){
+                if (message?.userId!!.toInt() != id) {
                     Picasso.with(this).load(message?.user!!.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(profPic)
                 }
             }
         }
-        if(message!!.timeDisplayed){
+        if (message!!.timeDisplayed) {
             date.visibility = TextView.VISIBLE
             val formatter = SimpleDateFormat("EEE - h:mm aaa")
             date.text = formatter.format(message.createdAt)
         }
     }
 
-    private fun bindMoneyViewHolder(viewHolder: BaseViewHolder?, message: Message?){
+    private fun bindMoneyViewHolder(viewHolder: BaseViewHolder?, message: Message?) {
         val date = viewHolder!!.get<TextView>(R.id.cvc_message_date)
         val messagetv = viewHolder.get<TextView>(R.id.cvc_message)
         val profPic = viewHolder.get<ImageView>(R.id.cvc_profile_pic)
@@ -512,19 +517,19 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         Picasso.with(this).load(R.drawable.ic_money).into(messagePic)
         controller.getUserId { id ->
             id?.let {
-                if(message?.userId!!.toInt() != it){
+                if (message?.userId!!.toInt() != it) {
                     Picasso.with(this).load(message.user!!.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(profPic)
                 }
             }
         }
-        if(message!!.timeDisplayed){
+        if (message!!.timeDisplayed) {
             date.visibility = TextView.VISIBLE
             val formatter = SimpleDateFormat("EEE - h:mm aaa")
             date.text = formatter.format(message.createdAt)
         }
     }
 
-    private fun bindChannelViewHolder(viewHolder: BaseViewHolder?, message: Message?){
+    private fun bindChannelViewHolder(viewHolder: BaseViewHolder?, message: Message?) {
         val date = viewHolder!!.get<TextView>(R.id.cvc_message_date)
         val messagetv = viewHolder.get<TextView>(R.id.cvc_message)
         val profPic = viewHolder.get<ImageView>(R.id.cvc_profile_pic)
@@ -552,12 +557,12 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         })
         controller.getUserId { id ->
             id?.let {
-                if(message.userId!!.toInt() != it){
+                if (message.userId!!.toInt() != it) {
                     Picasso.with(this).load(message.user!!.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(profPic)
                 }
             }
         }
-        if(message.timeDisplayed){
+        if (message.timeDisplayed) {
             date.visibility = TextView.VISIBLE
             val formatter = SimpleDateFormat("EEE - h:mm aaa")
             date.text = formatter.format(message.createdAt)
@@ -588,8 +593,8 @@ class ChatActivity: CoreActivity(), ChatContract.View{
 //        val m = controller.getMessages()
         mAdapter.setItems(controller.getMessages())
         mAdapter.notifyDataSetChanged()
-        if(controller.getMessages().size>1){
-            ac_floating_cascade_of_parchments.smoothScrollToPosition(controller.getMessages().size-1)
+        if (controller.getMessages().size > 1) {
+            ac_floating_cascade_of_parchments.smoothScrollToPosition(controller.getMessages().size - 1)
         }
 
     }
@@ -600,16 +605,16 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         mAdapter.setItems(controller.getMessages())
         mAdapter.notifyItemInserted(position)
 //        mAdapter.notifyDataSetChanged()
-        if(controller.getMessages().size>1){
-            ac_floating_cascade_of_parchments.smoothScrollToPosition(controller.getMessages().size-1)
+        if (controller.getMessages().size > 1) {
+            ac_floating_cascade_of_parchments.smoothScrollToPosition(controller.getMessages().size - 1)
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         showProgress()
-        when(requestCode){
+        when (requestCode) {
             Constants.ChannelRequestCodes.MY_CHANNELS_LIST -> {
-                if(data!= null){
+                if (data != null) {
                     controller.sendChannel(data.getIntExtra(Constants.IntentKeys.CHANNEL_ID, 0))
                 }
                 controller.retrieveChatHistory()
