@@ -52,7 +52,9 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         ChatController(this)
         intent?.getStringExtra(Constants.IntentKeys.CHAT_PIC)?.let {
             mChatPic = it
-            showRightImageToolbar(mChatPic)
+            if (!it.isBlank()) {
+                showRightImageToolbar(mChatPic)
+            }
         }
         mChatName = intent.getStringExtra(Constants.IntentKeys.CHAT_NAME)
         mParticipantId = intent.getIntExtra(Constants.IntentKeys.PARTICIPANT_ID, 8)

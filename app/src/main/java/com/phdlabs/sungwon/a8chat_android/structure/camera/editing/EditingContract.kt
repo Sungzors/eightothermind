@@ -23,6 +23,9 @@ interface EditingContract {
 
         /*Activity*/
         var activity:EditingActivity?
+
+        /*Navigation*/
+        var isFromCameraRoll: Boolean
     }
 
     interface Controller : BaseController {

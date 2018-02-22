@@ -65,9 +65,13 @@ class EditingActivityController(val mView: EditingContract.View) : EditingContra
             //Load Image Preview
             imageFilePath = it
             if (DeviceInfo.INSTANCE.isWarningDevice(Build.MODEL)) {
+                var presentWithRotation:Float  = 90f
+                if (mView.isFromCameraRoll){
+                    presentWithRotation = 0f
+                }
                 Picasso.with(mView.getContext())
                         .load(File(it))
-                        .rotate(90f) //Full screen //TODO: Probably 90 degrees
+                        .rotate(presentWithRotation) //Full screen //TODO: Probably 90 degrees
                         .into(mView.getPreviewLayout())
             } else {
                 Picasso.with(mView.getContext())
@@ -138,6 +142,8 @@ class EditingActivityController(val mView: EditingContract.View) : EditingContra
      * [clearAllViews] in [photoEditorSDK]
      * */
     override fun clearAllViews() {
+        undoViews()
+        mView.getPhotoEditor().clearBrushAllViews()
         mView.getPhotoEditor().clearAllViews()
     }
 

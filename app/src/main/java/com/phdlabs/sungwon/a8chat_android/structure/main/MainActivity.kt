@@ -35,6 +35,7 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
 
     /*Properties*/
     override val activity: MainActivity = this
+    private var lastSelectedTabId: Int? = null
 
     /*LifeCycle*/
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -91,9 +92,13 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
 
     /*Tab Control*/
     private fun showTabs(isLaunch: Boolean, backFromCamera: Boolean) {
+        //Last selected item
         if (backFromCamera) {
-            am_bottom_tab_nav.selectedItemId = R.id.mmt_home
+            lastSelectedTabId?.let {
+                    am_bottom_tab_nav.selectedItemId = it
+            }
         }
+        //Navigation
         am_bottom_tab_nav.setOnNavigationItemSelectedListener { item ->
             onTabSelected(item)
             true
@@ -112,6 +117,7 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
                 setupToolbars()
                 toolbarControl(true)
                 replaceFragment(LobbyFragment.newInstance(), false)
+                lastSelectedTabId = R.id.mmt_home
             }
         /*Camera*/
             R.id.mmt_camera -> controller.showCamera()
@@ -120,6 +126,7 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
                 super.onPostResume()
                 toolbarControl(false)
                 replaceFragment(MyProfileFragment.newInstance(), false)
+                lastSelectedTabId = R.id.mmt_profile
             }
         }
     }

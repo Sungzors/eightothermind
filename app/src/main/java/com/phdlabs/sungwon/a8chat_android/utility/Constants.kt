@@ -96,6 +96,7 @@ object Constants {
     object CameraIntents {
         val IMAGE_FILE_PATH = "img_file_path"
         val LENS_FACING = "lens_facing"
+        var IS_FROM_CAMERA_ROLL = "is_from_camera_roll"
         val EDITING_REQUEST_CODE = 7
         val CAMERA_REQUEST_CODE = 8
     }
