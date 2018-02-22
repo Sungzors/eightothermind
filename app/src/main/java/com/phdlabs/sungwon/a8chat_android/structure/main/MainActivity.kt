@@ -45,7 +45,7 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
         //Click listeners
         setupClickers()
         //Tabs
-        showTabs(true)
+        showTabs(true, false)
     }
 
     override fun onStart() {
@@ -74,7 +74,8 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
         if (resultCode == Activity.RESULT_OK || resultCode == Activity.RESULT_CANCELED) {
 
             if (requestCode == Constants.CameraIntents.CAMERA_REQUEST_CODE) { //Camera
-                showTabs(false)
+                am_bottom_tab_nav.setOnNavigationItemSelectedListener(null)
+                showTabs(false, true)
             } else if (requestCode == Constants.ContactIntens.CONTACTS_REQ_CODE) { //Contacts-Eight Friends
                 //todo: required contacts action if needed
             } else if (requestCode == Constants.ProfileIntents.EDIT_MY_PROFIILE) { //Profile
@@ -89,7 +90,10 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
     }
 
     /*Tab Control*/
-    private fun showTabs(isLaunch: Boolean) {
+    private fun showTabs(isLaunch: Boolean, backFromCamera: Boolean) {
+        if (backFromCamera) {
+            am_bottom_tab_nav.selectedItemId = R.id.mmt_home
+        }
         am_bottom_tab_nav.setOnNavigationItemSelectedListener { item ->
             onTabSelected(item)
             true

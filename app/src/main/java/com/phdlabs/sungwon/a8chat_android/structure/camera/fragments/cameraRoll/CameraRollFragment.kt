@@ -74,10 +74,15 @@ class CameraRollFragment : CameraBaseFragment(),
      * */
     private fun setupClickListeners() {
         toolbar_leftoolbart_action.setOnClickListener(this)
+        val currentContext = this
         fcr_refresh.setOnRefreshListener(object: SwipeRefreshLayout.OnRefreshListener{
             override fun onRefresh() {
                 //Refresh pictures
-                requestExternalStoragePermissions()
+                if (ContextCompat.checkSelfPermission(activity!!, Constants.AppPermissions.WRITE_EXTERNAL) != PackageManager.PERMISSION_GRANTED) {
+                    requestExternalStoragePermissions()
+                } else {
+                    loaderManager.initLoader(0, null, currentContext).forceLoad()
+                }
             }
 
         })
@@ -218,6 +223,7 @@ class CameraRollFragment : CameraBaseFragment(),
             /*Picture count subtitle & toolbar swap*/
             toolbarVisibility(mGalleryPhotos.count())
 
+            fcr_refresh.isRefreshing = false
 
             /*Setup RecyclerView with fresh data*/
             setupRecycler()
