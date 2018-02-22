@@ -139,5 +139,10 @@ object Constants {
         val TYPE_POST = "post"
     }
 
+    object ChatTypes {
+        val PRIVATE = "private"
+        val GROUP = "group"
+    }
+
 
 }
