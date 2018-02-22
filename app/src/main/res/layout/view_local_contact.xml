@@ -29,7 +29,8 @@
             android:layout_margin="15dp"
             android:buttonTint="@color/colorAccent"
             android:foregroundGravity="center"
-            android:gravity="end|center" />
+            android:gravity="end|center"
+            android:clickable="false"/>
 
     </RelativeLayout>
 

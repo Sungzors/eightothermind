@@ -52,12 +52,19 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         ChatController(this)
         intent?.getStringExtra(Constants.IntentKeys.CHAT_PIC)?.let {
             mChatPic = it
-            showRightImageToolbar(mChatPic)
+            if (!it.isBlank()) {
+                showRightImageToolbar(mChatPic)
+            }
         }
         mChatName = intent.getStringExtra(Constants.IntentKeys.CHAT_NAME)
         mParticipantId = intent.getIntExtra(Constants.IntentKeys.PARTICIPANT_ID, 8)
         setToolbarTitle(mChatName)
         showBackArrow(R.drawable.ic_back)
+        //showRightImageToolbar(mChatPic)
+    }
+
+    override fun onStart() {
+        super.onStart()
         //showRightImageToolbar(mChatPic)
         controller.start()
         controller.getUserId { id ->
@@ -69,10 +76,6 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         setupDrawer()
         setupClickers()
         setupRecycler()
-    }
-
-    override fun onStart() {
-        super.onStart()
     }
 
     override fun onResume() {

@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.support.v4.app.LoaderManager
 import android.support.v4.content.ContextCompat
 import android.support.v4.content.Loader
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.GridLayoutManager
 import android.view.LayoutInflater
 import android.view.View
@@ -73,6 +74,19 @@ class CameraRollFragment : CameraBaseFragment(),
      * */
     private fun setupClickListeners() {
         toolbar_leftoolbart_action.setOnClickListener(this)
+        val currentContext = this
+        fcr_refresh.setColorSchemeResources(R.color.blue_color_picker, R.color.sky_blue_color_picker)
+        fcr_refresh.setOnRefreshListener(object: SwipeRefreshLayout.OnRefreshListener{
+            override fun onRefresh() {
+                //Refresh pictures
+                if (ContextCompat.checkSelfPermission(activity!!, Constants.AppPermissions.WRITE_EXTERNAL) != PackageManager.PERMISSION_GRANTED) {
+                    requestExternalStoragePermissions()
+                } else {
+                    loaderManager.initLoader(0, null, currentContext).forceLoad()
+                }
+            }
+
+        })
     }
 
     /**
@@ -171,7 +185,11 @@ class CameraRollFragment : CameraBaseFragment(),
                             val intent = Intent(activity, EditingActivity::class.java)
                             intent.putExtra(
                                     Constants.CameraIntents.IMAGE_FILE_PATH,
-                                    getItem(adapterPosition).mFullPath)
+                                    getItem(adapterPosition).mFullPath
+                            )
+                            intent.putExtra(
+                                    Constants.CameraIntents.IS_FROM_CAMERA_ROLL,true
+                            )
                             activity?.startActivity(intent)
                         }
                         super.addClicks(views)
@@ -210,6 +228,8 @@ class CameraRollFragment : CameraBaseFragment(),
             /*Picture count subtitle & toolbar swap*/
             toolbarVisibility(mGalleryPhotos.count())
 
+            fcr_refresh.isRefreshing = false
+
             /*Setup RecyclerView with fresh data*/
             setupRecycler()
         }
@@ -223,6 +243,7 @@ class CameraRollFragment : CameraBaseFragment(),
     override fun onClick(p0: View?) {
         when (p0) {
 
+        /*Back button*/
         /*Back button*/
             toolbar_leftoolbart_action -> {
                 activity?.finish()

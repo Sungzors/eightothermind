@@ -33,19 +33,20 @@ class ContactsFragment : CoreFragment() {
     override fun layoutId(): Int = R.layout.fragment_contacts
 
     /*Properties*/
-    lateinit var mEightContacts: List<Contact>
+    private var mEightContacts: List<Contact> = listOf()
     private var mAdapter: BaseRecyclerAdapter<Contact, BaseViewHolder>? = null
     private lateinit var recyclerSections: List<String>
 
     /*LifeCycle*/
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        loadAndGroupContacts()
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupRecycler()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        //Load grouped contacts
+        loadAndGroupContacts()
     }
 
     private fun loadAndGroupContacts() {
@@ -66,6 +67,10 @@ class ContactsFragment : CoreFragment() {
         recyclerSections = firstCharFirstName.distinct() //Number of sections
         //Sort alphabetically
         recyclerSections = recyclerSections.sorted()
+
+        mAdapter?.setItems(mEightContacts)
+        mAdapter?.notifyDataSetChanged()
+
 
         print("Sections")
 

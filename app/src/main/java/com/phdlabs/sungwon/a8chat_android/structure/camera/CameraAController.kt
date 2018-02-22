@@ -102,6 +102,7 @@ class CameraAController(val mView: CameraContract.View) : CameraContract.Control
     override fun startPreviewActivity(imageFilePath: String?) {
         val intent = Intent(mView.getContext(), EditingActivity::class.java)
         intent.putExtra(Constants.CameraIntents.IMAGE_FILE_PATH, imageFilePath)
+        intent.putExtra(Constants.CameraIntents.IS_FROM_CAMERA_ROLL, false)
         mView.activity.startActivityForResult(intent, Constants.CameraIntents.EDITING_REQUEST_CODE)
     }
 

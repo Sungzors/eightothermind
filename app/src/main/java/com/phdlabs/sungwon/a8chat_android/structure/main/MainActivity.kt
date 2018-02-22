@@ -35,6 +35,7 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
 
     /*Properties*/
     override val activity: MainActivity = this
+    private var lastSelectedTabId: Int? = null
 
     /*LifeCycle*/
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,7 +46,7 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
         //Click listeners
         setupClickers()
         //Tabs
-        showTabs()
+        showTabs(true, false)
     }
 
     override fun onStart() {
@@ -74,12 +75,13 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
         if (resultCode == Activity.RESULT_OK || resultCode == Activity.RESULT_CANCELED) {
 
             if (requestCode == Constants.CameraIntents.CAMERA_REQUEST_CODE) { //Camera
-                am_bottom_tab_nav.selectedItemId = R.id.mmt_home
+                am_bottom_tab_nav.setOnNavigationItemSelectedListener(null)
+                showTabs(false, true)
             } else if (requestCode == Constants.ContactIntens.CONTACTS_REQ_CODE) { //Contacts-Eight Friends
                 //todo: required contacts action if needed
             } else if (requestCode == Constants.ProfileIntents.EDIT_MY_PROFIILE) { //Profile
                 //todo: required profile action if needed
-            } else if(requestCode == Constants.ContactIntens.INVITE_CONTACTS_REQ_CODE) { //Invite Contact
+            } else if (requestCode == Constants.ContactIntens.INVITE_CONTACTS_REQ_CODE) { //Invite Contact
                 //todo: required invite contact action if needed
             }
 
@@ -89,12 +91,22 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
     }
 
     /*Tab Control*/
-    private fun showTabs() {
+    private fun showTabs(isLaunch: Boolean, backFromCamera: Boolean) {
+        //Last selected item
+        if (backFromCamera) {
+            lastSelectedTabId?.let {
+                    am_bottom_tab_nav.selectedItemId = it
+            }
+        }
+        //Navigation
         am_bottom_tab_nav.setOnNavigationItemSelectedListener { item ->
             onTabSelected(item)
             true
         }
-        am_bottom_tab_nav.selectedItemId = R.id.mmt_home
+        //Launch Lobby 1st time
+        if (isLaunch) {
+            am_bottom_tab_nav.selectedItemId = R.id.mmt_home
+        }
     }
 
     private fun onTabSelected(item: MenuItem) {
@@ -102,8 +114,10 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
         /*Home*/
             R.id.mmt_home -> {
                 super.onPostResume()
+                setupToolbars()
                 toolbarControl(true)
                 replaceFragment(LobbyFragment.newInstance(), false)
+                lastSelectedTabId = R.id.mmt_home
             }
         /*Camera*/
             R.id.mmt_camera -> controller.showCamera()
@@ -112,6 +126,7 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
                 super.onPostResume()
                 toolbarControl(false)
                 replaceFragment(MyProfileFragment.newInstance(), false)
+                lastSelectedTabId = R.id.mmt_profile
             }
         }
     }

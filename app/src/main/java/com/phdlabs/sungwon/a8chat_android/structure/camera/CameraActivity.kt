@@ -137,7 +137,7 @@ class CameraActivity : CoreActivity(), CameraContract.View, TabLayout.OnTabSelec
             }
             cc_close_back -> {
                 /*Finish camera activity*/
-                this.finish()
+                onBackPressed()
             }
         }
     }
@@ -149,13 +149,11 @@ class CameraActivity : CoreActivity(), CameraContract.View, TabLayout.OnTabSelec
 
     /*Flash UI*/
     override fun flashFeedback(isFLashOn: Boolean) {
-        var message = ""
         if (isFLashOn) {
-            message = "Flash ON"
+            iv_camera_flash.setImageDrawable(getDrawable(R.drawable.flash_on))
         } else {
-            message = "Flash OFF"
+            iv_camera_flash.setImageDrawable(getDrawable(R.drawable.flash_off))
         }
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
 

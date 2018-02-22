@@ -523,7 +523,7 @@ class CameraControl private constructor() {
     }
 
     /**
-     * [rotatedBitmap] used for display purposes
+     * [rotatedBitmapCameraFrontLens] used for display purposes
      * @param facingLens of current camera
      * @param bitmapOptions bitmap options
      * @param filePath of current image used for displaying

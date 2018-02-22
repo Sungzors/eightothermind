@@ -257,20 +257,20 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
             override fun viewHolder(inflater: LayoutInflater?, parent: ViewGroup?, type: Int): BaseViewHolder {
                 return object : BaseViewHolder(R.layout.card_view_lobby_event, inflater!!, parent) {
                     override fun addClicks(views: ViewMap?) {
-                        views!!.click {
+                        views?.click {
                             val room = getItem(adapterPosition)
-                            if(room.chatType== "private"){
+                            if(room.chatType == "private"){
                                 val intent = Intent(context, ChatActivity::class.java)
-                                intent.putExtra(Constants.IntentKeys.CHAT_NAME, room.user!!.first_name + " " + room.user!!.last_name)
-                                intent.putExtra(Constants.IntentKeys.PARTICIPANT_ID, room.user!!.userRooms!!.userId)
+                                intent.putExtra(Constants.IntentKeys.CHAT_NAME, room.user?.first_name + " " + room.user?.last_name)
+                                intent.putExtra(Constants.IntentKeys.PARTICIPANT_ID, room.user?.userRooms?.userId)
                                 intent.putExtra(Constants.IntentKeys.ROOM_ID, room.id)
-                                intent.putExtra(Constants.IntentKeys.CHAT_PIC, room.user!!.avatar as String)
+                                intent.putExtra(Constants.IntentKeys.CHAT_PIC, room.user?.avatar?: "")
                                 startActivity(intent)
                             } else if (room.chatType == "group"){
                                 val intent = Intent(context, GroupChatActivity::class.java)
-                                intent.putExtra(Constants.IntentKeys.CHAT_NAME, room.groupChatInfo!!.name)
+                                intent.putExtra(Constants.IntentKeys.CHAT_NAME, room.groupChatInfo?.name)
                                 intent.putExtra(Constants.IntentKeys.ROOM_ID, room.id)
-                                intent.putExtra(Constants.IntentKeys.CHAT_PIC, room.groupChatInfo!!.avatar as String)
+                                intent.putExtra(Constants.IntentKeys.CHAT_PIC, room.groupChatInfo?.avatar as String)
                                 startActivity(intent)
                             }
 

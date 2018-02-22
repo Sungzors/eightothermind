@@ -9,6 +9,7 @@ import com.squareup.picasso.Transformation;
 
 /**
  * Created by SungWon on 10/2/2017.
+ * Updated by JPAM on 02/21/2017
  */
 
 public class CircleTransform implements Transformation {
@@ -25,7 +26,13 @@ public class CircleTransform implements Transformation {
             source.recycle();
         }
 
-        Bitmap bitmap = Bitmap.createBitmap(size, size, source.getConfig());
+        /* Fix picasso issue #997
+         * https://github.com/square/picasso/issues/997
+         * @see config
+         * */
+        Bitmap.Config config = source.getConfig() != null ? source.getConfig() : Bitmap.Config.ARGB_8888;
+        Bitmap bitmap = Bitmap.createBitmap(size, size, config);
+
 
         Canvas canvas = new Canvas(bitmap);
         Paint paint = new Paint();
@@ -45,4 +52,5 @@ public class CircleTransform implements Transformation {
     public String key() {
         return "circle";
     }
+
 }

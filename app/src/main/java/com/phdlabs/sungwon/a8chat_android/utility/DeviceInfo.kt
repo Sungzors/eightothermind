@@ -9,13 +9,14 @@ import android.os.Build
 class DeviceInfo {
 
     /*Properties*/
-    private var warningDevices = arrayOf(nexus5X)
+    private var warningDevices = arrayOf(nexus5X, xiaomiMix2)
 
     /*Companion*/
     companion object {
         val INSTANCE: DeviceInfo by lazy { Holder.INSTANCE }
         /*Warning DeviceInfo*/
         val nexus5X = "Nexus 5X"
+        val xiaomiMix2 = "Mi MIX 2"
     }
 
     /*Object holder for singleton pattern*/

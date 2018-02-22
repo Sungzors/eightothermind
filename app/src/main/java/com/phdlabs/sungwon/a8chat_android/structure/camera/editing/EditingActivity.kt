@@ -72,7 +72,7 @@ class EditingActivity : CoreActivity(),
     private lateinit var photoEditorSDK: PhotoEditorSDK
     //Adapters
     private lateinit var colorPickerAdapter: BaseRecyclerAdapter<Int, BaseViewHolder>
-
+    override var isFromCameraRoll: Boolean = false
 
     /*LifeCycle*/
     override
@@ -83,6 +83,7 @@ class EditingActivity : CoreActivity(),
         EditingActivityController(this)
         /*Load image*/
         imgFilePath = intent.extras.getString(Constants.CameraIntents.IMAGE_FILE_PATH)
+        isFromCameraRoll = intent.extras.getBoolean(Constants.CameraIntents.IS_FROM_CAMERA_ROLL)
         imgFilePath?.let {
             controller.loadImagePreview(it)
         }
@@ -116,7 +117,7 @@ class EditingActivity : CoreActivity(),
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             val result: CropImage.ActivityResult = CropImage.getActivityResult(data)
             if (resultCode == Activity.RESULT_OK) {
                 //Complete filepath
@@ -384,7 +385,7 @@ class EditingActivity : CoreActivity(),
             }
         /*Clear All Changes*/
             clear_all_tv -> {
-                controller.clearAllViews()
+                controller.clearAllViews() //TODO
             }
 
         /*Undo Last Change*/
