@@ -25,6 +25,7 @@ object Constants {
         const val ROOM_ID = "room_id"
         const val MESSAGE_ID = "message_id"
         const val OWNER_ID = "owner_id"
+        const val FROM_CONTACTS = "from_contacts"
     }
 
     /**
@@ -104,9 +105,10 @@ object Constants {
     /**
      * [ContactIntents]
      * */
-    object ContactIntens {
+    object ContactItems {
         val CONTACTS_REQ_CODE = 9
         val INVITE_CONTACTS_REQ_CODE = 11
+        var TO_CHAT_FROM_CONTACT_REQ_CODE = 12
     }
 
     /**
@@ -137,6 +139,11 @@ object Constants {
         val TYPE_CHANNEL = "channel"
         val TYPE_MONEY = "money"
         val TYPE_POST = "post"
+    }
+
+    object ChatTypes {
+        val PRIVATE = "private"
+        val GROUP = "group"
     }
 
 

@@ -1,9 +1,6 @@
 package com.phdlabs.sungwon.a8chat_android.api.rest
 
-import com.phdlabs.sungwon.a8chat_android.api.data.ChannelPostData
-import com.phdlabs.sungwon.a8chat_android.api.data.ContactsPostData
-import com.phdlabs.sungwon.a8chat_android.api.data.EventPostData
-import com.phdlabs.sungwon.a8chat_android.api.data.UserData
+import com.phdlabs.sungwon.a8chat_android.api.data.*
 import com.phdlabs.sungwon.a8chat_android.api.response.createEvent.EventPostResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.createChannel.ChannelResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.MediaResponse
@@ -11,8 +8,8 @@ import com.phdlabs.sungwon.a8chat_android.api.response.UserDataResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.contacts.ContactsInvitedResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.contacts.ContactsPostResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.contacts.UserFriendsResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.favorite.PrivateChatFavoriteResponse
 import com.phdlabs.sungwon.a8chat_android.api.rest.Caller.TOKEN
-import com.phdlabs.sungwon.a8chat_android.model.contacts.Contact
 import com.phdlabs.sungwon.a8chat_android.model.user.registration.RegistrationData
 import io.reactivex.Observable
 import okhttp3.MultipartBody
@@ -73,5 +70,9 @@ interface CallerRx {
                               @Path("userId") userId: Int,
                               @Body contactsPostData: Array<out Any>): Observable<ContactsInvitedResponse>
 
+    /*ROOM*/
+    @PATCH("/privateChats/{roomId}/favorite")
+    fun favoritePrivateChatRoom(@Header(TOKEN) token: String, @Path("roomId") roomId: Int,
+                                @Body privateChatPatchData: PrivateChatPatchData): Observable<PrivateChatFavoriteResponse>
 
 }

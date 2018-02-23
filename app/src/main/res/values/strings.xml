@@ -135,6 +135,7 @@
     <string name="update_profile">Update</string>
     <string name="invite_contacts">Invite your friends to join 8</string>
     <string name="invite_button">Invite</string>
+    <string name="contact_name">Contact Name</string>
 
 
 </resources>

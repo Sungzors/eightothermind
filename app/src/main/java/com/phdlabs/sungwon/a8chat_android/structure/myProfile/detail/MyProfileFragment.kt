@@ -113,7 +113,7 @@ class MyProfileFragment : CoreFragment(), View.OnClickListener {
         /*Invite friends*/
             fmp_fav_notif_container -> {
                 activity?.startActivityForResult(Intent(context, InviteContactsActivity::class.java),
-                        Constants.ContactIntens.INVITE_CONTACTS_REQ_CODE)
+                        Constants.ContactItems.INVITE_CONTACTS_REQ_CODE)
             }
         }
     }

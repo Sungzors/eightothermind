@@ -121,7 +121,6 @@ open class User() : RealmObject() {
     @Expose
     var translation_services: Boolean? = null
 
-    //TODO: Create User Rooms relationship
     var userRooms: UserRooms? = null
 
     @SerializedName("createdAt")

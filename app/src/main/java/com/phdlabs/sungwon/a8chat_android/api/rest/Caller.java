@@ -74,9 +74,6 @@ public interface Caller {
     @DELETE("/privateChats/{roomId}")
     Call<RoomResponse> deletePrivateChatRoom(@Header(TOKEN) String token, @Path("roomId") int roomId);
 
-    @PATCH("/privateChats/{roomId}/favorite")
-    Call<RoomResponse> favoritePrivateChatRoom(@Header(TOKEN) String token, @Path("roomId") int roomId, @Body PrivateChatPatchData body);
-
     @PATCH("/privateChats/{roomId}/incognito_mode")
     Call<RoomResponse> hidePrivateChatRoom(@Header(TOKEN) String token, @Path("roomId") int roomId, @Body PrivateChatPatchData body);
 

@@ -126,4 +126,22 @@ open class Contact : RealmObject() {
     @SerializedName("fcm_token")
     @Expose
     var fcm_token: String? = null
+
+
+    /**
+     * [hasFullName]
+     * Verifies full name availability
+     * @return Pair<Bool,String?> where
+     * @Bool availability of full name
+     * @String? Full name
+     * */
+    fun hasFullName(): Pair<Boolean, String?> {
+        val firstName: String = this.first_name ?: ""
+        val lastName: String = this.last_name ?: ""
+        if (firstName.isBlank() || lastName.isBlank()) {
+            return Pair(false, null)
+        }
+        val fullName: String = firstName + " " + lastName
+        return Pair(true, fullName)
+    }
 }
