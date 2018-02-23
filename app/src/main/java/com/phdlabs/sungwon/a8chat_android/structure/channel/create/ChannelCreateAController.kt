@@ -203,6 +203,7 @@ class ChannelCreateAController(val mView: ChannelContract.Create.View) : Channel
                         RequestBody.create(MediaType.parse("image/*"), file)
                 )
 
+
                 //Upload image
                 Token().queryFirst()?.let {
                     val call = Rest.getInstance().getmCallerRx().uploadMedia(it.token!!, multipartBodyPart)

@@ -1,6 +1,8 @@
 package com.phdlabs.sungwon.a8chat_android.structure.chat
 
+import android.content.Intent
 import android.widget.EditText
+import com.phdlabs.sungwon.a8chat_android.model.media.Media
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.structure.application.Application
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseController
@@ -16,6 +18,9 @@ interface ChatContract {
         val getChatParticipant : Int
         val getMessageET : String
         val getMessageETObject : EditText
+
+        fun setMedia(media: Media)
+        fun setMedia(mediaList: MutableList<Media>)
 
         fun hideDrawer()
 
@@ -38,6 +43,8 @@ interface ChatContract {
         fun createPrivateChatRoom()
 
         fun retrieveChatHistory()
+
+        fun onPictureResult(requestCode: Int, resultCode: Int, data: Intent?)
 
         fun sendChannel(channelId: Int)
         fun sendMessage()

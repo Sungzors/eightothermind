@@ -23,9 +23,13 @@ open class EventsEight() : RealmObject() {
     @Expose
     var id: Int? = null
 
-    @SerializedName("event_name")
+    @SerializedName("name")
     @Expose
     var name: String? = null
+
+    @SerializedName("event_name")
+    @Expose
+    var event_name: String? = null
 
     @SerializedName("distribution")
     @Expose

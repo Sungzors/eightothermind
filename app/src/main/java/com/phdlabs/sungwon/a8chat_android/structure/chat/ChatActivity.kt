@@ -2,6 +2,7 @@ package com.phdlabs.sungwon.a8chat_android.structure.chat
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
@@ -11,6 +12,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import com.phdlabs.sungwon.a8chat_android.R
+import com.phdlabs.sungwon.a8chat_android.model.media.Media
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.structure.application.Application
 import com.phdlabs.sungwon.a8chat_android.structure.channel.mychannel.MyChannelActivity
@@ -18,9 +20,11 @@ import com.phdlabs.sungwon.a8chat_android.structure.channel.mychannels.MyChannel
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.structure.setting.chat.ChatSettingActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
+import com.phdlabs.sungwon.a8chat_android.utility.RoundedCornersTransform
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseRecyclerAdapter
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseViewHolder
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.ViewMap
+import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.squareup.picasso.Picasso
@@ -41,6 +45,8 @@ class ChatActivity: CoreActivity(), ChatContract.View{
     private var mChatName: String = ""
     private var mUserId: Int = -1
     private var mParticipantId: Int = 8
+
+    private var mMedia = mutableListOf<Media>()
 
     override fun layoutId() = R.layout.activity_chat
 
@@ -265,6 +271,7 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         val moneyButtonDecline = viewHolder.get<Button>(R.id.cvc_message_button_money_decline)
         date.visibility = TextView.GONE
         messagePic.visibility = ImageView.GONE
+        messagetv.visibility = TextView.VISIBLE
         picContainer1.visibility = LinearLayout.GONE
         picContainer2.visibility = LinearLayout.GONE
         moneyButtonAccept.visibility = Button.GONE
@@ -332,6 +339,7 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         val moneyButtonDecline = viewHolder.get<Button>(R.id.cvc_message_button_money_decline)
         date.visibility = TextView.GONE
         messagePic.visibility = ImageView.VISIBLE
+        messagetv.visibility = TextView.VISIBLE
         picContainer1.visibility = LinearLayout.GONE
         picContainer2.visibility = LinearLayout.GONE
         moneyButtonAccept.visibility = Button.GONE
@@ -364,6 +372,7 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         val moneyButtonDecline = viewHolder.get<Button>(R.id.cvc_message_button_money_decline)
         date.visibility = TextView.GONE
         messagePic.visibility = ImageView.GONE
+        messagetv.visibility = TextView.VISIBLE
         picContainer1.visibility = LinearLayout.GONE
         picContainer2.visibility = LinearLayout.GONE
         moneyButtonAccept.visibility = Button.GONE
@@ -431,6 +440,7 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         val moneyButtonDecline = viewHolder.get<Button>(R.id.cvc_message_button_money_decline)
         date.visibility = TextView.GONE
         messagePic.visibility = ImageView.VISIBLE
+        messagetv.visibility = TextView.VISIBLE
         picContainer1.visibility = LinearLayout.GONE
         picContainer2.visibility = LinearLayout.GONE
         moneyButtonAccept.visibility = Button.GONE
@@ -467,15 +477,38 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         val moneyButtonAccept = viewHolder.get<Button>(R.id.cvc_message_button_money_accept)
         val moneyButtonDecline = viewHolder.get<Button>(R.id.cvc_message_button_money_decline)
         date.visibility = TextView.GONE
+        messagetv.visibility = TextView.GONE
         messagePic.visibility = ImageView.GONE
         picContainer1.visibility = LinearLayout.VISIBLE
         picContainer2.visibility = LinearLayout.VISIBLE
         moneyButtonAccept.visibility = Button.GONE
         moneyButtonDecline.visibility = Button.GONE
-        message?.files?.let {
-            messagetv.text = it[0]?.file_string
+        if(picContainer1.childCount>0){
+            picContainer1.removeAllViews()
         }
-        messagetv.setTextColor(ContextCompat.getColor(this, R.color.confirmText))
+        if(picContainer2.childCount>0){
+            picContainer2.removeAllViews()
+        }
+        var i = 0
+        for(media in message!!.mediaArray!!){
+            val iv = ImageView(context)
+            if(i<3){
+                val lp = LinearLayout.LayoutParams(240, 240)
+                lp.marginEnd = 15
+                lp.bottomMargin = 15
+                iv.layoutParams = lp
+                picContainer1.addView(iv)
+                Picasso.with(context).load(media.media_file).resize(240,240).centerCrop().transform(RoundedCornersTransform(7,0)).into(iv)
+            } else if (i>2 || i<7){
+                val lp = LinearLayout.LayoutParams(180, 180)
+                lp.marginEnd = 10
+                lp.bottomMargin = 15
+                iv.layoutParams = lp
+                picContainer2.addView(iv)
+                Picasso.with(context).load(media.media_file).resize(240,240).centerCrop().transform(RoundedCornersTransform(7,0)).into(iv)
+            }
+            i++
+        }
         controller.getUserId { id ->
             id?.let {
                 if(message?.userId!!.toInt() != id){
@@ -500,6 +533,7 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         val moneyButtonAccept = viewHolder.get<Button>(R.id.cvc_message_button_money_accept)
         val moneyButtonDecline = viewHolder.get<Button>(R.id.cvc_message_button_money_decline)
         date.visibility = TextView.GONE
+        messagetv.visibility = TextView.VISIBLE
         messagePic.visibility = ImageView.VISIBLE
         picContainer1.visibility = LinearLayout.GONE
         picContainer2.visibility = LinearLayout.GONE
@@ -535,13 +569,14 @@ class ChatActivity: CoreActivity(), ChatContract.View{
         val moneyButtonDecline = viewHolder.get<Button>(R.id.cvc_message_button_money_decline)
         date.visibility = TextView.GONE
         messagePic.visibility = ImageView.VISIBLE
+        messagetv.visibility = TextView.VISIBLE
         picContainer1.visibility = LinearLayout.GONE
         picContainer2.visibility = LinearLayout.GONE
         moneyButtonAccept.visibility = Button.GONE
         moneyButtonDecline.visibility = Button.GONE
         messagetv.text = message!!.channelInfo!!.name
         messagetv.setTextColor(ContextCompat.getColor(this, R.color.confirmText))
-        Picasso.with(this).load(message.channelInfo!!.avatar).placeholder(R.drawable.addphoto).into(messagePic) //TODO: change this to channel picture from channelinfo
+        Picasso.with(this).load(message.channelInfo!!.avatar).transform(CircleTransform()).placeholder(R.drawable.addphoto).into(messagePic)
         messagetv.setOnClickListener({
             val intent = Intent(this, MyChannelActivity::class.java)
             intent.putExtra(Constants.IntentKeys.CHANNEL_ID, message.channelInfo!!.id.toString())
@@ -579,6 +614,16 @@ class ChatActivity: CoreActivity(), ChatContract.View{
     override val getMessageETObject: EditText
         get() = ac_conjuring_conduit_of_messages
 
+    override fun setMedia(media: Media) {
+        mMedia.add(media)
+    }
+
+    override fun setMedia(mediaList: MutableList<Media>) {
+        for(media in mediaList){
+            setMedia(media)
+        }
+    }
+
     override fun hideDrawer() {
         ac_the_daddy_drawer.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED
     }
@@ -615,8 +660,23 @@ class ChatActivity: CoreActivity(), ChatContract.View{
                 controller.retrieveChatHistory()
                 ac_the_daddy_drawer.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED
             }
+            CameraControl.instance.requestCode() -> {
+                controller.onPictureResult(requestCode, resultCode, data)
+            }
         }
         super.onActivityResult(requestCode, resultCode, data)
         hideProgress()
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        if (requestCode == Constants.PermissionsReqCode.CAMERA_REQ_CODE) {
+            if (grantResults.size != 1 || grantResults.get(0) != PackageManager.PERMISSION_GRANTED) {
+                showError(getString(R.string.request_camera_permission))
+            } else {
+                controller.sendMedia()
+            }
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        }
     }
 }

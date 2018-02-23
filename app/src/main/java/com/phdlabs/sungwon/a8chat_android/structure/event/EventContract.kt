@@ -26,7 +26,7 @@ interface EventContract {
             fun setEventImage(filePath: String)
 
             /*Media*/
-            fun getMedia(media: Media)
+            fun setMedia(media: Media)
 
             /*Location*/
             fun getLocation(location: Pair<String?, String?>?)
