@@ -122,7 +122,7 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
                             val event = getItem(adapterPosition)
                             val intent = Intent(context, EventViewActivity::class.java)
                             intent.putExtra(Constants.IntentKeys.EVENT_ID, event.id)
-                            intent.putExtra(Constants.IntentKeys.EVENT_NAME, event.name)
+                            intent.putExtra(Constants.IntentKeys.EVENT_NAME, event.event_name)
                             intent.putExtra(Constants.IntentKeys.ROOM_ID, event.room_id)
                             startActivity(intent)
                         }
@@ -144,7 +144,7 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
         val message = viewHolder.get<TextView>(R.id.cvle_message)
         val time = viewHolder.get<TextView>(R.id.cvle_time)
         Picasso.with(coreActivity.context).load(data.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(eventPic)
-        title.text = data.name
+        title.text = data.event_name
         if (data.message != null) {
             when (data.message!!.type) {
                 "string" -> message.text = data.message!!.message

@@ -252,7 +252,7 @@ class EventCreateController(val mView: EventContract.Create.View) : EventContrac
                                 if (response.isSuccess) {
                                     response.mediaArray?.let {
                                         //Save temporary media
-                                        mView.getMedia(it[0])
+                                        mView.setMedia(it[0])
                                         mView.hideProgress()
                                     }
 

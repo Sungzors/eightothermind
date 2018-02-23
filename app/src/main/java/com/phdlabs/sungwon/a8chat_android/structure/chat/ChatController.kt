@@ -1,6 +1,8 @@
 package com.phdlabs.sungwon.a8chat_android.structure.chat
 
+import android.app.Activity
 import android.content.Context.LOCATION_SERVICE
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
@@ -16,10 +18,7 @@ import com.phdlabs.sungwon.a8chat_android.api.data.PrivateChatCreateData
 import com.phdlabs.sungwon.a8chat_android.api.data.SendMessageChannelData
 import com.phdlabs.sungwon.a8chat_android.api.data.SendMessageGeneralData
 import com.phdlabs.sungwon.a8chat_android.api.data.SendMessageStringData
-import com.phdlabs.sungwon.a8chat_android.api.event.MessageLocationSentEvent
-import com.phdlabs.sungwon.a8chat_android.api.event.MessageSentEvent
-import com.phdlabs.sungwon.a8chat_android.api.event.PrivateChatCreateEvent
-import com.phdlabs.sungwon.a8chat_android.api.event.RoomHistoryEvent
+import com.phdlabs.sungwon.a8chat_android.api.event.*
 import com.phdlabs.sungwon.a8chat_android.api.response.ErrorResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.RoomHistoryResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.RoomResponse
@@ -30,13 +29,19 @@ import com.phdlabs.sungwon.a8chat_android.api.utility.GsonHolder
 import com.phdlabs.sungwon.a8chat_android.db.EventBusManager
 import com.phdlabs.sungwon.a8chat_android.db.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
+import com.phdlabs.sungwon.a8chat_android.model.user.registration.Token
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
+import com.vicpin.krealmextensions.queryFirst
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import org.greenrobot.eventbus.EventBus
 import org.json.JSONException
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Response
+import java.io.File
 
 
 /**
@@ -263,7 +268,7 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
                         if (success) {
                             val call = mCaller.sendMessageLocation(
                                     token?.token,
-                                    SendMessageGeneralData(id.toString(), mRoomId.toString(),mLocation!!.first!!, mLocation!!.second!!)
+                                    SendMessageGeneralData(id.toString(), mRoomId.toString(),mLocation!!.second!!, mLocation!!.first!!)
                             )
                             call.enqueue(object : Callback8<ErrorResponse, MessageLocationSentEvent>(mEventBus) {
                                 override fun onSuccess(data: ErrorResponse?) {
@@ -310,6 +315,55 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
                 "Choose an event picture",
                 CameraControl.instance.requestCode(),
                 false)
+    }
+
+    override fun onPictureResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode != Activity.RESULT_CANCELED) {
+            mView.showProgress()
+
+            //Set image in UI
+            val imageUrl = CameraControl.instance.getImagePathFromResult(mView.getActivity, requestCode, resultCode, data)
+            imageUrl?.let {
+
+                //Prepare image for uploading
+                val file = File(it)
+//                val multipartBodyPart = MultipartBody.Part.createFormData(
+//                        "file",
+//                        file.name,
+//                        RequestBody.create(MediaType.parse("image/*"), file)
+//                )
+                var userId = -1
+                getUserId { id ->
+                    id?.let {
+                        userId = it
+                    }
+                }
+
+                val multipartBodyPart = MultipartBody.Builder().setType(MultipartBody.FORM)
+                        .addFormDataPart("userId", userId.toString())
+                        .addFormDataPart("roomId", mRoomId.toString())
+                        .addFormDataPart("file", file.name, RequestBody.create(MediaType.parse("image/*"), file))
+                        .build()
+
+                //Upload image
+                Token().queryFirst()?.let {
+                    val call = Rest.getInstance().caller.sendMessageMedia(it.token, multipartBodyPart)
+                    call.enqueue(object : Callback8<ErrorResponse, Event>(mEventBus){
+                        override fun onSuccess(data: ErrorResponse?) {
+                            mView.hideProgress()
+                            mView.hideDrawer()
+                        }
+                    })
+                } ?: run {
+                    /*User not available
+                    * This should only hit on DebugMode
+                    * */
+                    mView.hideProgress()
+                    Toast.makeText(mView.getContext(), "Please sign in to continue", Toast.LENGTH_SHORT).show()
+                }
+
+            }
+        }
     }
 
     override fun getMessages(): MutableList<Message> = mMessages

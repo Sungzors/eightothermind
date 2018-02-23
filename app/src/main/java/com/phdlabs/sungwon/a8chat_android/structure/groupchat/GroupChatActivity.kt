@@ -544,7 +544,7 @@ class GroupChatActivity: CoreActivity(), GroupChatContract.View{
         moneyButtonDecline.visibility = Button.GONE
         messagetv.text = message!!.channelInfo!!.name
         messagetv.setTextColor(ContextCompat.getColor(this, R.color.confirmText))
-        Picasso.with(this).load(message.channelInfo!!.avatar).placeholder(R.drawable.addphoto).into(messagePic) //TODO: change this to channel picture from channelinfo
+        Picasso.with(this).load(message.channelInfo!!.avatar).transform(CircleTransform()).placeholder(R.drawable.addphoto).into(messagePic)
         messagetv.setOnClickListener({
             val intent = Intent(this, MyChannelActivity::class.java)
             intent.putExtra(Constants.IntentKeys.CHANNEL_ID, message.channelInfo!!.id.toString())

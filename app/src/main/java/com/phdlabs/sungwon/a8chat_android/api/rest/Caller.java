@@ -119,9 +119,6 @@ public interface Caller {
     @GET("/users/{userId}/channels")
     Call<ChannelShowArrayResponse> getAssociatedChannels(@Header(TOKEN) String token, @Path("userId") int userid);
 
-//    @GET("/users/{userId}/events")
-//    Call<> TODO:Event, talk to Tomer about wtf happened
-
     @GET("/users/{userId}/events/with_flags")
     Call<EventRetrievalResponse> getEvents(@Header(TOKEN) String token, @Path("userId") int userId);
 
