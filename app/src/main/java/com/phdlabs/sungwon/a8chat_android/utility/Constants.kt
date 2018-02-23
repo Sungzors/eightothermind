@@ -141,10 +141,28 @@ object Constants {
         val TYPE_POST = "post"
     }
 
+    /**
+     * [ChatTypes]
+     * represents the type of room
+     * - Chat with single or multiple users
+     * */
     object ChatTypes {
         val PRIVATE = "private"
         val GROUP = "group"
     }
 
+    /**
+     * [RoomState]
+     * represents the state of the current room
+     * Chat state with specific user
+     * Used to display notifications & favorited rooms
+     * These properties can apply to both [ChatTypes]
+     * */
+    object RoomState {
+        val TYPE_UNREAD_FAVORITE = "unreadAndFavorite"
+        val TYPE_UNREAD = "unread"
+        val TYPE_FAVORITE = "favorite"
+        val TYPE_READ_NO_FAVORITE = "readandNonfavorite"
+    }
 
 }
