@@ -77,10 +77,16 @@ open class Room() : RealmObject() {
     @Expose
     var groupChatInfo: GroupChatInfo? = null
 
+    @SerializedName("chatType")
+    @Expose
+    var chatType: String? = null
+
+    @SerializedName("type")
+    @Expose
+    var type: String?= null
+
     /*Local Properties*/
     var isRead: Boolean = true
-
-    var chatType: String? = null
 
     @Ignore
     var message: Message? = null //Todo: Message in Realm

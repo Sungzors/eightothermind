@@ -16,6 +16,9 @@ interface SettingContract {
 
             /*Could not favorite contact*/
             fun couldNotFavoriteContact()
+
+            /*User feedback*/
+            fun feedback(message: String)
         }
 
         interface Controller : BaseController {
@@ -27,6 +30,7 @@ interface SettingContract {
 
             /*Retrieve room Info*/
             fun getRoomInfo(id: Int): Room?
+
         }
     }
 

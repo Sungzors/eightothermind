@@ -126,13 +126,12 @@ class ChatSettingActivity : CoreActivity(), SettingContract.Chat.View, View.OnCl
                         .centerCrop().transform(CircleTransform()).into(asc_chat_picture)
             }
         }
-        //Display Room Info
-//        mRoom?.let {
-//            //Favorite button
-//            it.user?.userRooms?.favorite?.let {
-//                asc_favorite_button.isPressed = it
-//            }
-//        }
+        //Display Room State info (favorite room)
+        mRoom?.let {
+            it.type?.let {
+                asc_favorite_button.isPressed = it == Constants.RoomState.TYPE_FAVORITE || it == Constants.RoomState.TYPE_UNREAD_FAVORITE
+            }
+        }
     }
 
     private fun setUpTabs() {
@@ -165,10 +164,9 @@ class ChatSettingActivity : CoreActivity(), SettingContract.Chat.View, View.OnCl
         asc_favorite_button.setOnTouchListener { view, event ->
             if (event.action == MotionEvent.ACTION_DOWN) {
                 mRoom?.let {
-                    it.user?.userRooms?.favorite?.let {
-                        asc_favorite_button.isPressed = !it
-                        //controller.favoriteRoom(mRoom, !it)
-                    }
+                    asc_favorite_button.isPressed = !asc_favorite_button.isPressed
+                    controller.favoriteRoom(mRoom, asc_favorite_button.isPressed)
+
                 }
             }
             true
@@ -255,4 +253,10 @@ class ChatSettingActivity : CoreActivity(), SettingContract.Chat.View, View.OnCl
 
     override fun finishActivity() {
     }
+
+    /*User feedback*/
+    override fun feedback(message: String) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+    }
+
 }
