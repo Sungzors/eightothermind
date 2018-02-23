@@ -161,7 +161,9 @@ class ContactsFragment : CoreFragment() {
                                 if (it != 0) {
                                     startActivity(intent)
                                 } else {
-                                    Toast.makeText(context, "Could not find profile", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(
+                                            context, "Could not find profile, Try messaging with them first", Toast.LENGTH_SHORT
+                                    ).show()
                                 }
                             }
                         }

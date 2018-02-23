@@ -4,10 +4,12 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.telephony.PhoneNumberUtils
+import android.view.MotionEvent
 import android.view.View
 import android.widget.Toast
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.model.contacts.Contact
+import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.phdlabs.sungwon.a8chat_android.structure.chat.ChatActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.structure.setting.SettingContract
@@ -33,9 +35,12 @@ class ChatSettingActivity : CoreActivity(), SettingContract.Chat.View, View.OnCl
     override fun contentContainerId(): Int = R.id.asc_fragment_container
 
     /*Properties*/
+    //Chat & Room
     private var mChatName = ""
     private var mRoomId = 0
-    private var mUserId = 0
+    private var mRoom: Room? = null
+    //Contact
+    private var contactId = 0
     private var mContact: Contact? = null
     private var mContactAvatar: String? = null
     private var mIntentFromContact: Boolean = false
@@ -43,15 +48,23 @@ class ChatSettingActivity : CoreActivity(), SettingContract.Chat.View, View.OnCl
     /*LifeCycle*/
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         //Controller
         ChatSettingController(this)
-        //Get Intent
+
+        /*Intent Information*/
+        //Chat Name
         mChatName = intent.getStringExtra(Constants.IntentKeys.CHAT_NAME)
+        //Room
         mRoomId = intent.getIntExtra(Constants.IntentKeys.ROOM_ID, 0)
-        mUserId = intent.getIntExtra(Constants.IntentKeys.PARTICIPANT_ID, 0)
+        mRoom = controller.getRoomInfo(mRoomId)
+        //Contact Id & Contact Info
+        contactId = intent.getIntExtra(Constants.IntentKeys.PARTICIPANT_ID, 0)
+        mContact = controller.getContactInfo(contactId)
+        //Navigation
         mIntentFromContact = intent.getBooleanExtra(Constants.IntentKeys.FROM_CONTACTS, false)
-        //Retrieve Contact Information
-        mContact = controller.getContactInfo(mUserId)
+
+        /*UI*/
         setupToolbar()
         setupUserInfo()
         setUpTabs()
@@ -113,6 +126,13 @@ class ChatSettingActivity : CoreActivity(), SettingContract.Chat.View, View.OnCl
                         .centerCrop().transform(CircleTransform()).into(asc_chat_picture)
             }
         }
+        //Display Room Info
+//        mRoom?.let {
+//            //Favorite button
+//            it.user?.userRooms?.favorite?.let {
+//                asc_favorite_button.isPressed = it
+//            }
+//        }
     }
 
     private fun setUpTabs() {
@@ -131,7 +151,30 @@ class ChatSettingActivity : CoreActivity(), SettingContract.Chat.View, View.OnCl
     }
 
     private fun setUpClickers() {
-        asc_notification_container.setOnClickListener(this)
+
+        //Notifications switch
+        asc_notif_switch.isSelected = false
+        asc_notif_switch.setOnCheckedChangeListener { compoundButton, b ->
+            if (b) { //Notifications ON
+                //TODO: Enable Notifications
+            } else {
+                //TODO: Disable Notifications
+            }
+        }
+        //Favorite Room (current private chat || Contact)
+        asc_favorite_button.setOnTouchListener { view, event ->
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                mRoom?.let {
+                    it.user?.userRooms?.favorite?.let {
+                        asc_favorite_button.isPressed = !it
+                        //controller.favoriteRoom(mRoom, !it)
+                    }
+                }
+            }
+            true
+        }
+
+        //OnClick
         asc_chat_container.setOnClickListener(this)
         asc_call_container.setOnClickListener(this)
         asc_video_container.setOnClickListener(this)
@@ -142,11 +185,12 @@ class ChatSettingActivity : CoreActivity(), SettingContract.Chat.View, View.OnCl
         asc_block_container.setOnClickListener(this)
     }
 
+    override fun couldNotFavoriteContact() {
+        asc_favorite_button.isPressed = false
+    }
+
     override fun onClick(p0: View?) {
         when (p0) {
-        /*Notifications*/
-            asc_notification_container -> {
-            }
         /*Private Chat with contact*/
             asc_chat_container -> {
                 if (!mIntentFromContact) {
@@ -162,24 +206,38 @@ class ChatSettingActivity : CoreActivity(), SettingContract.Chat.View, View.OnCl
             }
         /*Call contact*/
             asc_call_container -> {
+                //TODO
+                Toast.makeText(context, "In progress", Toast.LENGTH_SHORT).show()
             }
         /*Video Call with contact*/
             asc_video_container -> {
+                //TODO
+                Toast.makeText(context, "In progress", Toast.LENGTH_SHORT).show()
             }
         /*Send Money to Contact*/
             asc_money_container -> {
+                //TODO
+                Toast.makeText(context, "In progress", Toast.LENGTH_SHORT).show()
             }
         /*Favorite Messages with Contact*/
             asc_favemsg_container -> {
+                //TODO
+                Toast.makeText(context, "In progress", Toast.LENGTH_SHORT).show()
             }
         /*Share with Contact*/
             asc_share_container -> {
+                //TODO
+                Toast.makeText(context, "In progress", Toast.LENGTH_SHORT).show()
             }
         /*Clear conversation*/
             asc_clear_conversation -> {
+                //TODO
+                Toast.makeText(context, "In progress", Toast.LENGTH_SHORT).show()
             }
         /*Block / Unblock Contact*/
             asc_block_container -> {
+                //TODO
+                Toast.makeText(context, "In progress", Toast.LENGTH_SHORT).show()
             }
         }
     }

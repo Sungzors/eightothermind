@@ -39,7 +39,8 @@
                         android:layout_height="70dp"
                         android:layout_marginStart="20dp"
                         android:layout_marginTop="20dp"
-                        android:src="@drawable/addphoto" />
+                        android:src="@drawable/addphoto"
+                        android:elevation="4sp"/>
 
                     <LinearLayout
                         android:id="@+id/asc_button_container"
@@ -218,7 +219,6 @@
 
                     <!--Notification-->
                     <RelativeLayout
-                        android:id="@+id/asc_notification_container"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content">
 

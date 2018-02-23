@@ -55,6 +55,8 @@ class ChatActivity : CoreActivity(), ChatContract.View {
             mChatPic = it
             if (!it.isBlank()) {
                 showRightImageToolbar(mChatPic)
+            } else {
+                showRightImageToolbar(R.drawable.addphoto)
             }
         }
         mChatName = intent.getStringExtra(Constants.IntentKeys.CHAT_NAME)

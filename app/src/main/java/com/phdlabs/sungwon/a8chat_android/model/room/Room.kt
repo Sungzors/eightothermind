@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.model.realmNative.RealmInt
 import com.phdlabs.sungwon.a8chat_android.model.user.User
+import com.phdlabs.sungwon.a8chat_android.model.user.UserRooms
 import io.realm.RealmList
 import io.realm.RealmObject
 import io.realm.annotations.Ignore
@@ -60,14 +61,24 @@ open class Room() : RealmObject() {
     @Expose
     var last_activity: Date? = null
 
+    @SerializedName("last_activity_in_associated_channel_event_or_groupChat")
+    @Expose
+    var last_activity_in_associated_channel_event_or_groupChat: String? = null
+
+    @SerializedName("createdAt")
+    @Expose
+    var createdAt: String? = null
+
+    @SerializedName("updatedAt")
+    @Expose
+    var updatedAt: String? = null
+
     @SerializedName("groupChatInfo")
     @Expose
     var groupChatInfo: GroupChatInfo? = null
 
     /*Local Properties*/
     var isRead: Boolean = true
-
-    var isFavorite: Boolean? = false
 
     var chatType: String? = null
 
@@ -78,5 +89,16 @@ open class Room() : RealmObject() {
      * [User] assigned property when creating a Room
      * */
     var user: User? = null
+
+    /**
+     *  [userRoom]
+     *  This variable only exists when a room has been favorite'd or we
+     *  query a specific room on an API.
+     *  WARNING: This is not the same as [User] [UserRooms] even though we are using the same model
+     *  @see Realm [UserRooms]
+     * */
+    @SerializedName("userRoom")
+    @Expose
+    var userRoom: UserRooms? = null
 
 }

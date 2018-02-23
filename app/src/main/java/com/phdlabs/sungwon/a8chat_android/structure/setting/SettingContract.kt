@@ -1,6 +1,7 @@
 package com.phdlabs.sungwon.a8chat_android.structure.setting
 
 import com.phdlabs.sungwon.a8chat_android.model.contacts.Contact
+import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseController
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseView
 
@@ -12,14 +13,20 @@ interface SettingContract {
     interface Chat {
         interface View : BaseView<Controller> {
             fun finishActivity()
+
+            /*Could not favorite contact*/
+            fun couldNotFavoriteContact()
         }
 
         interface Controller : BaseController {
-            fun favoriteChat()
-            fun setRoomId(roomId: Int)
-            fun setFavorite(isFave: Boolean)
+            /*Update room to favorite*/
+            fun favoriteRoom(room: Room?, favorite: Boolean)
+
             /*Retrieve cached contact information*/
             fun getContactInfo(id: Int): Contact
+
+            /*Retrieve room Info*/
+            fun getRoomInfo(id: Int): Room
         }
     }
 
