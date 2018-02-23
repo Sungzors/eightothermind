@@ -23,10 +23,10 @@ interface SettingContract {
             fun favoriteRoom(room: Room?, favorite: Boolean)
 
             /*Retrieve cached contact information*/
-            fun getContactInfo(id: Int): Contact
+            fun getContactInfo(id: Int): Contact?
 
             /*Retrieve room Info*/
-            fun getRoomInfo(id: Int): Room
+            fun getRoomInfo(id: Int): Room?
         }
     }
 
