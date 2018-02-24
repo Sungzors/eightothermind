@@ -49,9 +49,10 @@ class ChatSettingController(val mView: SettingContract.Chat.View) : SettingContr
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .subscribe({ response ->
                                         if (response.isSuccess) { //Room is favorite & Update in Realm
+                                            //User Feedback
                                             response?.userRoom?.favorite?.let {
                                              if (it){mView.feedback("Favorite!")}
-                                                else {mView.feedback("Not Favorite")}
+                                                else {mView.feedback(":(")}
                                             }
                                         } else if (response.isError) {//Room couldn't be favorite
                                             mView.showError("Could not favorite contact")

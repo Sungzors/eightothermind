@@ -1,5 +1,9 @@
 package com.phdlabs.sungwon.a8chat_android.structure.setting.bottomtabfragments
 
+import android.graphics.Color
+import android.graphics.PorterDuff
+import android.media.Image
+import android.util.Xml
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -12,9 +16,7 @@ import com.phdlabs.sungwon.a8chat_android.structure.setting.chat.ChatSettingActi
 import com.phdlabs.sungwon.a8chat_android.utility.RoundedCornersTransform
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_chat_setting_media.*
-
-
-
+import org.xmlpull.v1.XmlPullParser
 
 
 /**
@@ -52,7 +54,8 @@ class MediaSettingFragment : CoreFragment(), SettingContract.MediaFragment.View 
         mMediaList.add(Media.Builder("https://i.imgur.com/xXtH5C4.jpg").build())
         //enddummy https://i.imgur.com/xXtH5C4.jpg
         val csa = activity as ChatSettingActivity
-        csa.updateMenuTitle(String.format(getString(R.string.medianum, mMediaList.size.toString())), String.format(getString(R.string.filenum, mFileList.size.toString())))
+        csa.updateMenuTitle(String.format(getString(R.string.medianum, mMediaList.size.toString())),
+                String.format(getString(R.string.filenum, mFileList.size.toString())))
         fcsm_container1.viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 fcsm_container1.viewTreeObserver.removeOnGlobalLayoutListener(this)
@@ -79,21 +82,25 @@ class MediaSettingFragment : CoreFragment(), SettingContract.MediaFragment.View 
         controller.stop()
     }
 
-    private fun setUpIVs(){
+    private fun setUpIVs() {
         var isLeft = true
-        for(media in mMediaList){
-            val iv = ImageView(context)
-            val lp = LinearLayout.LayoutParams(mContainerWidth, LinearLayout.LayoutParams.WRAP_CONTENT)
-            lp.bottomMargin = 15
-            iv.layoutParams = lp
+        for (media in mMediaList) {
 
-            if(isLeft){
+            val iv = ImageView(context)
+            iv.background = activity?.getDrawable(R.drawable.media_background)
+            iv.scaleType = ImageView.ScaleType.CENTER_INSIDE
+            iv.setColorFilter(Color.WHITE, PorterDuff.Mode.DARKEN)
+            val lp = LinearLayout.LayoutParams(mContainerWidth, LinearLayout.LayoutParams.WRAP_CONTENT)
+            lp.bottomMargin = 30
+            iv.layoutParams = LinearLayout.LayoutParams(lp.width, LinearLayout.LayoutParams.WRAP_CONTENT)
+
+            if (isLeft) {
                 fcsm_container1.addView(iv)
             } else {
                 fcsm_container2.addView(iv)
             }
             mIVList.add(iv)
-            Picasso.with(context).load(media.media_file).resize(mContainerWidth,0).transform(RoundedCornersTransform(7, 0)).into(iv)
+            Picasso.with(context).load(media.media_file).resize(mContainerWidth, 0).transform(RoundedCornersTransform(30, 15)).into(iv)
             isLeft = !isLeft
         }
     }
