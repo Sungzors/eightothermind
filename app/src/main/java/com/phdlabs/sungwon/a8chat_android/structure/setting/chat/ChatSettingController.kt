@@ -3,7 +3,7 @@ package com.phdlabs.sungwon.a8chat_android.structure.setting.chat
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.api.data.PrivateChatPatchData
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
-import com.phdlabs.sungwon.a8chat_android.db.MediaManager
+import com.phdlabs.sungwon.a8chat_android.db.media.MediaManager
 import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.contacts.Contact
 import com.phdlabs.sungwon.a8chat_android.model.room.Room

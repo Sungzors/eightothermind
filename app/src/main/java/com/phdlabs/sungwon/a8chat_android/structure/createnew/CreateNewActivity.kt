@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
@@ -23,6 +24,7 @@ import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseViewHolder
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.ViewMap
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform
 import com.squareup.picasso.Picasso
+import com.vicpin.krealmextensions.query
 import com.vicpin.krealmextensions.queryAll
 import kotlinx.android.synthetic.main.activity_create_new.*
 import kotlinx.android.synthetic.main.toolbar_create_new.*
@@ -37,10 +39,12 @@ class CreateNewActivity: CoreActivity(){
     override fun contentContainerId(): Int = 0
 
     private lateinit var mContactList : List<Contact>
+    private lateinit var mFavoriteContactList: List<Contact>
     private val mFilteredContactList = mutableListOf<Contact>()
     private val mFavoriteList = mutableListOf<Contact>()
     private val mFilteredFavoriteList = mutableListOf<Contact>()
     private var mContactAdapter: BaseRecyclerAdapter<Contact, BaseViewHolder>? = null
+    private var mFavContactAdapter: BaseRecyclerAdapter<Contact, BaseViewHolder>? = null
 
     override fun onStart() {
         super.onStart()
@@ -49,6 +53,7 @@ class CreateNewActivity: CoreActivity(){
         setUpClickers()
         setUpSearchers()
         setUpContactsAdapter(mContactList)
+        setUpFavoritesAdapter(mFavoriteContactList)
     }
 
     override fun onResume() {
@@ -65,6 +70,7 @@ class CreateNewActivity: CoreActivity(){
 
     private fun callContacts(){
         mContactList = Contact().queryAll()
+        mFavoriteContactList = Contact().query { it.equalTo("isFavorite", true) }
     }
 
     private fun setUpClickers(){
@@ -151,6 +157,52 @@ class CreateNewActivity: CoreActivity(){
         mContactAdapter?.setItems(list)
         acn_contacts_recycler.layoutManager = LinearLayoutManager(this)
         acn_contacts_recycler.adapter = mContactAdapter
+    }
+
+    private fun setUpFavoritesAdapter(list: List<Contact>) {
+        mFavContactAdapter = object : BaseRecyclerAdapter<Contact, BaseViewHolder>() {
+
+            override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: Contact?, position: Int, type: Int) {
+                val contactProfilePicture = viewHolder?.get<ImageView>(R.id.fc_friend_profile_picture)
+                val contactFullName = viewHolder?.get<TextView>(R.id.fc_friend_name)
+                viewHolder?.let {
+                    context?.let {
+                        /*load profile picture*/
+                        Picasso.with(it)
+                                .load(data?.avatar)
+                                .placeholder(R.drawable.addphoto)
+                                .transform(CircleTransform())
+                                .into(contactProfilePicture)
+                        /*load name*/
+                        contactFullName?.text = data?.first_name + " " + data?.last_name
+                    }
+                }            }
+
+            override fun viewHolder(inflater: LayoutInflater?, parent: ViewGroup?, type: Int): BaseViewHolder {
+                return object : BaseViewHolder(R.layout.view_eight_contact, inflater!!, parent) {
+                    override fun addClicks(views: ViewMap?) {
+                        views?.click {
+                            val contact = getItem(adapterPosition)
+                            val intent = Intent(context, ChatActivity::class.java)
+                            intent.putExtra(Constants.IntentKeys.CHAT_NAME, contact.first_name + " " + contact.last_name)
+                            intent.putExtra(Constants.IntentKeys.PARTICIPANT_ID, contact.id)
+                            intent.putExtra(Constants.IntentKeys.CHAT_PIC, contact.avatar)
+                            startActivity(intent)
+                        }
+                        super.addClicks(views)
+                    }
+                }
+            }
+        }
+        //Fav contacts visibility
+        if (mFavoriteContactList.count() > 0) {
+            acn_fav_contacts_card.visibility = View.VISIBLE
+        }else {
+            acn_fav_contacts_card.visibility = View.GONE
+        }
+        mFavContactAdapter?.setItems(mFavoriteContactList)
+        acn_favorites_recycler.layoutManager = LinearLayoutManager(this)
+        acn_favorites_recycler.adapter = mFavContactAdapter
     }
 
 }

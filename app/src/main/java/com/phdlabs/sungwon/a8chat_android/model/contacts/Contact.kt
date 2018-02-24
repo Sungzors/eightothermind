@@ -7,6 +7,7 @@ import com.phdlabs.sungwon.a8chat_android.model.realmNative.RealmString
 import io.realm.RealmList
 import io.realm.RealmObject
 import io.realm.annotations.Ignore
+import io.realm.annotations.Index
 import io.realm.annotations.PrimaryKey
 import io.realm.annotations.RealmClass
 
@@ -126,6 +127,14 @@ open class Contact : RealmObject() {
     @SerializedName("fcm_token")
     @Expose
     var fcm_token: String? = null
+
+    /**
+     * [Contact] becomes favorite
+     * when the user favorites their private chat room
+     * on the [ChatSettingsActivity]
+     * */
+    @Index
+    var isFavorite = false
 
 
     /**

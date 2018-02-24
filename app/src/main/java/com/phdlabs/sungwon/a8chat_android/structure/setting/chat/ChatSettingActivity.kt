@@ -17,6 +17,7 @@ import com.phdlabs.sungwon.a8chat_android.structure.setting.bottomtabfragments.M
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform
 import com.squareup.picasso.Picasso
+import com.vicpin.krealmextensions.save
 import kotlinx.android.synthetic.main.activity_settings_chat.*
 import java.util.*
 
@@ -131,6 +132,8 @@ class ChatSettingActivity : CoreActivity(), SettingContract.Chat.View, View.OnCl
         mRoom?.let {
             it.type?.let {
                 asc_favorite_button.isPressed = it == Constants.RoomState.TYPE_FAVORITE || it == Constants.RoomState.TYPE_UNREAD_FAVORITE
+                mContact?.isFavorite = it == Constants.RoomState.TYPE_FAVORITE || it == Constants.RoomState.TYPE_UNREAD_FAVORITE
+                mContact?.save()
             }
         }
     }
@@ -151,6 +154,8 @@ class ChatSettingActivity : CoreActivity(), SettingContract.Chat.View, View.OnCl
             if (event.action == MotionEvent.ACTION_DOWN) {
                 mRoom?.let {
                     asc_favorite_button.isPressed = !asc_favorite_button.isPressed
+                    mContact?.isFavorite = asc_favorite_button.isPressed
+                    mContact?.save()
                     controller.favoriteRoom(mRoom, asc_favorite_button.isPressed)
 
                 }
