@@ -1,4 +1,4 @@
-package com.phdlabs.sungwon.a8chat_android.db
+package com.phdlabs.sungwon.a8chat_android.db.user
 
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
 import com.phdlabs.sungwon.a8chat_android.model.user.User

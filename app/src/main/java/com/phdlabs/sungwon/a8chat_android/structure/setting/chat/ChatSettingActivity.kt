@@ -28,6 +28,7 @@ class ChatSettingActivity : CoreActivity(), SettingContract.Chat.View, View.OnCl
 
     /*Controller*/
     override lateinit var controller: SettingContract.Chat.Controller
+    override var activity: ChatSettingActivity? = this
 
     /*Layout*/
     override fun layoutId(): Int = R.layout.activity_settings_chat
@@ -68,6 +69,7 @@ class ChatSettingActivity : CoreActivity(), SettingContract.Chat.View, View.OnCl
         setupToolbar()
         setupUserInfo()
         setUpClickers()
+
     }
 
     override fun onStart() {
@@ -230,7 +232,7 @@ class ChatSettingActivity : CoreActivity(), SettingContract.Chat.View, View.OnCl
             }
         /*Media Left Tab*/
             acs_button_media -> {
-                addFragment(R.id.asc_fragment_container,MediaSettingFragment.newInstance(), false)
+                controller.getSharedMediaPrivate(contactId)
             }
         /*Files Right Tab*/
             acs_button_files -> {

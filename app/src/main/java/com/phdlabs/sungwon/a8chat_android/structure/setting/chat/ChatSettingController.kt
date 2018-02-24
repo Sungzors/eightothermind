@@ -1,14 +1,16 @@
 package com.phdlabs.sungwon.a8chat_android.structure.setting.chat
 
+import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.api.data.PrivateChatPatchData
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
-import com.phdlabs.sungwon.a8chat_android.db.UserManager
+import com.phdlabs.sungwon.a8chat_android.db.MediaManager
+import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.contacts.Contact
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.phdlabs.sungwon.a8chat_android.structure.setting.SettingContract
+import com.phdlabs.sungwon.a8chat_android.structure.setting.bottomtabfragments.MediaSettingFragment
 import com.vicpin.krealmextensions.query
 import com.vicpin.krealmextensions.queryAll
-import com.vicpin.krealmextensions.save
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
@@ -22,6 +24,7 @@ class ChatSettingController(val mView: SettingContract.Chat.View) : SettingContr
     init {
         mView.controller = this
     }
+
 
     override fun start() {
     }
@@ -51,8 +54,11 @@ class ChatSettingController(val mView: SettingContract.Chat.View) : SettingContr
                                         if (response.isSuccess) { //Room is favorite & Update in Realm
                                             //User Feedback
                                             response?.userRoom?.favorite?.let {
-                                             if (it){mView.feedback("Favorite!")}
-                                                else {mView.feedback(":(")}
+                                                if (it) {
+                                                    mView.feedback("Favorite!")
+                                                } else {
+                                                    mView.feedback(":(")
+                                                }
                                             }
                                         } else if (response.isError) {//Room couldn't be favorite
                                             mView.showError("Could not favorite contact")
@@ -73,8 +79,8 @@ class ChatSettingController(val mView: SettingContract.Chat.View) : SettingContr
 
     /*Get contact information from Realm*/
     override fun getContactInfo(id: Int): Contact? {
-        if(Contact().queryAll().count() > 0) {
-           return Contact().query { it.equalTo("id", id) }[0]
+        if (Contact().queryAll().count() > 0) {
+            return Contact().query { it.equalTo("id", id) }[0]
         }
         return null
     }
@@ -85,5 +91,15 @@ class ChatSettingController(val mView: SettingContract.Chat.View) : SettingContr
             return Room().query { it.equalTo("id", id) }[0]
         }
         return null
+    }
+
+    override fun getSharedMediaPrivate(contactId: Int) {
+        MediaManager.instance.getPrivateMedia(contactId, {
+            if (it.second == null) { //Success
+                //Set fragment
+                mView.activity?.addFragment(R.id.asc_fragment_container,
+                        MediaSettingFragment.newInstance(contactId), false)
+            }
+        })
     }
 }
