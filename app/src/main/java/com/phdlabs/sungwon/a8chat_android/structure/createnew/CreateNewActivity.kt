@@ -13,6 +13,7 @@ import android.widget.SearchView
 import android.widget.TextView
 import android.widget.Toast
 import com.phdlabs.sungwon.a8chat_android.R
+import com.phdlabs.sungwon.a8chat_android.db.EightQueries
 import com.phdlabs.sungwon.a8chat_android.model.contacts.Contact
 import com.phdlabs.sungwon.a8chat_android.structure.channel.create.ChannelCreateActivity
 import com.phdlabs.sungwon.a8chat_android.structure.chat.ChatActivity
@@ -31,21 +32,21 @@ import kotlinx.android.synthetic.main.toolbar_create_new.*
 
 /**
  * Created by SungWon on 2/14/2018.
+ * Updated by JPAM on 2/25/2018
  */
 class CreateNewActivity: CoreActivity(){
-
+    /*Layout*/
     override fun layoutId(): Int = R.layout.activity_create_new
 
     override fun contentContainerId(): Int = 0
 
+    /*Properties*/
     private lateinit var mContactList : List<Contact>
-    private lateinit var mFavoriteContactList: List<Contact>
-    private val mFilteredContactList = mutableListOf<Contact>()
-    private val mFavoriteList = mutableListOf<Contact>()
-    private val mFilteredFavoriteList = mutableListOf<Contact>()
+    private var mFavoriteList = mutableListOf<Contact>()
     private var mContactAdapter: BaseRecyclerAdapter<Contact, BaseViewHolder>? = null
     private var mFavContactAdapter: BaseRecyclerAdapter<Contact, BaseViewHolder>? = null
 
+    /*LifeCycle*/
     override fun onStart() {
         super.onStart()
         tcn_searchview.maxWidth = Int.MAX_VALUE
@@ -53,7 +54,7 @@ class CreateNewActivity: CoreActivity(){
         setUpClickers()
         setUpSearchers()
         setUpContactsAdapter(mContactList)
-        setUpFavoritesAdapter(mFavoriteContactList)
+        setUpFavoritesAdapter(mFavoriteList)
     }
 
     override fun onResume() {
@@ -68,10 +69,22 @@ class CreateNewActivity: CoreActivity(){
         super.onStop()
     }
 
-    private fun callContacts(){
-        mContactList = Contact().queryAll()
-        mFavoriteContactList = Contact().query { it.equalTo("isFavorite", true) }
+    /*UI Changes*/
+    private fun hideFavoritesCard(isHidden: Boolean) {
+        if (isHidden){
+            acn_fav_contacts_card.visibility = View.GONE
+        }else {
+            acn_fav_contacts_card.visibility = View.VISIBLE
+        }
     }
+
+    /*Data*/
+    private fun callContacts(){
+        //Cached Contacts
+        mContactList = Contact().queryAll()
+        mFavoriteList = Contact().query { it.equalTo("isFavorite", true) }.toMutableList()
+    }
+
 
     private fun setUpClickers(){
         tcn_cancel.setOnClickListener {
@@ -88,37 +101,8 @@ class CreateNewActivity: CoreActivity(){
         }
     }
 
-    private fun setUpSearchers(){
-        val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
-        tcn_searchview.setSearchableInfo(searchManager.getSearchableInfo(componentName))
-        tcn_searchview.queryHint = resources.getString(R.string.searchcontacthint)
-        tcn_searchview.isSubmitButtonEnabled = true
-        tcn_searchview.setOnQueryTextListener(
-                object : SearchView.OnQueryTextListener{
-                    override fun onQueryTextSubmit(p0: String?): Boolean {
-                        mFilteredContactList.clear()
-                        mFilteredFavoriteList.clear()
-                        for (contact in mContactList){
-                            if(contact.first_name?.toLowerCase()!!.contains(p0!!.toLowerCase())||contact.last_name?.toLowerCase()!!.contains(p0.toLowerCase())){
-                                mFilteredContactList.add(contact)
-                            }
-                        }
-                        for (contact in mFavoriteList){
-                            if(contact.first_name?.toLowerCase()!!.contains(p0!!.toLowerCase())||contact.last_name?.toLowerCase()!!.contains(p0.toLowerCase())){
-                                mFilteredFavoriteList.add(contact)
-                            }
-                        }
-                        tcn_searchview.clearFocus()
-                        val inputm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                        inputm.hideSoftInputFromWindow(tcn_searchview.windowToken, 0)
-                        return false
-                    }
-
-                    override fun onQueryTextChange(p0: String?): Boolean = false
-                }
-        )
-    }
-
+    /*Recycler Views & Adapters*/
+    //Contacts & Filtered contacts for search bar
     private fun setUpContactsAdapter(list: List<Contact>){
         mContactAdapter = object : BaseRecyclerAdapter<Contact, BaseViewHolder>(){
             override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: Contact?, position: Int, type: Int) {
@@ -142,6 +126,10 @@ class CreateNewActivity: CoreActivity(){
                 return object : BaseViewHolder(R.layout.view_eight_contact, inflater!!, parent) {
                     override fun addClicks(views: ViewMap?) {
                         views?.click {
+                            //Clear search info
+                            tcn_searchview.setQuery("",false)
+                            tcn_searchview.clearFocus()
+                            //Go to private chat
                             val contact = getItem(adapterPosition)
                             val intent = Intent(context, ChatActivity::class.java)
                             intent.putExtra(Constants.IntentKeys.CHAT_NAME, contact.first_name + " " + contact.last_name)
@@ -153,12 +141,15 @@ class CreateNewActivity: CoreActivity(){
                     }
                 }
             }
+
         }
         mContactAdapter?.setItems(list)
+        mContactAdapter?.setSortComparator(EightQueries.Comparators.alphabetComparator)
         acn_contacts_recycler.layoutManager = LinearLayoutManager(this)
         acn_contacts_recycler.adapter = mContactAdapter
     }
 
+    //Favorite Contacts
     private fun setUpFavoritesAdapter(list: List<Contact>) {
         mFavContactAdapter = object : BaseRecyclerAdapter<Contact, BaseViewHolder>() {
 
@@ -195,14 +186,73 @@ class CreateNewActivity: CoreActivity(){
             }
         }
         //Fav contacts visibility
-        if (mFavoriteContactList.count() > 0) {
-            acn_fav_contacts_card.visibility = View.VISIBLE
+        if (mFavoriteList.count() > 0) {
+            hideFavoritesCard(false)
         }else {
-            acn_fav_contacts_card.visibility = View.GONE
+            hideFavoritesCard(true)
         }
-        mFavContactAdapter?.setItems(mFavoriteContactList)
+        mFavContactAdapter?.setItems(mFavoriteList)
+        mFavContactAdapter?.setSortComparator(EightQueries.Comparators.alphabetComparator)
         acn_favorites_recycler.layoutManager = LinearLayoutManager(this)
         acn_favorites_recycler.adapter = mFavContactAdapter
+    }
+
+
+    /*SEARCH*/
+    private fun setUpSearchers(){
+
+        val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
+        tcn_searchview.setSearchableInfo(searchManager.getSearchableInfo(componentName))
+        tcn_searchview.queryHint = resources.getString(R.string.searchcontacthint)
+        tcn_searchview.isSubmitButtonEnabled = true
+        tcn_searchview.setOnQueryTextListener(
+                object : SearchView.OnQueryTextListener{
+
+                    //Text Submit
+                    override fun onQueryTextSubmit(p0: String?): Boolean {
+                        //UI
+                        if (!p0.isNullOrBlank()) {
+                            hideFavoritesCard(true)
+                        }else {
+                            hideFavoritesCard(false)
+                        }
+                        //Search
+                        mContactAdapter?.setFilter { filter ->
+                            p0?.let {
+                                filter?.first_name?.toLowerCase()?.startsWith(it, false)
+                            }
+                        }
+                        tcn_searchview.clearFocus()
+                        val inputm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                        inputm.hideSoftInputFromWindow(tcn_searchview.windowToken, 0)
+                        return true
+                    }
+
+                    //Text Change
+                    override fun onQueryTextChange(p0: String?): Boolean {
+                        if (!p0.isNullOrBlank()) {
+                            hideFavoritesCard(true)
+                        }else {
+                            hideFavoritesCard(false)
+                        }
+                        mContactAdapter?.setFilter { filter ->
+                            p0?.let {
+                                filter?.first_name?.toLowerCase()?.startsWith(it,false)
+                            }
+                        }
+                        return true
+                    }
+
+
+                }
+        )
+    }
+
+    /**
+     * Listener to make whole search bar touchable
+     * */
+    fun searchClicked(v: View) {
+        tcn_searchview.isIconified = false
     }
 
 }

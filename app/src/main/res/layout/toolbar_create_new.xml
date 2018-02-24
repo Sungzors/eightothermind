@@ -31,7 +31,8 @@
                 android:inputType="text"
                 android:queryHint="@string/searchcontacthint"
                 android:maxLines="1"
-                android:imeOptions="actionSearch"/>
+                android:imeOptions="actionSearch"
+                android:onClick="searchClicked"/>
         </LinearLayout>
         <TextView
             android:id="@+id/tcn_cancel"
