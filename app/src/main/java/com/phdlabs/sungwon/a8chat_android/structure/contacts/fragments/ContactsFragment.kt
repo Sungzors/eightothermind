@@ -190,7 +190,7 @@ class ContactsFragment : CoreFragment() {
         fc_contacts_recyclerView.adapter = mAdapter
     }
 
-    fun setupSearchBar() {
+    private fun setupSearchBar() {
         val searchManager = activity?.getSystemService(Context.SEARCH_SERVICE) as SearchManager
         activity?.ca_searchView?.setSearchableInfo(searchManager.getSearchableInfo(activity?.componentName))
         activity?.ca_searchView?.queryHint = resources.getString(R.string.contacts)
