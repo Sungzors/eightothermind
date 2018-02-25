@@ -50,7 +50,7 @@ class CreateNewActivity: CoreActivity(){
     override fun onStart() {
         super.onStart()
         tcn_searchview.maxWidth = Int.MAX_VALUE
-        callContacts()
+        queryContacts()
         setUpClickers()
         setUpSearchers()
         setUpContactsAdapter(mContactList)
@@ -79,7 +79,7 @@ class CreateNewActivity: CoreActivity(){
     }
 
     /*Data*/
-    private fun callContacts(){
+    private fun queryContacts   (){
         //Cached Contacts
         mContactList = Contact().queryAll()
         mFavoriteList = Contact().query { it.equalTo("isFavorite", true) }.toMutableList()

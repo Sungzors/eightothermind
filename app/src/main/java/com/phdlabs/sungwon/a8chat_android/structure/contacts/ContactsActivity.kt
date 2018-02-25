@@ -164,4 +164,11 @@ class ContactsActivity : CoreActivity(), ContactsContract.EightFriends.View, Vie
         ac_swipe_refresh.isRefreshing = false
     }
 
+    /**
+     * Listener to make whole search bar touchable
+     * */
+    fun searchClicked(v: View) {
+        ca_searchView.isIconified = false
+    }
+
 }

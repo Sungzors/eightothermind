@@ -1,15 +1,20 @@
 package com.phdlabs.sungwon.a8chat_android.structure.contacts.fragments
 
+import android.app.SearchManager
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.SearchView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import com.phdlabs.sungwon.a8chat_android.R
+import com.phdlabs.sungwon.a8chat_android.db.EightQueries
 import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.contacts.Contact
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
@@ -23,6 +28,8 @@ import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform
 import com.squareup.picasso.Picasso
 import com.vicpin.krealmextensions.query
 import com.vicpin.krealmextensions.queryAll
+import kotlinx.android.synthetic.main.activity_channel_list.*
+import kotlinx.android.synthetic.main.activity_contacts.*
 import kotlinx.android.synthetic.main.fragment_contacts.*
 
 /**
@@ -47,6 +54,7 @@ class ContactsFragment : CoreFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupRecycler()
+        setupSearchBar()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,6 +72,9 @@ class ContactsFragment : CoreFragment() {
         super.onResume()
         //Load grouped contacts
         loadAndGroupContacts()
+        //Clear search view
+        //activity?.acl_searchview?.setQuery("", false)
+        //activity?.acl_searchview?.clearFocus()
     }
 
     private fun loadAndGroupContacts() {
@@ -174,8 +185,45 @@ class ContactsFragment : CoreFragment() {
         }
 
         mAdapter?.setItems(mEightContacts)
+        mAdapter?.setSortComparator(EightQueries.Comparators.alphabetComparator)
         fc_contacts_recyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         fc_contacts_recyclerView.adapter = mAdapter
     }
 
+    fun setupSearchBar() {
+        val searchManager = activity?.getSystemService(Context.SEARCH_SERVICE) as SearchManager
+        activity?.ca_searchView?.setSearchableInfo(searchManager.getSearchableInfo(activity?.componentName))
+        activity?.ca_searchView?.queryHint = resources.getString(R.string.contacts)
+        activity?.ca_searchView?.isSubmitButtonEnabled = true
+        activity?.ca_searchView?.setOnQueryTextListener(
+                object : SearchView.OnQueryTextListener{
+
+                    //Text Submit
+                    override fun onQueryTextSubmit(p0: String?): Boolean {
+                        //Search
+                        mAdapter?.setFilter { filter ->
+                            p0?.let {
+                                filter?.first_name?.toLowerCase()?.startsWith(it, false)
+                            }
+                        }
+                        activity?.ca_searchView?.clearFocus()
+                        val inputm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                        inputm.hideSoftInputFromWindow(activity?.ca_searchView?.windowToken, 0)
+                        return true
+                    }
+
+                    //Text Change
+                    override fun onQueryTextChange(p0: String?): Boolean {
+                        mAdapter?.setFilter { filter ->
+                            p0?.let {
+                                filter?.first_name?.toLowerCase()?.startsWith(it,false)
+                            }
+                        }
+                        return true
+                    }
+
+
+                }
+        )
+    }
 }
