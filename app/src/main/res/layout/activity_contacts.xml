@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
     <!--Toolbar - My Contacts-->
@@ -17,7 +18,8 @@
             android:id="@+id/segmented2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
             android:elevation="4dp"
             android:orientation="horizontal"
             segmentedgroup:sc_border_width="2dp"
@@ -40,6 +42,29 @@
                 android:layout_weight="1" />
         </info.hoang8f.android.segmented.SegmentedGroup>
 
+        <!--Search Bar-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:padding="5sp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="10sp"
+            android:layout_marginBottom="6sp"
+            android:layout_gravity="start"
+            android:background="@drawable/bg_15dp_curve_shadow_greybg">
+            <android.support.v7.widget.SearchView
+                android:id="@+id/ca_searchView"
+                android:layout_gravity="start"
+                android:layout_width="match_parent"
+                android:layout_height="25sp"
+                android:inputType="text"
+                android:maxLines="1"
+                android:imeOptions="actionSearch"
+                android:onClick="searchClicked"/>
+
+        </LinearLayout>
+
     </android.support.design.widget.AppBarLayout>
 
     <include layout="@layout/progress_view" />
@@ -57,16 +82,6 @@
             android:layout_height="match_parent"
             android:padding="10dp"
             android:visibility="gone">
-
-            <TextView
-                android:id="@+id/ac_textView_zero_state"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:gravity="center|top"
-                android:paddingTop="55dp"
-                android:text="@string/no_contacts"
-                android:visibility="gone" />
 
         </FrameLayout>
 

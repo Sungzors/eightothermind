@@ -100,8 +100,6 @@ class ContactsActivity : CoreActivity(), ContactsContract.EightFriends.View, Vie
         if (contactCount > 0) {
             //Visible container
             ac_fragment_container.visibility = View.VISIBLE
-            //Invisible zero state
-            ac_textView_zero_state.visibility = View.GONE
             //Update UI
             ac_button_contacts.text = string
             //Set contacts fragment
@@ -109,8 +107,6 @@ class ContactsActivity : CoreActivity(), ContactsContract.EightFriends.View, Vie
         } else {
             //Visible Container
             ac_fragment_container.visibility = View.VISIBLE
-            //Visible Zero State
-            ac_textView_zero_state.visibility = View.VISIBLE
         }
 
     }
@@ -166,6 +162,13 @@ class ContactsActivity : CoreActivity(), ContactsContract.EightFriends.View, Vie
 
     override fun stopRefreshing() {
         ac_swipe_refresh.isRefreshing = false
+    }
+
+    /**
+     * Listener to make whole search bar touchable
+     * */
+    fun searchClicked(v: View) {
+        ca_searchView.isIconified = false
     }
 
 }

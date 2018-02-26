@@ -13,10 +13,10 @@ import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.phdlabs.sungwon.a8chat_android.structure.chat.ChatActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.structure.setting.SettingContract
-import com.phdlabs.sungwon.a8chat_android.structure.setting.bottomtabfragments.MediaSettingFragment
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform
 import com.squareup.picasso.Picasso
+import com.vicpin.krealmextensions.save
 import kotlinx.android.synthetic.main.activity_settings_chat.*
 import java.util.*
 
@@ -28,6 +28,7 @@ class ChatSettingActivity : CoreActivity(), SettingContract.Chat.View, View.OnCl
 
     /*Controller*/
     override lateinit var controller: SettingContract.Chat.Controller
+    override var activity: ChatSettingActivity? = this
 
     /*Layout*/
     override fun layoutId(): Int = R.layout.activity_settings_chat
@@ -67,8 +68,8 @@ class ChatSettingActivity : CoreActivity(), SettingContract.Chat.View, View.OnCl
         /*UI*/
         setupToolbar()
         setupUserInfo()
-        setUpTabs()
         setUpClickers()
+
     }
 
     override fun onStart() {
@@ -130,23 +131,10 @@ class ChatSettingActivity : CoreActivity(), SettingContract.Chat.View, View.OnCl
         mRoom?.let {
             it.type?.let {
                 asc_favorite_button.isPressed = it == Constants.RoomState.TYPE_FAVORITE || it == Constants.RoomState.TYPE_UNREAD_FAVORITE
+                mContact?.isFavorite = it == Constants.RoomState.TYPE_FAVORITE || it == Constants.RoomState.TYPE_UNREAD_FAVORITE
+                mContact?.save()
             }
         }
-    }
-
-    private fun setUpTabs() {
-        asc_bottomnav.setOnNavigationItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.mst_media -> {
-                    replaceFragment(MediaSettingFragment.newInstance(), false)
-                }
-                R.id.mst_file -> {
-                    Toast.makeText(this, "gurp", Toast.LENGTH_SHORT).show()
-                }
-            }
-            true
-        }
-        asc_bottomnav.selectedItemId = R.id.mst_media
     }
 
     private fun setUpClickers() {
@@ -164,7 +152,11 @@ class ChatSettingActivity : CoreActivity(), SettingContract.Chat.View, View.OnCl
         asc_favorite_button.setOnTouchListener { view, event ->
             if (event.action == MotionEvent.ACTION_DOWN) {
                 mRoom?.let {
+                    //UI
                     asc_favorite_button.isPressed = !asc_favorite_button.isPressed
+                    mContact?.isFavorite = asc_favorite_button.isPressed
+                    //Realm
+                    mContact?.save()
                     controller.favoriteRoom(mRoom, asc_favorite_button.isPressed)
 
                 }
@@ -179,13 +171,20 @@ class ChatSettingActivity : CoreActivity(), SettingContract.Chat.View, View.OnCl
         asc_money_container.setOnClickListener(this)
         asc_favemsg_container.setOnClickListener(this)
         asc_share_container.setOnClickListener(this)
-        asc_clear_conversation.setOnClickListener(this)
-        asc_block_container.setOnClickListener(this)
+        asc_clear_conv_container.setOnClickListener(this)
+        acs_block_container.setOnClickListener(this)
+        //Frag Container
+        acs_button_media.setOnClickListener(this)
+        acs_button_files.setOnClickListener(this)
+        acs_button_media.text = "Media"
+        acs_button_files.text = "Files"
+        //Init state
+        acs_button_media.isChecked = true //Default //TODO: Save button state to avoid multiple frag loading
+        acs_button_media.performClick()
+        acs_button_files.isChecked = false
+
     }
 
-    override fun couldNotFavoriteContact() {
-        asc_favorite_button.isPressed = false
-    }
 
     override fun onClick(p0: View?) {
         when (p0) {
@@ -228,26 +227,38 @@ class ChatSettingActivity : CoreActivity(), SettingContract.Chat.View, View.OnCl
                 Toast.makeText(context, "In progress", Toast.LENGTH_SHORT).show()
             }
         /*Clear conversation*/
-            asc_clear_conversation -> {
+            asc_clear_conv_container -> {
                 //TODO
                 Toast.makeText(context, "In progress", Toast.LENGTH_SHORT).show()
             }
         /*Block / Unblock Contact*/
-            asc_block_container -> {
+            acs_block_container -> {
                 //TODO
                 Toast.makeText(context, "In progress", Toast.LENGTH_SHORT).show()
+            }
+        /*Media Left Tab*/
+            acs_button_media -> {
+                controller.getSharedMediaPrivate(contactId)
+            }
+        /*Files Right Tab*/
+            acs_button_files -> {
+                //TODO: Files
             }
         }
     }
 
+    /*Favorite*/
+    override fun couldNotFavoriteContact() {
+        asc_favorite_button.isPressed = false
+    }
+
+    //
     fun updateMenuTitle(title1: String?, title2: String?) {
-        val leftTab = asc_bottomnav.menu.findItem(R.id.mst_media)
-        val rightTab = asc_bottomnav.menu.findItem(R.id.mst_file)
         title1.let {
-            leftTab.title = it
+            acs_button_media.text = it
         }
         title2.let {
-            rightTab.title = it
+            acs_button_files.text = it
         }
     }
 

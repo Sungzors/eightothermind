@@ -4,7 +4,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <!--TODO: Recycler view separated by alphabetical order as contacts-->
     <android.support.v7.widget.RecyclerView
         android:id="@+id/fc_contacts_recyclerView"
         android:layout_width="match_parent"

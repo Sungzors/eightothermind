@@ -3,7 +3,7 @@ package com.phdlabs.sungwon.a8chat_android.api.rest
 import com.phdlabs.sungwon.a8chat_android.api.data.*
 import com.phdlabs.sungwon.a8chat_android.api.response.createEvent.EventPostResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.createChannel.ChannelResponse
-import com.phdlabs.sungwon.a8chat_android.api.response.MediaResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.media.MediaResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.UserDataResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.contacts.ContactsInvitedResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.contacts.ContactsPostResponse
@@ -41,6 +41,10 @@ interface CallerRx {
     @Multipart
     @POST("/media")
     fun uploadMedia(@Header(TOKEN) token: String, @Part image: MultipartBody.Part): Observable<MediaResponse>
+
+    @GET("/media/shared/{userId1}/{userId2}")
+    fun getSharedMediaPrivate(@Header(TOKEN) token: String, @Path("userId1") userId1: Int,
+                              @Path("userId2") userId2: Int):Observable<MediaResponse>
 
     /*CHANNEL*/
     @POST("/channels")

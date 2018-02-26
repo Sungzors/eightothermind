@@ -1,10 +1,13 @@
 package com.phdlabs.sungwon.a8chat_android.structure.contacts.invite
 
+import android.app.SearchManager
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.view.ActionMode
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.SearchView
 import android.view.*
+import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.model.contacts.LocalContact
@@ -46,6 +49,7 @@ class InviteContactsActivity : CoreActivity(), ContactsContract.InviteContacts.V
         //Controller
         InviteContactsController(this)
         setupToolbar()
+        setupSearch()
         setClickers()
     }
 
@@ -168,6 +172,49 @@ class InviteContactsActivity : CoreActivity(), ContactsContract.InviteContacts.V
         aic_invite_button.setOnClickListener(this)
     }
 
+    /*Search*/
+    private fun setupSearch() {
+        val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
+        aic_searchView.setSearchableInfo(searchManager.getSearchableInfo(componentName))
+        aic_searchView.queryHint = resources.getString(R.string.contacts)
+        aic_searchView.isSubmitButtonEnabled = true
+        aic_searchView.setOnQueryTextListener(
+                object : SearchView.OnQueryTextListener {
+
+                    //Text Submit
+                    override fun onQueryTextSubmit(p0: String?): Boolean {
+                        //Search
+                        mAdapter?.setFilter { filter ->
+                            p0?.let {
+                                filter?.displayName?.toLowerCase()?.startsWith(it, false)
+                            }
+                        }
+                        aic_searchView.clearFocus()
+                        val inputm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                        inputm.hideSoftInputFromWindow(aic_searchView.windowToken, 0)
+                        return true
+                    }
+
+                    //Text Change
+                    override fun onQueryTextChange(p0: String?): Boolean {
+                        mAdapter?.setFilter { filter ->
+                            p0?.let {
+                                filter?.displayName?.toLowerCase()?.startsWith(it, false)
+                            }
+                        }
+                        return true
+                    }
+
+                })
+    }
+
+    /**
+     * Listener to make whole search bar touchable
+     * */
+    fun searchClicked(v: View) {
+        aic_searchView.isIconified = false
+    }
+
     /*On Click*/
     override fun onClick(p0: View?) {
 
@@ -182,6 +229,9 @@ class InviteContactsActivity : CoreActivity(), ContactsContract.InviteContacts.V
          * */
             aic_invite_button -> {
                 controller.notifyContacts(mSelectedContactsForInvite)
+                //Clear search view
+                aic_searchView.setQuery("", true)
+                aic_searchView.clearFocus()
             }
         }
 
