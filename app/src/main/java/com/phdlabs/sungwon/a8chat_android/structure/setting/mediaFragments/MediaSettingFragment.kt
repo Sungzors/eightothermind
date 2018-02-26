@@ -1,9 +1,7 @@
-package com.phdlabs.sungwon.a8chat_android.structure.setting.bottomtabfragments
+package com.phdlabs.sungwon.a8chat_android.structure.setting.mediaFragments
 
 import android.graphics.Color
 import android.graphics.PorterDuff
-import android.media.Image
-import android.util.Xml
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -17,7 +15,6 @@ import com.phdlabs.sungwon.a8chat_android.utility.RoundedCornersTransform
 import com.squareup.picasso.Picasso
 import com.vicpin.krealmextensions.query
 import kotlinx.android.synthetic.main.fragment_chat_setting_media.*
-import org.xmlpull.v1.XmlPullParser
 
 
 /**

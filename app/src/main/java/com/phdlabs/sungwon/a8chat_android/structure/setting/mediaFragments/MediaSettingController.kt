@@ -1,4 +1,4 @@
-package com.phdlabs.sungwon.a8chat_android.structure.setting.bottomtabfragments
+package com.phdlabs.sungwon.a8chat_android.structure.setting.mediaFragments
 
 import com.phdlabs.sungwon.a8chat_android.structure.setting.SettingContract
 

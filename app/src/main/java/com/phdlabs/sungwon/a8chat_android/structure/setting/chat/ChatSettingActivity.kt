@@ -13,7 +13,6 @@ import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.phdlabs.sungwon.a8chat_android.structure.chat.ChatActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.structure.setting.SettingContract
-import com.phdlabs.sungwon.a8chat_android.structure.setting.bottomtabfragments.MediaSettingFragment
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform
 import com.squareup.picasso.Picasso
@@ -153,8 +152,10 @@ class ChatSettingActivity : CoreActivity(), SettingContract.Chat.View, View.OnCl
         asc_favorite_button.setOnTouchListener { view, event ->
             if (event.action == MotionEvent.ACTION_DOWN) {
                 mRoom?.let {
+                    //UI
                     asc_favorite_button.isPressed = !asc_favorite_button.isPressed
                     mContact?.isFavorite = asc_favorite_button.isPressed
+                    //Realm
                     mContact?.save()
                     controller.favoriteRoom(mRoom, asc_favorite_button.isPressed)
 

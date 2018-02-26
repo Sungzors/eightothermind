@@ -126,9 +126,6 @@ class CreateNewActivity: CoreActivity(){
                 return object : BaseViewHolder(R.layout.view_eight_contact, inflater!!, parent) {
                     override fun addClicks(views: ViewMap?) {
                         views?.click {
-                            //Clear search info
-                            tcn_searchview.setQuery("",false)
-                            tcn_searchview.clearFocus()
                             //Go to private chat
                             val contact = getItem(adapterPosition)
                             val intent = Intent(context, ChatActivity::class.java)
@@ -136,6 +133,9 @@ class CreateNewActivity: CoreActivity(){
                             intent.putExtra(Constants.IntentKeys.PARTICIPANT_ID, contact.id)
                             intent.putExtra(Constants.IntentKeys.CHAT_PIC, contact.avatar)
                             startActivity(intent)
+                            //Clear search info
+                            tcn_searchview.setQuery("",false)
+                            tcn_searchview.clearFocus()
                         }
                         super.addClicks(views)
                     }

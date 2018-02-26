@@ -8,7 +8,7 @@ import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.contacts.Contact
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.phdlabs.sungwon.a8chat_android.structure.setting.SettingContract
-import com.phdlabs.sungwon.a8chat_android.structure.setting.bottomtabfragments.MediaSettingFragment
+import com.phdlabs.sungwon.a8chat_android.structure.setting.mediaFragments.MediaSettingFragment
 import com.vicpin.krealmextensions.query
 import com.vicpin.krealmextensions.queryAll
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -54,6 +54,7 @@ class ChatSettingController(val mView: SettingContract.Chat.View) : SettingContr
                                         if (response.isSuccess) { //Room is favorite & Update in Realm
                                             //User Feedback
                                             response?.userRoom?.favorite?.let {
+                                                //User feedback
                                                 if (it) {
                                                     mView.feedback("Favorite!")
                                                 } else {
