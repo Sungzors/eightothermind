@@ -1,5 +1,6 @@
 package com.phdlabs.sungwon.a8chat_android.structure.createnew
 
+import android.app.Activity
 import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
@@ -69,6 +70,23 @@ class CreateNewActivity: CoreActivity(){
         super.onStop()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        setResult(Activity.RESULT_CANCELED)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == Constants.ChannelRequestCodes.CREATE_NEW_BACK_REQ_CODE) { //Created New Content
+                setResult(Activity.RESULT_OK)
+                finish()
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data)
+        }
+    }
+
     /*UI Changes*/
     private fun hideFavoritesCard(isHidden: Boolean) {
         if (isHidden){
@@ -93,8 +111,10 @@ class CreateNewActivity: CoreActivity(){
         acn_group_container.setOnClickListener {
             Toast.makeText(this, "Group Chat in progress", Toast.LENGTH_SHORT).show()//TODO: groupchat activty lead
         }
+        /*Create new channel*/
         acn_channel_container.setOnClickListener {
-            startActivity(Intent(this, ChannelCreateActivity::class.java))
+            val createChannelIntent = Intent(this, ChannelCreateActivity::class.java)
+            startActivityForResult(createChannelIntent, Constants.ChannelRequestCodes.CREATE_NEW_BACK_REQ_CODE)
         }
         acn_event_container.setOnClickListener {
             startActivity(Intent(this, EventCreateActivity::class.java))

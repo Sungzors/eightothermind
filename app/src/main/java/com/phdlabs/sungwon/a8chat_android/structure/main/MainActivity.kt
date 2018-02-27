@@ -37,6 +37,13 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
     override val activity: MainActivity = this
     private var lastSelectedTabId: Int? = null
 
+    /*Instances*/
+    private var mLobbyFragment: LobbyFragment = LobbyFragment.newInstance()
+
+    init {
+        //Fresh data on launch
+    }
+
     /*LifeCycle*/
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,19 +79,35 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
-        if (resultCode == Activity.RESULT_OK || resultCode == Activity.RESULT_CANCELED) {
-
+        if (resultCode == Activity.RESULT_OK) {
             if (requestCode == Constants.CameraIntents.CAMERA_REQUEST_CODE) { //Camera
                 am_bottom_tab_nav.setOnNavigationItemSelectedListener(null)
                 showTabs(false, true)
             } else if (requestCode == Constants.ContactItems.CONTACTS_REQ_CODE) { //Contacts-Eight Friends
                 //todo: required contacts action if needed
             } else if (requestCode == Constants.ProfileIntents.EDIT_MY_PROFIILE) { //Profile
-                //todo: required profile action if needed
+                /*Do not refresh lobby*/
+                mLobbyFragment.controller.setRefreshFlag(false)
             } else if (requestCode == Constants.ContactItems.INVITE_CONTACTS_REQ_CODE) { //Invite Contact
                 //todo: required invite contact action if needed
+            } else if (requestCode == Constants.ChannelRequestCodes.CREATE_NEW_BACK_REQ_CODE) {
+                mLobbyFragment.controller.setRefreshFlag(true)
+                am_bottom_tab_nav.setOnNavigationItemSelectedListener(null)
+                showTabs(false, false)
             }
 
+        } else if (resultCode == Activity.RESULT_CANCELED) {
+            //Don't refresh Lobby
+            mLobbyFragment.controller.setRefreshFlag(false)
+            //Actions
+            if (requestCode == Constants.CameraIntents.CAMERA_REQUEST_CODE) { //Camera
+                am_bottom_tab_nav.setOnNavigationItemSelectedListener(null)
+                showTabs(false, true)
+            } else if (requestCode == Constants.ChannelRequestCodes.CREATE_NEW_BACK_REQ_CODE) {
+                //Refresh Data if needed
+                am_bottom_tab_nav.setOnNavigationItemSelectedListener(null)
+                showTabs(false, false)
+            }
         } else {
             super.onActivityResult(requestCode, resultCode, data)
         }
@@ -95,7 +118,7 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
         //Last selected item
         if (backFromCamera) {
             lastSelectedTabId?.let {
-                    am_bottom_tab_nav.selectedItemId = it
+                am_bottom_tab_nav.selectedItemId = it
             }
         }
         //Navigation
@@ -116,7 +139,14 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
                 super.onPostResume()
                 setupToolbars()
                 toolbarControl(true)
-                replaceFragment(LobbyFragment.newInstance(), false)
+                //If comming back from profile, do not refresh data
+                lastSelectedTabId?.let {
+                    if (it == R.id.mmt_profile) {
+                        mLobbyFragment = LobbyFragment.newInstance(false)
+                    }
+                }
+                replaceFragment(contentContainerId(), mLobbyFragment, false)
+
                 lastSelectedTabId = R.id.mmt_home
             }
         /*Camera*/
@@ -125,7 +155,7 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
             R.id.mmt_profile -> {
                 super.onPostResume()
                 toolbarControl(false)
-                replaceFragment(MyProfileFragment.newInstance(), false)
+                replaceFragment(contentContainerId(), MyProfileFragment.newInstance(), false)
                 lastSelectedTabId = R.id.mmt_profile
             }
         }
@@ -149,9 +179,10 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
                 startActivityForResult(editIntent,
                         Constants.ProfileIntents.EDIT_MY_PROFIILE)
             }
-        /*Create New*/
+        /**Create New -> [CreateNewActivity]*/
             home_toolbar.toolbar_right_picture -> {
-                startActivity(Intent(this, CreateNewActivity::class.java))
+                val createNewIntent = Intent(this, CreateNewActivity::class.java)
+                startActivityForResult(createNewIntent, Constants.ChannelRequestCodes.CREATE_NEW_BACK_REQ_CODE)
 
             }
         }

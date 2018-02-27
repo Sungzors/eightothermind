@@ -2,26 +2,30 @@ package com.phdlabs.sungwon.a8chat_android.structure.main.lobby
 
 import com.phdlabs.sungwon.a8chat_android.api.event.Event
 import com.phdlabs.sungwon.a8chat_android.api.response.*
+import com.phdlabs.sungwon.a8chat_android.api.response.channels.MyChannelRoomsResponse
 import com.phdlabs.sungwon.a8chat_android.api.rest.Caller
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
 import com.phdlabs.sungwon.a8chat_android.api.utility.Callback8
 import com.phdlabs.sungwon.a8chat_android.db.EventBusManager
+import com.phdlabs.sungwon.a8chat_android.db.channels.ChannelsManager
 import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
 import com.phdlabs.sungwon.a8chat_android.model.event.EventsEight
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
+import com.phdlabs.sungwon.a8chat_android.model.user.User
+import com.phdlabs.sungwon.a8chat_android.model.user.registration.Token
 import com.vicpin.krealmextensions.save
+import com.vicpin.krealmextensions.saveAll
 import org.greenrobot.eventbus.EventBus
 
 /**
  * Created by SungWon on 10/17/2017.
  * Updated by JPAM on 1/31/2018
  */
-class LobbyController(val mView: LobbyContract.View) : LobbyContract.Controller {
+class LobbyController(val mView: LobbyContract.View, var refresh: Boolean) : LobbyContract.Controller {
 
-    //connects to LobbyFragment
-
-    private val mMyChannel = mutableListOf<Channel>()
+    /*Properties*/
+    private var mMyChannel = mutableListOf<Channel>()
     private val mEvents = mutableListOf<EventsEight>()
     private val mChannelsFollowed = mutableListOf<Channel>()
     private val mChannel = mutableListOf<Channel>()
@@ -37,43 +41,45 @@ class LobbyController(val mView: LobbyContract.View) : LobbyContract.Controller 
     }
 
     override fun start() {
-        callMyChannel()
+    }
+
+    override fun resume() {
+        callMyChannel(refresh)
         callEvent()
         callFollow()
         callChannel()
         callChats()
     }
 
-    override fun resume() {
-    }
-
     override fun pause() {
+
     }
 
     override fun stop() {
     }
 
-    private fun callMyChannel() {
-        UserManager.instance.getCurrentUser { success, user, token ->
-            if (success) {
-                val call = mCaller.getAssociatedChannels(token?.token, user?.id!!)
-                call.enqueue(object : Callback8<ChannelShowArrayResponse, Event>(mEventBus) {
-                    override fun onSuccess(data: ChannelShowArrayResponse?) {
-                        for (channel in data!!.channels!!) {
-                            mMyChannel.addAll(channel.channels)
-                        }
-                        if (mMyChannel.size > 0) {
-                            for (channel in mMyChannel) {
-                                channel.save()
-                                mView.setUpMyChannelRecycler()
-                            }
-                        }
+    private fun callMyChannel(refresh: Boolean) {
+        mView.showProgress()
+        ChannelsManager.instance.getMyChannels(refresh, { response ->
+            response.second?.let {
+                //Error
+                mView.hideProgress()
+                mView.showError(it)
+            } ?: run {
+                mView.hideProgress()
+                response.first?.let {
+                    mMyChannel = it.toMutableList()
+                    if (mMyChannel.size > 0) {
+                        mView.setUpMyChannelRecycler(mMyChannel)
                     }
-                })
+                }
             }
-        }
-
+        })
     }
+
+//    private fun callEvent(refresh: Boolean){
+//        //TODO:
+//    }
 
     private fun callEvent() {
         UserManager.instance.getCurrentUser { success, user, token ->
@@ -87,7 +93,7 @@ class LobbyController(val mView: LobbyContract.View) : LobbyContract.Controller 
                                 event.save()
                             }
                             if (mEvents.size > 0) {
-                                mView.setUpEventsRecycler()
+                                mView.setUpEventsRecycler(mEvents)
                             }
                         }
                     }
@@ -103,22 +109,20 @@ class LobbyController(val mView: LobbyContract.View) : LobbyContract.Controller 
                 call.enqueue(object : Callback8<ChannelFollowResponse, Event>(mEventBus) {
                     override fun onSuccess(data: ChannelFollowResponse?) {
                         for (channel in data!!.channels!!.popular!!.unread!!) {
-                            mChannelsFollowed.addAll(channel.channels)
+                            //mChannelsFollowed.addAll(channel.channels)
                         }
                         for (channel in data.channels!!.popular!!.read!!) {
-                            mChannelsFollowed.addAll(channel.channels)
+                            //mChannelsFollowed.addAll(channel.channels)
                         }
                         for (channel in data.channels!!.unpopular!!.unread!!) {
-                            mChannelsFollowed.addAll(channel.channels)
+                            // mChannelsFollowed.addAll(channel.channels)
                         }
                         for (channel in data.channels!!.unpopular!!.read!!) {
-                            mChannelsFollowed.addAll(channel.channels)
+                            //mChannelsFollowed.addAll(channel.channels)
                         }
                         if (mChannelsFollowed.size > 0) {
-                            for (channel in mChannelsFollowed) {
-                                channel.save()
-                            }
-                            mView.setUpChannelsFollowedRecycler()
+                            mChannelsFollowed.saveAll()
+                            mView.setUpChannelsFollowedRecycler(mChannelsFollowed)
                         }
 
                     }
@@ -135,10 +139,8 @@ class LobbyController(val mView: LobbyContract.View) : LobbyContract.Controller 
                     override fun onSuccess(data: ChannelArrayResponse?) {
                         mChannel.addAll(data!!.channels!!)
                         if (mChannel.size > 0) {
-                            for (channel in mChannel) {
-                                channel.save()
-                            }
-                            mView.setUpChannelRecycler()
+                            mChannel.saveAll()
+                            mView.setUpChannelRecycler(mChannel)
                         }
                     }
                 })
@@ -154,16 +156,28 @@ class LobbyController(val mView: LobbyContract.View) : LobbyContract.Controller 
                     override fun onSuccess(data: ChatsRetrievalResponse?) {
                         mChat.addAll(data!!.chats!!)
                         if (mChat.size > 0) {
-                            for (room in mChat) {
-                                room.save()
-                            }
-                            mView.setUpChatRecycler()
+                            mChat.saveAll()
+                            mView.setUpChatRecycler(mChat)
                         }
                     }
                 })
             }
         }
 
+    }
+
+    override fun setRefreshFlag(shouldRefresh: Boolean) {
+        refresh = shouldRefresh
+    }
+
+    override fun getRefreshFlag(): Boolean  = refresh
+
+    override fun refreshAll() {
+        callMyChannel(true)
+        callEvent()
+        callFollow()
+        callChannel()
+        callChats()
     }
 
     override fun getMyChannel(): MutableList<Channel> = mMyChannel
@@ -175,4 +189,5 @@ class LobbyController(val mView: LobbyContract.View) : LobbyContract.Controller 
     override fun getChannel(): MutableList<Channel> = mChannel
 
     override fun getChat(): MutableList<Room> = mChat
+
 }

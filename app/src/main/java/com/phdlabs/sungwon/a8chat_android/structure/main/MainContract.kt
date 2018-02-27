@@ -1,5 +1,6 @@
 package com.phdlabs.sungwon.a8chat_android.structure.main
 
+import com.phdlabs.sungwon.a8chat_android.structure.application.Application
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseController
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseView
 
@@ -15,5 +16,6 @@ interface MainContract {
     interface Controller: BaseController{
         fun showHome()
         fun showCamera()
+        fun getUserId(callback: (Int?) -> Unit)
     }
 }

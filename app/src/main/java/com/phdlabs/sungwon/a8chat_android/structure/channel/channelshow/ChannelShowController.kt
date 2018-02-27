@@ -4,7 +4,7 @@ import android.widget.Toast
 import com.phdlabs.sungwon.a8chat_android.api.event.ChannelPostGetEvent
 import com.phdlabs.sungwon.a8chat_android.api.event.Event
 import com.phdlabs.sungwon.a8chat_android.api.event.PostLikeEvent
-import com.phdlabs.sungwon.a8chat_android.api.response.ChannelShowArrayResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.channels.MyChannelRoomsResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.ErrorResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.RoomHistoryResponse
 import com.phdlabs.sungwon.a8chat_android.api.rest.Caller
@@ -45,18 +45,19 @@ class ChannelShowController(val mView : ChannelContract.ChannelShow.View): Chann
     }
 
     private fun loadChannels(){
-        UserManager.instance.getCurrentUser { success, user, token ->
-            if (success) {
-                mView.showProgress()
-                val call = mCaller.getAssociatedChannels(token?.token, user?.id!!)
-                call.enqueue(object : Callback8<ChannelShowArrayResponse, Event>(mEventBus) {
-                    override fun onSuccess(data: ChannelShowArrayResponse?) {
-                        mView.addToChannels(data!!.channels!!)
-                        mView.setUpTopRecycler()
-                    }
-                })
-            }
-        }
+        //TODO: Replace with manager
+//        UserManager.instance.getCurrentUser { success, user, token ->
+//            if (success) {
+//                mView.showProgress()
+//                val call = mCaller.getAssociatedChannels(token?.token, user?.id!!)
+//                call.enqueue(object : Callback8<MyChannelRoomsResponse, Event>(mEventBus) {
+//                    override fun onSuccess(data: MyChannelRoomsResponse?) {
+//                        mView.addToChannels(data!!.channels!!)
+//                        mView.setUpTopRecycler()
+//                    }
+//                })
+//            }
+//        }
     }
 
     override fun loadChannel(roomID: Int) {

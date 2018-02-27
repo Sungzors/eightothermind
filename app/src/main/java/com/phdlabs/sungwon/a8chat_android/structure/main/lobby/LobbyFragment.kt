@@ -1,10 +1,12 @@
 package com.phdlabs.sungwon.a8chat_android.structure.main.lobby
 
 import android.content.Intent
+import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
@@ -32,30 +34,45 @@ import java.util.*
  */
 class LobbyFragment : CoreFragment(), LobbyContract.View {
 
+    /*Controller*/
     override lateinit var controller: LobbyContract.Controller
 
+    /*Adapters*/
     private lateinit var mAdapterMyChannel: BaseRecyclerAdapter<Channel, BaseViewHolder>
     private lateinit var mAdapterEvent: BaseRecyclerAdapter<EventsEight, BaseViewHolder>
     private lateinit var mAdapterFollow: BaseRecyclerAdapter<Channel, BaseViewHolder>
     private lateinit var mAdapterChannel: BaseRecyclerAdapter<Channel, BaseViewHolder>
     private lateinit var mAdapterChat: BaseRecyclerAdapter<Room, BaseViewHolder>
 
+    /*Layout*/
     override fun layoutId() = R.layout.fragment_lobby
 
+    /*Companion*/
     companion object {
+
+        /*Global control variable*/
+        var refresh: Boolean = true
+
+        /**
+         * Default constructor
+         * Will not refresh data from API
+         * */
         fun newInstance(): LobbyFragment = LobbyFragment()
+
+        fun newInstance(shouldUpdate: Boolean):LobbyFragment {
+            this.refresh = shouldUpdate
+            return LobbyFragment()
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        LobbyController(this, refresh)
     }
 
     override fun onStart() {
         super.onStart()
-        LobbyController(this)
         controller.start()
-
-//        setUpChannelRecycler()
-//        setUpChannelsFollowedRecycler()
-//        setUpChatRecycler()
-//        setUpEventsRecycler()
-//        setUpMyChannelRecycler()
     }
 
     override fun onResume() {
@@ -73,7 +90,8 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
         controller.stop()
     }
 
-    override fun setUpMyChannelRecycler() {
+    /*My Channels*/
+    override fun setUpMyChannelRecycler(myChannels: MutableList<Channel>) {
         mAdapterMyChannel = object : BaseRecyclerAdapter<Channel, BaseViewHolder>() {
             override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: Channel?, position: Int, type: Int) {
                 bindMyChannelViewHolder(viewHolder!!, data!!)
@@ -85,7 +103,7 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
                 }
             }
         }
-        mAdapterMyChannel.setItems(controller.getMyChannel())
+        mAdapterMyChannel.setItems(myChannels)
         fl_my_channels_title.visibility = TextView.VISIBLE
         fl_my_channels_recycler.visibility = RecyclerView.VISIBLE
         fl_my_channels_recycler.layoutManager = LinearLayoutManager(coreActivity.context, LinearLayoutManager.HORIZONTAL, false)
@@ -109,7 +127,8 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
         }
     }
 
-    override fun setUpEventsRecycler() {
+    /*Events*/
+    override fun setUpEventsRecycler(events: MutableList<EventsEight>) {
         mAdapterEvent = object : BaseRecyclerAdapter<EventsEight, BaseViewHolder>() {
             override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: EventsEight?, position: Int, type: Int) {
                 bindEventViewHolder(viewHolder!!, data!!)
@@ -129,9 +148,10 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
                     }
                 }
             }
+
         }
-        mAdapterEvent.setItems(controller.getEvents())
-        fl_events_title.visibility = TextView.VISIBLE //TODO: Fix -> Sometimes it crashes due to visibility
+        mAdapterEvent.setItems(events)
+        fl_events_title.visibility = TextView.VISIBLE
         fl_events_recycler.visibility = RecyclerView.VISIBLE
         fl_events_recycler.layoutManager = LinearLayoutManager(coreActivity.context)
         fl_events_recycler.adapter = mAdapterEvent
@@ -170,7 +190,8 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
 
     }
 
-    override fun setUpChannelsFollowedRecycler() {
+    /*Followed Channels*/
+    override fun setUpChannelsFollowedRecycler(channelsFollowed: MutableList<Channel>) {
         mAdapterFollow = object : BaseRecyclerAdapter<Channel, BaseViewHolder>() {
             override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: Channel?, position: Int, type: Int) {
                 when (data!!.isRead) {
@@ -185,14 +206,15 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
                 }
             }
         }
-        mAdapterFollow.setItems(controller.getChannelsFollowed())
+        mAdapterFollow.setItems(channelsFollowed)
         fl_follow_title.visibility = TextView.VISIBLE
         fl_follow_recycler.visibility = RecyclerView.VISIBLE
         fl_follow_recycler.layoutManager = LinearLayoutManager(coreActivity.context, LinearLayoutManager.HORIZONTAL, false)
         fl_follow_recycler.adapter = mAdapterFollow
     }
 
-    override fun setUpChannelRecycler() {
+    /*All Channels*/
+    override fun setUpChannelRecycler(allChannels: MutableList<Channel>) {
         mAdapterChannel = object : BaseRecyclerAdapter<Channel, BaseViewHolder>() {
             override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: Channel?, position: Int, type: Int) {
                 when (data!!.isRead) {
@@ -207,13 +229,14 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
                 }
             }
         }
-        mAdapterChannel.setItems(controller.getChannel())
+        mAdapterChannel.setItems(allChannels)
         fl_channels_title.visibility = TextView.VISIBLE
         fl_channels_recycler.visibility = RecyclerView.VISIBLE
         fl_channels_recycler.layoutManager = LinearLayoutManager(coreActivity.context, LinearLayoutManager.HORIZONTAL, false)
         fl_channels_recycler.adapter = mAdapterChannel
     }
 
+    //Read channels
     private fun bindReadChannelViewHolder(viewHolder: BaseViewHolder, data: Channel) {
         val bg = viewHolder.get<ImageView>(R.id.cvlc_background_unread)
         val profilePic = viewHolder.get<ImageView>(R.id.cvlc_picture_profile)
@@ -231,6 +254,7 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
         }
     }
 
+    //Unread channels
     private fun bindUnreadChannelViewHolder(viewHolder: BaseViewHolder, data: Channel) {
         val bg = viewHolder.get<ImageView>(R.id.cvlc_background_unread)
         val profilePic = viewHolder.get<ImageView>(R.id.cvlc_picture_profile)
@@ -248,7 +272,8 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
         }
     }
 
-    override fun setUpChatRecycler() {
+    /*CHAT - Conversations*/
+    override fun setUpChatRecycler(chats: MutableList<Room>) {
         mAdapterChat = object : BaseRecyclerAdapter<Room, BaseViewHolder>() {
             override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: Room?, position: Int, type: Int) {
                 bindRoomViewHolder(viewHolder!!, data!!)
@@ -259,14 +284,15 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
                     override fun addClicks(views: ViewMap?) {
                         views?.click {
                             val room = getItem(adapterPosition)
-                            if(room.chatType == "private"){
+                            if (room.chatType == "private") {
                                 val intent = Intent(context, ChatActivity::class.java)
                                 intent.putExtra(Constants.IntentKeys.CHAT_NAME, room.user?.first_name + " " + room.user?.last_name)
                                 intent.putExtra(Constants.IntentKeys.PARTICIPANT_ID, room.user?.userRooms?.userId)
                                 intent.putExtra(Constants.IntentKeys.ROOM_ID, room.id)
-                                intent.putExtra(Constants.IntentKeys.CHAT_PIC, room.user?.avatar?: "")
+                                intent.putExtra(Constants.IntentKeys.CHAT_PIC, room.user?.avatar
+                                        ?: "")
                                 startActivity(intent)
-                            } else if (room.chatType == "group"){
+                            } else if (room.chatType == "group") {
                                 val intent = Intent(context, GroupChatActivity::class.java)
                                 intent.putExtra(Constants.IntentKeys.CHAT_NAME, room.groupChatInfo?.name)
                                 intent.putExtra(Constants.IntentKeys.ROOM_ID, room.id)
@@ -279,7 +305,7 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
                 }
             }
         }
-        mAdapterChat.setItems(controller.getChat())
+        mAdapterChat.setItems(chats)
         fl_chat_title.visibility = TextView.VISIBLE
         fl_chat_recycler.visibility = RecyclerView.VISIBLE
         fl_chat_recycler.layoutManager = LinearLayoutManager(coreActivity.context)
@@ -320,7 +346,7 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
             } else {
                 eventIndicator.visibility = ImageView.INVISIBLE
             }
-        } else if (data.chatType == "group"){
+        } else if (data.chatType == "group") {
             Picasso.with(context).load(data.groupChatInfo!!.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(eventPic)
             title.text = data.groupChatInfo!!.name
             if (data.message != null) {
@@ -343,36 +369,5 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
                 time.text = ""
             }
         }
-
-    }
-
-    override fun updateMyChannelRecycler() {
-        mAdapterMyChannel.clear()
-        mAdapterMyChannel.setItems(controller.getMyChannel())
-        mAdapterMyChannel.notifyDataSetChanged()
-    }
-
-    override fun updateEventsRecycler() {
-        mAdapterEvent.clear()
-        mAdapterEvent.setItems(controller.getEvents())
-        mAdapterEvent.notifyDataSetChanged()
-    }
-
-    override fun updateChannelsFollowedRecycler() {
-        mAdapterFollow.clear()
-        mAdapterFollow.setItems(controller.getChannelsFollowed())
-        mAdapterFollow.notifyDataSetChanged()
-    }
-
-    override fun updateChannelRecycler() {
-        mAdapterChannel.clear()
-        mAdapterChannel.setItems(controller.getChannel())
-        mAdapterChannel.notifyDataSetChanged()
-    }
-
-    override fun updateChatRecycler() {
-        mAdapterChat.clear()
-        mAdapterChat.setItems(controller.getChat())
-        mAdapterChat.notifyDataSetChanged()
     }
 }

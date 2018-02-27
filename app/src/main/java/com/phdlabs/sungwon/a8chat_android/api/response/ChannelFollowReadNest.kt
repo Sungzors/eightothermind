@@ -1,6 +1,6 @@
 package com.phdlabs.sungwon.a8chat_android.api.response
 
-import com.phdlabs.sungwon.a8chat_android.model.ChannelShowNest
+import com.phdlabs.sungwon.a8chat_android.model.channel.ChannelShowNest
 
 /**
  * Created by SungWon on 1/5/2018.

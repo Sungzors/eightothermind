@@ -11,10 +11,10 @@ object EightQueries {
 
     /**
      * [Comparators]
-     * Used to
+     * Used for ordering
      * */
     object Comparators {
-        //Comparator
+        //Alphabetical comparator
          val alphabetComparator = object : Comparator<Contact> {
             override fun compare(a: Contact?, b: Contact?): Int {
                 a?.first_name?.let {

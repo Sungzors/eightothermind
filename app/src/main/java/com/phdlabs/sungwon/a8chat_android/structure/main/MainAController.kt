@@ -1,7 +1,8 @@
 package com.phdlabs.sungwon.a8chat_android.structure.main
 
 import android.content.Intent
-import android.support.v4.content.ContextCompat.startActivity
+import com.github.nkzawa.socketio.client.Socket
+import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
 import com.phdlabs.sungwon.a8chat_android.structure.camera.CameraActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 
@@ -12,12 +13,20 @@ import com.phdlabs.sungwon.a8chat_android.utility.Constants
 class MainAController(val mView: MainContract.View) : MainContract.Controller {
 
     //connects to MainActivity
+    //private val mSocket: Socket
+    //private var isConnected: Boolean
 
     init {
         mView.controller = this
+        //mSocket = mView.get8Application.getSocket()
+        //isConnected = false
     }
 
     override fun start() {
+        getUserId { userId ->
+            //mSocket.emit(Constants.SocketKeys.USER_ENTERED_8, userId)
+            //isConnected = true
+        }
     }
 
     override fun resume() {
@@ -37,6 +46,16 @@ class MainAController(val mView: MainContract.View) : MainContract.Controller {
         mView.activity.let {
             it.startActivityForResult(Intent(it.context, CameraActivity::class.java),
                     Constants.CameraIntents.CAMERA_REQUEST_CODE)
+        }
+    }
+
+    override fun getUserId(callback: (Int?) -> Unit) {
+        UserManager.instance.getCurrentUser { success, user, _ ->
+            if (success) {
+                user?.id.let {
+                    callback(it)
+                }
+            }
         }
     }
 

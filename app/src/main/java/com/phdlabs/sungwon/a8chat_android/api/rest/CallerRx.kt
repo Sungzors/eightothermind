@@ -5,6 +5,7 @@ import com.phdlabs.sungwon.a8chat_android.api.response.createEvent.EventPostResp
 import com.phdlabs.sungwon.a8chat_android.api.response.createChannel.ChannelResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.media.MediaResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.UserDataResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.channels.MyChannelRoomsResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.contacts.ContactsInvitedResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.contacts.ContactsPostResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.contacts.UserFriendsResponse
@@ -46,16 +47,22 @@ interface CallerRx {
     fun getSharedMediaPrivate(@Header(TOKEN) token: String, @Path("userId1") userId1: Int,
                               @Path("userId2") userId2: Int):Observable<MediaResponse>
 
+
     /*CHANNEL*/
+    //Create new channel
     @POST("/channels")
     fun postChannel(@Header(TOKEN) token: String, @Body channelPostData: ChannelPostData): Observable<ChannelResponse>
+
+    //Get all my channels
+    @GET("/users/{userId}/channels")
+    fun getMyChannels(@Header(TOKEN) token: String, @Path("userId") userId: Int): Observable<MyChannelRoomsResponse>
+
 
     /*EVENTS*/
     @POST("/events")
     fun postEvents(@Header(TOKEN) token: String, @Body eventPostData: EventPostData): Observable<EventPostResponse>
 
     /*CONTACTS*/
-
     /**
      * [getEightContactsPhoneNumbers]
      * @Body Array of [LocalContact]
@@ -73,6 +80,7 @@ interface CallerRx {
     fun inviteContactsToEight(@Header(TOKEN) token: String,
                               @Path("userId") userId: Int,
                               @Body contactsPostData: Array<out Any>): Observable<ContactsInvitedResponse>
+
 
     /*ROOM*/
     @PATCH("/privateChats/{roomId}/favorite")

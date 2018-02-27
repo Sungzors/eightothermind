@@ -1,5 +1,6 @@
 package com.phdlabs.sungwon.a8chat_android.structure.channel.create
 
+import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -78,12 +79,17 @@ class ChannelCreateActivity : CoreActivity(), ChannelContract.Create.View {
 
     /*Transition*/
     override fun onCreateChannel(chanId: Int?, chanName: String?, roomId: Int?, ownerId: Int?) {
+        //Dismiss previous activity
+        setResult(Activity.RESULT_OK)
+        //Transition to new channel
         val intent = Intent(this, MyChannelActivity::class.java)
         intent.putExtra(Constants.IntentKeys.CHANNEL_ID, chanId)
         intent.putExtra(Constants.IntentKeys.CHANNEL_NAME, chanName)
         intent.putExtra(Constants.IntentKeys.ROOM_ID, roomId)
         intent.putExtra(Constants.IntentKeys.OWNER_ID, ownerId)
         startActivity(intent)
+        /*Finish current activity & deliver navigation results to previous back-stack*/
+        finish()
     }
 
 
