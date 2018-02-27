@@ -6,7 +6,6 @@ import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.vicpin.krealmextensions.delete
 import com.vicpin.krealmextensions.query
-import com.vicpin.krealmextensions.queryAll
 import com.vicpin.krealmextensions.save
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -89,4 +88,6 @@ class ChannelsManager {
             }
         }
     }
+
+
 }

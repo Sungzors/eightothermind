@@ -46,17 +46,18 @@ class SectionRecyclerViewAdapter
         })
     }
 
-    /*SectionRecyclerViewAdapter required methods*/
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when(viewType) {
             SectionedType.HEADER.value -> sectionAdapter.onCreateViewHolder(parent, viewType)
             else -> itemAdapter.onCreateViewHolder(parent, viewType -1)
         }
     }
 
+    /*SectionRecyclerViewAdapter required methods*/
+
     override fun getItemCount() = if(valid) itemAdapter.itemCount + sectionAdapter.itemCount else 0
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, position: Int) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if(isSectionHeaderPosition(position)) {
             sectionAdapter.onBindViewHolder(holder,position)
         } else {

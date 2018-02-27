@@ -49,6 +49,11 @@ object Constants {
      * */
     object ChannelRequestCodes {
         const val MY_CHANNELS_LIST = 1
+
+        /**
+         * Used when creating a new Channel, Event or GroupChat
+         * Starting Navigation through Main Activity (Lobby Frag)
+         * */
         const val CREATE_NEW_BACK_REQ_CODE = 13
     }
 
@@ -127,6 +132,16 @@ object Constants {
     object EventPrivacy {
         val ONLY_FRIENDS = "only my friends"
         var FRIENDS_OF_FRIENDS = "friends of friends"
+    }
+
+    /**
+     * [EventAssociation]
+     * Used to determine the current user relationship to the event
+     * */
+    object EventAssociation {
+        var EVENT_CREATED = "created"
+        var EVENT_FULL_PARTICIPANT = "fullParticipant"
+        var EVENT_READ_ONLY = "readOnly"
     }
 
     /**

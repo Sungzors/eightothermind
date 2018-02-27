@@ -153,10 +153,10 @@ class ContactsActivity : CoreActivity(), ContactsContract.EightFriends.View, Vie
     /*Refresh current screen*/
     override fun onRefresh() {
         if (ac_button_contacts.isChecked && !ac_button_channels.isChecked) {
-            //Todo: refresh contacts
+            //Todo: refreshChannels contacts
             controller.loadContactsFromApi()
         } else if (ac_button_channels.isChecked && !ac_button_contacts.isChecked) {
-            //Todo: refresh channels
+            //Todo: refreshChannels channels
         }
     }
 

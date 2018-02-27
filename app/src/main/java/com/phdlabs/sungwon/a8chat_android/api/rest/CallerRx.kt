@@ -9,6 +9,7 @@ import com.phdlabs.sungwon.a8chat_android.api.response.channels.MyChannelRoomsRe
 import com.phdlabs.sungwon.a8chat_android.api.response.contacts.ContactsInvitedResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.contacts.ContactsPostResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.contacts.UserFriendsResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.eightEvents.EventRetrievalResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.favorite.PrivateChatFavoriteResponse
 import com.phdlabs.sungwon.a8chat_android.api.rest.Caller.TOKEN
 import com.phdlabs.sungwon.a8chat_android.model.user.registration.RegistrationData
@@ -45,7 +46,7 @@ interface CallerRx {
 
     @GET("/media/shared/{userId1}/{userId2}")
     fun getSharedMediaPrivate(@Header(TOKEN) token: String, @Path("userId1") userId1: Int,
-                              @Path("userId2") userId2: Int):Observable<MediaResponse>
+                              @Path("userId2") userId2: Int): Observable<MediaResponse>
 
 
     /*CHANNEL*/
@@ -59,8 +60,22 @@ interface CallerRx {
 
 
     /*EVENTS*/
+    /**[postEvents]
+     * @Post new event from current user
+     * */
     @POST("/events")
     fun postEvents(@Header(TOKEN) token: String, @Body eventPostData: EventPostData): Observable<EventPostResponse>
+
+    /**
+     * [getUserEventsWithFlags]
+     * @Get current user's events with flags
+     * @created -> User created the event
+     * @fullParticipant ->  User is able to send messages
+     * @readOnly -> User can only read the event
+     * */
+    @GET("/users/{userId}/events/with_flags")
+    fun getUserEventsWithFlags(@Header(TOKEN) token: String, @Path("userId") userId: Int): Observable<EventRetrievalResponse>
+
 
     /*CONTACTS*/
     /**

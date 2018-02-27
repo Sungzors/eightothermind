@@ -2,19 +2,16 @@ package com.phdlabs.sungwon.a8chat_android.structure.main.lobby
 
 import com.phdlabs.sungwon.a8chat_android.api.event.Event
 import com.phdlabs.sungwon.a8chat_android.api.response.*
-import com.phdlabs.sungwon.a8chat_android.api.response.channels.MyChannelRoomsResponse
 import com.phdlabs.sungwon.a8chat_android.api.rest.Caller
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
 import com.phdlabs.sungwon.a8chat_android.api.utility.Callback8
 import com.phdlabs.sungwon.a8chat_android.db.EventBusManager
 import com.phdlabs.sungwon.a8chat_android.db.channels.ChannelsManager
+import com.phdlabs.sungwon.a8chat_android.db.events.EventsManager
 import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
 import com.phdlabs.sungwon.a8chat_android.model.event.EventsEight
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
-import com.phdlabs.sungwon.a8chat_android.model.user.User
-import com.phdlabs.sungwon.a8chat_android.model.user.registration.Token
-import com.vicpin.krealmextensions.save
 import com.vicpin.krealmextensions.saveAll
 import org.greenrobot.eventbus.EventBus
 
@@ -22,11 +19,12 @@ import org.greenrobot.eventbus.EventBus
  * Created by SungWon on 10/17/2017.
  * Updated by JPAM on 1/31/2018
  */
-class LobbyController(val mView: LobbyContract.View, var refresh: Boolean) : LobbyContract.Controller {
+class LobbyController(val mView: LobbyContract.View,
+                      private var refresh: Boolean) : LobbyContract.Controller {
 
     /*Properties*/
     private var mMyChannel = mutableListOf<Channel>()
-    private val mEvents = mutableListOf<EventsEight>()
+    private var mEvents = mutableListOf<EventsEight>()
     private val mChannelsFollowed = mutableListOf<Channel>()
     private val mChannel = mutableListOf<Channel>()
     private val mChat = mutableListOf<Room>()
@@ -45,7 +43,7 @@ class LobbyController(val mView: LobbyContract.View, var refresh: Boolean) : Lob
 
     override fun resume() {
         callMyChannel(refresh)
-        callEvent()
+        callEvent(refresh)
         callFollow()
         callChannel()
         callChats()
@@ -64,10 +62,12 @@ class LobbyController(val mView: LobbyContract.View, var refresh: Boolean) : Lob
             response.second?.let {
                 //Error
                 mView.hideProgress()
-                mView.showError(it)
+                /*When no channels are available it triggers a localized error message not wanted*/
+                //mView.showError(it)
             } ?: run {
                 mView.hideProgress()
                 response.first?.let {
+                    //Channels
                     mMyChannel = it.toMutableList()
                     if (mMyChannel.size > 0) {
                         mView.setUpMyChannelRecycler(mMyChannel)
@@ -77,29 +77,25 @@ class LobbyController(val mView: LobbyContract.View, var refresh: Boolean) : Lob
         })
     }
 
-//    private fun callEvent(refresh: Boolean){
-//        //TODO:
-//    }
-
-    private fun callEvent() {
-        UserManager.instance.getCurrentUser { success, user, token ->
-            if (success) {
-                val call = mCaller.getEvents(token?.token, user?.id!!)
-                call.enqueue(object : Callback8<EventRetrievalResponse, Event>(mEventBus) {
-                    override fun onSuccess(data: EventRetrievalResponse?) {
-                        mEvents.addAll(data!!.events!!)
-                        if (mEvents.size > 0) {
-                            for (event in mEvents) {
-                                event.save()
-                            }
-                            if (mEvents.size > 0) {
-                                mView.setUpEventsRecycler(mEvents)
-                            }
-                        }
+    private fun callEvent(refresh: Boolean) {
+        mView.showProgress()
+        EventsManager.instance.getEvents(refresh, { response ->
+            response.second?.let {
+                // Error
+                mView.hideProgress()
+                /*When no events are available it triggers a localized error message not wanted*/
+                //mView.showError(it)
+            } ?: run {
+                mView.hideProgress()
+                response.first?.let {
+                    //Events
+                    mEvents = it.toMutableList()
+                    if (mEvents.size > 0) {
+                        mView.setUpEventsRecycler(mEvents)
                     }
-                })
+                }
             }
-        }
+        })
     }
 
     private fun callFollow() {
@@ -170,11 +166,11 @@ class LobbyController(val mView: LobbyContract.View, var refresh: Boolean) : Lob
         refresh = shouldRefresh
     }
 
-    override fun getRefreshFlag(): Boolean  = refresh
+    override fun getRefreshFlag(): Boolean = refresh
 
     override fun refreshAll() {
         callMyChannel(true)
-        callEvent()
+        callEvent(true)
         callFollow()
         callChannel()
         callChats()

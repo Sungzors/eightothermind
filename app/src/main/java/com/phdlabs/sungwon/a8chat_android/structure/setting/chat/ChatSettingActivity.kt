@@ -94,7 +94,7 @@ class ChatSettingActivity : CoreActivity(), SettingContract.Chat.View, View.OnCl
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == Activity.RESULT_OK && requestCode == Constants.ContactItems.TO_CHAT_FROM_CONTACT_REQ_CODE) {
-            //TODO: Back from chat launched from contacts screen, todo refresh media , files & favorite messages only
+            //TODO: Back from chat launched from contacts screen, todo refreshChannels media , files & favorite messages only
         }
         super.onActivityResult(requestCode, resultCode, data)
     }

@@ -55,7 +55,7 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
 
         /**
          * Default constructor
-         * Will not refresh data from API
+         * Will not refreshChannels data from API
          * */
         fun newInstance(): LobbyFragment = LobbyFragment()
 
