@@ -111,6 +111,11 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
                 //Set home button selected
                 am_bottom_tab_nav.setOnNavigationItemSelectedListener(null)
                 showTabs(false, false)
+            } else if (requestCode == Constants.ContactItems.CONTACTS_REQ_CODE) {
+                //Don't refreshChannels Lobby
+                mLobbyFragment.controller.setRefreshFlag(false)
+                am_bottom_tab_nav.setOnNavigationItemSelectedListener(null)
+                showTabs(false, true) //Preserve last selected tab
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data)

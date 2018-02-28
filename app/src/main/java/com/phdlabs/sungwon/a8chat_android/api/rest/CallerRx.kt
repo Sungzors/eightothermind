@@ -1,6 +1,7 @@
 package com.phdlabs.sungwon.a8chat_android.api.rest
 
 import com.phdlabs.sungwon.a8chat_android.api.data.*
+import com.phdlabs.sungwon.a8chat_android.api.response.channels.follow.ChannelFollowResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.createEvent.EventPostResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.createChannel.ChannelResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.media.MediaResponse
@@ -58,6 +59,9 @@ interface CallerRx {
     @GET("/users/{userId}/channels")
     fun getMyChannels(@Header(TOKEN) token: String, @Path("userId") userId: Int): Observable<MyChannelRoomsResponse>
 
+    //Get channels I follow
+    @GET("/users/{userId}/channels/follows/with_flags")
+    fun getMyFollowedChannels(@Header(TOKEN) token: String, @Path("userId") userId: Int): Observable<ChannelFollowResponse>
 
     /*EVENTS*/
     /**[postEvents]

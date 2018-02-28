@@ -10,7 +10,7 @@ import java.util.*
  * Created by SungWon on 12/21/2017.
  * Updated by JPAM on 02/26/2018
  * Initializing variable is the array of [Channel]s
- * Properties make reference to the current [Channel] [Room]
+ * Properties make reference to the current [Channel]'s [Room]
  * @see Realm
  */
 data class ChannelShowNest(val channels: Array<Channel?>) {

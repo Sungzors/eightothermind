@@ -3,6 +3,7 @@ package com.phdlabs.sungwon.a8chat_android.db.channels
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
 import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
+import com.phdlabs.sungwon.a8chat_android.model.channel.ChannelShowNest
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.vicpin.krealmextensions.delete
 import com.vicpin.krealmextensions.query
@@ -29,6 +30,7 @@ class ChannelsManager {
     /**
      * [getMyChannels]
      * Updates the realm with the current user's channel
+     * @param refresh -> If true will download fresh data, else will read from @see Realm
      * @default scope is to public -> All channels
      * @return Pair<Array<Channel>?, String?>
      *     @see MyChannels, ErrorMessage
@@ -52,23 +54,15 @@ class ChannelsManager {
                                                  * Save || Update -> [Room] & [Channel] info
                                                  * */
                                                 for (room in it) {
-                                                    //Room data
-                                                    val roomToUpdate = Room()
-                                                    roomToUpdate.id = room.id
-                                                    roomToUpdate.channel = room.channel
-                                                    roomToUpdate.event = room.event
-                                                    roomToUpdate.groupChat = room.groupChat
-                                                    roomToUpdate.privateChat = room.privateChat
-                                                    roomToUpdate.locked = room.locked
-                                                    roomToUpdate.participantsId = room.participantsId
-                                                    roomToUpdate.last_activity = room.last_activity
-                                                    roomToUpdate.last_activity_in_associated_channel_event_or_groupChat = room.last_activity_in_associated_channel_event_or_groupChat
-                                                    roomToUpdate.createdAt = room.createdAt
-                                                    roomToUpdate.updatedAt = room.updatedAt
-                                                    roomToUpdate.save()
+                                                    //Update room
+                                                    updateRoom(room)
                                                     //Channel data
                                                     for (channel in room.channels) {
-                                                        channel?.save()
+                                                        channel?.user_creator_id?.let {
+                                                            if (it == user.id!!){
+                                                                channel.save()
+                                                            }
+                                                        }
                                                     }
                                                 }
                                                 //Callback with Realm Query
@@ -89,5 +83,155 @@ class ChannelsManager {
         }
     }
 
+    /**
+     * [getMyFollowedChannels]
+     * @param refresh -> If true will download fresh data, else will read from @see Realm
+     * Updates the realm with the User's followed channels
+     * @return (Pair(Popular_Unread_Channels, Popular_Read_Channels), Pair(Unpopular_Unread_Channels, UnPopular_Read_Channels), Error Message)
+     * @return (Pair(<Array<Channel>?,Array<Channel>?>), Pair(<Array<Channel>?,Array<Channel>?>), String?)
+     *     @see MyFollowedChannels
+     *
+     *
+     * Only call [getMyFollowedChannels] Channels after calling [getMyChannels]
+     * This is important as it updates the @Realm local copy with
+     * the @see iFollow , @see unread_messages , @see isPopular & @see last_activity
+     * */
+    fun getMyFollowedChannels(refresh: Boolean, callback: (Pair<List<Channel>?, List<Channel>?>?, Pair<List<Channel>?, List<Channel>?>?, String?) -> Unit) {
+        UserManager.instance.getCurrentUser { isSuccess, user, token ->
+            if (isSuccess) {
+                user?.let {
+                    if (refresh) { //API Query & caching
+                        token?.token?.let {
+                            val call = Rest.getInstance().getmCallerRx().getMyFollowedChannels(it, user.id!!)
+                            call.subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe({ response ->
+                                        if (response.isSuccess) {
+                                            //Save channels
+                                            response.channels?.let {
+                                                for (channelNestFollowResponse in it) {
+                                                    channelNestFollowResponse?.channel?.let {
+                                                        val updatedChannel = it
+                                                        updatedChannel.user_creator_id?.let {
+                                                            if (it != user.id!!) {
+                                                                updatedChannel.unread_messages = channelNestFollowResponse.unread_messages
+                                                                updatedChannel.last_activity = channelNestFollowResponse.last_activity
+                                                                updatedChannel.isPopular = channelNestFollowResponse.isPopular
+                                                                updatedChannel.iFollow = true
+                                                                updatedChannel.save()
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            //Query
+                                            callback(
+                                                    Pair(getCachedPopularUnreadFollowedChannels(), getCachedPopularReadFollowedChannels()),
+                                                    Pair(getCachedUnpopularUnreadFollowedChannels(), getCachedUnpopularReadFollowedChannels()),
+                                                    null
+                                            )
+                                        } else if (response.isError) {
+                                            callback(null, null, "could not download favorite channels")
+                                        }
+                                    }, { throwable ->
+                                        callback(null, null, throwable.localizedMessage)
+                                    })
+                        }
+                    } else { //Local Query
+                        callback(
+                                Pair(getCachedPopularUnreadFollowedChannels(), getCachedPopularReadFollowedChannels()),
+                                Pair(getCachedUnpopularUnreadFollowedChannels(), getCachedUnpopularReadFollowedChannels()),
+                                null
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * [updateRoom]
+     * Used to update room information on pulled [Channel]
+     * @see [getMyChannels]
+     *
+     * */
+    private fun updateRoom(channelShowNest: ChannelShowNest?) {
+        channelShowNest?.let {
+            val roomToUpdate = Room()
+            roomToUpdate.id = it.id
+            roomToUpdate.channel = it.channel
+            roomToUpdate.event = it.event
+            roomToUpdate.groupChat = it.groupChat
+            roomToUpdate.privateChat = it.privateChat
+            roomToUpdate.locked = it.locked
+            roomToUpdate.participantsId = it.participantsId
+            roomToUpdate.last_activity = it.last_activity
+            roomToUpdate.last_activity_in_associated_channel_event_or_groupChat = it.last_activity_in_associated_channel_event_or_groupChat
+            roomToUpdate.createdAt = it.createdAt
+            roomToUpdate.updatedAt = it.updatedAt
+            roomToUpdate.save()
+        }
+    }
+
+    /**
+     * REALM QUERIES for [ChannelsManager]
+     * data sorting
+     * */
+
+    /**
+     * Popular & Unread Followed Channels
+     * */
+    private fun getCachedPopularUnreadFollowedChannels(): List<Channel>? {
+        return Channel().query { channels ->
+            channels.equalTo("iFollow", true)
+            channels.equalTo("isPopular", true)
+            channels.equalTo("unread_messages", true)
+        }
+    }
+
+    /**
+     * Popular & Read Followed Channels
+     * */
+    private fun getCachedPopularReadFollowedChannels(): List<Channel>? {
+        return Channel().query { channels ->
+            channels.equalTo("iFollow", true)
+            channels.equalTo("isPopular", true)
+            channels.equalTo("unread_messages", false)
+        }
+    }
+
+    /**
+     * Unpopular & Unread Followed Channels
+     * */
+    private fun getCachedUnpopularUnreadFollowedChannels(): List<Channel>? {
+        return Channel().query { channels ->
+            channels.equalTo("iFollow", true)
+            channels.equalTo("isPopular", false)
+            channels.equalTo("unread_messages", true)
+        }
+    }
+
+    /**
+     * Unpopular & Read Followed Channels
+     * */
+    private fun getCachedUnpopularReadFollowedChannels(): List<Channel>? {
+        return Channel().query { channels ->
+            channels.equalTo("iFollow", true)
+            channels.equalTo("isPopular", false)
+            channels.equalTo("unread_messages", false)
+        }
+    }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+

@@ -81,4 +81,22 @@ open class Channel : RealmObject() {
     @Expose
     var notification: Boolean = false
 
+    /**Realm Query Options ->
+    * Not available for all channels, Verify Nullability before accessing
+    * */
+    var iFollow:Boolean = false
+
+    @SerializedName("unread_messages")
+    @Expose
+    var unread_messages: Boolean? = false
+
+    @SerializedName("last_activity")
+    @Expose
+    var last_activity: String? = null
+
+    @SerializedName("isPopular")
+    @Expose
+    var isPopular: Boolean? = false
+
+
 }
