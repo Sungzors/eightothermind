@@ -12,7 +12,9 @@ import com.phdlabs.sungwon.a8chat_android.api.response.contacts.ContactsPostResp
 import com.phdlabs.sungwon.a8chat_android.api.response.contacts.UserFriendsResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.eightEvents.EventRetrievalResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.favorite.PrivateChatFavoriteResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.room.EnterLeaveRoomResponse
 import com.phdlabs.sungwon.a8chat_android.api.rest.Caller.TOKEN
+import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.phdlabs.sungwon.a8chat_android.model.user.User
 import com.phdlabs.sungwon.a8chat_android.model.user.registration.RegistrationData
 import io.reactivex.Observable
@@ -120,5 +122,19 @@ interface CallerRx {
 
     /*ROOM CONTROL*/
 
+    /**
+     * [enterRoom]
+     * Alerts the API the user has entered a Room
+     * */
+    @PATCH("/users/{userId}/enter/{roomId}")
+    fun enterRoom(@Header(TOKEN) token: String, @Path("userId") userId: Int,
+                  @Path("roomId") roomId: Int): Observable<EnterLeaveRoomResponse>
 
+    /**
+     * [leaveRoom]
+     * Alerts the API the user has left a Room
+     * */
+    @PATCH("users/{userId}/leave/{roomId}")
+    fun leaveRoom(@Header(TOKEN) token: String, @Path("userId") userId: Int,
+                  @Path("roomId") roomId: Int): Observable<EnterLeaveRoomResponse>
 }
