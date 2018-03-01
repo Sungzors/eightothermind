@@ -80,6 +80,8 @@ class ChannelsManager {
                                         callback(Pair(null, throwable.localizedMessage))
                                     })
 
+                            //TODO: Update read info if the user has unread posts
+
                         }
                     } else { //Local query
                         userId?.let {

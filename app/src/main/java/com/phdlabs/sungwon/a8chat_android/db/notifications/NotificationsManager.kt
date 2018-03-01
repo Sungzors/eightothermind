@@ -22,4 +22,5 @@ class NotificationsManager {
      * Turn on or off read receipts for every chat the user is a part of
      * */
     //TODO: RX call is ready
+    //TODO: Warning -> Do not use the receipts call unitl Tomer Fixes the server crash
 }

@@ -32,46 +32,51 @@ import java.text.SimpleDateFormat
 
 /**
  * Created by SungWon on 12/20/2017.
+ * Updated by JPAM on 03/01/2018
  */
 
-//TODO: Refactor Channel & Room data
-class MyChannelActivity: CoreActivity(), ChannelContract.MyChannel.View{
+class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
 
+    /*Controller*/
     override lateinit var controller: ChannelContract.MyChannel.Controller
 
+    /*Layout*/
     override fun layoutId(): Int = R.layout.activity_channel_my
 
     override fun contentContainerId(): Int = 0
 
+    /*Properties*/
     private var mChannelId: Int = 0
     private lateinit var mChannelName: String
     private var mRoomId: Int = 0
     private var mOwnerId = 0
 
+    /*Adapter*/
     private lateinit var mAdapter: BaseRecyclerAdapter<Message, BaseViewHolder>
 
+    /*LifeCycle*/
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         MyChannelController(this)
-        mChannelId = intent.getIntExtra(Constants.IntentKeys.CHANNEL_ID, 0 )
+        mChannelId = intent.getIntExtra(Constants.IntentKeys.CHANNEL_ID, 0)
         mChannelName = intent.getStringExtra(Constants.IntentKeys.CHANNEL_NAME)
         mRoomId = intent.getIntExtra(Constants.IntentKeys.ROOM_ID, 0)
         mOwnerId = intent.getIntExtra(Constants.IntentKeys.OWNER_ID, 0)
         showBackArrow(R.drawable.ic_back)
         setToolbarTitle(mChannelName)
         setUpRecycler()
-
         controller.start()
 //        controller.createChannelRoom()
-
     }
 
     override fun onStart() {
         super.onStart()
+
+        /*Show || Hide -> Bottom Drawer*/
         UserManager.instance.getCurrentUser { success, user, _ ->
             if (success) {
                 user?.id.let {
-                    if(it != mOwnerId){
+                    if (it != mOwnerId) {
                         acm_the_drawer.visibility = LinearLayout.INVISIBLE
                     }
                 }
@@ -102,9 +107,9 @@ class MyChannelActivity: CoreActivity(), ChannelContract.MyChannel.View{
     }
 
     private fun setUpRecycler() {
-        mAdapter = object : BaseRecyclerAdapter<Message, BaseViewHolder>(){
+        mAdapter = object : BaseRecyclerAdapter<Message, BaseViewHolder>() {
             override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: Message?, position: Int, type: Int) {
-                when(type){
+                when (type) {
                     0 -> {
                         bindMessageViewHolder(viewHolder!!, data!!)
                     }
@@ -118,12 +123,12 @@ class MyChannelActivity: CoreActivity(), ChannelContract.MyChannel.View{
             }
 
             override fun getItemType(t: Message?): Int {
-                if(t!!.mediaArray == null){
+                if (t!!.mediaArray == null) {
                     return 0
-                } else if(t.message == null){
+                } else if (t.message == null) {
                     return 1
                 } else {
-                    if(t.mediaArray?.size!! > 0){
+                    if (t.mediaArray?.size!! > 0) {
                         return 2
                     } else {
                         return 0
@@ -132,24 +137,24 @@ class MyChannelActivity: CoreActivity(), ChannelContract.MyChannel.View{
             }
 
             override fun viewHolder(inflater: LayoutInflater?, parent: ViewGroup?, type: Int): BaseViewHolder {
-                when(type){
+                when (type) {
                     0 -> {
-                        return object : BaseViewHolder(R.layout.card_view_post_string, inflater!!, parent){
+                        return object : BaseViewHolder(R.layout.card_view_post_string, inflater!!, parent) {
 
                         }
                     }
                     1 -> {
-                        return object : BaseViewHolder(R.layout.card_view_post_photo, inflater!!, parent){
+                        return object : BaseViewHolder(R.layout.card_view_post_photo, inflater!!, parent) {
 
                         }
                     }
                     2 -> {
-                        return object : BaseViewHolder(R.layout.card_view_post_media, inflater!!, parent){
+                        return object : BaseViewHolder(R.layout.card_view_post_media, inflater!!, parent) {
 
                         }
                     }
                 }
-                return object :BaseViewHolder(R.layout.card_view_post_media, inflater!!, parent){
+                return object : BaseViewHolder(R.layout.card_view_post_media, inflater!!, parent) {
 
                 }
             }
@@ -160,7 +165,7 @@ class MyChannelActivity: CoreActivity(), ChannelContract.MyChannel.View{
         acm_post_recycler.adapter = mAdapter
     }
 
-    private fun bindMessageViewHolder(viewHolder: BaseViewHolder, data: Message){
+    private fun bindMessageViewHolder(viewHolder: BaseViewHolder, data: Message) {
         val pic = viewHolder.get<ImageView>(R.id.cvps_poster_pic)
         val text = viewHolder.get<TextView>(R.id.cvps_post_text)
         val posterName = viewHolder.get<TextView>(R.id.cvps_poster_name)
@@ -173,7 +178,7 @@ class MyChannelActivity: CoreActivity(), ChannelContract.MyChannel.View{
         postDate.text = formatter.format(data.createdAt)
     }
 
-    private fun bindMediaViewHolder(viewHolder: BaseViewHolder, data: Message){
+    private fun bindMediaViewHolder(viewHolder: BaseViewHolder, data: Message) {
         val pic = viewHolder.get<ImageView>(R.id.cvpp_poster_pic)
         val postPic = viewHolder.get<ImageView>(R.id.cvpp_post_pic)
         val posterName = viewHolder.get<TextView>(R.id.cvpp_poster_name)
@@ -188,7 +193,7 @@ class MyChannelActivity: CoreActivity(), ChannelContract.MyChannel.View{
         postDate.text = formatter.format(data.createdAt)
     }
 
-    private fun bindPostViewHolder(viewHolder: BaseViewHolder, data: Message){
+    private fun bindPostViewHolder(viewHolder: BaseViewHolder, data: Message) {
         val picasso = Picasso.with(this)
         val posterPic = viewHolder.get<ImageView>(R.id.cvpm_poster_pic)
         val posterName = viewHolder.get<TextView>(R.id.cvpm_poster_name)
@@ -216,10 +221,10 @@ class MyChannelActivity: CoreActivity(), ChannelContract.MyChannel.View{
             startActivity(intent)
         }
         likeButton.setOnClickListener {
-//            controller.likePost(data.id!!)
+            //            controller.likePost(data.id!!)
         }
         commentButton.setOnClickListener {
-//            controller.commentPost(data.id!!)
+            //            controller.commentPost(data.id!!)
         }
         postText.text = data.message
         likeCount.text = data.likes.toString()
@@ -233,16 +238,18 @@ class MyChannelActivity: CoreActivity(), ChannelContract.MyChannel.View{
         acm_post_recycler.smoothScrollToPosition(0)
     }
 
-    private fun setUpDrawer(){
+    private fun setUpDrawer() {
         acm_the_daddy_drawer.isClipPanel = false
         acm_the_daddy_drawer.panelHeight = 150
         acm_the_daddy_drawer.coveredFadeColor = ContextCompat.getColor(this, R.color.transparent)
     }
 
-    private fun setUpClickers(){
+    private fun setUpClickers() {
+        /*Send Message*/
         acm_emitting_button_of_green_arrow.setOnClickListener({
             controller.sendMessage()
         })
+
         acm_conjuring_conduit_of_messages.setOnClickListener {
             val layoutManager = acm_post_recycler.layoutManager as LinearLayoutManager
             acm_conjuring_conduit_of_messages.isFocusableInTouchMode = true
@@ -253,15 +260,16 @@ class MyChannelActivity: CoreActivity(), ChannelContract.MyChannel.View{
                 imm.showSoftInput(acm_conjuring_conduit_of_messages, InputMethodManager.SHOW_IMPLICIT)
             }
         }
+
         acm_conjuring_conduit_of_messages.setOnFocusChangeListener { view, b ->
-            if(!b){
+            if (!b) {
                 acm_conjuring_conduit_of_messages.isFocusableInTouchMode = false
                 val imm = this.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.hideSoftInputFromWindow(acm_conjuring_conduit_of_messages.windowToken, 0)
             }
         }
         acm_drawer_summoner.setOnClickListener {
-            if(acm_the_daddy_drawer.panelState == SlidingUpPanelLayout.PanelState.COLLAPSED){
+            if (acm_the_daddy_drawer.panelState == SlidingUpPanelLayout.PanelState.COLLAPSED) {
                 acm_the_daddy_drawer.panelState = SlidingUpPanelLayout.PanelState.EXPANDED
             } else {
                 acm_the_daddy_drawer.panelState == SlidingUpPanelLayout.PanelState.COLLAPSED
@@ -289,9 +297,9 @@ class MyChannelActivity: CoreActivity(), ChannelContract.MyChannel.View{
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode == CameraControl.instance.requestCode()){
+        if (requestCode == CameraControl.instance.requestCode()) {
             controller.onPictureOnlyResult(requestCode, resultCode, data)
-        } else if (requestCode == 345){
+        } else if (requestCode == 345) {
             controller.onPicturePostResult(requestCode, resultCode, data)
         }
     }

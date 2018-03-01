@@ -75,7 +75,7 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
         mEventBus = EventBusManager.instance().mDataEventBus
         /*Room Alert*/
         mRoomId = mView.getRoomId
-        //Api
+        //Api -> Enter Room
         RoomManager.instance.enterRoom(mRoomId, { userRooms ->
             userRooms?.let {
                 mUserRoom = it
@@ -104,12 +104,6 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
     }
 
     override fun pause() {
-        //Api
-        RoomManager.instance.leaveRoom(mRoomId, { userRooms ->
-            userRooms?.let {
-                mUserRoom = it
-            }
-        })
         //Socket
         mSocket.off(Constants.SocketKeys.UPDATE_ROOM)
         mSocket.off(Constants.SocketKeys.UPDATE_CHAT_STRING)
@@ -123,6 +117,13 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
 
     override fun stop() {
 //        mSocket.off(Constants.SocketKeys.CONNECT)
+        //Api -> Leave Room
+        RoomManager.instance.leaveRoom(mRoomId, { userRooms ->
+            userRooms?.let {
+                mUserRoom = it
+            }
+        })
+
     }
 
     override fun destroy() {
