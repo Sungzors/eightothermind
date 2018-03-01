@@ -2,6 +2,7 @@ package com.phdlabs.sungwon.a8chat_android.structure.main.lobby
 
 import com.phdlabs.sungwon.a8chat_android.api.event.Event
 import com.phdlabs.sungwon.a8chat_android.api.response.*
+import com.phdlabs.sungwon.a8chat_android.api.response.channels.follow.ChannelFollowResponse
 import com.phdlabs.sungwon.a8chat_android.api.rest.Caller
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
 import com.phdlabs.sungwon.a8chat_android.api.utility.Callback8
@@ -25,7 +26,7 @@ class LobbyController(val mView: LobbyContract.View,
     /*Properties*/
     private var mMyChannel = mutableListOf<Channel>()
     private var mEvents = mutableListOf<EventsEight>()
-    private val mChannelsFollowed = mutableListOf<Channel>()
+    private var mChannelsFollowed = mutableListOf<Channel>()
     private val mChannel = mutableListOf<Channel>()
     private val mChat = mutableListOf<Room>()
 
@@ -44,7 +45,7 @@ class LobbyController(val mView: LobbyContract.View,
     override fun resume() {
         callMyChannel(refresh)
         callEvent(refresh)
-        callFollow()
+        callFollow(refresh)
         callChannel()
         callChats()
     }
@@ -70,6 +71,7 @@ class LobbyController(val mView: LobbyContract.View,
                     //Channels
                     mMyChannel = it.toMutableList()
                     if (mMyChannel.size > 0) {
+                        //UI
                         mView.setUpMyChannelRecycler(mMyChannel)
                     }
                 }
@@ -91,6 +93,7 @@ class LobbyController(val mView: LobbyContract.View,
                     //Events
                     mEvents = it.toMutableList()
                     if (mEvents.size > 0) {
+                        //UI
                         mView.setUpEventsRecycler(mEvents)
                     }
                 }
@@ -98,33 +101,47 @@ class LobbyController(val mView: LobbyContract.View,
         })
     }
 
-    private fun callFollow() {
-        UserManager.instance.getCurrentUser { success, user, token ->
-            if (success) {
-                val call = mCaller.getFollowChannel(token?.token, user?.id!!)
-                call.enqueue(object : Callback8<ChannelFollowResponse, Event>(mEventBus) {
-                    override fun onSuccess(data: ChannelFollowResponse?) {
-                        for (channel in data!!.channels!!.popular!!.unread!!) {
-                            //mChannelsFollowed.addAll(channel.channels)
-                        }
-                        for (channel in data.channels!!.popular!!.read!!) {
-                            //mChannelsFollowed.addAll(channel.channels)
-                        }
-                        for (channel in data.channels!!.unpopular!!.unread!!) {
-                            // mChannelsFollowed.addAll(channel.channels)
-                        }
-                        for (channel in data.channels!!.unpopular!!.read!!) {
-                            //mChannelsFollowed.addAll(channel.channels)
-                        }
-                        if (mChannelsFollowed.size > 0) {
-                            mChannelsFollowed.saveAll()
-                            mView.setUpChannelsFollowedRecycler(mChannelsFollowed)
-                        }
-
+    private fun callFollow(refresh: Boolean) {
+        mView.showProgress()
+        ChannelsManager.instance.getMyFollowedChannels(refresh, { popular, unpopular, errorMessage ->
+            errorMessage?.let {
+                //Error
+                mView.hideProgress()
+                /*When no followed channels are available it triggers a localized error message not wanted*/
+                mView.showError(it)
+            } ?: run {
+                mView.hideProgress()
+                mChannelsFollowed.clear()
+                //Popular Channels
+                popular?.let {
+                    //Unread
+                    it.first?.let {
+                        mChannelsFollowed.addAll(it)
+                        //TODO: Change UI for this item
                     }
-                })
+                    //Read
+                    it.second?.let {
+                        mChannelsFollowed.addAll(it)
+                    }
+                }
+                //Unpopular Channels
+                unpopular?.let {
+                    //Unread
+                    it.first?.let {
+                        mChannelsFollowed.addAll(it)
+                        //TODO: Change UI for this item
+                    }
+                    //Read
+                    it.second?.let {
+                        mChannelsFollowed.addAll(it)
+                    }
+                }
+                //UI
+                if (mChannelsFollowed.size > 0) {
+                    mView.setUpChannelsFollowedRecycler(mChannelsFollowed)
+                }
             }
-        }
+        })
     }
 
     private fun callChannel() {
@@ -171,7 +188,7 @@ class LobbyController(val mView: LobbyContract.View,
     override fun refreshAll() {
         callMyChannel(true)
         callEvent(true)
-        callFollow()
+        callFollow(true)
         callChannel()
         callChats()
     }

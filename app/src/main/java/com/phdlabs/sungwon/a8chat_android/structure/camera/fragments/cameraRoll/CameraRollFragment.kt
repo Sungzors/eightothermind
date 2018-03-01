@@ -222,12 +222,13 @@ class CameraRollFragment : CameraBaseFragment(),
             }
 
             /*Picture count subtitle & toolbar swap*/
-            toolbarVisibility(mGalleryPhotos.count())
+            if(mGalleryPhotos.count() > 0) {
+                toolbarVisibility(mGalleryPhotos.count())
+                fcr_refresh.isRefreshing = false
 
-            fcr_refresh.isRefreshing = false
-
-            /*Setup RecyclerView with fresh data*/
-            setupRecycler()
+                /*Setup RecyclerView with fresh data*/
+                setupRecycler()
+            }
         }
     }
 
@@ -239,7 +240,6 @@ class CameraRollFragment : CameraBaseFragment(),
     override fun onClick(p0: View?) {
         when (p0) {
 
-        /*Back button*/
         /*Back button*/
             toolbar_leftoolbart_action -> {
                 activity?.finish()
