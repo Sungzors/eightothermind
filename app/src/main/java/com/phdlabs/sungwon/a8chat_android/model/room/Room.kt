@@ -88,8 +88,14 @@ open class Room() : RealmObject() {
     /*Local Properties*/
     var isRead: Boolean = true
 
-    @Ignore
-    var message: Message? = null //Todo: Message in Realm
+    /**
+     * [message]
+     * Should always be the last message from
+     * the current room
+     * */
+    @SerializedName("message")
+    @Expose
+    var message: Message? = null
 
     /**
      * [User] assigned property when creating a Room

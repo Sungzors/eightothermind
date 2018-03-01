@@ -12,7 +12,10 @@ import com.phdlabs.sungwon.a8chat_android.api.response.contacts.ContactsPostResp
 import com.phdlabs.sungwon.a8chat_android.api.response.contacts.UserFriendsResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.eightEvents.EventRetrievalResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.favorite.PrivateChatFavoriteResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.room.EnterLeaveRoomResponse
 import com.phdlabs.sungwon.a8chat_android.api.rest.Caller.TOKEN
+import com.phdlabs.sungwon.a8chat_android.model.room.Room
+import com.phdlabs.sungwon.a8chat_android.model.user.User
 import com.phdlabs.sungwon.a8chat_android.model.user.registration.RegistrationData
 import io.reactivex.Observable
 import okhttp3.MultipartBody
@@ -55,9 +58,9 @@ interface CallerRx {
     @POST("/channels")
     fun postChannel(@Header(TOKEN) token: String, @Body channelPostData: ChannelPostData): Observable<ChannelResponse>
 
-    //Get all my channels
+    //Get all user channels
     @GET("/users/{userId}/channels")
-    fun getMyChannels(@Header(TOKEN) token: String, @Path("userId") userId: Int): Observable<MyChannelRoomsResponse>
+    fun getUserChannels(@Header(TOKEN) token: String, @Path("userId") userId: Int): Observable<MyChannelRoomsResponse>
 
     //Get channels I follow
     @GET("/users/{userId}/channels/follows/with_flags")
@@ -106,4 +109,32 @@ interface CallerRx {
     fun favoritePrivateChatRoom(@Header(TOKEN) token: String, @Path("roomId") roomId: Int,
                                 @Body privateChatPatchData: PrivateChatPatchData): Observable<PrivateChatFavoriteResponse>
 
+    /*NOTIFICATIONS*/
+
+    /**
+     * [updateReceipt]
+     * Turns on or off read receipts for every chat the user is in
+     * */
+    @PATCH("/users/{userId}/receipts")
+    fun updateReceipt(@Header(TOKEN) token: String, @Path("userId") userId: Int,
+                      @Body receiptData: ReceiptPatchData): Observable<User>
+
+
+    /*ROOM CONTROL*/
+
+    /**
+     * [enterRoom]
+     * Alerts the API the user has entered a Room
+     * */
+    @PATCH("/users/{userId}/enter/{roomId}")
+    fun enterRoom(@Header(TOKEN) token: String, @Path("userId") userId: Int,
+                  @Path("roomId") roomId: Int): Observable<EnterLeaveRoomResponse>
+
+    /**
+     * [leaveRoom]
+     * Alerts the API the user has left a Room
+     * */
+    @PATCH("users/{userId}/leave/{roomId}")
+    fun leaveRoom(@Header(TOKEN) token: String, @Path("userId") userId: Int,
+                  @Path("roomId") roomId: Int): Observable<EnterLeaveRoomResponse>
 }

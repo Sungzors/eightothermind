@@ -2,7 +2,6 @@ package com.phdlabs.sungwon.a8chat_android.structure.main.lobby
 
 import com.phdlabs.sungwon.a8chat_android.api.event.Event
 import com.phdlabs.sungwon.a8chat_android.api.response.*
-import com.phdlabs.sungwon.a8chat_android.api.response.channels.follow.ChannelFollowResponse
 import com.phdlabs.sungwon.a8chat_android.api.rest.Caller
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
 import com.phdlabs.sungwon.a8chat_android.api.utility.Callback8
@@ -43,10 +42,10 @@ class LobbyController(val mView: LobbyContract.View,
     }
 
     override fun resume() {
-        callMyChannel(refresh)
+        callMyChannels(refresh)
         callEvent(refresh)
         callFollow(refresh)
-        callChannel()
+        //callChannel()
         callChats()
     }
 
@@ -57,9 +56,9 @@ class LobbyController(val mView: LobbyContract.View,
     override fun stop() {
     }
 
-    private fun callMyChannel(refresh: Boolean) {
+    private fun callMyChannels(refresh: Boolean) {
         mView.showProgress()
-        ChannelsManager.instance.getMyChannels(refresh, { response ->
+        ChannelsManager.instance.getUserChannels(null, refresh, { response ->
             response.second?.let {
                 //Error
                 mView.hideProgress()
@@ -69,6 +68,7 @@ class LobbyController(val mView: LobbyContract.View,
                 mView.hideProgress()
                 response.first?.let {
                     //Channels
+                    mMyChannel.clear()
                     mMyChannel = it.toMutableList()
                     if (mMyChannel.size > 0) {
                         //UI
@@ -79,6 +79,7 @@ class LobbyController(val mView: LobbyContract.View,
         })
     }
 
+    //TODO: Refactor Events API
     private fun callEvent(refresh: Boolean) {
         mView.showProgress()
         EventsManager.instance.getEvents(refresh, { response ->
@@ -144,26 +145,10 @@ class LobbyController(val mView: LobbyContract.View,
         })
     }
 
-    private fun callChannel() {
-        UserManager.instance.getCurrentUser { success, _, token ->
-            if (success) {
-                val call = mCaller.getChannel(token?.token)
-                call.enqueue(object : Callback8<ChannelArrayResponse, Event>(mEventBus) {
-                    override fun onSuccess(data: ChannelArrayResponse?) {
-                        mChannel.addAll(data!!.channels!!)
-                        if (mChannel.size > 0) {
-                            mChannel.saveAll()
-                            mView.setUpChannelRecycler(mChannel)
-                        }
-                    }
-                })
-            }
-        }
-    }
-
     private fun callChats() {
         UserManager.instance.getCurrentUser { success, user, token ->
             if (success) {
+                mChat.clear()
                 val call = mCaller.getAllChats(token?.token, user?.id!!)
                 call.enqueue(object : Callback8<ChatsRetrievalResponse, Event>(mEventBus) {
                     override fun onSuccess(data: ChatsRetrievalResponse?) {
@@ -186,10 +171,10 @@ class LobbyController(val mView: LobbyContract.View,
     override fun getRefreshFlag(): Boolean = refresh
 
     override fun refreshAll() {
-        callMyChannel(true)
+        callMyChannels(true)
         callEvent(true)
         callFollow(true)
-        callChannel()
+        //callChannel()
         callChats()
     }
 

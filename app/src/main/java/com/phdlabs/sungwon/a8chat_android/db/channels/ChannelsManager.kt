@@ -28,14 +28,15 @@ class ChannelsManager {
     }
 
     /**
-     * [getMyChannels]
+     * [getUserChannels]
      * Updates the realm with the current user's channel
+     * @param userId -> User to get channels from, if [null] will return current user Channels
      * @param refresh -> If true will download fresh data, else will read from @see Realm
      * @default scope is to public -> All channels
      * @return Pair<Array<Channel>?, String?>
      *     @see MyChannels, ErrorMessage
      * */
-    fun getMyChannels(refresh: Boolean, callback: (Pair<List<Channel>?, String?>) -> Unit) {
+    fun getUserChannels(userId: Int?, refresh: Boolean, callback: (Pair<List<Channel>?, String?>) -> Unit) {
         UserManager.instance.getCurrentUser { isSuccess, user, token ->
             if (isSuccess) {
                 user?.let {
@@ -44,7 +45,13 @@ class ChannelsManager {
                         Channel().delete { it.equalTo("user_creator_id", user.id) }
                         //Get Data
                         token?.token?.let {
-                            val call = Rest.getInstance().getmCallerRx().getMyChannels(token.token!!, user.id!!)
+                            //Which user
+                            var userInfoId: Int = user.id!!
+                            userId?.let {
+                                userInfoId = it
+                            }
+                            //Call
+                            val call = Rest.getInstance().getmCallerRx().getUserChannels(token.token!!, userInfoId)
                             call.subscribeOn(Schedulers.io())
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .subscribe({ response ->
@@ -54,19 +61,17 @@ class ChannelsManager {
                                                  * Save || Update -> [Room] & [Channel] info
                                                  * */
                                                 for (room in it) {
-                                                    //Update room
+                                                    //Update room data
                                                     updateRoom(room)
-                                                    //Channel data
                                                     for (channel in room.channels) {
-                                                        channel?.user_creator_id?.let {
-                                                            if (it == user.id!!){
-                                                                channel.save()
-                                                            }
-                                                        }
+                                                        //Update channel data
+                                                        channel?.save()
                                                     }
                                                 }
                                                 //Callback with Realm Query
-                                                callback(Pair((Channel().query { it.equalTo("user_creator_id", user.id) }), null))
+                                                callback(Pair((Channel().query {
+                                                    it.equalTo("user_creator_id", userInfoId)
+                                                }), null))
                                             }
                                         } else if (response.isError) {
                                             callback(Pair(null, "could not download channels"))
@@ -74,9 +79,18 @@ class ChannelsManager {
                                     }, { throwable ->
                                         callback(Pair(null, throwable.localizedMessage))
                                     })
+
                         }
                     } else { //Local query
-                        callback(Pair((Channel().query { it.equalTo("user_creator_id", user.id) }), null))
+                        userId?.let {
+                            callback(Pair((Channel().query {
+                                it.equalTo("user_creator_id", userId)
+                            }), null))
+                        } ?: run {
+                            callback(Pair((Channel().query {
+                                it.equalTo("user_creator_id", user.id)
+                            }), null))
+                        }
                     }
                 }
             }
@@ -92,7 +106,7 @@ class ChannelsManager {
      *     @see MyFollowedChannels
      *
      *
-     * Only call [getMyFollowedChannels] Channels after calling [getMyChannels]
+     * Only call [getMyFollowedChannels] Channels after calling [getUserChannels]
      * This is important as it updates the @Realm local copy with
      * the @see iFollow , @see unread_messages , @see isPopular & @see last_activity
      * */
@@ -118,7 +132,7 @@ class ChannelsManager {
                                                                 updatedChannel.last_activity = channelNestFollowResponse.last_activity
                                                                 updatedChannel.isPopular = channelNestFollowResponse.isPopular
                                                                 updatedChannel.iFollow = true
-                                                                updatedChannel.save()
+                                                                                updatedChannel.save()
                                                             }
                                                         }
                                                     }
@@ -152,7 +166,7 @@ class ChannelsManager {
     /**
      * [updateRoom]
      * Used to update room information on pulled [Channel]
-     * @see [getMyChannels]
+     * @see [getUserChannels]
      *
      * */
     private fun updateRoom(channelShowNest: ChannelShowNest?) {
@@ -169,6 +183,11 @@ class ChannelsManager {
             roomToUpdate.last_activity_in_associated_channel_event_or_groupChat = it.last_activity_in_associated_channel_event_or_groupChat
             roomToUpdate.createdAt = it.createdAt
             roomToUpdate.updatedAt = it.updatedAt
+            it.messages?.let {
+                if (it.count() > 0) {
+                    roomToUpdate.message = it[0]
+                }
+            }
             roomToUpdate.save()
         }
     }

@@ -2,6 +2,7 @@ package com.phdlabs.sungwon.a8chat_android.model.channel
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.model.realmNative.RealmInt
 import io.realm.RealmList
 import java.util.*
@@ -61,6 +62,11 @@ data class ChannelShowNest(val channels: Array<Channel?>) {
     @SerializedName("updatedAt")
     @Expose
     var updatedAt: String? = null
+
+    //Received as array, but it only contains the last message index [0]
+    @SerializedName("messages")
+    @Expose
+    var messages: Array<Message?>? = null
 
     //Query hash maps
     override fun equals(other: Any?): Boolean {

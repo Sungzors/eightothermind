@@ -2,6 +2,8 @@ package com.phdlabs.sungwon.a8chat_android.model.user
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import com.phdlabs.sungwon.a8chat_android.model.realmNative.RealmInt
+import io.realm.RealmList
 import io.realm.RealmObject
 import io.realm.annotations.Index
 import io.realm.annotations.PrimaryKey
@@ -72,5 +74,9 @@ open class UserRooms : RealmObject() {
     @SerializedName("updatedAt")
     @Expose
     var updatedAt: String? = null
+
+    @SerializedName("messages_not_to_display")
+    @Expose
+    var messages_not_to_display: RealmList<RealmInt?>? = null
 
 }
