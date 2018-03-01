@@ -98,7 +98,7 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
             }
 
             override fun viewHolder(inflater: LayoutInflater?, parent: ViewGroup?, type: Int): BaseViewHolder {
-                return object : BaseViewHolder(R.layout.card_view_lobby_channel, inflater!!, parent) {
+                return object : BaseViewHolder(R.layout.card_view_lobby_my_channel, inflater!!, parent) {
 
                 }
             }
@@ -114,6 +114,15 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
         val bg = viewHolder.get<ImageView>(R.id.cvlc_background_unread)
         val profilePic = viewHolder.get<ImageView>(R.id.cvlc_picture_profile)
         val channelName = viewHolder.get<TextView>(R.id.cvlc_name_channel)
+        val unreadChannelIndicator = viewHolder.get<ImageView>(R.id.cvlc_background_unread)
+        //Unread indicator
+        data.unread_messages?.let {
+            if (it){
+                unreadChannelIndicator.visibility = View.VISIBLE
+            }else {
+                unreadChannelIndicator.visibility = View.GONE
+            }
+        }
         Picasso.with(coreActivity.context).load(R.drawable.bg_circle_orange_lobby).into(bg)
         Picasso.with(coreActivity.context).load(data.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(profilePic)
         channelName.text = data.name
@@ -194,14 +203,11 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
     override fun setUpChannelsFollowedRecycler(channelsFollowed: MutableList<Channel>) {
         mAdapterFollow = object : BaseRecyclerAdapter<Channel, BaseViewHolder>() {
             override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: Channel?, position: Int, type: Int) {
-                when (data!!.isRead) {
-                    true -> bindReadChannelViewHolder(viewHolder!!, data)
-                    false -> bindUnreadChannelViewHolder(viewHolder!!, data)
-                }
+                bindReadChannelViewHolder(viewHolder!!, data!!)
             }
 
             override fun viewHolder(inflater: LayoutInflater?, parent: ViewGroup?, type: Int): BaseViewHolder {
-                return object : BaseViewHolder(R.layout.card_view_lobby_channel, inflater!!, parent) {
+                return object : BaseViewHolder(R.layout.card_view_lobby_follow_channel, inflater!!, parent) {
 
                 }
             }
@@ -213,35 +219,20 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
         fl_follow_recycler.adapter = mAdapterFollow
     }
 
-    /*All Channels*/
-    override fun setUpChannelRecycler(allChannels: MutableList<Channel>) {
-        mAdapterChannel = object : BaseRecyclerAdapter<Channel, BaseViewHolder>() {
-            override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: Channel?, position: Int, type: Int) {
-                when (data!!.isRead) {
-                    true -> bindReadChannelViewHolder(viewHolder!!, data)
-                    false -> bindUnreadChannelViewHolder(viewHolder!!, data)
-                }
-            }
-
-            override fun viewHolder(inflater: LayoutInflater?, parent: ViewGroup?, type: Int): BaseViewHolder {
-                return object : BaseViewHolder(R.layout.card_view_lobby_channel, inflater!!, parent) {
-
-                }
-            }
-        }
-        mAdapterChannel.setItems(allChannels)
-        fl_channels_title.visibility = TextView.VISIBLE
-        fl_channels_recycler.visibility = RecyclerView.VISIBLE
-        fl_channels_recycler.layoutManager = LinearLayoutManager(coreActivity.context, LinearLayoutManager.HORIZONTAL, false)
-        fl_channels_recycler.adapter = mAdapterChannel
-    }
-
     //Read channels
     private fun bindReadChannelViewHolder(viewHolder: BaseViewHolder, data: Channel) {
         val bg = viewHolder.get<ImageView>(R.id.cvlc_background_unread)
         val profilePic = viewHolder.get<ImageView>(R.id.cvlc_picture_profile)
         val channelName = viewHolder.get<TextView>(R.id.cvlc_name_channel)
-        bg.setBackgroundColor(ContextCompat.getColor(coreActivity.context, R.color.white))//TODO: set this to shadowed bg
+        val unreadChannelIndicator = viewHolder.get<ImageView>(R.id.cvlc_background_unread)
+        //Unread indicator
+        data.unread_messages?.let {
+            if (it){
+                unreadChannelIndicator.visibility = View.VISIBLE
+            }else {
+                unreadChannelIndicator.visibility = View.GONE
+            }
+        }
         Picasso.with(coreActivity.context).load(data.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(profilePic)
         channelName.text = data.name
         profilePic.setOnClickListener {
@@ -249,24 +240,6 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
             intent.putExtra(Constants.IntentKeys.CHANNEL_ID, data.id.toString())
             intent.putExtra(Constants.IntentKeys.CHANNEL_NAME, data.name)
             intent.putExtra(Constants.IntentKeys.ROOM_ID, data.room_id?.toInt())
-            intent.putExtra(Constants.IntentKeys.OWNER_ID, data.user_creator_id?.toInt())
-            startActivity(intent)
-        }
-    }
-
-    //Unread channels
-    private fun bindUnreadChannelViewHolder(viewHolder: BaseViewHolder, data: Channel) {
-        val bg = viewHolder.get<ImageView>(R.id.cvlc_background_unread)
-        val profilePic = viewHolder.get<ImageView>(R.id.cvlc_picture_profile)
-        val channelName = viewHolder.get<TextView>(R.id.cvlc_name_channel)
-        //TODO: set this to shadowed bg
-        Picasso.with(coreActivity.context).load(data.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(profilePic)
-        channelName.text = data.name
-        profilePic.setOnClickListener {
-            val intent = Intent(activity, MyChannelActivity::class.java)
-            intent.putExtra(Constants.IntentKeys.CHANNEL_ID, data.id.toString())
-            intent.putExtra(Constants.IntentKeys.CHANNEL_NAME, data.name)
-            intent.putExtra(Constants.IntentKeys.ROOM_ID, data.room_id)
             intent.putExtra(Constants.IntentKeys.OWNER_ID, data.user_creator_id?.toInt())
             startActivity(intent)
         }

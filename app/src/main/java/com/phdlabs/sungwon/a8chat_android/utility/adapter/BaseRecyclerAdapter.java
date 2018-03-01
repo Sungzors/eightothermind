@@ -397,7 +397,9 @@ public abstract class BaseRecyclerAdapter<T, VH extends RecyclerView.ViewHolder>
             protected void publishResults(CharSequence constraint, FilterResults results) {
 
                 mFilteredValues.clear();
-                mFilteredValues.addAll((Collection<? extends T>) results.values);
+                if (results.values != null) {
+                    mFilteredValues.addAll((Collection<? extends T>) results.values);
+                }
                 notifyDataSetChanged();
 
             }

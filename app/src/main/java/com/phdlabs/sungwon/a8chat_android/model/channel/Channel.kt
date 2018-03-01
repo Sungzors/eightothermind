@@ -82,9 +82,9 @@ open class Channel : RealmObject() {
     var notification: Boolean = false
 
     /**Realm Query Options ->
-    * Not available for all channels, Verify Nullability before accessing
-    * */
-    var iFollow:Boolean = false
+     * Not available for all channels, Verify Nullability before accessing
+     * */
+    var iFollow: Boolean = false
 
     @SerializedName("unread_messages")
     @Expose
@@ -97,6 +97,5 @@ open class Channel : RealmObject() {
     @SerializedName("isPopular")
     @Expose
     var isPopular: Boolean? = false
-
 
 }

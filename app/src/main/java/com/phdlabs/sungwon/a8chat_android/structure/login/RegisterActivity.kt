@@ -70,8 +70,8 @@ class RegisterActivity : CoreActivity() {
                     } ?: run {
                         /*Not registered*/
                         val registrationData = RegistrationData()
-                        registrationData.phone = phone
-                        registrationData.country_code = ar_ccp.selectedCountryCodeWithPlus
+                        registrationData.phone = phone?.trim()
+                        registrationData.country_code = ar_ccp.selectedCountryCodeWithPlus.trim()
                         /*Network Call*/
                         val call = Rest.getInstance().getmCallerRx().login(registrationData)
                         call.subscribeOn(Schedulers.io())

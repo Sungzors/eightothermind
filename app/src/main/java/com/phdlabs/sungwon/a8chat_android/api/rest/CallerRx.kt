@@ -13,6 +13,7 @@ import com.phdlabs.sungwon.a8chat_android.api.response.contacts.UserFriendsRespo
 import com.phdlabs.sungwon.a8chat_android.api.response.eightEvents.EventRetrievalResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.favorite.PrivateChatFavoriteResponse
 import com.phdlabs.sungwon.a8chat_android.api.rest.Caller.TOKEN
+import com.phdlabs.sungwon.a8chat_android.model.user.User
 import com.phdlabs.sungwon.a8chat_android.model.user.registration.RegistrationData
 import io.reactivex.Observable
 import okhttp3.MultipartBody
@@ -55,9 +56,9 @@ interface CallerRx {
     @POST("/channels")
     fun postChannel(@Header(TOKEN) token: String, @Body channelPostData: ChannelPostData): Observable<ChannelResponse>
 
-    //Get all my channels
+    //Get all user channels
     @GET("/users/{userId}/channels")
-    fun getMyChannels(@Header(TOKEN) token: String, @Path("userId") userId: Int): Observable<MyChannelRoomsResponse>
+    fun getUserChannels(@Header(TOKEN) token: String, @Path("userId") userId: Int): Observable<MyChannelRoomsResponse>
 
     //Get channels I follow
     @GET("/users/{userId}/channels/follows/with_flags")
@@ -105,5 +106,19 @@ interface CallerRx {
     @PATCH("/privateChats/{roomId}/favorite")
     fun favoritePrivateChatRoom(@Header(TOKEN) token: String, @Path("roomId") roomId: Int,
                                 @Body privateChatPatchData: PrivateChatPatchData): Observable<PrivateChatFavoriteResponse>
+
+    /*NOTIFICATIONS*/
+
+    /**
+     * [updateReceipt]
+     * Turns on or off read receipts for every chat the user is in
+     * */
+    @PATCH("/users/{userId}/receipts")
+    fun updateReceipt(@Header(TOKEN) token: String, @Path("userId") userId: Int,
+                      @Body receiptData: ReceiptPatchData): Observable<User>
+
+
+    /*ROOM CONTROL*/
+
 
 }

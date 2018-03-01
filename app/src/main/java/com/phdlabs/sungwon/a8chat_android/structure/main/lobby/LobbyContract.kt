@@ -17,7 +17,7 @@ interface LobbyContract {
         fun setUpMyChannelRecycler(myChannels: MutableList<Channel>)
         fun setUpEventsRecycler(events: MutableList<EventsEight>)
         fun setUpChannelsFollowedRecycler(channelsFollowed: MutableList<Channel>)
-        fun setUpChannelRecycler(allChannels: MutableList<Channel>)
+        //fun setUpChannelRecycler(allChannels: MutableList<Channel>)
         fun setUpChatRecycler(chats: MutableList<Room>)
     }
 
