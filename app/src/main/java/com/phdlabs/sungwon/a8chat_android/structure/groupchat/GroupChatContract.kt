@@ -11,6 +11,19 @@ import com.phdlabs.sungwon.a8chat_android.structure.core.BaseView
  * Created by SungWon on 2/19/2018.
  */
 interface GroupChatContract {
+    interface Create {
+        interface View : BaseView<Controller>{
+
+        }
+        interface Controller : BaseController {
+            /*Event Picture*/
+            fun onPictureResult(requestCode: Int, resultCode: Int, data: Intent?)
+
+            fun showPicture()
+
+        }
+    }
+
     interface View: BaseView<Controller>{
         val get8Application : Application
         val getActivity : GroupChatActivity
