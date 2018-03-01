@@ -75,18 +75,18 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
         mEventBus = EventBusManager.instance().mDataEventBus
         /*Room Alert*/
         mRoomId = mView.getRoomId
-        //socket
-        UserManager.instance.getCurrentUser { success, user, _ ->
-            if (success) {
-                mSocket.emit("connect-rooms", user?.id, "channel")
-            }
-        }
         //Api
         RoomManager.instance.enterRoom(mRoomId, { userRooms ->
             userRooms?.let {
                 mUserRoom = it
             }
         })
+        //socket
+        UserManager.instance.getCurrentUser { success, user, _ ->
+            if (success) {
+                mSocket.emit("connect-rooms", user?.id, "channel")
+            }
+        }
         //Messages
         retrieveChatHistory()
     }
@@ -104,6 +104,12 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
     }
 
     override fun pause() {
+        //Api
+        RoomManager.instance.leaveRoom(mRoomId, { userRooms ->
+            userRooms?.let {
+                mUserRoom = it
+            }
+        })
         //Socket
         mSocket.off(Constants.SocketKeys.UPDATE_ROOM)
         mSocket.off(Constants.SocketKeys.UPDATE_CHAT_STRING)
@@ -113,12 +119,6 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
         mSocket.off(Constants.SocketKeys.UPDATE_CHAT_MEDIA)
         mSocket.off(Constants.SocketKeys.UPDATE_CHAT_POST)
         mSocket.off(Constants.SocketKeys.ON_ERROR)
-        //Api
-        RoomManager.instance.leaveRoom(mRoomId, { userRooms ->
-            userRooms?.let {
-                mUserRoom = it
-            }
-        })
     }
 
     override fun stop() {
