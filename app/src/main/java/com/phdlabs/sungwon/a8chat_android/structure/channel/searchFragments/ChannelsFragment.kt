@@ -80,13 +80,9 @@ class ChannelsFragment : CoreFragment() {
                     /*Actions*/
                     override fun addClicks(views: ViewMap?) {
                         super.addClicks(views)
-                        view?.let {
-                            //Open Channel
-                            when (it.id) {
-                                R.id.fc_followed_container -> {
-                                    it.setOnClickListener { openChannel(getItem(adapterPosition)) }
-                                }
-                            }
+                        //Open Channel
+                        views?.click {
+                            openChannel(getItem(adapterPosition))
                         }
                         super.addClicks(views)
                     }
@@ -112,12 +108,8 @@ class ChannelsFragment : CoreFragment() {
                     /*Actions*/
                     override fun addClicks(views: ViewMap?) {
                         //Open Channel
-                        view?.let {
-                            when (it.id) {
-                                R.id.fc_popular_container -> {
-                                    it.setOnClickListener { openChannel(getItem(adapterPosition)) }
-                                }
-                            }
+                        views?.click {
+                            openChannel(getItem(adapterPosition))
                         }
                         super.addClicks(views)
                     }
@@ -143,12 +135,9 @@ class ChannelsFragment : CoreFragment() {
                 return object : BaseViewHolder(R.layout.view_eight_channel_card, inflater!!, parent) {
                     override fun addClicks(views: ViewMap?) {
                         //Open Channel
-                        view?.let {
-                            when (it.id) {
-                                R.id.fc_all_container -> {
-                                    it.setOnClickListener { openChannel(getItem(adapterPosition)) }
-                                }
-                            }
+                        //Open Channel
+                        views?.click {
+                            openChannel(getItem(adapterPosition))
                         }
                         super.addClicks(views)
                     }
