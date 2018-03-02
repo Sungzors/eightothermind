@@ -10,6 +10,7 @@ import android.support.v4.content.ContextCompat
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.api.data.ContactsPostData
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
+import com.phdlabs.sungwon.a8chat_android.db.channels.ChannelsManager
 import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.contacts.Contact
 import com.phdlabs.sungwon.a8chat_android.model.contacts.LocalContact
@@ -102,7 +103,36 @@ class ContactsAController(val mView: ContactsContract.EightFriends.View) :
     }
 
     override fun loadChannels() {
-        //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ChannelsManager.instance.getMyFollowedChannels(true, { popular, followed, errorMessage ->
+            errorMessage?.let {
+                mView.showError(errorMessage)
+                mView.stopRefreshing()
+            } ?: run {
+                //Channel Count
+                var channelCount = 0
+                popular?.let {
+                    if (it.count() > 0) {
+                        channelCount += it.count()
+                    }
+                }
+                followed?.let {
+                    it.first?.let {
+                        if (it.count() > 0) {
+                            channelCount += it.count()
+                        }
+                    }
+                    it.second?.let {
+                        if (it.count() > 0) {
+                            channelCount += it.count()
+                        }
+                    }
+                }
+                if (channelCount > 0) {
+                    mView.updateChannelsSelector("Channels ($channelCount)", channelCount)
+                }
+                mView.stopRefreshing()
+            }
+        })
     }
 
     /*PERMISSIONS*/

@@ -38,7 +38,6 @@ interface ContactsContract {
             fun loadContactsFromApi()
             /*load channels*/
             fun loadChannels()
-
             /*Permissions*/
             fun permissionResults(requestCode: Int, permissions: Array<out String>, grantResults: IntArray):Boolean
 

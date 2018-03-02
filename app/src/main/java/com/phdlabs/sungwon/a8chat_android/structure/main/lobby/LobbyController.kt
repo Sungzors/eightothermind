@@ -104,33 +104,20 @@ class LobbyController(val mView: LobbyContract.View,
 
     private fun callFollow(refresh: Boolean) {
         mView.showProgress()
-        ChannelsManager.instance.getMyFollowedChannels(refresh, { popular, unpopular, errorMessage ->
+        ChannelsManager.instance.getMyFollowedChannels(refresh, { _, followedChannels, errorMessage ->
             errorMessage?.let {
                 //Error
                 mView.hideProgress()
                 /*When no followed channels are available it triggers a localized error message not wanted*/
-                mView.showError(it)
+                //mView.showError(it)
             } ?: run {
                 mView.hideProgress()
                 mChannelsFollowed.clear()
-                //Popular Channels
-                popular?.let {
+                //Channels I Follow
+                followedChannels?.let {
                     //Unread
                     it.first?.let {
                         mChannelsFollowed.addAll(it)
-                        //TODO: Change UI for this item
-                    }
-                    //Read
-                    it.second?.let {
-                        mChannelsFollowed.addAll(it)
-                    }
-                }
-                //Unpopular Channels
-                unpopular?.let {
-                    //Unread
-                    it.first?.let {
-                        mChannelsFollowed.addAll(it)
-                        //TODO: Change UI for this item
                     }
                     //Read
                     it.second?.let {
