@@ -1,6 +1,7 @@
 package com.phdlabs.sungwon.a8chat_android.api.rest
 
 import com.phdlabs.sungwon.a8chat_android.api.data.*
+import com.phdlabs.sungwon.a8chat_android.api.response.GroupChatPostResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.channels.follow.ChannelFollowResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.createEvent.EventPostResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.createChannel.ChannelResponse
@@ -109,6 +110,10 @@ interface CallerRx {
     fun favoritePrivateChatRoom(@Header(TOKEN) token: String, @Path("roomId") roomId: Int,
                                 @Body privateChatPatchData: PrivateChatPatchData): Observable<PrivateChatFavoriteResponse>
 
+    /*GROUP*/
+    @POST("/groupChats")
+    fun createGroupChat(@Header(TOKEN) token: String,
+                        @Body data: GroupChatPostData): Observable<GroupChatPostResponse>
     /*NOTIFICATIONS*/
 
     /**
