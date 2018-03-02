@@ -40,6 +40,7 @@ object Constants {
         const val UPDATE_CHAT_CHANNEL = "update-chat-channel"
         const val UPDATE_CHAT_CONTACT = "update-chat-contact"
         const val UPDATE_CHAT_POST = "update-chat-post"
+        const val USER_ENTERED_8 = "user-entered-8"
         const val ON_ERROR = "on-error"
     }
 
@@ -48,6 +49,12 @@ object Constants {
      * */
     object ChannelRequestCodes {
         const val MY_CHANNELS_LIST = 1
+
+        /**
+         * Used when creating a new Channel, Event or GroupChat
+         * Starting Navigation through Main Activity (Lobby Frag)
+         * */
+        const val CREATE_NEW_BACK_REQ_CODE = 13
     }
 
     /**
@@ -128,6 +135,16 @@ object Constants {
     }
 
     /**
+     * [EventAssociation]
+     * Used to determine the current user relationship to the event
+     * */
+    object EventAssociation {
+        var EVENT_CREATED = "created"
+        var EVENT_FULL_PARTICIPANT = "fullParticipant"
+        var EVENT_READ_ONLY = "readOnly"
+    }
+
+    /**
      * [MessageTypes] used to select single message type on [Message]
      * */
     object MessageTypes {
@@ -141,10 +158,28 @@ object Constants {
         val TYPE_POST = "post"
     }
 
+    /**
+     * [ChatTypes]
+     * represents the type of room
+     * - Chat with single or multiple users
+     * */
     object ChatTypes {
         val PRIVATE = "private"
         val GROUP = "group"
     }
 
+    /**
+     * [RoomState]
+     * represents the state of the current room
+     * Chat state with specific user
+     * Used to display notifications & favorited rooms
+     * These properties can apply to both [ChatTypes]
+     * */
+    object RoomState {
+        val TYPE_UNREAD_FAVORITE = "unreadAndFavorite"
+        val TYPE_UNREAD = "unread"
+        val TYPE_FAVORITE = "favorite"
+        val TYPE_READ_NO_FAVORITE = "readandNonfavorite"
+    }
 
 }

@@ -27,6 +27,7 @@ import java.util.List;
 
 /**
  * Created by SungWon on 10/9/2017.
+ * Updated by JPAM on 2/25/2018
  */
 
 public abstract class BaseRecyclerAdapter<T, VH extends RecyclerView.ViewHolder>
@@ -130,6 +131,7 @@ public abstract class BaseRecyclerAdapter<T, VH extends RecyclerView.ViewHolder>
         //Tap Gesture
         gestureDetector = new GestureDetectorCompat(recyclerView.getContext(), new GestureListener(recyclerView));
         recyclerView.setOnTouchListener(new ItemTouchListener());
+
         //Delete Gesture
 //        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
 //        itemTouchHelper.attachToRecyclerView(recyclerView);
@@ -395,7 +397,9 @@ public abstract class BaseRecyclerAdapter<T, VH extends RecyclerView.ViewHolder>
             protected void publishResults(CharSequence constraint, FilterResults results) {
 
                 mFilteredValues.clear();
-                mFilteredValues.addAll((Collection<? extends T>) results.values);
+                if (results.values != null) {
+                    mFilteredValues.addAll((Collection<? extends T>) results.values);
+                }
                 notifyDataSetChanged();
 
             }

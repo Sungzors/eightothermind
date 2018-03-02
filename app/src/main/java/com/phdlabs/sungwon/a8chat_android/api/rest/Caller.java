@@ -13,13 +13,10 @@ import com.phdlabs.sungwon.a8chat_android.api.data.SendMessageMoneyData;
 import com.phdlabs.sungwon.a8chat_android.api.data.SendMessageStringData;
 import com.phdlabs.sungwon.a8chat_android.api.data.VerifyData;
 import com.phdlabs.sungwon.a8chat_android.api.response.ChannelArrayResponse;
-import com.phdlabs.sungwon.a8chat_android.api.response.ChannelFollowResponse;
-import com.phdlabs.sungwon.a8chat_android.api.response.ChannelShowArrayResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.ChatsRetrievalResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.CommentArrayResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.CommentResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.ErrorResponse;
-import com.phdlabs.sungwon.a8chat_android.api.response.EventRetrievalResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.PrivateChatResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.ResendResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.RoomHistoryResponse;
@@ -112,15 +109,6 @@ public interface Caller {
 
     @GET("/users/{userId}/private&group_chats")
     Call<ChatsRetrievalResponse> getAllChats(@Header(TOKEN) String token, @Path("userId") int userid);
-
-    @GET("/users/{userId}/channels")
-    Call<ChannelShowArrayResponse> getAssociatedChannels(@Header(TOKEN) String token, @Path("userId") int userid);
-
-    @GET("/users/{userId}/events/with_flags")
-    Call<EventRetrievalResponse> getEvents(@Header(TOKEN) String token, @Path("userId") int userId);
-
-    @GET("/users/{userId}/channels/follows")
-    Call<ChannelFollowResponse> getFollowChannel(@Header(TOKEN) String token, @Path("userId") int userId);
 
     @POST("/comments/{messageId}")
     Call<CommentResponse> postComment(@Header(TOKEN) String token, @Path("messageId") int messageId, @Body CommentPostData data);

@@ -21,8 +21,11 @@ import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
 import com.phdlabs.sungwon.a8chat_android.api.utility.Callback8
 import com.phdlabs.sungwon.a8chat_android.api.utility.GsonHolder
 import com.phdlabs.sungwon.a8chat_android.db.EventBusManager
-import com.phdlabs.sungwon.a8chat_android.db.UserManager
+import com.phdlabs.sungwon.a8chat_android.db.room.RoomManager
+import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
+import com.phdlabs.sungwon.a8chat_android.model.user.User
+import com.phdlabs.sungwon.a8chat_android.model.user.UserRooms
 import com.phdlabs.sungwon.a8chat_android.structure.channel.ChannelContract
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
@@ -40,12 +43,18 @@ import java.io.ByteArrayOutputStream
  */
 class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelContract.MyChannel.Controller {
 
+    //TAG
     private val TAG = "MyChannelController"
 
+    /*Properties*/
     private var mSocket: Socket
 
+    //Current Room
     private var mRoomId: Int = 0
+    //Current Room Info
+    private var mUserRoom: UserRooms? = null
 
+    //Message History
     private var mMessages = mutableListOf<Message>()
 
     private lateinit var mCaller: Caller
@@ -53,28 +62,37 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
 
     private var isConnected: Boolean = false
 
+    /*Initialize*/
     init {
         mView.controller = this
         mSocket = mView.get8Application.getSocket()
     }
 
+    /*LifeCycle*/
     override fun start() {
+        //Callers
         mCaller = Rest.getInstance().caller
         mEventBus = EventBusManager.instance().mDataEventBus
+        /*Room Alert*/
         mRoomId = mView.getRoomId
+        //Api -> Enter Room
+        RoomManager.instance.enterRoom(mRoomId, { userRooms ->
+            userRooms?.let {
+                mUserRoom = it
+            }
+        })
+        //socket
         UserManager.instance.getCurrentUser { success, user, _ ->
             if (success) {
                 mSocket.emit("connect-rooms", user?.id, "channel")
             }
         }
+        //Messages
         retrieveChatHistory()
-
-//        mSocket.on(Constants.SocketKeys.CONNECT, onConnect)
-//        mSocket.connect()
     }
 
     override fun resume() {
-
+        //Socket
         mSocket.on(Constants.SocketKeys.UPDATE_ROOM, onUpdateRoom)
         mSocket.on(Constants.SocketKeys.UPDATE_CHAT_STRING, onNewMessage)
         mSocket.on(Constants.SocketKeys.UPDATE_CHAT_CHANNEL, onNewMessage)
@@ -86,6 +104,7 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
     }
 
     override fun pause() {
+        //Socket
         mSocket.off(Constants.SocketKeys.UPDATE_ROOM)
         mSocket.off(Constants.SocketKeys.UPDATE_CHAT_STRING)
         mSocket.off(Constants.SocketKeys.UPDATE_CHAT_CHANNEL)
@@ -98,6 +117,13 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
 
     override fun stop() {
 //        mSocket.off(Constants.SocketKeys.CONNECT)
+        //Api -> Leave Room
+        RoomManager.instance.leaveRoom(mRoomId, { userRooms ->
+            userRooms?.let {
+                mUserRoom = it
+            }
+        })
+
     }
 
     override fun destroy() {
@@ -217,7 +243,7 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
         mView.getActivity.runOnUiThread({
             val data: JSONObject = args[0] as JSONObject
             val message = GsonHolder.Companion.instance.get()!!.fromJson(data.toString(), Message::class.java)
-            if(message.roomId == mRoomId){
+            if (message.roomId == mRoomId) {
                 mMessages.add(0, message)
                 mView.updateRecycler()
             }

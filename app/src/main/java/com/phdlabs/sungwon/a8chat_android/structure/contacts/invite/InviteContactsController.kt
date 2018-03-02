@@ -9,7 +9,7 @@ import android.support.v4.content.ContextCompat
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.api.data.ContactsPostData
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
-import com.phdlabs.sungwon.a8chat_android.db.UserManager
+import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.contacts.LocalContact
 import com.phdlabs.sungwon.a8chat_android.structure.contacts.ContactsContract
 import com.phdlabs.sungwon.a8chat_android.utility.Constants

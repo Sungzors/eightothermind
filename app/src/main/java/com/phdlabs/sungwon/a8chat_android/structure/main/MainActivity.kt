@@ -37,6 +37,13 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
     override val activity: MainActivity = this
     private var lastSelectedTabId: Int? = null
 
+    /*Instances*/
+    private var mLobbyFragment: LobbyFragment = LobbyFragment.newInstance()
+
+    init {
+        //Fresh data on launch
+    }
+
     /*LifeCycle*/
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,9 +79,9 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
-        if (resultCode == Activity.RESULT_OK || resultCode == Activity.RESULT_CANCELED) {
-
+        if (resultCode == Activity.RESULT_OK) {
             if (requestCode == Constants.CameraIntents.CAMERA_REQUEST_CODE) { //Camera
+                //Set home button selected
                 am_bottom_tab_nav.setOnNavigationItemSelectedListener(null)
                 showTabs(false, true)
             } else if (requestCode == Constants.ContactItems.CONTACTS_REQ_CODE) { //Contacts-Eight Friends
@@ -83,88 +90,39 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
                 //todo: required profile action if needed
             } else if (requestCode == Constants.ContactItems.INVITE_CONTACTS_REQ_CODE) { //Invite Contact
                 //todo: required invite contact action if needed
+            } else if (requestCode == Constants.ChannelRequestCodes.CREATE_NEW_BACK_REQ_CODE) {
+                //Refresh Lobby if coming back from Create New screen
+                mLobbyFragment.controller.setRefreshFlag(true)
+                am_bottom_tab_nav.setOnNavigationItemSelectedListener(null)
+                showTabs(false, false)
             }
 
+        } else if (resultCode == Activity.RESULT_CANCELED) {
+            //Actions
+            if (requestCode == Constants.CameraIntents.CAMERA_REQUEST_CODE) { //Camera
+                //Don't refreshChannels Lobby
+                mLobbyFragment.controller.setRefreshFlag(false)
+                //Set home button selected
+                am_bottom_tab_nav.setOnNavigationItemSelectedListener(null)
+                showTabs(false, true)
+            } else if (requestCode == Constants.ChannelRequestCodes.CREATE_NEW_BACK_REQ_CODE) {
+                //Don't refreshChannels Lobby
+                mLobbyFragment.controller.setRefreshFlag(false)
+                //Set home button selected
+                am_bottom_tab_nav.setOnNavigationItemSelectedListener(null)
+                showTabs(false, false)
+            } else if (requestCode == Constants.ContactItems.CONTACTS_REQ_CODE) {
+                //Don't refreshChannels Lobby
+                mLobbyFragment.controller.setRefreshFlag(false)
+                am_bottom_tab_nav.setOnNavigationItemSelectedListener(null)
+                showTabs(false, true) //Preserve last selected tab
+            }
         } else {
             super.onActivityResult(requestCode, resultCode, data)
         }
     }
 
-    /*Tab Control*/
-    private fun showTabs(isLaunch: Boolean, backFromCamera: Boolean) {
-        //Last selected item
-        if (backFromCamera) {
-            lastSelectedTabId?.let {
-                    am_bottom_tab_nav.selectedItemId = it
-            }
-        }
-        //Navigation
-        am_bottom_tab_nav.setOnNavigationItemSelectedListener { item ->
-            onTabSelected(item)
-            true
-        }
-        //Launch Lobby 1st time
-        if (isLaunch) {
-            am_bottom_tab_nav.selectedItemId = R.id.mmt_home
-        }
-    }
-
-    private fun onTabSelected(item: MenuItem) {
-        when (item.itemId) {
-        /*Home*/
-            R.id.mmt_home -> {
-                super.onPostResume()
-                setupToolbars()
-                toolbarControl(true)
-                replaceFragment(LobbyFragment.newInstance(), false)
-                lastSelectedTabId = R.id.mmt_home
-            }
-        /*Camera*/
-            R.id.mmt_camera -> controller.showCamera()
-        /*Profile*/
-            R.id.mmt_profile -> {
-                super.onPostResume()
-                toolbarControl(false)
-                replaceFragment(MyProfileFragment.newInstance(), false)
-                lastSelectedTabId = R.id.mmt_profile
-            }
-        }
-    }
-
-
-    /*On Click*/
-    override fun onClick(p0: View?) {
-        when (p0) {
-
-        /*Contacts -> top left action*/
-            toolbar_left_action -> {
-                startActivityForResult(Intent(this, ContactsActivity::class.java),
-                        Constants.ContactItems.CONTACTS_REQ_CODE)
-            }
-
-        /**Edit Profile -> [MyProfileFragment]*/
-            profile_toolbar.toolbar_right_text -> {
-                val editIntent = Intent(this, MyProfileUpdateActivity::class.java)
-                editIntent.putExtra(Constants.ProfileIntents.WILL_EDIT_PROFILE, true)
-                startActivityForResult(editIntent,
-                        Constants.ProfileIntents.EDIT_MY_PROFIILE)
-            }
-        /*Create New*/
-            home_toolbar.toolbar_right_picture -> {
-                startActivity(Intent(this, CreateNewActivity::class.java))
-
-            }
-        }
-    }
-
-    private fun setupClickers() {
-        toolbar_left_action.setOnClickListener(this)
-        profile_toolbar.toolbar_right_text.setOnClickListener(this)
-        home_toolbar.toolbar_right_picture.setOnClickListener(this)
-    }
-
     /*Toolbar Control*/
-
     private fun setupToolbars() {
         //Status bar flags
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
@@ -185,6 +143,90 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
             window.statusBarColor = ContextCompat.getColor(this, R.color.eight_status_bar)
             home_toolbar.visibility = View.GONE
             profile_toolbar.visibility = View.VISIBLE
+        }
+    }
+
+    /*Tab Control*/
+    private fun showTabs(isLaunch: Boolean, backFromCamera: Boolean) {
+        //Last selected item
+        if (backFromCamera) {
+            lastSelectedTabId?.let {
+                am_bottom_tab_nav.selectedItemId = it
+            }
+        }
+        //Navigation
+        am_bottom_tab_nav.setOnNavigationItemSelectedListener { item ->
+            onTabSelected(item)
+            true
+        }
+        //Launch Lobby 1st time
+        if (isLaunch) {
+            am_bottom_tab_nav.selectedItemId = R.id.mmt_home
+        }
+    }
+
+    private fun onTabSelected(item: MenuItem) {
+        when (item.itemId) {
+
+        /*Home*/
+            R.id.mmt_home -> {
+                super.onPostResume()
+                setupToolbars()
+                toolbarControl(true)
+                /*If coming back from profile, do not refreshChannels data*/
+                lastSelectedTabId?.let {
+                    if (it == R.id.mmt_profile) {
+                        mLobbyFragment = LobbyFragment.newInstance(false)
+                    }
+                }
+                replaceFragment(contentContainerId(), mLobbyFragment, false)
+
+                lastSelectedTabId = R.id.mmt_home
+            }
+
+        /*Camera*/
+            R.id.mmt_camera -> controller.showCamera()
+
+        /*Profile*/
+            R.id.mmt_profile -> {
+                super.onPostResume()
+                toolbarControl(false)
+                replaceFragment(contentContainerId(), MyProfileFragment.newInstance(), false)
+                lastSelectedTabId = R.id.mmt_profile
+            }
+        }
+    }
+
+
+    /*On Click*/
+    private fun setupClickers() {
+        toolbar_left_action.setOnClickListener(this)
+        profile_toolbar.toolbar_right_text.setOnClickListener(this)
+        home_toolbar.toolbar_right_picture.setOnClickListener(this)
+    }
+
+    override fun onClick(p0: View?) {
+        when (p0) {
+
+        /**Contacts -> top left action to [ContactsActivity]*/
+            toolbar_left_action -> {
+                startActivityForResult(Intent(this, ContactsActivity::class.java),
+                        Constants.ContactItems.CONTACTS_REQ_CODE)
+            }
+
+        /**Edit Profile -> [MyProfileFragment]*/
+            profile_toolbar.toolbar_right_text -> {
+                val editIntent = Intent(this, MyProfileUpdateActivity::class.java)
+                editIntent.putExtra(Constants.ProfileIntents.WILL_EDIT_PROFILE, true)
+                startActivityForResult(editIntent,
+                        Constants.ProfileIntents.EDIT_MY_PROFIILE)
+            }
+        /**Create New -> [CreateNewActivity]*/
+            home_toolbar.toolbar_right_picture -> {
+                val createNewIntent = Intent(this, CreateNewActivity::class.java)
+                startActivityForResult(createNewIntent, Constants.ChannelRequestCodes.CREATE_NEW_BACK_REQ_CODE)
+
+            }
         }
     }
 

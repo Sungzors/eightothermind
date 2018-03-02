@@ -77,13 +77,25 @@ open class Room() : RealmObject() {
     @Expose
     var groupChatInfo: GroupChatInfo? = null
 
+    @SerializedName("chatType")
+    @Expose
+    var chatType: String? = null
+
+    @SerializedName("type")
+    @Expose
+    var type: String?= null
+
     /*Local Properties*/
     var isRead: Boolean = true
 
-    var chatType: String? = null
-
-    @Ignore
-    var message: Message? = null //Todo: Message in Realm
+    /**
+     * [message]
+     * Should always be the last message from
+     * the current room
+     * */
+    @SerializedName("message")
+    @Expose
+    var message: Message? = null
 
     /**
      * [User] assigned property when creating a Room

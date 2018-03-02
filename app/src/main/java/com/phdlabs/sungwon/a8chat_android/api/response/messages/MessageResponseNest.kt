@@ -1,4 +1,4 @@
-package com.phdlabs.sungwon.a8chat_android.api.response
+package com.phdlabs.sungwon.a8chat_android.api.response.messages
 
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
 

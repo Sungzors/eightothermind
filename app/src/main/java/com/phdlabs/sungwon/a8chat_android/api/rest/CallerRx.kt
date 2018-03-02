@@ -2,15 +2,21 @@ package com.phdlabs.sungwon.a8chat_android.api.rest
 
 import com.phdlabs.sungwon.a8chat_android.api.data.*
 import com.phdlabs.sungwon.a8chat_android.api.response.GroupChatPostResponse
-import com.phdlabs.sungwon.a8chat_android.api.response.MediaResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.channels.follow.ChannelFollowResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.createEvent.EventPostResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.createChannel.ChannelResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.media.MediaResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.UserDataResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.channels.MyChannelRoomsResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.contacts.ContactsInvitedResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.contacts.ContactsPostResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.contacts.UserFriendsResponse
-import com.phdlabs.sungwon.a8chat_android.api.response.createChannel.ChannelResponse
-import com.phdlabs.sungwon.a8chat_android.api.response.createEvent.EventPostResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.eightEvents.EventRetrievalResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.favorite.PrivateChatFavoriteResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.room.EnterLeaveRoomResponse
 import com.phdlabs.sungwon.a8chat_android.api.rest.Caller.TOKEN
+import com.phdlabs.sungwon.a8chat_android.model.room.Room
+import com.phdlabs.sungwon.a8chat_android.model.user.User
 import com.phdlabs.sungwon.a8chat_android.model.user.registration.RegistrationData
 import io.reactivex.Observable
 import okhttp3.MultipartBody
@@ -43,16 +49,43 @@ interface CallerRx {
     @POST("/media")
     fun uploadMedia(@Header(TOKEN) token: String, @Part image: MultipartBody.Part): Observable<MediaResponse>
 
+    @GET("/media/shared/{userId1}/{userId2}")
+    fun getSharedMediaPrivate(@Header(TOKEN) token: String, @Path("userId1") userId1: Int,
+                              @Path("userId2") userId2: Int): Observable<MediaResponse>
+
+
     /*CHANNEL*/
+    //Create new channel
     @POST("/channels")
     fun postChannel(@Header(TOKEN) token: String, @Body channelPostData: ChannelPostData): Observable<ChannelResponse>
 
+    //Get all user channels
+    @GET("/users/{userId}/channels")
+    fun getUserChannels(@Header(TOKEN) token: String, @Path("userId") userId: Int): Observable<MyChannelRoomsResponse>
+
+    //Get channels I follow
+    @GET("/users/{userId}/channels/follows/with_flags")
+    fun getMyFollowedChannels(@Header(TOKEN) token: String, @Path("userId") userId: Int): Observable<ChannelFollowResponse>
+
     /*EVENTS*/
+    /**[postEvents]
+     * @Post new event from current user
+     * */
     @POST("/events")
     fun postEvents(@Header(TOKEN) token: String, @Body eventPostData: EventPostData): Observable<EventPostResponse>
 
-    /*CONTACTS*/
+    /**
+     * [getUserEventsWithFlags]
+     * @Get current user's events with flags
+     * @created -> User created the event
+     * @fullParticipant ->  User is able to send messages
+     * @readOnly -> User can only read the event
+     * */
+    @GET("/users/{userId}/events/with_flags")
+    fun getUserEventsWithFlags(@Header(TOKEN) token: String, @Path("userId") userId: Int): Observable<EventRetrievalResponse>
 
+
+    /*CONTACTS*/
     /**
      * [getEightContactsPhoneNumbers]
      * @Body Array of [LocalContact]
@@ -71,6 +104,7 @@ interface CallerRx {
                               @Path("userId") userId: Int,
                               @Body contactsPostData: Array<out Any>): Observable<ContactsInvitedResponse>
 
+
     /*ROOM*/
     @PATCH("/privateChats/{roomId}/favorite")
     fun favoritePrivateChatRoom(@Header(TOKEN) token: String, @Path("roomId") roomId: Int,
@@ -80,4 +114,32 @@ interface CallerRx {
     @POST("/groupChats")
     fun createGroupChat(@Header(TOKEN) token: String,
                         @Body data: GroupChatPostData): Observable<GroupChatPostResponse>
+    /*NOTIFICATIONS*/
+
+    /**
+     * [updateReceipt]
+     * Turns on or off read receipts for every chat the user is in
+     * */
+    @PATCH("/users/{userId}/receipts")
+    fun updateReceipt(@Header(TOKEN) token: String, @Path("userId") userId: Int,
+                      @Body receiptData: ReceiptPatchData): Observable<User>
+
+
+    /*ROOM CONTROL*/
+
+    /**
+     * [enterRoom]
+     * Alerts the API the user has entered a Room
+     * */
+    @PATCH("/users/{userId}/enter/{roomId}")
+    fun enterRoom(@Header(TOKEN) token: String, @Path("userId") userId: Int,
+                  @Path("roomId") roomId: Int): Observable<EnterLeaveRoomResponse>
+
+    /**
+     * [leaveRoom]
+     * Alerts the API the user has left a Room
+     * */
+    @PATCH("users/{userId}/leave/{roomId}")
+    fun leaveRoom(@Header(TOKEN) token: String, @Path("userId") userId: Int,
+                  @Path("roomId") roomId: Int): Observable<EnterLeaveRoomResponse>
 }

@@ -1,9 +1,7 @@
 package com.phdlabs.sungwon.a8chat_android.structure.contacts
 
 import android.app.AlertDialog
-import android.app.Dialog
 import android.app.LoaderManager
-import android.content.DialogInterface
 import android.content.Loader
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -12,7 +10,7 @@ import android.support.v4.content.ContextCompat
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.api.data.ContactsPostData
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
-import com.phdlabs.sungwon.a8chat_android.db.UserManager
+import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.contacts.Contact
 import com.phdlabs.sungwon.a8chat_android.model.contacts.LocalContact
 import com.phdlabs.sungwon.a8chat_android.utility.Constants

@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.phdlabs.sungwon.a8chat_android.R
-import com.phdlabs.sungwon.a8chat_android.model.ChannelShowNest
+import com.phdlabs.sungwon.a8chat_android.model.channel.ChannelShowNest
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.structure.channel.ChannelContract
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
@@ -68,7 +68,7 @@ class ChannelShowActivity : CoreActivity(), ChannelContract.ChannelShow.View {
                     override fun addClicks(views: ViewMap?) {
                         views!!.click({ view ->
                             val a = getItem(adapterPosition)
-                            controller.loadChannel(getItem(adapterPosition).channels[0].room_id!!)
+                            controller.loadChannel(getItem(adapterPosition).channels[0]?.room_id!!)
                         })
                     }
                 }
@@ -83,8 +83,8 @@ class ChannelShowActivity : CoreActivity(), ChannelContract.ChannelShow.View {
     private fun bindTopViewHolder(viewHolder: BaseViewHolder, data: ChannelShowNest) {
         val pic = viewHolder.get<ImageView>(R.id.cvcl_channel_pic)
         val text = viewHolder.get<TextView>(R.id.cvcl_channel_text)
-        Picasso.with(this).load(data.channels[0].avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(pic)
-        text.text = data.channels[0].name
+        Picasso.with(this).load(data.channels[0]?.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(pic)
+        text.text = data.channels[0]?.name
     }
 
     override fun addToChannels(channels: Array<ChannelShowNest>) {

@@ -1,12 +1,12 @@
 package com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.cameraRoll
 
+import android.app.LoaderManager
 import android.content.Intent
+import android.content.Loader
 import android.content.pm.PackageManager
 import android.graphics.Point
 import android.os.Bundle
-import android.support.v4.app.LoaderManager
 import android.support.v4.content.ContextCompat
-import android.support.v4.content.Loader
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.GridLayoutManager
 import android.view.LayoutInflater
@@ -76,13 +76,13 @@ class CameraRollFragment : CameraBaseFragment(),
         toolbar_leftoolbart_action.setOnClickListener(this)
         val currentContext = this
         fcr_refresh.setColorSchemeResources(R.color.blue_color_picker, R.color.sky_blue_color_picker)
-        fcr_refresh.setOnRefreshListener(object: SwipeRefreshLayout.OnRefreshListener{
+        fcr_refresh.setOnRefreshListener(object : SwipeRefreshLayout.OnRefreshListener {
             override fun onRefresh() {
                 //Refresh pictures
                 if (ContextCompat.checkSelfPermission(activity!!, Constants.AppPermissions.WRITE_EXTERNAL) != PackageManager.PERMISSION_GRANTED) {
                     requestExternalStoragePermissions()
                 } else {
-                    loaderManager.initLoader(0, null, currentContext).forceLoad()
+                    activity!!.loaderManager.initLoader(0, null, currentContext).forceLoad()
                 }
             }
 
@@ -122,7 +122,7 @@ class CameraRollFragment : CameraBaseFragment(),
         if (ContextCompat.checkSelfPermission(activity!!, Constants.AppPermissions.WRITE_EXTERNAL) != PackageManager.PERMISSION_GRANTED) {
             requestExternalStoragePermissions()
         } else {
-            loaderManager.initLoader(0, null, this).forceLoad()
+            activity!!.loaderManager.initLoader(0, null, this).forceLoad()
         }
     }
 
@@ -145,7 +145,7 @@ class CameraRollFragment : CameraBaseFragment(),
             if (grantResults.size != 1 || grantResults.get(0) != PackageManager.PERMISSION_GRANTED) {
                 showError(getString(R.string.request_write_external_permission))
             } else {
-                loaderManager.initLoader(0, null, this).forceLoad()
+                activity!!.loaderManager.initLoader(0, null, this).forceLoad()
             }
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -164,11 +164,7 @@ class CameraRollFragment : CameraBaseFragment(),
                 val imageView = viewHolder?.get<ImageView>(R.id.cr_iv_photo)
                 viewHolder?.let {
                     context?.let {
-                        Picasso.with(it).
-                                load(File(data?.mFullPath)).
-                                centerInside().
-                                resize(imageWidth, imageHeight).
-                                into(imageView)
+                        Picasso.with(it).load(File(data?.mFullPath)).centerInside().resize(imageWidth, imageHeight).into(imageView)
                         println("DATE_TAKEN: " + data?.mDate)
                     }
                 }
@@ -188,7 +184,7 @@ class CameraRollFragment : CameraBaseFragment(),
                                     getItem(adapterPosition).mFullPath
                             )
                             intent.putExtra(
-                                    Constants.CameraIntents.IS_FROM_CAMERA_ROLL,true
+                                    Constants.CameraIntents.IS_FROM_CAMERA_ROLL, true
                             )
                             activity?.startActivity(intent)
                         }
@@ -205,8 +201,8 @@ class CameraRollFragment : CameraBaseFragment(),
     }
 
     fun refreshRecycler() {
-        if(!loaderManager.hasRunningLoaders()) {
-            loaderManager.initLoader(0, null, this).forceLoad()
+        if (!loaderManager.hasRunningLoaders()) {
+            activity!!.loaderManager.initLoader(0, null, this).forceLoad()
         }
     }
 
@@ -226,12 +222,13 @@ class CameraRollFragment : CameraBaseFragment(),
             }
 
             /*Picture count subtitle & toolbar swap*/
-            toolbarVisibility(mGalleryPhotos.count())
+            if(mGalleryPhotos.count() > 0) {
+                toolbarVisibility(mGalleryPhotos.count())
+                fcr_refresh.isRefreshing = false
 
-            fcr_refresh.isRefreshing = false
-
-            /*Setup RecyclerView with fresh data*/
-            setupRecycler()
+                /*Setup RecyclerView with fresh data*/
+                setupRecycler()
+            }
         }
     }
 
@@ -243,7 +240,6 @@ class CameraRollFragment : CameraBaseFragment(),
     override fun onClick(p0: View?) {
         when (p0) {
 
-        /*Back button*/
         /*Back button*/
             toolbar_leftoolbart_action -> {
                 activity?.finish()

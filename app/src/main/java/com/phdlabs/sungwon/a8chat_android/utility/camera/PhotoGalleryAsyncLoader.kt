@@ -2,7 +2,7 @@ package com.phdlabs.sungwon.a8chat_android.utility.camera
 
 
 import android.content.Context
-import android.support.v4.content.AsyncTaskLoader
+import android.content.AsyncTaskLoader
 import com.phdlabs.sungwon.a8chat_android.model.media.GalleryPhoto
 
 /**
