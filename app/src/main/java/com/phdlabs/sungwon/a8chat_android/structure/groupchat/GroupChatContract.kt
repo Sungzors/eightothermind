@@ -2,6 +2,7 @@ package com.phdlabs.sungwon.a8chat_android.structure.groupchat
 
 import android.content.Intent
 import android.widget.EditText
+import com.phdlabs.sungwon.a8chat_android.api.data.GroupChatPostData
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.structure.application.Application
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseController
@@ -20,6 +21,8 @@ interface GroupChatContract {
             fun onPictureResult(requestCode: Int, resultCode: Int, data: Intent?)
 
             fun showPicture()
+
+            fun createGroupChat(data: GroupChatPostData)
 
         }
     }

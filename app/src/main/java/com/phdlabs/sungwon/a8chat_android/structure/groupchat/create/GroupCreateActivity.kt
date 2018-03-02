@@ -3,10 +3,12 @@ package com.phdlabs.sungwon.a8chat_android.structure.groupchat.create
 import android.content.Intent
 import android.content.pm.PackageManager
 import com.phdlabs.sungwon.a8chat_android.R
+import com.phdlabs.sungwon.a8chat_android.model.contacts.Contact
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.structure.groupchat.GroupChatContract
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
+import kotlinx.android.synthetic.main.activity_group_create.*
 
 /**
  * Created by SungWon on 3/1/2018.
@@ -18,6 +20,8 @@ class GroupCreateActivity : CoreActivity(), GroupChatContract.Create.View{
     override fun layoutId(): Int  = R.layout.activity_group_create
 
     override fun contentContainerId(): Int = 0
+
+    private val mMembersList = mutableListOf<Contact>()
 
     override fun onStart() {
         super.onStart()
@@ -68,6 +72,11 @@ class GroupCreateActivity : CoreActivity(), GroupChatContract.Create.View{
     }
 
     private fun setUpClickers() {
+        agc_group_picture.setOnClickListener {
+            controller.showPicture()
+        }
+        agc_add_people_container.setOnClickListener {
 
+        }
     }
 }

@@ -10,13 +10,13 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.SearchView
 import android.widget.TextView
-import android.widget.Toast
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.model.contacts.Contact
 import com.phdlabs.sungwon.a8chat_android.structure.channel.create.ChannelCreateActivity
 import com.phdlabs.sungwon.a8chat_android.structure.chat.ChatActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.structure.event.create.EventCreateActivity
+import com.phdlabs.sungwon.a8chat_android.structure.groupchat.create.GroupCreateActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseRecyclerAdapter
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseViewHolder
@@ -72,7 +72,7 @@ class CreateNewActivity: CoreActivity(){
             onBackPressed()
         }
         acn_group_container.setOnClickListener {
-            Toast.makeText(this, "Group Chat in progress", Toast.LENGTH_SHORT).show()//TODO: groupchat activty lead
+            startActivity(Intent(this, GroupCreateActivity::class.java))
         }
         acn_channel_container.setOnClickListener {
             startActivity(Intent(this, ChannelCreateActivity::class.java))

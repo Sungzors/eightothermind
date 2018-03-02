@@ -1,13 +1,14 @@
 package com.phdlabs.sungwon.a8chat_android.api.rest
 
 import com.phdlabs.sungwon.a8chat_android.api.data.*
-import com.phdlabs.sungwon.a8chat_android.api.response.createEvent.EventPostResponse
-import com.phdlabs.sungwon.a8chat_android.api.response.createChannel.ChannelResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.GroupChatPostResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.MediaResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.UserDataResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.contacts.ContactsInvitedResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.contacts.ContactsPostResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.contacts.UserFriendsResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.createChannel.ChannelResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.createEvent.EventPostResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.favorite.PrivateChatFavoriteResponse
 import com.phdlabs.sungwon.a8chat_android.api.rest.Caller.TOKEN
 import com.phdlabs.sungwon.a8chat_android.model.user.registration.RegistrationData
@@ -75,4 +76,8 @@ interface CallerRx {
     fun favoritePrivateChatRoom(@Header(TOKEN) token: String, @Path("roomId") roomId: Int,
                                 @Body privateChatPatchData: PrivateChatPatchData): Observable<PrivateChatFavoriteResponse>
 
+    /*GROUP*/
+    @POST("/groupChats")
+    fun createGroupChat(@Header(TOKEN) token: String,
+                        @Body data: GroupChatPostData): Observable<GroupChatPostResponse>
 }

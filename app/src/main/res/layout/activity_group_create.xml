@@ -89,7 +89,7 @@
 
                 <RelativeLayout
                     android:id="@+id/agc_add_people_container"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
                     <TextView
@@ -99,7 +99,8 @@
                         android:layout_marginStart="20dp"
                         android:layout_marginTop="20dp"
                         android:text="@string/add_people"
-                        android:drawableStart=""/>
+                        android:drawableStart="@drawable/ic_add_blue"
+                        android:drawablePadding="10dp"/>
 
 
                 </RelativeLayout>
