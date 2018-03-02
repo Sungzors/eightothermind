@@ -7,6 +7,7 @@ import com.phdlabs.sungwon.a8chat_android.model.channel.ChannelShowNest
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.vicpin.krealmextensions.delete
 import com.vicpin.krealmextensions.query
+import com.vicpin.krealmextensions.queryAll
 import com.vicpin.krealmextensions.save
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -79,9 +80,6 @@ class ChannelsManager {
                                     }, { throwable ->
                                         callback(Pair(null, throwable.localizedMessage))
                                     })
-
-                            //TODO: Update read info if the user has unread posts
-
                         }
                     } else { //Local query
                         userId?.let {
@@ -216,7 +214,7 @@ class ChannelsManager {
     /**
      * All the channels I Follow
      * */
-    fun getAllFollwedChannels(): List<Channel>? {
+    fun getAllFollowedChannels(): List<Channel>? {
         return Channel().query { channels ->
             channels.equalTo("iFollow", true)
             channels.equalTo("isPopular", false)
@@ -224,9 +222,14 @@ class ChannelsManager {
     }
 
     /**
+     * All channels
+     * */
+    fun getAllChannels(): List<Channel>? = Channel().queryAll()
+
+    /**
      * Unpopular & Unread Followed Channels
      * */
-    fun getCachedUnpopularUnreadFollowedChannels(): List<Channel>? {
+    private fun getCachedUnpopularUnreadFollowedChannels(): List<Channel>? {
         return Channel().query { channels ->
             channels.equalTo("iFollow", true)
             channels.equalTo("isPopular", false)
@@ -237,7 +240,7 @@ class ChannelsManager {
     /**
      * Unpopular & Read Followed Channels
      * */
-    fun getCachedUnpopularReadFollowedChannels(): List<Channel>? {
+    private fun getCachedUnpopularReadFollowedChannels(): List<Channel>? {
         return Channel().query { channels ->
             channels.equalTo("iFollow", true)
             channels.equalTo("isPopular", false)

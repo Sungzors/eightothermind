@@ -57,16 +57,19 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
     /*LifeCycle*/
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        //Controller
         MyChannelController(this)
+        //Intent
         mChannelId = intent.getIntExtra(Constants.IntentKeys.CHANNEL_ID, 0)
         mChannelName = intent.getStringExtra(Constants.IntentKeys.CHANNEL_NAME)
         mRoomId = intent.getIntExtra(Constants.IntentKeys.ROOM_ID, 0)
         mOwnerId = intent.getIntExtra(Constants.IntentKeys.OWNER_ID, 0)
+        //UI
         showBackArrow(R.drawable.ic_back)
         setToolbarTitle(mChannelName)
         setUpRecycler()
+        //Controller //TODO: change this once it proves to work in the correct lifecycle method
         controller.start()
-//        controller.createChannelRoom()
     }
 
     override fun onStart() {

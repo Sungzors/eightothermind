@@ -199,7 +199,7 @@ class ContactsFragment : CoreFragment() {
                         //Search
                         mAdapter?.setFilter { filter ->
                             p0?.let {
-                                filter?.first_name?.toLowerCase()?.startsWith(it, false)
+                                filter?.first_name?.toLowerCase()?.startsWith(it.toLowerCase(), false)
                             }
                         }
                         activity?.ca_searchView?.clearFocus()
@@ -212,7 +212,7 @@ class ContactsFragment : CoreFragment() {
                     override fun onQueryTextChange(p0: String?): Boolean {
                         mAdapter?.setFilter { filter ->
                             p0?.let {
-                                filter?.first_name?.toLowerCase()?.startsWith(it,false)
+                                filter?.first_name?.toLowerCase()?.startsWith(it.toLowerCase(),false)
                             }
                         }
                         return true
