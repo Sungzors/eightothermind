@@ -7,8 +7,8 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.ImageView
 import com.phdlabs.sungwon.a8chat_android.R
-import com.phdlabs.sungwon.a8chat_android.structure.contacts.fragments.ChannelsFragment
-import com.phdlabs.sungwon.a8chat_android.structure.contacts.fragments.ContactsFragment
+import com.phdlabs.sungwon.a8chat_android.structure.channel.searchFragments.ChannelsFragment
+import com.phdlabs.sungwon.a8chat_android.structure.contacts.searchFragments.ContactsFragment
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import kotlinx.android.synthetic.main.activity_contacts.*
 import kotlinx.android.synthetic.main.toolbar.*
@@ -112,13 +112,10 @@ class ContactsActivity : CoreActivity(), ContactsContract.EightFriends.View, Vie
     }
 
     override fun updateChannelsSelector(string: String, channelCount: Int) {
-        if (channelCount > 0) {
-            //TODO: Retrieve & show channels
-        } else {
-            //Visible Container
-            ac_fragment_container.visibility = View.VISIBLE
-            replaceFragment(ChannelsFragment(), false)
-        }
+        //Visible Container
+        ac_fragment_container.visibility = View.VISIBLE
+        ac_button_channels.text = string
+        replaceFragment(ChannelsFragment(), false)
     }
 
     /*On Click*/
@@ -145,7 +142,7 @@ class ContactsActivity : CoreActivity(), ContactsContract.EightFriends.View, Vie
             ac_button_channels -> {
                 // - set channels fragment
                 updateChannelsSelector("Channels", 0)
-                //TODO: Load channels
+                controller.loadChannels()
             }
         }
     }
@@ -157,6 +154,7 @@ class ContactsActivity : CoreActivity(), ContactsContract.EightFriends.View, Vie
             controller.loadContactsFromApi()
         } else if (ac_button_channels.isChecked && !ac_button_contacts.isChecked) {
             //Todo: refreshChannels channels
+            controller.loadChannels()
         }
     }
 

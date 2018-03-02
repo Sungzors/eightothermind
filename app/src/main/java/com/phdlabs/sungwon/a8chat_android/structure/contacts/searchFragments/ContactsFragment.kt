@@ -1,4 +1,4 @@
-package com.phdlabs.sungwon.a8chat_android.structure.contacts.fragments
+package com.phdlabs.sungwon.a8chat_android.structure.contacts.searchFragments
 
 import android.app.SearchManager
 import android.content.Context
@@ -28,7 +28,6 @@ import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform
 import com.squareup.picasso.Picasso
 import com.vicpin.krealmextensions.query
 import com.vicpin.krealmextensions.queryAll
-import kotlinx.android.synthetic.main.activity_channel_list.*
 import kotlinx.android.synthetic.main.activity_contacts.*
 import kotlinx.android.synthetic.main.fragment_contacts.*
 
@@ -72,9 +71,6 @@ class ContactsFragment : CoreFragment() {
         super.onResume()
         //Load grouped contacts
         loadAndGroupContacts()
-        //Clear search view
-        //activity?.acl_searchview?.setQuery("", false)
-        //activity?.acl_searchview?.clearFocus()
     }
 
     private fun loadAndGroupContacts() {

@@ -103,8 +103,8 @@ class ChannelsManager {
      * [getMyFollowedChannels]
      * @param refresh -> If true will download fresh data, else will read from @see Realm
      * Updates the realm with the User's followed channels
-     * @return (Pair(Popular_Unread_Channels, Popular_Read_Channels), Pair(Unpopular_Unread_Channels, UnPopular_Read_Channels), Error Message)
-     * @return (Pair(<Array<Channel>?,Array<Channel>?>), Pair(<Array<Channel>?,Array<Channel>?>), String?)
+     * @return (Popular Channels, Pair(Unpopular_Unread_Channels, UnPopular_Read_Channels), Error Message)
+     * @return (Array<Channel>?), Pair(<Array<Channel>?,Array<Channel>?>), String?)
      *     @see MyFollowedChannels
      *
      *
@@ -112,7 +112,7 @@ class ChannelsManager {
      * This is important as it updates the @Realm local copy with
      * the @see iFollow , @see unread_messages , @see isPopular & @see last_activity
      * */
-    fun getMyFollowedChannels(refresh: Boolean, callback: (Pair<List<Channel>?, List<Channel>?>?, Pair<List<Channel>?, List<Channel>?>?, String?) -> Unit) {
+    fun getMyFollowedChannels(refresh: Boolean, callback: (List<Channel>?, Pair<List<Channel>?, List<Channel>?>?, String?) -> Unit) {
         UserManager.instance.getCurrentUser { isSuccess, user, token ->
             if (isSuccess) {
                 user?.let {
@@ -130,11 +130,16 @@ class ChannelsManager {
                                                         val updatedChannel = it
                                                         updatedChannel.user_creator_id?.let {
                                                             if (it != user.id!!) {
-                                                                updatedChannel.unread_messages = channelNestFollowResponse.unread_messages
-                                                                updatedChannel.last_activity = channelNestFollowResponse.last_activity
+                                                                //Only unpopular channels have unread messages & last activity
+                                                                channelNestFollowResponse.unread_messages?.let {
+                                                                    updatedChannel.unread_messages = it
+                                                                    updatedChannel.iFollow = true
+                                                                }
+                                                                channelNestFollowResponse.last_activity?.let {
+                                                                    updatedChannel.last_activity = it
+                                                                }
                                                                 updatedChannel.isPopular = channelNestFollowResponse.isPopular
-                                                                updatedChannel.iFollow = true
-                                                                                updatedChannel.save()
+                                                                updatedChannel.save()
                                                             }
                                                         }
                                                     }
@@ -142,7 +147,7 @@ class ChannelsManager {
                                             }
                                             //Query
                                             callback(
-                                                    Pair(getCachedPopularUnreadFollowedChannels(), getCachedPopularReadFollowedChannels()),
+                                                    getPopularChannels(),
                                                     Pair(getCachedUnpopularUnreadFollowedChannels(), getCachedUnpopularReadFollowedChannels()),
                                                     null
                                             )
@@ -155,7 +160,7 @@ class ChannelsManager {
                         }
                     } else { //Local Query
                         callback(
-                                Pair(getCachedPopularUnreadFollowedChannels(), getCachedPopularReadFollowedChannels()),
+                                getPopularChannels(),
                                 Pair(getCachedUnpopularUnreadFollowedChannels(), getCachedUnpopularReadFollowedChannels()),
                                 null
                         )
@@ -200,31 +205,28 @@ class ChannelsManager {
      * */
 
     /**
-     * Popular & Unread Followed Channels
+     * Popular Channels
      * */
-    private fun getCachedPopularUnreadFollowedChannels(): List<Channel>? {
+    fun getPopularChannels(): List<Channel>? {
         return Channel().query { channels ->
-            channels.equalTo("iFollow", true)
             channels.equalTo("isPopular", true)
-            channels.equalTo("unread_messages", true)
         }
     }
 
     /**
-     * Popular & Read Followed Channels
+     * All the channels I Follow
      * */
-    private fun getCachedPopularReadFollowedChannels(): List<Channel>? {
+    fun getAllFollwedChannels(): List<Channel>? {
         return Channel().query { channels ->
             channels.equalTo("iFollow", true)
-            channels.equalTo("isPopular", true)
-            channels.equalTo("unread_messages", false)
+            channels.equalTo("isPopular", false)
         }
     }
 
     /**
      * Unpopular & Unread Followed Channels
      * */
-    private fun getCachedUnpopularUnreadFollowedChannels(): List<Channel>? {
+    fun getCachedUnpopularUnreadFollowedChannels(): List<Channel>? {
         return Channel().query { channels ->
             channels.equalTo("iFollow", true)
             channels.equalTo("isPopular", false)
@@ -235,7 +237,7 @@ class ChannelsManager {
     /**
      * Unpopular & Read Followed Channels
      * */
-    private fun getCachedUnpopularReadFollowedChannels(): List<Channel>? {
+    fun getCachedUnpopularReadFollowedChannels(): List<Channel>? {
         return Channel().query { channels ->
             channels.equalTo("iFollow", true)
             channels.equalTo("isPopular", false)

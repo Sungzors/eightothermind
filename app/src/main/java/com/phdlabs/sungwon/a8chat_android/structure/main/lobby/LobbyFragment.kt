@@ -41,7 +41,6 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
     private lateinit var mAdapterMyChannel: BaseRecyclerAdapter<Channel, BaseViewHolder>
     private lateinit var mAdapterEvent: BaseRecyclerAdapter<EventsEight, BaseViewHolder>
     private lateinit var mAdapterFollow: BaseRecyclerAdapter<Channel, BaseViewHolder>
-    private lateinit var mAdapterChannel: BaseRecyclerAdapter<Channel, BaseViewHolder>
     private lateinit var mAdapterChat: BaseRecyclerAdapter<Room, BaseViewHolder>
 
     /*Layout*/

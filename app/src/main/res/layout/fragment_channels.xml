@@ -4,18 +4,81 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <!--TODO: Recycler view holding the channels I follow-->
-
-
-    <!--TODO: Recycler view holding the most popular channels-->
-
-    <TextView
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:text="In progress"
-        android:textSize="15dp"
-        />
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <!--Loading-->
+            <include layout="@layout/progress_view" />
+
+            <!--Channels I Follow-->
+            <LinearLayout
+                android:id="@+id/fc_followed_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/activityBackgroundGrey"
+                android:orientation="vertical"
+                android:paddingEnd="10dp"
+                android:paddingStart="10dp"
+                android:paddingTop="20dp">
+                <!--Title-->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="20dp"
+                    android:paddingEnd="10dp"
+                    android:paddingStart="10dp"
+                    android:text="@string/channels_i_follow"
+                    android:textStyle="bold" />
+                <!--Channels I follow recycler view-->
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/cf_channels_i_follow_recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingEnd="10dp"
+                    android:paddingStart="10dp" />
+            </LinearLayout>
+
+            <!--Popular Channels-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/activityBackgroundGrey"
+                android:orientation="vertical"
+                android:paddingEnd="10dp"
+                android:paddingStart="10dp"
+                android:paddingTop="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="20dp"
+                    android:paddingEnd="10dp"
+                    android:paddingStart="10dp"
+                    android:text="@string/popular_channels"
+                    android:textStyle="bold" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/cf_channels_popular_recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingEnd="10dp"
+                    android:paddingStart="10dp" />
+            </LinearLayout>
+
+            <!--Empty Background-->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/activityBackgroundGrey" />
+
+        </LinearLayout>
+
+    </ScrollView>
 
 </LinearLayout>
