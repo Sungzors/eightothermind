@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
@@ -15,6 +16,7 @@ import android.widget.TextView
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.db.TemporaryManager
 import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
+import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.structure.application.Application
 import com.phdlabs.sungwon.a8chat_android.structure.channel.ChannelContract
@@ -23,6 +25,7 @@ import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseRecyclerAdapter
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseViewHolder
+import com.phdlabs.sungwon.a8chat_android.utility.adapter.ViewMap
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
@@ -51,8 +54,10 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
     private var mRoomId: Int = 0
     private var mOwnerId = 0
 
-    /*Adapter*/
-    private lateinit var mAdapter: BaseRecyclerAdapter<Message, BaseViewHolder>
+    /*Followed channels adapter*/
+    private lateinit var mFollowedChanellsAdapter: BaseRecyclerAdapter<Channel, BaseViewHolder>
+    /*Content Adapter*/
+    private lateinit var mContentAdapter: BaseRecyclerAdapter<Message, BaseViewHolder>
 
     /*LifeCycle*/
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,9 +72,10 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         //UI
         showBackArrow(R.drawable.ic_back)
         setToolbarTitle(mChannelName)
-        setUpRecycler()
-        //Controller //TODO: change this once it proves to work in the correct lifecycle method
-        controller.start()
+        setupFollowedChannelsRecycler()
+        setupContentRecycler()
+        //Controller
+        controller.onCreate()
     }
 
     override fun onStart() {
@@ -109,16 +115,61 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         controller.destroy()
     }
 
-    private fun setUpRecycler() {
-        mAdapter = object : BaseRecyclerAdapter<Message, BaseViewHolder>() {
+    /*FOLLOWED CHANNELS*/
+    private fun setupFollowedChannelsRecycler() {
+        mFollowedChanellsAdapter = object : BaseRecyclerAdapter<Channel, BaseViewHolder>() {
+            override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: Channel?, position: Int, type: Int) {
+                val profilePic = viewHolder?.get<ImageView>(R.id.cvlc_picture_profile)
+                val channelName = viewHolder?.get<TextView>(R.id.cvlc_name_channel)
+                val unreadChannelIndicator = viewHolder?.get<ImageView>(R.id.cvlc_background_unread)
+                //Unread indicator
+                data?.unread_messages?.let {
+                    if (it) {
+                        unreadChannelIndicator?.visibility = View.VISIBLE
+                    } else {
+                        unreadChannelIndicator?.visibility = View.GONE
+                    }
+                }
+                Picasso.with(context).load(data?.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(profilePic)
+                channelName?.text = data?.name
+            }
+
+            override fun viewHolder(inflater: LayoutInflater?, parent: ViewGroup?, type: Int): BaseViewHolder {
+                return object : BaseViewHolder(R.layout.card_view_lobby_follow_channel, inflater!!, parent) {
+                    override fun addClicks(views: ViewMap?) {
+                        views?.click {
+                            val channel = getItem(adapterPosition)
+                            val intent = Intent(context, MyChannelActivity::class.java)
+                            intent.putExtra(Constants.IntentKeys.CHANNEL_ID, channel?.id.toString())
+                            intent.putExtra(Constants.IntentKeys.CHANNEL_NAME, channel?.name)
+                            intent.putExtra(Constants.IntentKeys.ROOM_ID, channel?.room_id?.toInt())
+                            intent.putExtra(Constants.IntentKeys.OWNER_ID, channel?.user_creator_id?.toInt())
+                            startActivity(intent)
+                        }
+                        super.addClicks(views)
+                    }
+                }
+            }
+        }
+        mFollowedChanellsAdapter.setItems(controller.getFollowedChannels())
+        acm_fav_channel_recycler.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        acm_fav_channel_recycler.adapter = mFollowedChanellsAdapter
+    }
+
+    /*POSTS RECYCLER*/
+    private fun setupContentRecycler() {
+        mContentAdapter = object : BaseRecyclerAdapter<Message, BaseViewHolder>() {
             override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: Message?, position: Int, type: Int) {
                 when (type) {
+                /*Message*/
                     0 -> {
                         bindMessageViewHolder(viewHolder!!, data!!)
                     }
+                /*Media*/
                     1 -> {
                         bindMediaViewHolder(viewHolder!!, data!!)
                     }
+                /*Post*/
                     2 -> {
                         bindPostViewHolder(viewHolder!!, data!!)
                     }
@@ -141,16 +192,19 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
 
             override fun viewHolder(inflater: LayoutInflater?, parent: ViewGroup?, type: Int): BaseViewHolder {
                 when (type) {
+                /*Message*/
                     0 -> {
                         return object : BaseViewHolder(R.layout.card_view_post_string, inflater!!, parent) {
 
                         }
                     }
+                /*Media*/
                     1 -> {
                         return object : BaseViewHolder(R.layout.card_view_post_photo, inflater!!, parent) {
 
                         }
                     }
+                /*Post*/
                     2 -> {
                         return object : BaseViewHolder(R.layout.card_view_post_media, inflater!!, parent) {
 
@@ -162,12 +216,13 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
                 }
             }
         }
-        mAdapter.setItems(controller.getMessages())
+        mContentAdapter.setItems(controller.getMessages())
         val layoutManager = LinearLayoutManager(this)
         acm_post_recycler.layoutManager = layoutManager
-        acm_post_recycler.adapter = mAdapter
+        acm_post_recycler.adapter = mContentAdapter
     }
 
+    /*Message*/
     private fun bindMessageViewHolder(viewHolder: BaseViewHolder, data: Message) {
         val pic = viewHolder.get<ImageView>(R.id.cvps_poster_pic)
         val text = viewHolder.get<TextView>(R.id.cvps_post_text)
@@ -181,6 +236,7 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         postDate.text = formatter.format(data.createdAt)
     }
 
+    /*Media*/
     private fun bindMediaViewHolder(viewHolder: BaseViewHolder, data: Message) {
         val pic = viewHolder.get<ImageView>(R.id.cvpp_poster_pic)
         val postPic = viewHolder.get<ImageView>(R.id.cvpp_post_pic)
@@ -196,6 +252,7 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         postDate.text = formatter.format(data.createdAt)
     }
 
+    /*Post*/
     private fun bindPostViewHolder(viewHolder: BaseViewHolder, data: Message) {
         val picasso = Picasso.with(this)
         val posterPic = viewHolder.get<ImageView>(R.id.cvpm_poster_pic)
@@ -234,19 +291,30 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         commentCount.text = data.comments.toString()
     }
 
-    override fun updateRecycler() {
-        mAdapter.clear()
-        mAdapter.setItems(controller.getMessages())
-        mAdapter.notifyDataSetChanged()
+    /*Update*/
+    override fun updateContentRecycler() {
+        mContentAdapter.clear()
+        mContentAdapter.setItems(controller.getMessages())
+        mContentAdapter.notifyDataSetChanged()
         acm_post_recycler.smoothScrollToPosition(0)
     }
 
+    override fun updateFollowedChannelsRecycler() {
+        mFollowedChanellsAdapter.clear()
+        mFollowedChanellsAdapter.setItems(controller.getFollowedChannels())
+        mFollowedChanellsAdapter.notifyDataSetChanged()
+        acm_fav_channel_recycler.smoothScrollToPosition(0)
+    }
+
+
+    /*Drawer*/
     private fun setUpDrawer() {
         acm_the_daddy_drawer.isClipPanel = false
         acm_the_daddy_drawer.panelHeight = 150
         acm_the_daddy_drawer.coveredFadeColor = ContextCompat.getColor(this, R.color.transparent)
     }
 
+    /*On Click*/
     private fun setUpClickers() {
         /*Send Message*/
         acm_emitting_button_of_green_arrow.setOnClickListener({

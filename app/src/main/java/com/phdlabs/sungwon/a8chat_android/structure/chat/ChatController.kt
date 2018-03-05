@@ -485,7 +485,7 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
 //                    }
 //                    message.timeDisplayed = mView.lastTimeDisplayed(message)
 //                    mMessages!!.add(message)
-//                    mView.updateRecycler(mMessages!!.size)
+//                    mView.updateContentRecycler(mMessages!!.size)
 //                }
 //                Message.TYPE_CHANNEL -> {
 //                    val channelInfo: JSONObject
@@ -521,7 +521,7 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
 //                        return@runOnUiThread
 //                    }
 //                    mMessages!!.add(builder.message(message).channel(channel).build())
-//                    mView.updateRecycler(mMessages!!.size)
+//                    mView.updateContentRecycler(mMessages!!.size)
 //                }
 //                Message.TYPE_CONTACT -> {
 //                    val contactInfo: JSONObject
@@ -574,7 +574,7 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
 //                        return@runOnUiThread
 //                    }
 //                    mMessages.add(builder.message(message).contact(contact).build())
-//                    mView.updateRecycler(mMessages.size)
+//                    mView.updateContentRecycler(mMessages.size)
 //                }
 //                Message.TYPE_LOCATION -> {
 //                    val message = builder.message(message!!).build()
@@ -602,7 +602,7 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
 //                    }
 //                    message.timeDisplayed = mView.lastTimeDisplayed(message)
 //                    mMessages.add(message)
-//                    mView.updateRecycler(mMessages.size)
+//                    mView.updateContentRecycler(mMessages.size)
 //                }
 //
 //            }
@@ -611,7 +611,7 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
 
     private val onError = Emitter.Listener { args ->
         mView.getActivity.runOnUiThread {
-            val message = args[0] as String //args[0] as JSONObject
+            val message = args[0].toString() //args[0] as JSONObject
             Toast.makeText(mView.getContext(), message, Toast.LENGTH_SHORT).show()
             //Log.e(TAG, message.getString("message"))
 

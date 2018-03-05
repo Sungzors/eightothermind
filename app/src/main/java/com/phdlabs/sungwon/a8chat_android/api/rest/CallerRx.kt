@@ -2,6 +2,7 @@ package com.phdlabs.sungwon.a8chat_android.api.rest
 
 import com.phdlabs.sungwon.a8chat_android.api.data.*
 import com.phdlabs.sungwon.a8chat_android.api.response.GroupChatPostResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.PrivateChatResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.channels.follow.ChannelFollowResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.createEvent.EventPostResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.createChannel.ChannelResponse
@@ -83,6 +84,16 @@ interface CallerRx {
      * */
     @GET("/users/{userId}/events/with_flags")
     fun getUserEventsWithFlags(@Header(TOKEN) token: String, @Path("userId") userId: Int): Observable<EventRetrievalResponse>
+
+    /*PRIVATE CHATS*/
+
+    /**
+     * [getPrivateChats]
+     * @Get current user's private chat
+     * Should be cached at download.
+     * */
+    @GET("/users/{userId}/privateChats")
+    fun getPrivateChats(@Header(TOKEN) token: String, @Path("userId") userId: Int): Observable<PrivateChatResponse>
 
 
     /*CONTACTS*/

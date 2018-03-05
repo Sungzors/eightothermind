@@ -23,10 +23,13 @@ interface ChannelContract {
         interface View : BaseView<Controller> {
             /*UI*/
             val getActivity: ChannelCreateActivity
+
             /*Camera||Photo*/
             fun setChannelImage(filePath: String)
+
             /*Media*/
             fun getMedia(media: Media)
+
             /*LifeCycle*/
             fun onCreateChannel(chanId: Int?, chanName: String?, roomId: Int?, ownerId: Int?)
         }
@@ -62,22 +65,34 @@ interface ChannelContract {
             val getRoomId: Int
             val getChannelId: Int
 
-            fun updateRecycler()
+            fun updateContentRecycler()
+            fun updateFollowedChannelsRecycler()
         }
 
         interface Controller : BaseController {
+            /*LifeCycle*/
+            fun onCreate()
             fun destroy()
-
             fun sendMessage()
             fun sendPost()
             fun sendMedia()
 
-            fun createChannelRoom()
+            /*Get Followed Channels*/
+            fun getFollowedChannels(): MutableList<Channel>?
+
+            /*Create room*/
+            //fun createChannelRoom()
+
+            /*Pull Chat History*/
             fun retrieveChatHistory()
 
+            /*Chat History*/
             fun getMessages(): MutableList<Message>
 
+            /*Picture Intent*/
             fun onPictureOnlyResult(requestCode: Int, resultCode: Int, data: Intent?)
+
+            /*Post Picture*/
             fun onPicturePostResult(requestCode: Int, resultCode: Int, data: Intent?)
         }
     }
