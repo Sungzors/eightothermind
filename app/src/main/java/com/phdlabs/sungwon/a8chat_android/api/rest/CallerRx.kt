@@ -3,6 +3,7 @@ package com.phdlabs.sungwon.a8chat_android.api.rest
 import com.phdlabs.sungwon.a8chat_android.api.data.*
 import com.phdlabs.sungwon.a8chat_android.api.response.GroupChatPostResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.PrivateChatResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.RoomHistoryResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.channels.follow.ChannelFollowResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.createEvent.EventPostResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.createChannel.ChannelResponse
@@ -71,6 +72,10 @@ interface CallerRx {
     @GET("/users/{userId}/channels/follows/with_flags")
     fun getMyFollowedChannels(@Header(TOKEN) token: String, @Path("userId") userId: Int): Observable<ChannelFollowResponse>
 
+    //Get All channel Posts
+    @GET("/channels/{roomId}/user/{userId}/messages")
+    fun getChannelPosts(@Header(TOKEN) token: String, @Path("roomId") roomId: Int,
+                        @Path("userId") userId: Int, @Query("messageId") messageId: String): Observable<RoomHistoryResponse>
     /*EVENTS*/
     /**[postEvents]
      * @Post new event from current user

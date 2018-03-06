@@ -413,6 +413,7 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
                     false)
         }
         acm_drawer_post.setOnClickListener {
+            controller.keepSocketConnection(true)
             val intent = Intent(this, CreatePostActivity::class.java)
             intent.putExtra(Constants.IntentKeys.ROOM_ID, mRoomId)
             startActivityForResult(intent,
@@ -438,11 +439,12 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
                 val filepathArrayList = data?.extras?.getStringArrayList(Constants.IntentKeys.MEDIA_POST)
                 val postMessage = data?.extras?.getString(Constants.IntentKeys.MEDIA_POST_MESSAGE)
                 controller.createPost(postMessage, filepathArrayList)
+                controller.keepSocketConnection(false)
             }
         }
         //Back from viewing a post
         else if (requestCode == Constants.ChannelRequestCodes.VIEW_POST_REQ_CODE) {
-            if (resultCode == Activity.RESULT_OK) {
+            if (resultCode == Activity.RESULT_OK || resultCode == Activity.RESULT_CANCELED) {
                 controller.keepSocketConnection(false)
             }
         }

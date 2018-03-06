@@ -105,6 +105,7 @@
             android:layout_below="@id/cvpm_like_button"
             android:layout_marginBottom="15dp"
             android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
             android:textColor="@color/black" />
 
         <View

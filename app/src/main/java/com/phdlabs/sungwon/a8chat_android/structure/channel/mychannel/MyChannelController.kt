@@ -79,7 +79,6 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
         mEventBus = EventBusManager.instance().mDataEventBus
         /*Room Alert*/
         mRoomId = mView.getRoomId
-
         //Message History (API)
         retrieveChatHistory()
     }
@@ -208,7 +207,7 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
             } catch (e: JSONException) {
                 Log.e(TAG, e.message)
             }
-            retrieveChatHistory()
+            //retrieveChatHistory()
             if (userAdded != null) {
 
             }
@@ -310,35 +309,50 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
 
     /*Messages*/
     override fun retrieveChatHistory() {
-        UserManager.instance.getCurrentUser { success, user, token ->
-            if (success) {
-                val call = mCaller.getChannelPosts(
-                        token?.token,
-                        mRoomId,
-                        user?.id!!,
-                        null
-                )
-                call.enqueue(object : Callback8<RoomHistoryResponse, RoomHistoryEvent>(mEventBus) {
-                    override fun onSuccess(data: RoomHistoryResponse?) {
-                        mMessages.clear()
-                        //TODO: need to add read first then unread always, but check for unread null instead.
-                        for (item in data!!.messages!!.allMessages!!) {
-                            if (item.roomId == mRoomId) {
-                                mMessages.add(0, item)
-                            }
-                        }
+        mView.showProgress()
+        ChannelsManager.instance.getChannelPosts(mRoomId, null, { channelPosts ->
+            channelPosts.second?.let {
+                mView.showError(it)
+                mView.hideProgress()
+            } ?: run {
+                channelPosts.first?.let {
+                    if (it.count() > 0) {
+                        it.filter { it.roomId == mRoomId }.forEach { mMessages.add(0, it) }
                         mView.updateContentRecycler()
-                        mView.hideProgress()
                     }
-
-                    override fun onError(response: Response<RoomHistoryResponse>?) {
-                        super.onError(response)
-                        Log.e(TAG, response!!.message())
-                        mView.hideProgress()
-                    }
-                })
+                }
+                mView.hideProgress()
             }
-        }
+        })
+//        UserManager.instance.getCurrentUser { success, user, token ->
+//            if (success) {
+//                val call = mCaller.getChannelPosts(
+//                        token?.token,
+//                        mRoomId,
+//                        user?.id!!,
+//                        null
+//                )
+//                call.enqueue(object : Callback8<RoomHistoryResponse, RoomHistoryEvent>(mEventBus) {
+//                    override fun onSuccess(data: RoomHistoryResponse?) {
+//                        mMessages.clear()
+//                        //TODO: need to add read first then unread always, but check for unread null instead.
+//                        for (item in data!!.messages!!.allMessages!!) {
+//                            if (item.roomId == mRoomId) {
+//                                mMessages.add(0, item)
+//                            }
+//                        }
+//                        mView.updateContentRecycler()
+//                        mView.hideProgress()
+//                    }
+//
+//                    override fun onError(response: Response<RoomHistoryResponse>?) {
+//                        super.onError(response)
+//                        Log.e(TAG, response!!.message())
+//                        mView.hideProgress()
+//                    }
+//                })
+//            }
+//        }
     }
 
     override fun getMessages(): MutableList<Message> = mMessages
@@ -351,7 +365,7 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
                 user?.let {
                     token?.token?.let {
                         val formBodyBuilder = MultipartBody.Builder().setType(MultipartBody.FORM)
-                                .addFormDataPart("message", message)
+                                .addFormDataPart("message", message ?: "")
                                 .addFormDataPart("userId", user.id!!.toString())
                                 .addFormDataPart("roomId", mView.getRoomId.toString())
                         //Create Post BodyPart

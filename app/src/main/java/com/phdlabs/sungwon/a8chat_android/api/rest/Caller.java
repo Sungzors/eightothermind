@@ -53,8 +53,6 @@ public interface Caller {
     @PATCH("/channels/{channelId}/follow")
     Call<RoomResponse> followChannel(@Header(TOKEN) String token, @Path("channelId") int channelId, @Body FollowUserData data);
 
-    @GET("/channels/{roomId}/user/{userId}/messages")
-    Call<RoomHistoryResponse> getChannelPosts(@Header(TOKEN) String token, @Path("roomId") int roomId, @Path("userId") int userId, @Query("messageId") String messageId);
 
     @PATCH("/channels/{messageId}/like/{userId}/user")
     Call<ErrorResponse> likePost(@Header(TOKEN) String token, @Path("messageId") int messageId, @Path("userId") int userId);

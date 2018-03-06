@@ -61,18 +61,18 @@ class ChannelShowController(val mView : ChannelContract.ChannelShow.View): Chann
     }
 
     override fun loadChannel(roomID: Int) {
-        UserManager.instance.getCurrentUser { success, user, token ->
-            if (success) {
-                mView.showProgress()
-                val call = mCaller.getChannelPosts(token?.token, roomID, user?.id!!, null)
-                call.enqueue(object : Callback8<RoomHistoryResponse, ChannelPostGetEvent>(mEventBus) {
-                    override fun onSuccess(data: RoomHistoryResponse?) {
-                        mView.addToPosts(data!!.messages!!.allMessages!!)
-                        mView.setUpPostRecycler()
-                    }
-                })
-            }
-        }
+//        UserManager.instance.getCurrentUser { success, user, token ->
+//            if (success) {
+//                mView.showProgress()
+//                val call = mCaller.getChannelPosts(token?.token, roomID, user?.id!!, null)
+//                call.enqueue(object : Callback8<RoomHistoryResponse, ChannelPostGetEvent>(mEventBus) {
+//                    override fun onSuccess(data: RoomHistoryResponse?) {
+//                        mView.addToPosts(data!!.messages!!.allMessages!!)
+//                        mView.setUpPostRecycler()
+//                    }
+//                })
+//            }
+//        }
     }
 
     override fun likePost(messageId: Int?) {
