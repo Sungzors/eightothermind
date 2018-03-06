@@ -144,6 +144,8 @@
     <string name="channel_name">Channel Name</string>
     <string name="add_photos_or_videos">+ Add Photos or Videos</string>
     <string name="post">Post</string>
+    <string name="remove_media">Remove media</string>
+    <string name="create_a_post">Create a Post</string>
 
 
 </resources>

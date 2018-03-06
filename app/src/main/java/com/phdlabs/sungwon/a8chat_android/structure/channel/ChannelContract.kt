@@ -1,6 +1,7 @@
 package com.phdlabs.sungwon.a8chat_android.structure.channel
 
 import android.content.Intent
+import android.net.Uri
 import android.widget.EditText
 import com.phdlabs.sungwon.a8chat_android.api.data.ChannelPostData
 import com.phdlabs.sungwon.a8chat_android.model.channel.ChannelShowNest
@@ -96,6 +97,9 @@ interface ChannelContract {
 
             /*Post Picture*/
             fun onPicturePostResult(requestCode: Int, resultCode: Int, data: Intent?)
+
+            /*Create Post*/
+            fun createPost(message: String?, filePaths: ArrayList<String>?)
         }
     }
 
@@ -136,11 +140,15 @@ interface ChannelContract {
 
         interface View : BaseView<Controller> {
             var activity: CreatePostActivity
+            fun refreshMediaAdapter()
+            fun validatePost(): Boolean
+            fun getPostData(): Pair<String, MutableList<Uri>>
         }
 
         interface Controller : BaseController {
             fun requestStoragePermissions()
             fun openMediaPicker()
+            fun createPost()
         }
     }
 

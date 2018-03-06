@@ -3,6 +3,9 @@ package com.phdlabs.sungwon.a8chat_android.structure.channel.mychannel
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
+import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
 import com.github.nkzawa.emitter.Emitter
@@ -27,6 +30,8 @@ import com.phdlabs.sungwon.a8chat_android.model.user.UserRooms
 import com.phdlabs.sungwon.a8chat_android.structure.channel.ChannelContract
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -328,4 +333,49 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
     }
 
     override fun getMessages(): MutableList<Message> = mMessages
+
+    /*POST*/
+    /*Create Post*/
+    override fun createPost(message: String?, filePaths: ArrayList<String>?) {
+        UserManager.instance.getCurrentUser { isSuccess, user, token ->
+            if (isSuccess) {
+                user?.let {
+                    token?.token?.let {
+                        val formBodyBuilder = MultipartBody.Builder().setType(MultipartBody.FORM)
+                                .addFormDataPart("message", message)
+                                .addFormDataPart("userId", user.id!!.toString())
+                                .addFormDataPart("roomId", mView.getRoomId.toString())
+                        //Create Post BodyPart
+                        filePaths?.let {
+                            for (mediaFile in it) {
+                                val imageBitmap = MediaStore.Images.Media.getBitmap(mView.getActivity.contentResolver, Uri.parse(mediaFile))
+                                imageBitmap?.let {
+                                    val bos = ByteArrayOutputStream()
+                                    it.compress(Bitmap.CompressFormat.PNG, 0, bos)
+                                    val bitmapData = bos.toByteArray()
+                                    formBodyBuilder.addFormDataPart("file[${filePaths.indexOf(mediaFile)}]",
+                                            "8_" + System.currentTimeMillis(),
+                                            RequestBody.create(MediaType.parse("image/png"), bitmapData))
+                                }
+                            }
+                        }
+                        val formBody = formBodyBuilder.build()
+                        val call = Rest.getInstance().getmCallerRx().postChannelPost(it, formBody, true)
+                        call.subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe({ response ->
+                                    if (response.isSuccess) {
+                                        println("Message: " + response.messageInfo?.message)
+                                    } else if (response.isError) {
+                                        mView.showError("Could not post")
+                                    }
+                                }, { throwable ->
+                                    mView.showError(throwable.localizedMessage)
+                                })
+                    }
+                }
+            }
+        }
+
+    }
 }

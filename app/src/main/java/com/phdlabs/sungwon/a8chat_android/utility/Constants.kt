@@ -26,6 +26,8 @@ object Constants {
         const val MESSAGE_ID = "message_id"
         const val OWNER_ID = "owner_id"
         const val FROM_CONTACTS = "from_contacts"
+        const val MEDIA_POST = "media_post"
+        const val MEDIA_POST_MESSAGE = "media_post_message"
     }
 
     /**

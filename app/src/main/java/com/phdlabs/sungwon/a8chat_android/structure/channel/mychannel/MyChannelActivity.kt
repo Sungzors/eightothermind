@@ -1,5 +1,6 @@
 package com.phdlabs.sungwon.a8chat_android.structure.channel.mychannel
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -361,12 +362,10 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         }
         acm_drawer_post.setOnClickListener {
             //TODO: Open & Handle the new created post
-            startActivityForResult(Intent(this, CreatePostActivity::class.java),
+            val intent = Intent(this, CreatePostActivity::class.java)
+            intent.putExtra(Constants.IntentKeys.ROOM_ID, mRoomId)
+            startActivityForResult(intent,
                     Constants.ChannelRequestCodes.CREATE_NEW_POST_REQ_CODE)
-//            CameraControl.instance.pickImage(this,
-//                    "Choose a media",
-//                    345,
-//                    false)
         }
     }
 
@@ -377,13 +376,14 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
             controller.onPictureOnlyResult(requestCode, resultCode, data)
         }
         //Back from creating a post
-        else if(requestCode == Constants.ChannelRequestCodes.CREATE_NEW_POST_REQ_CODE){
-            //TODO: Handle posting the new created post
-            println("PUSH NEW CREATED POST AFTER SOCKET IS ON")
+        else if (requestCode == Constants.ChannelRequestCodes.CREATE_NEW_POST_REQ_CODE) {
+            if (resultCode == Activity.RESULT_OK) {
+                println("PUSH NEW CREATED POST AFTER SOCKET IS ON")
+                val filepathArrayList = data?.extras?.getStringArrayList(Constants.IntentKeys.MEDIA_POST)
+                val postMessage = data?.extras?.getString(Constants.IntentKeys.MEDIA_POST_MESSAGE)
+                controller.createPost(postMessage, filepathArrayList)
+            }
         }
-//        else if (requestCode == 345) {
-//            controller.onPicturePostResult(requestCode, resultCode, data)
-//        }
     }
 
     override val get8Application: Application

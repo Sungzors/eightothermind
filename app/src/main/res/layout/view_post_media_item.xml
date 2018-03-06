@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="110sp"
+    android:layout_height="110sp"
+    android:clickable="false"
+    android:focusable="false">
+
+    <!--Add frame to image view-->
+    <ImageView
+        android:id="@+id/vpmi_remove_image"
+        android:contentDescription="@string/remove_media"
+        android:layout_width="35sp"
+        android:layout_height="35sp"
+        android:layout_alignParentEnd="true"
+        android:src="@android:drawable/ic_menu_delete"
+        android:elevation="6sp"/>
+
+    <!--Camera Roll Image View-->
+    <ImageView
+        android:id="@+id/vpmi_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="2dp"
+        android:adjustViewBounds="true"
+        android:background="@drawable/photo_frame_unselected"
+        android:contentDescription="@string/camerarollimage"
+        android:scaleType="fitCenter"
+        android:src="@drawable/addphoto" />
+
+
+</RelativeLayout>

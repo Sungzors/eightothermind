@@ -9,6 +9,7 @@ import com.phdlabs.sungwon.a8chat_android.api.response.createChannel.ChannelResp
 import com.phdlabs.sungwon.a8chat_android.api.response.media.MediaResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.UserDataResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.channels.MyChannelRoomsResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.channels.post.ChannelPostResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.contacts.ContactsInvitedResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.contacts.ContactsPostResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.contacts.UserFriendsResponse
@@ -54,6 +55,8 @@ interface CallerRx {
     fun getSharedMediaPrivate(@Header(TOKEN) token: String, @Path("userId1") userId1: Int,
                               @Path("userId2") userId2: Int): Observable<MediaResponse>
 
+    @POST("/messages/media")
+    fun postChannelPost(@Header(TOKEN) token: String, @Body multipartBody: MultipartBody, @Query("post") post: Boolean): Observable<ChannelPostResponse>
 
     /*CHANNEL*/
     //Create new channel
