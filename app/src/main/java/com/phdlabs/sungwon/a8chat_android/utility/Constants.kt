@@ -55,6 +55,11 @@ object Constants {
          * Starting Navigation through Main Activity (Lobby Frag)
          * */
         const val CREATE_NEW_BACK_REQ_CODE = 13
+
+        /**
+         * Used when creating a new Post inside a channel
+         * */
+        const val CREATE_NEW_POST_REQ_CODE = 14
     }
 
     /**
@@ -82,6 +87,7 @@ object Constants {
         val CAMERA = Manifest.permission.CAMERA
         val RECORD_AUDIO = Manifest.permission.RECORD_AUDIO
         val WRITE_EXTERNAL = Manifest.permission.WRITE_EXTERNAL_STORAGE
+        val READ_EXTERNAL = Manifest.permission.READ_EXTERNAL_STORAGE
         val FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION
         val COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION
         val CONTACTS = Manifest.permission.READ_CONTACTS
@@ -94,6 +100,7 @@ object Constants {
         val CAMERA_REQ_CODE = 0
         val RECORD_AUDIO_REQ_CODE = 1
         val WRITE_EXTERNAL_REQ_CODE = 2
+        val READ_EXTERNAL_STORAGE = 16
         val LOCATION_REQ_CODE = 3
         val CONTACTS_REQ_CODE = 4
     }
@@ -107,6 +114,7 @@ object Constants {
         var IS_FROM_CAMERA_ROLL = "is_from_camera_roll"
         val EDITING_REQUEST_CODE = 7
         val CAMERA_REQUEST_CODE = 8
+        val OPEN_MEDIA_PICKER = 15
     }
 
     /**

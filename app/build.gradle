@@ -132,6 +132,9 @@ dependencies {
 
     //Phone Number
     compile 'io.michaelrocks:libphonenumber-android:8.8.5'
+
+    //Image Picker
+    compile 'com.github.andremion:louvre:1.2.3'
 }
 
 //Realm Annotations

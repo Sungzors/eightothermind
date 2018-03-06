@@ -20,6 +20,7 @@ import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.structure.application.Application
 import com.phdlabs.sungwon.a8chat_android.structure.channel.ChannelContract
+import com.phdlabs.sungwon.a8chat_android.structure.channel.createPost.CreatePostActivity
 import com.phdlabs.sungwon.a8chat_android.structure.channel.postshow.ChannelPostShowActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
@@ -359,20 +360,30 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
                     false)
         }
         acm_drawer_post.setOnClickListener {
-            CameraControl.instance.pickImage(this,
-                    "Choose a media",
-                    345,
-                    false)
+            //TODO: Open & Handle the new created post
+            startActivityForResult(Intent(this, CreatePostActivity::class.java),
+                    Constants.ChannelRequestCodes.CREATE_NEW_POST_REQ_CODE)
+//            CameraControl.instance.pickImage(this,
+//                    "Choose a media",
+//                    345,
+//                    false)
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        //
         if (requestCode == CameraControl.instance.requestCode()) {
             controller.onPictureOnlyResult(requestCode, resultCode, data)
-        } else if (requestCode == 345) {
-            controller.onPicturePostResult(requestCode, resultCode, data)
         }
+        //Back from creating a post
+        else if(requestCode == Constants.ChannelRequestCodes.CREATE_NEW_POST_REQ_CODE){
+            //TODO: Handle posting the new created post
+            println("PUSH NEW CREATED POST AFTER SOCKET IS ON")
+        }
+//        else if (requestCode == 345) {
+//            controller.onPicturePostResult(requestCode, resultCode, data)
+//        }
     }
 
     override val get8Application: Application

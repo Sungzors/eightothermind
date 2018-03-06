@@ -9,6 +9,7 @@ import com.phdlabs.sungwon.a8chat_android.model.media.Media
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.structure.application.Application
 import com.phdlabs.sungwon.a8chat_android.structure.channel.create.ChannelCreateActivity
+import com.phdlabs.sungwon.a8chat_android.structure.channel.createPost.CreatePostActivity
 import com.phdlabs.sungwon.a8chat_android.structure.channel.mychannel.MyChannelActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseController
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseView
@@ -72,6 +73,7 @@ interface ChannelContract {
         interface Controller : BaseController {
             /*LifeCycle*/
             fun onCreate()
+
             fun destroy()
             fun sendMessage()
             fun sendPost()
@@ -126,6 +128,19 @@ interface ChannelContract {
             fun commentPost(messageId: Int?)
 
 
+        }
+    }
+
+    /*CREATE POST*/
+    interface CreatePost {
+
+        interface View : BaseView<Controller> {
+            var activity: CreatePostActivity
+        }
+
+        interface Controller : BaseController {
+            fun requestStoragePermissions()
+            fun openMediaPicker()
         }
     }
 
