@@ -100,6 +100,9 @@ interface ChannelContract {
 
             /*Create Post*/
             fun createPost(message: String?, filePaths: ArrayList<String>?)
+
+            /*Keep Channel-Room socket connection if opening a post*/
+            fun keepSocketConnection(keepConnection: Boolean)
         }
     }
 

@@ -1,5 +1,6 @@
 package com.phdlabs.sungwon.a8chat_android.structure.channel.postshow
 
+import android.app.Activity
 import android.os.Bundle
 import android.widget.Toast
 import com.phdlabs.sungwon.a8chat_android.R
@@ -98,11 +99,16 @@ class ChannelPostShowActivity: CoreActivity(), ChannelContract.PostShow.View{
     override fun onStop() {
         super.onStop()
         controller.stop()
+        setResult(Activity.RESULT_OK)
     }
 
     private fun setUpViews(){
         mMessage?.mediaArray?.let {
-            Picasso.with(this).load(it[0]?.media_file).into(acps_post_pic)
+            Picasso.with(this)
+                    .load(it[0]?.media_file)
+                    .resize(600, 600)
+                    .centerInside()
+                    .into(acps_post_pic)
         }
         acps_post_text.text = mMessage!!.message
         acps_like_count.text = mMessage!!.likes.toString()

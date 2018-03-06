@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +19,7 @@ import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.db.TemporaryManager
 import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
+import com.phdlabs.sungwon.a8chat_android.model.media.Media
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.structure.application.Application
 import com.phdlabs.sungwon.a8chat_android.structure.channel.ChannelContract
@@ -32,7 +34,13 @@ import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.squareup.picasso.Picasso
+import com.vicpin.krealmextensions.save
+import cz.intik.overflowindicator.OverflowPagerIndicator
+import cz.intik.overflowindicator.SimpleSnapHelper
+import io.realm.RealmList
 import kotlinx.android.synthetic.main.activity_channel_my.*
+import kotlinx.android.synthetic.main.card_view_post_media.*
+import kotlinx.android.synthetic.main.color_picker_item_list.view.*
 import java.text.SimpleDateFormat
 
 /**
@@ -60,6 +68,8 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
     private lateinit var mFollowedChanellsAdapter: BaseRecyclerAdapter<Channel, BaseViewHolder>
     /*Content Adapter*/
     private lateinit var mContentAdapter: BaseRecyclerAdapter<Message, BaseViewHolder>
+    /*Post Media Adapter*/
+    private lateinit var mPostMediaAdapter: BaseRecyclerAdapter<Media, BaseViewHolder>
 
     /*LifeCycle*/
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -180,12 +190,12 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
 
             override fun getItemType(t: Message?): Int {
                 if (t!!.mediaArray == null) {
-                    return 0
+                    return 0 //Message
                 } else if (t.message == null) {
-                    return 1
+                    return 1 //Media
                 } else {
                     if (t.mediaArray?.size!! > 0) {
-                        return 2
+                        return 2 //Post
                     } else {
                         return 0
                     }
@@ -256,41 +266,83 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
 
     /*Post*/
     private fun bindPostViewHolder(viewHolder: BaseViewHolder, data: Message) {
+        //Post Owner
         val picasso = Picasso.with(this)
         val posterPic = viewHolder.get<ImageView>(R.id.cvpm_poster_pic)
         val posterName = viewHolder.get<TextView>(R.id.cvpm_poster_name)
         val postDate = viewHolder.get<TextView>(R.id.cvpm_post_date)
-        val postPic = viewHolder.get<ImageView>(R.id.cvpm_post_pic)
+        //Media Recycler
+        val postPicRecycler = viewHolder.get<RecyclerView>(R.id.cvpm_post_pic_recycler)
+        //Page Indicator
+        val pageIndicator = viewHolder.get<OverflowPagerIndicator>(R.id.cvpm_view_pager_indicator)
+        setupMediaRecycler(data.mediaArray, postPicRecycler, data, pageIndicator)
+        //Actions
         val likeButton = viewHolder.get<ImageView>(R.id.cvpm_like_button)
         val commentButton = viewHolder.get<ImageView>(R.id.cvpm_comment_button)
         val postText = viewHolder.get<TextView>(R.id.cvpm_post_text)
         val likeCount = viewHolder.get<TextView>(R.id.cvpm_like_count)
         val commentCount = viewHolder.get<TextView>(R.id.cvpm_comment_count)
-
+        //Load info
         picasso.load(data.user!!.avatar).transform(CircleTransform()).into(posterPic)
         posterName.text = data.getUserName()
-        data.mediaArray?.let {
-            picasso.load(it[0]?.media_file).into(postPic)
-        }
+        //Date
         val formatter = SimpleDateFormat("EEE - h:mm aaa")
         postDate.text = formatter.format(data.createdAt)
-        postPic.setOnClickListener {
-            TemporaryManager.instance.mMessageList.clear()
-            TemporaryManager.instance.mMessageList.add(data)
-            val intent = Intent(this, ChannelPostShowActivity::class.java)
-            intent.putExtra(Constants.IntentKeys.MESSAGE_ID, data.id)
-            intent.putExtra(Constants.IntentKeys.CHANNEL_NAME, mChannelName)
-            startActivity(intent)
-        }
+
+        //Like Post
         likeButton.setOnClickListener {
             //            controller.likePost(data.id!!)
+            //TODO
         }
+        //Comment on post
         commentButton.setOnClickListener {
             //            controller.commentPost(data.id!!)
+            //TODO
         }
         postText.text = data.message
         likeCount.text = data.likes.toString()
         commentCount.text = data.comments.toString()
+    }
+
+    //Post Media Recycler (Mutliple Images)
+    private fun setupMediaRecycler(mediaArray: RealmList<Media>?, recyclerView: RecyclerView, message: Message, pageIndicator: OverflowPagerIndicator) {
+        mPostMediaAdapter = object : BaseRecyclerAdapter<Media, BaseViewHolder>() {
+            override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: Media?, position: Int, type: Int) {
+                val imageView = viewHolder?.get<ImageView>(R.id.vmpi_imageView)
+                data?.media_file?.let {
+                    Picasso.with(context)
+                            .load(it)
+                            .resize(400, 400)
+                            .centerInside()
+                            .into(imageView)
+                }
+            }
+
+            override fun viewHolder(inflater: LayoutInflater?, parent: ViewGroup?, type: Int): BaseViewHolder {
+                return object : BaseViewHolder(R.layout.view_multiple_media_post_item, inflater!!, parent) {
+                    override fun addClicks(views: ViewMap?) {
+                        views?.click {
+                            controller.keepSocketConnection(true)
+                            TemporaryManager.instance.mMessageList.clear()
+                            TemporaryManager.instance.mMessageList.add(message)
+                            val intent = Intent(context, ChannelPostShowActivity::class.java)
+                            intent.putExtra(Constants.IntentKeys.MESSAGE_ID, message.id)
+                            intent.putExtra(Constants.IntentKeys.CHANNEL_NAME, mChannelName)
+                            startActivityForResult(intent, Constants.ChannelRequestCodes.VIEW_POST_REQ_CODE)
+                        }
+                        super.addClicks(views)
+                    }
+                }
+            }
+        }
+        mPostMediaAdapter.setItems(mediaArray)
+        recyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        recyclerView.adapter = mPostMediaAdapter
+        //Pager indicator
+        recyclerView.onFlingListener = null
+        pageIndicator.attachToRecyclerView(recyclerView)
+        val simpleSnapHelper = SimpleSnapHelper(pageIndicator)
+        simpleSnapHelper.attachToRecyclerView(recyclerView)
     }
 
     /*Update*/
@@ -361,7 +413,6 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
                     false)
         }
         acm_drawer_post.setOnClickListener {
-            //TODO: Open & Handle the new created post
             val intent = Intent(this, CreatePostActivity::class.java)
             intent.putExtra(Constants.IntentKeys.ROOM_ID, mRoomId)
             startActivityForResult(intent,
@@ -371,17 +422,28 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        //
+
+        //Close Drawer
+        if (acm_the_daddy_drawer.panelState == SlidingUpPanelLayout.PanelState.EXPANDED) {
+            acm_the_daddy_drawer.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED
+        }
+        //Picture
         if (requestCode == CameraControl.instance.requestCode()) {
             controller.onPictureOnlyResult(requestCode, resultCode, data)
         }
         //Back from creating a post
         else if (requestCode == Constants.ChannelRequestCodes.CREATE_NEW_POST_REQ_CODE) {
             if (resultCode == Activity.RESULT_OK) {
-                println("PUSH NEW CREATED POST AFTER SOCKET IS ON")
+                //Push new post after socket is connected
                 val filepathArrayList = data?.extras?.getStringArrayList(Constants.IntentKeys.MEDIA_POST)
                 val postMessage = data?.extras?.getString(Constants.IntentKeys.MEDIA_POST_MESSAGE)
                 controller.createPost(postMessage, filepathArrayList)
+            }
+        }
+        //Back from viewing a post
+        else if (requestCode == Constants.ChannelRequestCodes.VIEW_POST_REQ_CODE) {
+            if (resultCode == Activity.RESULT_OK) {
+                controller.keepSocketConnection(false)
             }
         }
     }

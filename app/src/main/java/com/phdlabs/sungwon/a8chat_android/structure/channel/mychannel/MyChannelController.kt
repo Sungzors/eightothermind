@@ -63,6 +63,9 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
     private lateinit var mCaller: Caller
     private lateinit var mEventBus: EventBus
 
+    /*Flags*/
+    private var mKeepSocketConnection: Boolean = false
+
     /*Initialize*/
     init {
         mView.controller = this
@@ -177,14 +180,20 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
     }
 
     private fun socketOff() {
-        mSocket.off(Constants.SocketKeys.UPDATE_ROOM)
-        mSocket.off(Constants.SocketKeys.UPDATE_CHAT_STRING)
-        mSocket.off(Constants.SocketKeys.UPDATE_CHAT_CHANNEL)
-        mSocket.off(Constants.SocketKeys.UPDATE_CHAT_CONTACT)
-        mSocket.off(Constants.SocketKeys.UPDATE_CHAT_LOCATION)
-        mSocket.off(Constants.SocketKeys.UPDATE_CHAT_MEDIA)
-        mSocket.off(Constants.SocketKeys.UPDATE_CHAT_POST)
-        mSocket.off(Constants.SocketKeys.ON_ERROR)
+        if (!mKeepSocketConnection) {
+            mSocket.off(Constants.SocketKeys.UPDATE_ROOM)
+            mSocket.off(Constants.SocketKeys.UPDATE_CHAT_STRING)
+            mSocket.off(Constants.SocketKeys.UPDATE_CHAT_CHANNEL)
+            mSocket.off(Constants.SocketKeys.UPDATE_CHAT_CONTACT)
+            mSocket.off(Constants.SocketKeys.UPDATE_CHAT_LOCATION)
+            mSocket.off(Constants.SocketKeys.UPDATE_CHAT_MEDIA)
+            mSocket.off(Constants.SocketKeys.UPDATE_CHAT_POST)
+            mSocket.off(Constants.SocketKeys.ON_ERROR)
+        }
+    }
+
+    override fun keepSocketConnection(keepConnection: Boolean) {
+        mKeepSocketConnection = keepConnection
     }
 
     private val onUpdateRoom = Emitter.Listener { args ->

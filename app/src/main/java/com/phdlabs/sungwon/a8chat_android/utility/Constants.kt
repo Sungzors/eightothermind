@@ -62,6 +62,11 @@ object Constants {
          * Used when creating a new Post inside a channel
          * */
         const val CREATE_NEW_POST_REQ_CODE = 14
+        /**
+         * Used when opening a current post
+         * - Possible Post commenting & Liking
+         * */
+        const val VIEW_POST_REQ_CODE = 17
     }
 
     /**

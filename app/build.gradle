@@ -135,6 +135,9 @@ dependencies {
 
     //Image Picker
     compile 'com.github.andremion:louvre:1.2.3'
+
+    //Pager Indicator
+    compile "cz.intik:overflow-pager-indicator:1.2.1"
 }
 
 //Realm Annotations

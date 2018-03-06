@@ -10,9 +10,12 @@
         <include layout="@layout/toolbar"/>
     </android.support.design.widget.AppBarLayout>
     <ImageView
+        android:layout_marginTop="20sp"
         android:id="@+id/acps_post_pic"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:maxHeight="600sp"
+        android:maxWidth="600sp"
         android:layout_below="@id/acps_toolbar"/>
     <ImageView
         android:id="@+id/acps_like_button"

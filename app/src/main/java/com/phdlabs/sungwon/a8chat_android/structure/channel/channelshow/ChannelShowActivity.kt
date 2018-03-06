@@ -119,7 +119,7 @@ class ChannelShowActivity : CoreActivity(), ChannelContract.ChannelShow.View {
         val posterPic = viewHolder.get<ImageView>(R.id.cvpm_poster_pic)
         val posterName = viewHolder.get<TextView>(R.id.cvpm_poster_name)
         val postDate = viewHolder.get<TextView>(R.id.cvpm_post_date)
-        val postPic = viewHolder.get<ImageView>(R.id.cvpm_post_pic)
+        val postPic = viewHolder.get<ImageView>(R.id.cvpm_post_pic_recycler)
         val likeButton = viewHolder.get<ImageView>(R.id.cvpm_like_button)
         val commentButton = viewHolder.get<ImageView>(R.id.cvpm_comment_button)
         val postText = viewHolder.get<TextView>(R.id.cvpm_post_text)
