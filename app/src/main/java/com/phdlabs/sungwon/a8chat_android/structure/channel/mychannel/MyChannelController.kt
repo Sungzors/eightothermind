@@ -105,7 +105,7 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
 
     }
 
-    /*Messages*/
+    /*String Messages posted from Drawer*/
     override fun sendMessage() {
         UserManager.instance.getCurrentUser { success, user, token ->
             if (success) {
@@ -138,10 +138,17 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
         }
     }
 
-    override fun sendPost() {
-    }
-
-    override fun sendMedia() {
+    /*Send File*/
+    override fun sendFile() {
+        UserManager.instance.getCurrentUser { success, user, token ->
+            if (success) {
+                user?.let {
+                    token?.token?.let {
+                        //TODO: Send File -> Create RX Call
+                    }
+                }
+            }
+        }
     }
 
     /*SOCKETS*/
@@ -178,6 +185,7 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
         mKeepSocketConnection = keepConnection
     }
 
+    //TODO: Refine users leaving and entering the room
     private val onUpdateRoom = Emitter.Listener { args ->
         mView.getActivity.runOnUiThread({
             val data: JSONObject = args[0] as JSONObject
@@ -269,7 +277,7 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
     override fun getFollowedChannels(): MutableList<Channel>? =
             ChannelsManager.instance.getAllFollowedChannels()?.toMutableList()
 
-    /*Messages*/
+    /*Chat History*/
     override fun retrieveChatHistory() {
         mView.showProgress()
         ChannelsManager.instance.getChannelPosts(mRoomId, null, { channelPosts ->

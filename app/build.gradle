@@ -138,6 +138,11 @@ dependencies {
 
     //Pager Indicator
     compile "cz.intik:overflow-pager-indicator:1.2.1"
+
+    //File Dialog
+    implementation 'yogesh.firzen:FilesLister:1.0.1.g'
+    implementation 'yogesh.firzen:MukkiyaSevaigal:1.0.6'
+
 }
 
 //Realm Annotations

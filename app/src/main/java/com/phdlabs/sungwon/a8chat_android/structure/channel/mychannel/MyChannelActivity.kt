@@ -34,13 +34,11 @@ import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.squareup.picasso.Picasso
-import com.vicpin.krealmextensions.save
 import cz.intik.overflowindicator.OverflowPagerIndicator
 import cz.intik.overflowindicator.SimpleSnapHelper
 import io.realm.RealmList
 import kotlinx.android.synthetic.main.activity_channel_my.*
-import kotlinx.android.synthetic.main.card_view_post_media.*
-import kotlinx.android.synthetic.main.color_picker_item_list.view.*
+import yogesh.firzen.filelister.FileListerDialog
 import java.text.SimpleDateFormat
 
 /**
@@ -70,6 +68,8 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
     private lateinit var mContentAdapter: BaseRecyclerAdapter<Message, BaseViewHolder>
     /*Post Media Adapter*/
     private lateinit var mPostMediaAdapter: BaseRecyclerAdapter<Media, BaseViewHolder>
+    /*Files*/
+    lateinit var fileListerDialog: FileListerDialog
 
     /*LifeCycle*/
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -86,6 +86,11 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         setToolbarTitle(mChannelName)
         setupFollowedChannelsRecycler()
         setupContentRecycler()
+        //Files
+        fileListerDialog = FileListerDialog.createFileListerDialog(this)
+        fileListerDialog.setOnFileSelectedListener { file, path ->
+            controller.sendFile()
+        }
         //Controller
         controller.onCreate()
     }
@@ -403,9 +408,11 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         acm_drawer_broadcast.setOnClickListener {
 
         }
+        /*File*/
         acm_drawer_file.setOnClickListener {
-
+            fileListerDialog.show()
         }
+        /*Media*/
         acm_drawer_media.setOnClickListener {
             controller.keepSocketConnection(true)
             CameraControl.instance.pickImage(this,
@@ -413,6 +420,7 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
                     CameraControl.instance.requestCode(),
                     false)
         }
+        /*Post*/
         acm_drawer_post.setOnClickListener {
             controller.keepSocketConnection(true)
             val intent = Intent(this, CreatePostActivity::class.java)

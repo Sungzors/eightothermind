@@ -76,15 +76,15 @@ interface ChannelContract {
             fun onCreate()
 
             fun destroy()
+
+            /*String message*/
             fun sendMessage()
-            fun sendPost()
-            fun sendMedia()
+
+            /*File message*/
+            fun sendFile()
 
             /*Get Followed Channels*/
             fun getFollowedChannels(): MutableList<Channel>?
-
-            /*Create room*/
-            //fun createChannelRoom()
 
             /*Pull Chat History*/
             fun retrieveChatHistory()
@@ -92,7 +92,7 @@ interface ChannelContract {
             /*Chat History*/
             fun getMessages(): MutableList<Message>
 
-            /*Picture Intent*/
+            /*Picture Intent -> Post only media*/
             fun onPictureOnlyResult(requestCode: Int, resultCode: Int, data: Intent?)
 
             /*Create Post*/
