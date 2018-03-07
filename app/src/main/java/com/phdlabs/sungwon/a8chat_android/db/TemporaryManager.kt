@@ -1,7 +1,7 @@
 package com.phdlabs.sungwon.a8chat_android.db
 
-import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
+import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
 
 /**
@@ -45,4 +45,16 @@ class TemporaryManager {
         }
         return null
     }
+
+    val mMemberList = mutableListOf<Triple<Int, String, String>>()
+
+    fun isMemberChecked(userId: Int): Boolean {
+        for(member in mMemberList){
+            if(member.first==userId){
+                return true
+            }
+        }
+        return false
+    }
+
 }

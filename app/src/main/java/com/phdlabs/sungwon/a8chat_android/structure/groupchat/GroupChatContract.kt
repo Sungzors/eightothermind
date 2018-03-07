@@ -7,6 +7,7 @@ import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.structure.application.Application
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseController
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseView
+import com.phdlabs.sungwon.a8chat_android.structure.groupchat.groupinvite.GroupInviteActivity
 
 /**
  * Created by SungWon on 2/19/2018.
@@ -24,6 +25,21 @@ interface GroupChatContract {
 
             fun createGroupChat(data: GroupChatPostData)
 
+        }
+    }
+
+    interface Invite {
+        interface View : BaseView<Controller>{
+            val activity: GroupInviteActivity
+
+
+            fun refreshRecycler()
+        }
+        interface Controller: BaseController {
+            /*load contacts*/
+            fun loadContactsCheckCache()
+            /*Permissions*/
+            fun permissionResults(requestCode: Int, permissions: Array<out String>, grantResults: IntArray):Boolean
         }
     }
 

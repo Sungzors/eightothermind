@@ -90,7 +90,7 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
                 //todo: required profile action if needed
             } else if (requestCode == Constants.ContactItems.INVITE_CONTACTS_REQ_CODE) { //Invite Contact
                 //todo: required invite contact action if needed
-            } else if (requestCode == Constants.ChannelRequestCodes.CREATE_NEW_BACK_REQ_CODE) {
+            } else if (requestCode == Constants.RequestCodes.CREATE_NEW_BACK_REQ_CODE) {
                 //Refresh Lobby if coming back from Create New screen
                 mLobbyFragment.controller.setRefreshFlag(true)
                 am_bottom_tab_nav.setOnNavigationItemSelectedListener(null)
@@ -105,7 +105,7 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
                 //Set home button selected
                 am_bottom_tab_nav.setOnNavigationItemSelectedListener(null)
                 showTabs(false, true)
-            } else if (requestCode == Constants.ChannelRequestCodes.CREATE_NEW_BACK_REQ_CODE) {
+            } else if (requestCode == Constants.RequestCodes.CREATE_NEW_BACK_REQ_CODE) {
                 //Don't refreshChannels Lobby
                 mLobbyFragment.controller.setRefreshFlag(false)
                 //Set home button selected
@@ -224,7 +224,7 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
         /**Create New -> [CreateNewActivity]*/
             home_toolbar.toolbar_right_picture -> {
                 val createNewIntent = Intent(this, CreateNewActivity::class.java)
-                startActivityForResult(createNewIntent, Constants.ChannelRequestCodes.CREATE_NEW_BACK_REQ_CODE)
+                startActivityForResult(createNewIntent, Constants.RequestCodes.CREATE_NEW_BACK_REQ_CODE)
 
             }
         }

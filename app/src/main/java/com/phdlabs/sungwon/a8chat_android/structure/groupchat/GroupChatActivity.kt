@@ -153,7 +153,7 @@ class GroupChatActivity: CoreActivity(), GroupChatContract.View{
         }
         ac_drawer_channel.setOnClickListener {
             val intent = Intent(this, MyChannelsListActivity::class.java)
-            startActivityForResult(intent, Constants.ChannelRequestCodes.MY_CHANNELS_LIST)
+            startActivityForResult(intent, Constants.RequestCodes.MY_CHANNELS_LIST)
         }
         ac_drawer_contact.setOnClickListener {
 
@@ -614,7 +614,7 @@ class GroupChatActivity: CoreActivity(), GroupChatContract.View{
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         showProgress()
         when(requestCode){
-            Constants.ChannelRequestCodes.MY_CHANNELS_LIST -> {
+            Constants.RequestCodes.MY_CHANNELS_LIST -> {
                 if(data!= null){
                     controller.sendChannel(data.getIntExtra(Constants.IntentKeys.CHANNEL_ID, 0))
                 }

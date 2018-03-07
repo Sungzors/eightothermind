@@ -99,13 +99,14 @@
                         android:layout_marginStart="20dp"
                         android:layout_marginTop="20dp"
                         android:text="@string/add_people"
-                        android:drawableStart="@drawable/ic_add_blue"
+                        android:drawableStart="@drawable/ic_add_blue_nobg"
                         android:drawablePadding="10dp"/>
 
 
                 </RelativeLayout>
 
                 <View
+                    android:id="@+id/agc_divider"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginEnd="20dp"
@@ -121,7 +122,7 @@
                         android:id="@+id/agc_add_people_recycler"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        />
+                        android:layout_marginBottom="10dp"/>
                 </RelativeLayout>
 
             </LinearLayout>

@@ -433,11 +433,11 @@ class EventViewActivity : CoreActivity(), EventContract.ViewDetail.View {
         }
         ac_drawer_channel.setOnClickListener {
             val intent = Intent(this, MyChannelsListActivity::class.java)
-            startActivityForResult(intent, Constants.ChannelRequestCodes.MY_CHANNELS_LIST)
+            startActivityForResult(intent, Constants.RequestCodes.MY_CHANNELS_LIST)
         }
         ac_drawer_contact.setOnClickListener {
             val intent = Intent(this, MyChannelsListActivity::class.java)
-            startActivityForResult(intent, Constants.ChannelRequestCodes.MY_CHANNELS_LIST)
+            startActivityForResult(intent, Constants.RequestCodes.MY_CHANNELS_LIST)
         }
         ac_drawer_file.setOnClickListener {
             controller.sendFile()
@@ -471,7 +471,7 @@ class EventViewActivity : CoreActivity(), EventContract.ViewDetail.View {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         showProgress()
         when (requestCode) {
-            Constants.ChannelRequestCodes.MY_CHANNELS_LIST -> {
+            Constants.RequestCodes.MY_CHANNELS_LIST -> {
                 controller.sendChannel(data!!.getIntExtra(Constants.IntentKeys.CHANNEL_ID, 0))
                 controller.retrieveChatHistory()
                 ac_the_daddy_drawer.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED
