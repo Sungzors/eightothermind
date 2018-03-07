@@ -95,9 +95,6 @@ interface ChannelContract {
             /*Picture Intent*/
             fun onPictureOnlyResult(requestCode: Int, resultCode: Int, data: Intent?)
 
-            /*Post Picture*/
-            fun onPicturePostResult(requestCode: Int, resultCode: Int, data: Intent?)
-
             /*Create Post*/
             fun createPost(message: String?, filePaths: ArrayList<String>?)
 

@@ -57,7 +57,10 @@ interface CallerRx {
                               @Path("userId2") userId2: Int): Observable<MediaResponse>
 
     @POST("/messages/media")
-    fun postChannelPost(@Header(TOKEN) token: String, @Body multipartBody: MultipartBody, @Query("post") post: Boolean): Observable<ChannelPostResponse>
+    fun postChannelMediaPost(@Header(TOKEN) token: String, @Body multipartBody: MultipartBody, @Query("post") post: Boolean): Observable<ChannelPostResponse>
+
+    @POST("/messages/string")
+    fun postChannelMessagePost(@Header(TOKEN) token: String, @Body message: SendMessageStringData, @Query("post") post: Boolean): Observable<ChannelPostResponse>
 
     /*CHANNEL*/
     //Create new channel

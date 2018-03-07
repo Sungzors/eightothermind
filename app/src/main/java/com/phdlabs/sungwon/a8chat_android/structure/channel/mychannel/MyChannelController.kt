@@ -3,24 +3,14 @@ package com.phdlabs.sungwon.a8chat_android.structure.channel.mychannel
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
-import android.widget.Toast
 import com.github.nkzawa.emitter.Emitter
 import com.github.nkzawa.socketio.client.Socket
 import com.phdlabs.sungwon.a8chat_android.api.data.SendMessageStringData
-import com.phdlabs.sungwon.a8chat_android.api.event.MediaEvent
-import com.phdlabs.sungwon.a8chat_android.api.event.MessageSentEvent
-import com.phdlabs.sungwon.a8chat_android.api.event.RoomHistoryEvent
-import com.phdlabs.sungwon.a8chat_android.api.response.ErrorResponse
-import com.phdlabs.sungwon.a8chat_android.api.response.RoomHistoryResponse
-import com.phdlabs.sungwon.a8chat_android.api.rest.Caller
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
-import com.phdlabs.sungwon.a8chat_android.api.utility.Callback8
 import com.phdlabs.sungwon.a8chat_android.api.utility.GsonHolder
-import com.phdlabs.sungwon.a8chat_android.db.EventBusManager
 import com.phdlabs.sungwon.a8chat_android.db.channels.ChannelsManager
 import com.phdlabs.sungwon.a8chat_android.db.room.RoomManager
 import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
@@ -35,10 +25,8 @@ import io.reactivex.schedulers.Schedulers
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import org.greenrobot.eventbus.EventBus
 import org.json.JSONException
 import org.json.JSONObject
-import retrofit2.Response
 import java.io.ByteArrayOutputStream
 
 /**
@@ -59,12 +47,9 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
     /*Messages*/
     private var mMessages = mutableListOf<Message>()
 
-    /*Network*/
-    private lateinit var mCaller: Caller
-    private lateinit var mEventBus: EventBus
-
     /*Flags*/
     private var mKeepSocketConnection: Boolean = false
+    private var mIsSocketConnected: Boolean = false
 
     /*Initialize*/
     init {
@@ -74,9 +59,6 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
 
     /*LifeCycle*/
     override fun onCreate() {
-        //Callers
-        mCaller = Rest.getInstance().caller
-        mEventBus = EventBusManager.instance().mDataEventBus
         /*Room Alert*/
         mRoomId = mView.getRoomId
         //Message History (API)
@@ -127,15 +109,31 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
     override fun sendMessage() {
         UserManager.instance.getCurrentUser { success, user, token ->
             if (success) {
-                val call = mCaller.sendMessageString(
-                        token?.token,
-                        SendMessageStringData(user?.id!!, mView.getMessageET, mRoomId)
-                )
-                call.enqueue(object : Callback8<ErrorResponse, MessageSentEvent>(mEventBus) {
-                    override fun onSuccess(data: ErrorResponse?) {
-                        mView.getMessageETObject.setText("")
+                user?.let {
+                    token?.token?.let {
+                        if (!mView.getMessageET.isBlank()) {
+                            //Create String-Post without media
+                            val call = Rest.getInstance().getmCallerRx().postChannelMessagePost(
+                                    it,
+                                    SendMessageStringData(user.id!!, mView.getMessageET, mView.getRoomId),
+                                    false
+                            )
+                            call.subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe({ response ->
+                                        if (response.isSuccess) {
+                                            println("Message: " + response.messageInfo?.message)
+                                        } else if (response.isError) {
+                                            mView.showError("Could not post")
+                                        }
+                                    }, { throwable ->
+                                        mView.showError(throwable.localizedMessage)
+                                    })
+                        } else {
+                            mView.showError("Try typing something")
+                        }
                     }
-                })
+                }
             }
         }
     }
@@ -146,36 +144,20 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
     override fun sendMedia() {
     }
 
-    //Follow A channel
-//    override fun createChannelRoom() {
-//        UserManager.instance.getCurrentUser { success, user, token ->
-//            if (success) {
-//                val call = mCaller.followChannel(
-//                        token?.token,
-//                        mView.getChannelId,
-//                        FollowUserData(arrayOf(user?.id!!))
-//                )
-//                call.enqueue(object : Callback8<RoomResponse, ChannelFollowEvent>(mEventBus) {
-//                    override fun onSuccess(data: RoomResponse?) {
-//                        mEventBus.post(ChannelFollowEvent())
-//                        mRoomId = data!!.room!!.id!!
-//                    }
-//                })
-//            }
-//        }
-//    }
-
     /*SOCKETS*/
     private fun socketOn() {
         //Socket
-        mSocket.on(Constants.SocketKeys.UPDATE_ROOM, onUpdateRoom)
-        mSocket.on(Constants.SocketKeys.UPDATE_CHAT_STRING, onNewMessage)
-        mSocket.on(Constants.SocketKeys.UPDATE_CHAT_CHANNEL, onNewMessage)
-        mSocket.on(Constants.SocketKeys.UPDATE_CHAT_CONTACT, onNewMessage)
-        mSocket.on(Constants.SocketKeys.UPDATE_CHAT_LOCATION, onNewMessage)
-        mSocket.on(Constants.SocketKeys.UPDATE_CHAT_MEDIA, onNewMessage)
-        mSocket.on(Constants.SocketKeys.UPDATE_CHAT_POST, onNewMessage)
-        mSocket.on(Constants.SocketKeys.ON_ERROR, onError)
+        if (!mIsSocketConnected) {
+            mSocket.on(Constants.SocketKeys.UPDATE_ROOM, onUpdateRoom)
+            mSocket.on(Constants.SocketKeys.UPDATE_CHAT_STRING, onNewMessage)
+            mSocket.on(Constants.SocketKeys.UPDATE_CHAT_CHANNEL, onNewMessage)
+            mSocket.on(Constants.SocketKeys.UPDATE_CHAT_CONTACT, onNewMessage)
+            mSocket.on(Constants.SocketKeys.UPDATE_CHAT_LOCATION, onNewMessage)
+            mSocket.on(Constants.SocketKeys.UPDATE_CHAT_MEDIA, onNewMessage)
+            mSocket.on(Constants.SocketKeys.UPDATE_CHAT_POST, onNewMessage)
+            mSocket.on(Constants.SocketKeys.ON_ERROR, onError)
+            mIsSocketConnected = true
+        }
     }
 
     private fun socketOff() {
@@ -188,6 +170,7 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
             mSocket.off(Constants.SocketKeys.UPDATE_CHAT_MEDIA)
             mSocket.off(Constants.SocketKeys.UPDATE_CHAT_POST)
             mSocket.off(Constants.SocketKeys.ON_ERROR)
+            mIsSocketConnected = false
         }
     }
 
@@ -222,9 +205,13 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
             val data: JSONObject = args[0] as JSONObject
             val message = GsonHolder.Companion.instance.get()!!.fromJson(data.toString(), Message::class.java)
             if (message.roomId == mRoomId) {
-                mMessages.add(0, message)
-                mView.updateContentRecycler()
+                if (mMessages.count() > 0) {
+                    if (mMessages[0].id != message.id) {
+                        mMessages.add(0, message)
+                    }
+                }
             }
+            mView.updateContentRecycler()
         })
     }
 
@@ -240,66 +227,41 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
     /*Media*/
     override fun onPictureOnlyResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode != Activity.RESULT_CANCELED) {
-            mView.showProgress()
-            //Set image in UI
-            val imageUrl = CameraControl.instance.getImagePathFromResult(mView.getActivity, requestCode, resultCode, data)
-            //Upload Image
-            val imageBitmap = CameraControl.instance.getImageFromResult(mView.getActivity, requestCode, resultCode, data)
-            imageBitmap.let {
-                UserManager.instance.getCurrentUser { success, user, token ->
-                    if (success) {
-                        val bos = ByteArrayOutputStream()
-                        it!!.compress(Bitmap.CompressFormat.PNG, 0, bos)
-                        val bitmapData = bos.toByteArray()
-                        val formBody = MultipartBody.Builder().setType(MultipartBody.FORM)
-                                .addFormDataPart("userId", user?.id.toString())
-                                .addFormDataPart("roomId", mRoomId.toString())
-                                .addFormDataPart("file", "8_" + System.currentTimeMillis(), RequestBody.create(MediaType.parse("image/png"), bitmapData))
-                                .build()
-                        val call = Rest.getInstance().caller.sendMessageMedia(token?.token, formBody)
-                        call.enqueue(object : Callback8<ErrorResponse, MediaEvent>(EventBusManager.instance().mDataEventBus) {
-                            override fun onSuccess(data: ErrorResponse?) {
-                                mView.hideProgress()
-                                Toast.makeText(mView.getContext(), "Picture uploaded", Toast.LENGTH_SHORT).show()
+            UserManager.instance.getCurrentUser { isSuccess, user, token ->
+                if (isSuccess) {
+                    user?.let {
+                        token?.token?.let {
+                            val formBodyBuilder = MultipartBody.Builder().setType(MultipartBody.FORM)
+                                    .addFormDataPart("userId", user.id!!.toString())
+                                    .addFormDataPart("roomId", mView.getRoomId.toString())
+                            //Create Media-Post BodyPart & Call
+                            val imageBitmap = CameraControl.instance.getImageFromResult(mView.getActivity, requestCode, resultCode, data)
+                            imageBitmap?.let {
+                                val bos = ByteArrayOutputStream()
+                                it.compress(Bitmap.CompressFormat.PNG, 0, bos)
+                                val bitmapData = bos.toByteArray()
+                                formBodyBuilder.addFormDataPart("file[0]",
+                                        "8_" + System.currentTimeMillis(),
+                                        RequestBody.create(MediaType.parse("image/png"), bitmapData))
                             }
-                        })
-                    }
-                }
-            }
-            mView.hideProgress()
-        }
-    }
+                            val formBody = formBodyBuilder.build()
+                            val call = Rest.getInstance().getmCallerRx().postChannelMediaPost(token.token!!, formBody, false)
+                            call.subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe({ response ->
+                                        if (response.isSuccess) {
+                                            println("Message: " + response.messageInfo?.message)
+                                        } else if (response.isError) {
+                                            mView.showError("Could not post")
+                                        }
+                                    }, { throwable ->
+                                        mView.showError(throwable.localizedMessage)
+                                    })
 
-    override fun onPicturePostResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode != Activity.RESULT_CANCELED) {
-            mView.showProgress()
-            //Set image in UI
-            val imageUrl = CameraControl.instance.getImagePathFromResult(mView.getActivity, requestCode, resultCode, data)
-            //Upload Image
-            val imageBitmap = CameraControl.instance.getImageFromResult(mView.getActivity, requestCode, resultCode, data)
-            imageBitmap.let {
-                UserManager.instance.getCurrentUser { success, user, token ->
-                    if (success) {
-                        val bos = ByteArrayOutputStream()
-                        it!!.compress(Bitmap.CompressFormat.PNG, 0, bos)
-                        val bitmapData = bos.toByteArray()
-                        val formBody = MultipartBody.Builder().setType(MultipartBody.FORM)
-                                .addFormDataPart("userId", user?.id.toString())
-                                .addFormDataPart("roomId", mRoomId.toString())
-                                .addFormDataPart("file", "8_" + System.currentTimeMillis(), RequestBody.create(MediaType.parse("image/png"), bitmapData))
-                                .addFormDataPart("message", mView.getMessageET)
-                                .build()
-                        val call = Rest.getInstance().caller.sendMessageMedia(token?.token, formBody)
-                        call.enqueue(object : Callback8<ErrorResponse, MediaEvent>(EventBusManager.instance().mDataEventBus) {
-                            override fun onSuccess(data: ErrorResponse?) {
-                                mView.hideProgress()
-                                Toast.makeText(mView.getContext(), "Picture uploaded", Toast.LENGTH_SHORT).show()
-                            }
-                        })
+                        }
                     }
                 }
             }
-            mView.hideProgress()
         }
     }
 
@@ -324,35 +286,6 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
                 mView.hideProgress()
             }
         })
-//        UserManager.instance.getCurrentUser { success, user, token ->
-//            if (success) {
-//                val call = mCaller.getChannelPosts(
-//                        token?.token,
-//                        mRoomId,
-//                        user?.id!!,
-//                        null
-//                )
-//                call.enqueue(object : Callback8<RoomHistoryResponse, RoomHistoryEvent>(mEventBus) {
-//                    override fun onSuccess(data: RoomHistoryResponse?) {
-//                        mMessages.clear()
-//                        //TODO: need to add read first then unread always, but check for unread null instead.
-//                        for (item in data!!.messages!!.allMessages!!) {
-//                            if (item.roomId == mRoomId) {
-//                                mMessages.add(0, item)
-//                            }
-//                        }
-//                        mView.updateContentRecycler()
-//                        mView.hideProgress()
-//                    }
-//
-//                    override fun onError(response: Response<RoomHistoryResponse>?) {
-//                        super.onError(response)
-//                        Log.e(TAG, response!!.message())
-//                        mView.hideProgress()
-//                    }
-//                })
-//            }
-//        }
     }
 
     override fun getMessages(): MutableList<Message> = mMessages
@@ -368,33 +301,53 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
                                 .addFormDataPart("message", message ?: "")
                                 .addFormDataPart("userId", user.id!!.toString())
                                 .addFormDataPart("roomId", mView.getRoomId.toString())
-                        //Create Post BodyPart
+                        //Create Media-Post BodyPart & Call
                         filePaths?.let {
-                            for (mediaFile in it) {
-                                val imageBitmap = MediaStore.Images.Media.getBitmap(mView.getActivity.contentResolver, Uri.parse(mediaFile))
-                                imageBitmap?.let {
-                                    val bos = ByteArrayOutputStream()
-                                    it.compress(Bitmap.CompressFormat.PNG, 0, bos)
-                                    val bitmapData = bos.toByteArray()
-                                    formBodyBuilder.addFormDataPart("file[${filePaths.indexOf(mediaFile)}]",
-                                            "8_" + System.currentTimeMillis(),
-                                            RequestBody.create(MediaType.parse("image/png"), bitmapData))
+                            if (it.count() > 0) {
+                                for (mediaFile in it) {
+                                    val imageBitmap = MediaStore.Images.Media.getBitmap(mView.getActivity.contentResolver, Uri.parse(mediaFile))
+                                    imageBitmap?.let {
+                                        val bos = ByteArrayOutputStream()
+                                        it.compress(Bitmap.CompressFormat.PNG, 0, bos)
+                                        val bitmapData = bos.toByteArray()
+                                        formBodyBuilder.addFormDataPart("file[${filePaths.indexOf(mediaFile)}]",
+                                                "8_" + System.currentTimeMillis(),
+                                                RequestBody.create(MediaType.parse("image/png"), bitmapData))
+                                    }
                                 }
+                                val formBody = formBodyBuilder.build()
+                                val call = Rest.getInstance().getmCallerRx().postChannelMediaPost(token.token!!, formBody, true)
+                                call.subscribeOn(Schedulers.io())
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .subscribe({ response ->
+                                            if (response.isSuccess) {
+                                                println("Message: " + response.messageInfo?.message)
+                                            } else if (response.isError) {
+                                                mView.showError("Could not post")
+                                            }
+                                        }, { throwable ->
+                                            mView.showError(throwable.localizedMessage)
+                                        })
+                            } else {
+                                //Create String-Message
+                                val call = Rest.getInstance().getmCallerRx().postChannelMessagePost(
+                                        token.token!!,
+                                        SendMessageStringData(user.id!!, message, mView.getRoomId),
+                                        false
+                                )
+                                call.subscribeOn(Schedulers.io())
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .subscribe({ response ->
+                                            if (response.isSuccess) {
+                                                println("Message: " + response.messageInfo?.message)
+                                            } else if (response.isError) {
+                                                mView.showError("Could not post")
+                                            }
+                                        }, { throwable ->
+                                            mView.showError(throwable.localizedMessage)
+                                        })
                             }
                         }
-                        val formBody = formBodyBuilder.build()
-                        val call = Rest.getInstance().getmCallerRx().postChannelPost(it, formBody, true)
-                        call.subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe({ response ->
-                                    if (response.isSuccess) {
-                                        println("Message: " + response.messageInfo?.message)
-                                    } else if (response.isError) {
-                                        mView.showError("Could not post")
-                                    }
-                                }, { throwable ->
-                                    mView.showError(throwable.localizedMessage)
-                                })
                     }
                 }
             }

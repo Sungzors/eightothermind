@@ -304,7 +304,7 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         commentCount.text = data.comments.toString()
     }
 
-    //Post Media Recycler (Mutliple Images)
+    //Post Media Recycler (Multiple Images)
     private fun setupMediaRecycler(mediaArray: RealmList<Media>?, recyclerView: RecyclerView, message: Message, pageIndicator: OverflowPagerIndicator) {
         mPostMediaAdapter = object : BaseRecyclerAdapter<Media, BaseViewHolder>() {
             override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: Media?, position: Int, type: Int) {
@@ -407,6 +407,7 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
 
         }
         acm_drawer_media.setOnClickListener {
+            controller.keepSocketConnection(true)
             CameraControl.instance.pickImage(this,
                     "Choose a media",
                     CameraControl.instance.requestCode(),
@@ -431,6 +432,7 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         //Picture
         if (requestCode == CameraControl.instance.requestCode()) {
             controller.onPictureOnlyResult(requestCode, resultCode, data)
+            controller.keepSocketConnection(false)
         }
         //Back from creating a post
         else if (requestCode == Constants.ChannelRequestCodes.CREATE_NEW_POST_REQ_CODE) {
