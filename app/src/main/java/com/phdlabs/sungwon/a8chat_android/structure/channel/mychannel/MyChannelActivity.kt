@@ -16,7 +16,6 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.phdlabs.sungwon.a8chat_android.R
-import com.phdlabs.sungwon.a8chat_android.db.TemporaryManager
 import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
 import com.phdlabs.sungwon.a8chat_android.model.media.Media
@@ -34,6 +33,8 @@ import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.squareup.picasso.Picasso
+import com.vicpin.krealmextensions.queryFirst
+import com.vicpin.krealmextensions.save
 import cz.intik.overflowindicator.OverflowPagerIndicator
 import cz.intik.overflowindicator.SimpleSnapHelper
 import io.realm.RealmList
@@ -190,19 +191,38 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
                     2 -> {
                         bindPostViewHolder(viewHolder!!, data!!)
                     }
+                /*Message Post*/
+                    3 -> {
+                        bindMessagePostViewHolder(viewHolder!!, data!!)
+                    }
                 }
             }
 
             override fun getItemType(t: Message?): Int {
+                //Check if it's a Message Post
                 if (t!!.mediaArray == null) {
+                    t.post?.let {
+                        return if (it) {
+                            3 //Message Post
+                        } else {
+                            0 //Message
+                        }
+                    }
                     return 0 //Message
-                } else if (t.message == null) {
+                } else if (t.message == null) { // Media shared -> No post
                     return 1 //Media
                 } else {
-                    if (t.mediaArray?.size!! > 0) {
+                    if (t.mediaArray?.size!! > 0) { // Post
+                        t.post?.let {
+                            return if (it) {
+                                2 //Post
+                            } else {
+                                0 //Message
+                            }
+                        }
                         return 2 //Post
                     } else {
-                        return 0
+                        return 0 //Message
                     }
                 }
             }
@@ -224,6 +244,12 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
                 /*Post*/
                     2 -> {
                         return object : BaseViewHolder(R.layout.card_view_post_media, inflater!!, parent) {
+
+                        }
+                    }
+                /*Message Post*/
+                    3 -> {
+                        return object : BaseViewHolder(R.layout.card_view_post_message_no_media, inflater!!, parent) {
 
                         }
                     }
@@ -269,7 +295,7 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         postDate.text = formatter.format(data.createdAt)
     }
 
-    /*Post*/
+    /*Post W/Media*/
     private fun bindPostViewHolder(viewHolder: BaseViewHolder, data: Message) {
         //Post Owner
         val picasso = Picasso.with(this)
@@ -286,7 +312,7 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         val commentButton = viewHolder.get<ImageView>(R.id.cvpm_comment_button)
         val postText = viewHolder.get<TextView>(R.id.cvpm_post_text)
         val likeCount = viewHolder.get<TextView>(R.id.cvpm_like_count)
-        val commentCount = viewHolder.get<TextView>(R.id.cvpm_comment_count)
+        val commentCount = viewHolder.get<TextView>(R.id.cvpmnm_comment_count)
         //Load info
         picasso.load(data.user!!.avatar).transform(CircleTransform()).into(posterPic)
         posterName.text = data.getUserName()
@@ -297,17 +323,79 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         //Like Post
         likeButton.setOnClickListener {
             //            controller.likePost(data.id!!)
-            //TODO
+            //TODO -> Only like the post
         }
-        //Comment on post
+        //Transition to Full Post View to see the comments
         commentButton.setOnClickListener {
-            //            controller.commentPost(data.id!!)
-            //TODO
+            val messageQuery = Message().queryFirst { it.equalTo("id", data.id) }
+            if (messageQuery == null) {
+                data.save()
+            }
+            //Transition to Post Show Activity
+            val intent = Intent(context, ChannelPostShowActivity::class.java)
+            intent.putExtra(Constants.IntentKeys.MESSAGE_ID, data.id)
+            intent.putExtra(Constants.IntentKeys.CHANNEL_NAME, mChannelName)
+            intent.putExtra(Constants.IntentKeys.INCLUDES_MEDIA, true)
+            startActivityForResult(intent, Constants.ChannelRequestCodes.VIEW_POST_REQ_CODE)
         }
         postText.text = data.message
         likeCount.text = data.likes.toString()
         commentCount.text = data.comments.toString()
     }
+
+    /*Post W/Message*/
+    private fun bindMessagePostViewHolder(viewHolder: BaseViewHolder, data: Message) {
+        //Post Owner
+        val picasso = Picasso.with(this)
+        val posterPic = viewHolder.get<ImageView>(R.id.cvpmnm_poster_pic)
+        val posterName = viewHolder.get<TextView>(R.id.cvpmnm_poster_name)
+        val postDate = viewHolder.get<TextView>(R.id.cvpmnm_post_date)
+        //Content
+        val postText = viewHolder.get<TextView>(R.id.cvpmnm_post_text)
+        //Actions
+        val likeButton = viewHolder.get<ImageView>(R.id.cvpmnm_like_button)
+        val commentButton = viewHolder.get<ImageView>(R.id.cvpmnm_comment_button)
+        val likeCount = viewHolder.get<TextView>(R.id.cvpmnm_like_count)
+        val commentCount = viewHolder.get<TextView>(R.id.cvpmnm_comment_count)
+        //Load Info
+        data.user?.avatar?.let {
+            picasso.load(it).transform(CircleTransform()).into(posterPic)
+        }
+        posterName.text = data.getUserName()
+        //Date
+        val formatter = SimpleDateFormat("EEE - h:mm aaa")
+        postDate.text = formatter.format(data.createdAt)
+        //Like Post
+        likeButton.setOnClickListener {
+            //TODO: Only like the post
+        }
+        //Transition to Full Post View to see the comments
+        commentButton.setOnClickListener {
+            val messageQuery = Message().queryFirst { it.equalTo("id", data.id) }
+            if (messageQuery == null) {
+                data.save()
+            }
+            //Transition to Post Show Activity
+            val intent = Intent(context, ChannelPostShowActivity::class.java)
+            intent.putExtra(Constants.IntentKeys.MESSAGE_ID, data.id)
+            intent.putExtra(Constants.IntentKeys.CHANNEL_NAME, mChannelName)
+            intent.putExtra(Constants.IntentKeys.INCLUDES_MEDIA, false)
+            startActivityForResult(intent, Constants.ChannelRequestCodes.VIEW_POST_REQ_CODE)
+        }
+        //Post
+        postText.text = data.message
+        data.likes?.let {
+            likeCount.text = it.toString()
+        } ?: run {
+            likeCount.text = "0"
+        }
+        data.comments?.let {
+            commentCount.text = it.toString()
+        } ?: run {
+            commentCount.text = "0"
+        }
+    }
+
 
     //Post Media Recycler (Multiple Images)
     private fun setupMediaRecycler(mediaArray: RealmList<Media>?, recyclerView: RecyclerView, message: Message, pageIndicator: OverflowPagerIndicator) {
@@ -328,11 +416,16 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
                     override fun addClicks(views: ViewMap?) {
                         views?.click {
                             controller.keepSocketConnection(true)
-                            TemporaryManager.instance.mMessageList.clear()
-                            TemporaryManager.instance.mMessageList.add(message)
+                            //Save || Update @see Realm
+                            val messageQuery = Message().queryFirst { it.equalTo("id", message.id) }
+                            if (messageQuery == null) {
+                                message.save()
+                            }
+                            //Transition to Post Show Activity
                             val intent = Intent(context, ChannelPostShowActivity::class.java)
                             intent.putExtra(Constants.IntentKeys.MESSAGE_ID, message.id)
                             intent.putExtra(Constants.IntentKeys.CHANNEL_NAME, mChannelName)
+                            intent.putExtra(Constants.IntentKeys.INCLUDES_MEDIA, true)
                             startActivityForResult(intent, Constants.ChannelRequestCodes.VIEW_POST_REQ_CODE)
                         }
                         super.addClicks(views)

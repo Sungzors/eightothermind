@@ -337,11 +337,11 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
                                             mView.showError(throwable.localizedMessage)
                                         })
                             } else {
-                                //Create String-Message
+                                //Create String-Message Post
                                 val call = Rest.getInstance().getmCallerRx().postChannelMessagePost(
                                         token.token!!,
                                         SendMessageStringData(user.id!!, message, mView.getRoomId),
-                                        false
+                                        true
                                 )
                                 call.subscribeOn(Schedulers.io())
                                         .observeOn(AndroidSchedulers.mainThread())

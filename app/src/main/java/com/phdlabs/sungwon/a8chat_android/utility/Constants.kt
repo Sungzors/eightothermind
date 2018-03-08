@@ -28,6 +28,7 @@ object Constants {
         const val FROM_CONTACTS = "from_contacts"
         const val MEDIA_POST = "media_post"
         const val MEDIA_POST_MESSAGE = "media_post_message"
+        const val INCLUDES_MEDIA = "includes_media"
     }
 
     /**

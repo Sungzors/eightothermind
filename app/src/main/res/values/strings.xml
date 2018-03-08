@@ -146,6 +146,8 @@
     <string name="post">Post</string>
     <string name="remove_media">Remove media</string>
     <string name="create_a_post">Create a Post</string>
+    <string name="name">Name</string>
+    <string name="date">Date</string>
 
 
 </resources>

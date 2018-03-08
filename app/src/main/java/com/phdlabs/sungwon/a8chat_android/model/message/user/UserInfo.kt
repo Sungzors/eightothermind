@@ -29,4 +29,23 @@ open class UserInfo : RealmObject() {
     @Expose
     var profile_picture_string: String? = null
 
+    //todo: Missing languages spoken Realm List... not sure if we should map that?
+
+    /**
+     * [hasFullName]
+     * Verifies full name availability
+     * @return Pair<Bool,String?> where
+     * @Bool availability of full name
+     * @String? Full name
+     * */
+    fun hasFullName(): Pair<Boolean, String?> {
+        val firstName: String = this.first_name ?: ""
+        val lastName: String = this.last_name ?: ""
+        if (firstName.isBlank() || lastName.isBlank()) {
+            return Pair(false, null)
+        }
+        val fullName: String = firstName + " " + lastName
+        return Pair(true, fullName)
+    }
+
 }

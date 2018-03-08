@@ -1,14 +1,11 @@
 package com.phdlabs.sungwon.a8chat_android.api.rest
 
 import com.phdlabs.sungwon.a8chat_android.api.data.*
-import com.phdlabs.sungwon.a8chat_android.api.response.GroupChatPostResponse
-import com.phdlabs.sungwon.a8chat_android.api.response.PrivateChatResponse
-import com.phdlabs.sungwon.a8chat_android.api.response.RoomHistoryResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.*
 import com.phdlabs.sungwon.a8chat_android.api.response.channels.follow.ChannelFollowResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.createEvent.EventPostResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.createChannel.ChannelResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.media.MediaResponse
-import com.phdlabs.sungwon.a8chat_android.api.response.UserDataResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.channels.MyChannelRoomsResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.channels.post.ChannelPostResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.contacts.ContactsInvitedResponse
@@ -79,6 +76,16 @@ interface CallerRx {
     @GET("/channels/{roomId}/user/{userId}/messages")
     fun getChannelPosts(@Header(TOKEN) token: String, @Path("roomId") roomId: Int,
                         @Path("userId") userId: Int, @Query("messageId") messageId: String): Observable<RoomHistoryResponse>
+
+    /**
+     * [getPostComments]
+     * Get last 40 comments from a Channel Post
+     * @Query used for pagination
+     * */
+    @GET("/comments/{messageId}/user/{userId}")
+    fun getPostComments(@Header(TOKEN) token: String, @Path("messageId") messageId: Int,
+                        @Path("userId") userId: Int, @Query("commentId") commentId: String): Observable<CommentArrayResponse>
+
     /*EVENTS*/
     /**[postEvents]
      * @Post new event from current user

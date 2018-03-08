@@ -4,6 +4,7 @@ import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
 import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
 import com.phdlabs.sungwon.a8chat_android.model.channel.ChannelShowNest
+import com.phdlabs.sungwon.a8chat_android.model.channel.Comment
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.vicpin.krealmextensions.*
@@ -198,6 +199,38 @@ class ChannelsManager {
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * [getPostComments]
+     * Retrieve last 40 comments from a Channel Post
+     * @return List<Comment>
+     * @see Realm
+     * */
+    fun getPostComments(messageId: Int, callback: (Pair<List<Comment>?, String?>) -> Unit) {
+        UserManager.instance.getCurrentUser { success, user, token ->
+            if (success) {
+                user?.let {
+                    token?.token?.let {
+                        var call = Rest.getInstance().getmCallerRx().getPostComments(it, messageId, user.id!!, "")
+                        call.subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe({ response ->
+                                    if (response.isSuccess) {
+                                        response.comments?.let {
+                                            callback(Pair(it.toList(), null))
+                                        }
+                                    } else if (response.isError) {
+                                        callback(Pair(null, "Could not download comments"))
+                                    }
+                                }, { throwable ->
+                                    callback(Pair(null, throwable.localizedMessage))
+                                })
+                    }
+                }
+            }
+
         }
     }
 

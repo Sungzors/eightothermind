@@ -114,9 +114,6 @@ public interface Caller {
     @PATCH("/comments/{commentId}/edit")
     Call<CommentResponse> patchComment(@Header(TOKEN) String token, @Path("commentId") int commentId, @Body CommentPatchData data);
 
-    @GET("/comments/{messageId}/user/{userId}")
-    Call<CommentArrayResponse> getComments(@Header(TOKEN) String token, @Path("messageId") int messageId, @Path("userId") int userId, @Query("commentId") String commentId);
-
     @GET("/events/{roomId}/user/{userId}/messages")
     Call<RoomHistoryResponse> getEventHistory(@Header(TOKEN) String token, @Path("roomId") int roomId, @Path("userId") int userId);
 }

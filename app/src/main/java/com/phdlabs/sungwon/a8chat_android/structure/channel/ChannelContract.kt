@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.widget.EditText
 import com.phdlabs.sungwon.a8chat_android.api.data.ChannelPostData
+import com.phdlabs.sungwon.a8chat_android.model.channel.Comment
 import com.phdlabs.sungwon.a8chat_android.model.channel.ChannelShowNest
 import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
 import com.phdlabs.sungwon.a8chat_android.model.media.Media
@@ -50,11 +51,15 @@ interface ChannelContract {
             val getChannelId: Int?
             val getMessageId: Int?
             fun onLike()
+            fun updateCommentsRecycler()
         }
 
         interface Controller : BaseController {
-            fun likePost(messageId: Int?, userId: Int?)
+            fun likePost(messageId: Int?)
             fun commentPost(messageId: String)
+            fun pullPostComments(messageId: Int)
+            fun getPostComments(): ArrayList<Comment>
+
         }
     }
 
