@@ -1,11 +1,14 @@
 package com.phdlabs.sungwon.a8chat_android.structure.channel.postshow
 
 import android.app.Activity
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -13,6 +16,7 @@ import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.model.channel.Comment
 import com.phdlabs.sungwon.a8chat_android.model.media.Media
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
+import com.phdlabs.sungwon.a8chat_android.structure.application.Application
 import com.phdlabs.sungwon.a8chat_android.structure.channel.ChannelContract
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
@@ -30,7 +34,6 @@ import kotlinx.android.synthetic.main.activity_channel_post_show.*
  */
 class ChannelPostShowActivity : CoreActivity(), ChannelContract.PostShow.View {
 
-
     /*Controller*/
     override lateinit var controller: ChannelContract.PostShow.Controller
 
@@ -43,8 +46,12 @@ class ChannelPostShowActivity : CoreActivity(), ChannelContract.PostShow.View {
     private var mChannelName = ""
     private var mMessageId: Int = 0
     private var mMessage: Message? = Message()
-    private var mComments = mutableListOf<Comment>()
     private var mIncludesMedia = false
+
+    /*Computed Properties*/
+    override val get8Application: Application
+        get() = application as Application
+    override val getActivity: ChannelPostShowActivity = this
 
     /*Adapters*/
     private var mMediaRecyclerAdapter: BaseRecyclerAdapter<Media, BaseViewHolder>? = null
@@ -202,15 +209,42 @@ class ChannelPostShowActivity : CoreActivity(), ChannelContract.PostShow.View {
         acps_like_button.setOnClickListener {
             /*User safe type for liking post*/
             controller.likePost(mMessageId)
+
         }
         acps_comment_button.setOnClickListener {
-            controller.commentPost("")
-            Toast.makeText(this, "To be implemented", Toast.LENGTH_SHORT).show()
+            //Validate post comment
+            isValidPost { comment ->
+                if (comment.isBlank()) {
+                    Toast.makeText(context, "Empty comment", Toast.LENGTH_SHORT).show()
+                } else {
+                    //Create comment
+                    controller.commentPost(mMessageId.toString(), comment)
+                }
+            }
         }
     }
 
-    override fun setUpRecycler() {
-
+    /**
+     * [isValidPost]
+     * Validates & Returns the comment message to be posted
+     * @callback Comment on Post
+     * */
+    private fun isValidPost(callback: (String) -> Unit) {
+        val alertDialog = AlertDialog.Builder(context)
+        val commentEditText = EditText(context)
+        commentEditText.minLines = 2
+        commentEditText.setPadding(10, 0 , 10, 0)
+        alertDialog.setMessage("Type something...")
+        alertDialog.setTitle("Comment")
+        alertDialog.setView(commentEditText)
+        alertDialog.setPositiveButton("publish") { p0, p1 ->
+            val comment = commentEditText.text.toString()
+            callback(comment)
+        }
+        alertDialog.setNegativeButton("cancel") { p0, p1 ->
+            callback("")
+        }
+        alertDialog.show()
     }
 
     override fun onLike() {

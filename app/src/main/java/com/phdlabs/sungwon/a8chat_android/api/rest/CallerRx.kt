@@ -15,7 +15,6 @@ import com.phdlabs.sungwon.a8chat_android.api.response.eightEvents.EventRetrieva
 import com.phdlabs.sungwon.a8chat_android.api.response.favorite.PrivateChatFavoriteResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.room.EnterLeaveRoomResponse
 import com.phdlabs.sungwon.a8chat_android.api.rest.Caller.TOKEN
-import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.phdlabs.sungwon.a8chat_android.model.user.User
 import com.phdlabs.sungwon.a8chat_android.model.user.registration.RegistrationData
 import io.reactivex.Observable
@@ -85,6 +84,14 @@ interface CallerRx {
     @GET("/comments/{messageId}/user/{userId}")
     fun getPostComments(@Header(TOKEN) token: String, @Path("messageId") messageId: Int,
                         @Path("userId") userId: Int, @Query("commentId") commentId: String): Observable<CommentArrayResponse>
+
+    /**
+     * [commentOnChannelPost]
+     * Post a comment in a Message flagged as a Post
+     * */
+    @POST("/comments/{messageId}")
+    fun commentOnChannelPost(@Header(TOKEN) token: String, @Path("messageId") messageId: String,
+                             @Body commentPostData: CommentPostData): Observable<CommentArrayResponse>
 
     /*EVENTS*/
     /**[postEvents]

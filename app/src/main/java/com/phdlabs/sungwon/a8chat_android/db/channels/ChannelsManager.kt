@@ -1,5 +1,6 @@
 package com.phdlabs.sungwon.a8chat_android.db.channels
 
+import com.phdlabs.sungwon.a8chat_android.api.data.CommentPostData
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
 import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
@@ -7,6 +8,7 @@ import com.phdlabs.sungwon.a8chat_android.model.channel.ChannelShowNest
 import com.phdlabs.sungwon.a8chat_android.model.channel.Comment
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
+import com.phdlabs.sungwon.a8chat_android.model.user.User
 import com.vicpin.krealmextensions.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -232,6 +234,38 @@ class ChannelsManager {
             }
 
         }
+    }
+
+    /**
+     * [commentOnChannelsPost]
+     * @return Pair<Array of comments, ErrorMessage>
+     * This API call is used inside the [ChannelPostShowController] with the Socket channel function
+     * */
+    fun commentOnChannelsPost(messageId: String, comment: String, callback: (Pair<List<Comment>?, String?>) -> Unit) {
+        UserManager.instance.getCurrentUser { success, user, token ->
+            if (success) {
+                user?.let {
+                    token?.token?.let {
+                        val call = Rest.getInstance().getmCallerRx().commentOnChannelPost(
+                                it, messageId,
+                                CommentPostData(user.id.toString(), comment)
+                        )
+                        call.subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe({ response ->
+                                    if (response.isSuccess) {
+                                        callback(Pair(response.comments?.toList(), null))
+                                    } else if (response.isError) {
+                                        callback(Pair(null, "Could not download comments"))
+                                    }
+                                }, { throwable ->
+                                    callback(Pair(null, throwable.localizedMessage))
+                                })
+                    }
+                }
+            }
+        }
+
     }
 
     /**

@@ -45,6 +45,18 @@ object Constants {
         const val UPDATE_CHAT_POST = "update-chat-post"
         const val USER_ENTERED_8 = "user-entered-8"
         const val ON_ERROR = "on-error"
+        const val COMMENT = "comment"
+        const val EDIT_COMMENT = "edit-comment"
+    }
+
+    /**
+     * [SocketTypes]
+     * */
+    object SocketTypes {
+        const val PRIVATE_CHAT = "privateChat"
+        const val GROUP_CHAT = "groupChat"
+        const val CHANNEL = "channel"
+        const val EVENT = "event"
     }
 
     /**

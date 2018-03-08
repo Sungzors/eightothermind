@@ -13,6 +13,7 @@ import com.phdlabs.sungwon.a8chat_android.structure.application.Application
 import com.phdlabs.sungwon.a8chat_android.structure.channel.create.ChannelCreateActivity
 import com.phdlabs.sungwon.a8chat_android.structure.channel.createPost.CreatePostActivity
 import com.phdlabs.sungwon.a8chat_android.structure.channel.mychannel.MyChannelActivity
+import com.phdlabs.sungwon.a8chat_android.structure.channel.postshow.ChannelPostShowActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseController
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseView
 
@@ -47,7 +48,8 @@ interface ChannelContract {
 
     interface PostShow {
         interface View : BaseView<Controller> {
-            fun setUpRecycler()
+            val get8Application: Application
+            val getActivity: ChannelPostShowActivity
             val getChannelId: Int?
             val getMessageId: Int?
             fun onLike()
@@ -56,7 +58,7 @@ interface ChannelContract {
 
         interface Controller : BaseController {
             fun likePost(messageId: Int?)
-            fun commentPost(messageId: String)
+            fun commentPost(messageId: String, comment: String)
             fun pullPostComments(messageId: Int)
             fun getPostComments(): ArrayList<Comment>
 
