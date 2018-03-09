@@ -43,6 +43,7 @@ object Constants {
         const val UPDATE_CHAT_CHANNEL = "update-chat-channel"
         const val UPDATE_CHAT_CONTACT = "update-chat-contact"
         const val UPDATE_CHAT_POST = "update-chat-post"
+        const val UPDATE_CHAT_FILE = "update-chat-file"
         const val USER_ENTERED_8 = "user-entered-8"
         const val ON_ERROR = "on-error"
         const val COMMENT = "comment"

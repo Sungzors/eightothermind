@@ -31,6 +31,7 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.FileOutputStream
 
 /**
  * Created by SungWon on 12/20/2017.
@@ -149,10 +150,30 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
             if (success) {
                 user?.let {
                     token?.token?.let {
-                        //TODO: Create multipart body
-                        //TODO: Create Query
+                        //Single file upload only supported
+                        val formBodyBuilder = MultipartBody.Builder().setType(MultipartBody.FORM)
+                                .addFormDataPart("userId", user.id!!.toString())
+                                .addFormDataPart("roomId", mView.getRoomId.toString())
+                                .addFormDataPart("file[0]",
+                                        "8_" + System.currentTimeMillis(),
+                                        RequestBody.create(MediaType.parse("application/*"), file))
+                                .build()
 
-                        //val call = Rest.getInstance().getmCallerRx().shareFile(it, )
+                        val call = Rest.getInstance().getmCallerRx().shareFile(
+                                it, formBodyBuilder, null, false, null, null)
+                        call.subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe({ response ->
+                                    if (response.isSuccess) {
+                                        response?.newlyCreatedMsg?.let {
+                                            println("File Sent: " + it)
+                                        }
+                                    } else {
+                                        mView.showError("Can't upload file at this time")
+                                    }
+                                }, { throwable ->
+                                    mView.showError(throwable.localizedMessage)
+                                })
                     }
                 }
             }
@@ -170,6 +191,7 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
             mSocket.on(Constants.SocketKeys.UPDATE_CHAT_LOCATION, onNewMessage)
             mSocket.on(Constants.SocketKeys.UPDATE_CHAT_MEDIA, onNewMessage)
             mSocket.on(Constants.SocketKeys.UPDATE_CHAT_POST, onNewMessage)
+            mSocket.on(Constants.SocketKeys.UPDATE_CHAT_FILE, onNewMessage)
             mSocket.on(Constants.SocketKeys.COMMENT, onNewMessage)
             mSocket.on(Constants.SocketKeys.ON_ERROR, onError)
             mIsSocketConnected = true
@@ -185,6 +207,7 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
             mSocket.off(Constants.SocketKeys.UPDATE_CHAT_LOCATION)
             mSocket.off(Constants.SocketKeys.UPDATE_CHAT_MEDIA)
             mSocket.off(Constants.SocketKeys.UPDATE_CHAT_POST)
+            mSocket.off(Constants.SocketKeys.UPDATE_CHAT_FILE)
             mSocket.off(Constants.SocketKeys.COMMENT)
             mSocket.off(Constants.SocketKeys.ON_ERROR)
             mIsSocketConnected = false
@@ -258,7 +281,7 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
                                 val bitmapData = bos.toByteArray()
                                 formBodyBuilder.addFormDataPart("file[0]",
                                         "8_" + System.currentTimeMillis(),
-                                        RequestBody.create(MediaType.parse("image/png"), bitmapData))
+                                        RequestBody.create(MediaType.parse("image/*"), bitmapData))
                             }
                             val formBody = formBodyBuilder.build()
                             val call = Rest.getInstance().getmCallerRx().postChannelMediaPost(token.token!!, formBody, false)
@@ -329,7 +352,7 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
                                         val bitmapData = bos.toByteArray()
                                         formBodyBuilder.addFormDataPart("file[${filePaths.indexOf(mediaFile)}]",
                                                 "8_" + System.currentTimeMillis(),
-                                                RequestBody.create(MediaType.parse("image/png"), bitmapData))
+                                                RequestBody.create(MediaType.parse("image/*"), bitmapData))
                                     }
                                 }
                                 val formBody = formBodyBuilder.build()

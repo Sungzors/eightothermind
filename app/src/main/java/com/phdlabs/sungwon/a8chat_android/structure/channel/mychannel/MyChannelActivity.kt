@@ -195,10 +195,21 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
                     3 -> {
                         bindMessagePostViewHolder(viewHolder!!, data!!)
                     }
+                /*Sharing Files*/
+                    4 -> {
+                        bindSharedFiledViewHolder(viewHolder!!, data!!)
+                    }
                 }
             }
 
             override fun getItemType(t: Message?): Int {
+
+                //Check for files
+                t?.files?.let {
+                    if (it.count() > 0) {
+                        return 4
+                    }
+                }
 
                 //Check for media
                 t?.mediaArray?.let {
@@ -260,6 +271,12 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
                 /*Message Post*/
                     3 -> {
                         return object : BaseViewHolder(R.layout.card_view_post_message_no_media, inflater!!, parent) {
+
+                        }
+                    }
+                /*Files Post*/
+                    4 -> {
+                        return object : BaseViewHolder(R.layout.card_view_files, inflater!!, parent) {
 
                         }
                     }
@@ -463,6 +480,38 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
             commentCount.text = it.toString()
         } ?: run {
             commentCount.text = "0"
+        }
+    }
+
+    /*File Sharing*/
+    fun bindSharedFiledViewHolder(viewHolder: BaseViewHolder, data: Message) {
+        //Post Owner
+        val picasso = Picasso.with(this)
+        val posterPic = viewHolder.get<ImageView>(R.id.cvf_poster_pic)
+        val posterName = viewHolder.get<TextView>(R.id.cvf_poster_name)
+        val postDate = viewHolder.get<TextView>(R.id.cvf_post_date)
+        val fileName = viewHolder.get<TextView>(R.id.cvf_file_name)
+        val container = viewHolder.get<LinearLayout>(R.id.cvf_file_container)
+        //Load Info
+        data.user?.avatar?.let {
+            picasso.load(it).transform(CircleTransform()).into(posterPic)
+        }
+        posterName.text = data.getUserName()
+
+        //Date
+        val formatter = SimpleDateFormat("EEE - h:mm aaa")
+        postDate.text = formatter.format(data.createdAt)
+        //File
+        data.files?.let {
+            if (it.count() > 0) {
+                //TODO: Check out the fileName & see hos it's posted
+                fileName.text = it.get(0)?.file_string ?: "n/a"
+            }
+        }
+        //Open File
+        container.setOnClickListener {
+            //TODO: Open File Preview Screen
+            println("TAPPED FILE: " + fileName.text)
         }
     }
 

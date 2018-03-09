@@ -150,6 +150,7 @@
     <string name="date">Date</string>
     <string name="comment">comment...</string>
     <string name="cancel">cancel</string>
+    <string name="file_name">File Name</string>
 
 
 </resources>

@@ -14,6 +14,7 @@ import com.phdlabs.sungwon.a8chat_android.api.response.contacts.ContactsPostResp
 import com.phdlabs.sungwon.a8chat_android.api.response.contacts.UserFriendsResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.eightEvents.EventRetrievalResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.favorite.PrivateChatFavoriteResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.media.FileResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.room.EnterLeaveRoomResponse
 import com.phdlabs.sungwon.a8chat_android.api.rest.Caller.TOKEN
 import com.phdlabs.sungwon.a8chat_android.model.user.User
@@ -71,8 +72,8 @@ interface CallerRx {
      * */
     @POST("/messages/file")
     fun shareFile(@Header(TOKEN) token: String, @Body multipartBody: MultipartBody,
-                  @Query("selfDestruct") selfDestruct: Boolean, @Query("post") post: Boolean,
-                  @Query("schedule") schedule: Boolean, @Query("minutes") minutes: Int)
+                  @Query("selfDestruct") selfDestruct: Boolean?, @Query("post") post: Boolean?,
+                  @Query("schedule") schedule: Boolean?, @Query("minutes") minutes: Int?): Observable<FileResponse>
 
     /*CHANNEL*/
     //Create new channel
