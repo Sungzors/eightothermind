@@ -3,10 +3,12 @@ package com.phdlabs.sungwon.a8chat_android.structure.groupchat
 import android.content.Intent
 import android.widget.EditText
 import com.phdlabs.sungwon.a8chat_android.api.data.GroupChatPostData
+import com.phdlabs.sungwon.a8chat_android.model.media.Media
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.structure.application.Application
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseController
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseView
+import com.phdlabs.sungwon.a8chat_android.structure.groupchat.create.GroupCreateActivity
 import com.phdlabs.sungwon.a8chat_android.structure.groupchat.groupinvite.GroupInviteActivity
 
 /**
@@ -15,6 +17,13 @@ import com.phdlabs.sungwon.a8chat_android.structure.groupchat.groupinvite.GroupI
 interface GroupChatContract {
     interface Create {
         interface View : BaseView<Controller>{
+            val getActivity: GroupCreateActivity
+
+            fun setChannelImage(filePath: String)
+
+            fun setMedia(media: Media)
+
+            fun onCreateGroup(name: String, id: Int, pic: String)
 
         }
         interface Controller : BaseController {

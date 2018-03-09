@@ -2,20 +2,19 @@ package com.phdlabs.sungwon.a8chat_android.api.rest
 
 import com.phdlabs.sungwon.a8chat_android.api.data.*
 import com.phdlabs.sungwon.a8chat_android.api.response.GroupChatPostResponse
-import com.phdlabs.sungwon.a8chat_android.api.response.channels.follow.ChannelFollowResponse
-import com.phdlabs.sungwon.a8chat_android.api.response.createEvent.EventPostResponse
-import com.phdlabs.sungwon.a8chat_android.api.response.createChannel.ChannelResponse
-import com.phdlabs.sungwon.a8chat_android.api.response.media.MediaResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.UserDataResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.channels.MyChannelRoomsResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.channels.follow.ChannelFollowResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.contacts.ContactsInvitedResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.contacts.ContactsPostResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.contacts.UserFriendsResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.createChannel.ChannelResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.createEvent.EventPostResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.eightEvents.EventRetrievalResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.favorite.PrivateChatFavoriteResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.media.MediaResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.room.EnterLeaveRoomResponse
 import com.phdlabs.sungwon.a8chat_android.api.rest.Caller.TOKEN
-import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.phdlabs.sungwon.a8chat_android.model.user.User
 import com.phdlabs.sungwon.a8chat_android.model.user.registration.RegistrationData
 import io.reactivex.Observable
@@ -114,6 +113,7 @@ interface CallerRx {
     @POST("/groupChats")
     fun createGroupChat(@Header(TOKEN) token: String,
                         @Body data: GroupChatPostData): Observable<GroupChatPostResponse>
+
     /*NOTIFICATIONS*/
 
     /**
