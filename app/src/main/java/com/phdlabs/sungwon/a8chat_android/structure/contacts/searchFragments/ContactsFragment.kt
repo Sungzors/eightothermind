@@ -141,7 +141,7 @@ class ContactsFragment : CoreFragment() {
                             intent.putExtra(Constants.IntentKeys.PARTICIPANT_ID, contact.id)
                             intent.putExtra(Constants.IntentKeys.FROM_CONTACTS, true)
                             var roomId: Int? = 0
-                            val availableRooms = Room().query { it.findAll() }
+                            val availableRooms = Room().query { findAll() }
                             for (roomElement in availableRooms) {
                                 //Check if this is a private chat
                                 roomElement.chatType?.let {

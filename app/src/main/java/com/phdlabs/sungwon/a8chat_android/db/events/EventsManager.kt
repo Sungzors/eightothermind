@@ -54,17 +54,17 @@ class EventsManager {
                         val allEventsEight: ArrayList<EventsEight> = arrayListOf()
                         //Query For all events
                         val createdEvents = EventsEight().query {
-                            it.equalTo("association",
+                            equalTo("association",
                                     Constants.EventAssociation.EVENT_CREATED)
                         }
                         allEventsEight += createdEvents
                         val fullAccessEvents = EventsEight().query {
-                            it.equalTo("association",
+                            equalTo("association",
                                     Constants.EventAssociation.EVENT_FULL_PARTICIPANT)
                         }
                         allEventsEight += fullAccessEvents
                         val readOnly = EventsEight().query {
-                            it.equalTo("association",
+                            equalTo("association",
                                     Constants.EventAssociation.EVENT_READ_ONLY)
                         }
                         allEventsEight += readOnly

@@ -2,6 +2,7 @@ package com.phdlabs.sungwon.a8chat_android.api.rest
 
 import com.phdlabs.sungwon.a8chat_android.api.data.*
 import com.phdlabs.sungwon.a8chat_android.api.response.*
+import com.phdlabs.sungwon.a8chat_android.api.response.channels.LikeResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.channels.follow.ChannelFollowResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.createEvent.EventPostResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.createChannel.ChannelResponse
@@ -58,6 +59,21 @@ interface CallerRx {
     @POST("/messages/string")
     fun postChannelMessagePost(@Header(TOKEN) token: String, @Body message: SendMessageStringData, @Query("post") post: Boolean): Observable<ChannelPostResponse>
 
+    /*FILES*/
+
+    /**
+     * [shareFile]
+     * Can be used to share a single or multiple files
+     * @Query selfDestruct -> Message self destruction after an ammount of time
+     * @Query post -> Determines if this is a post on a channel
+     * @Query schedule -> A channel File post can be scheduled to be posted in a date
+     * @Query minutes -> Number of minutes before the message self destructs
+     * */
+    @POST("/messages/file")
+    fun shareFile(@Header(TOKEN) token: String, @Body multipartBody: MultipartBody,
+                  @Query("selfDestruct") selfDestruct: Boolean, @Query("post") post: Boolean,
+                  @Query("schedule") schedule: Boolean, @Query("minutes") minutes: Int)
+
     /*CHANNEL*/
     //Create new channel
     @POST("/channels")
@@ -75,6 +91,11 @@ interface CallerRx {
     @GET("/channels/{roomId}/user/{userId}/messages")
     fun getChannelPosts(@Header(TOKEN) token: String, @Path("roomId") roomId: Int,
                         @Path("userId") userId: Int, @Query("messageId") messageId: String): Observable<RoomHistoryResponse>
+
+    @PATCH("/channels/{messageId}/like/{userId}/user")
+    fun likePost(@Header(TOKEN) token: String, @Path("messageId") messageId: Int,
+                 @Path("userId") userId: Int, @Query("unlike") unlike: Boolean?): Observable<LikeResponse>
+
 
     /**
      * [getPostComments]

@@ -20,6 +20,8 @@ import com.phdlabs.sungwon.a8chat_android.model.user.UserRooms
 import com.phdlabs.sungwon.a8chat_android.structure.channel.ChannelContract
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
+import com.vicpin.krealmextensions.queryFirst
+import com.vicpin.krealmextensions.save
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import okhttp3.MediaType
@@ -28,6 +30,7 @@ import okhttp3.RequestBody
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
+import java.io.File
 
 /**
  * Created by SungWon on 12/20/2017.
@@ -62,7 +65,7 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
         /*Room Alert*/
         mRoomId = mView.getRoomId
         //Message History (API)
-        retrieveChatHistory()
+        retrieveChatHistory(true)
     }
 
     /*LifeCycle*/
@@ -70,6 +73,8 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
     }
 
     override fun resume() {
+        retrieveChatHistory(false)
+        //retrieveChatHistory(false)
         //Socket io ON
         socketOn()
         //Api -> Enter Room
@@ -88,6 +93,13 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
 
 
     override fun pause() {
+
+    }
+
+    override fun stop() {
+    }
+
+    override fun destroy() {
         //Socket io OFF
         socketOff()
         //Api -> Leave Room
@@ -96,13 +108,6 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
                 mUserRoom = it
             }
         })
-    }
-
-    override fun stop() {
-    }
-
-    override fun destroy() {
-
     }
 
     /*String Messages posted from Drawer*/
@@ -139,12 +144,15 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
     }
 
     /*Send File*/
-    override fun sendFile() {
+    override fun sendFile(file: File, path: String) {
         UserManager.instance.getCurrentUser { success, user, token ->
             if (success) {
                 user?.let {
                     token?.token?.let {
-                        //TODO: Send File -> Create RX Call
+                        //TODO: Create multipart body
+                        //TODO: Create Query
+
+                        //val call = Rest.getInstance().getmCallerRx().shareFile(it, )
                     }
                 }
             }
@@ -162,6 +170,7 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
             mSocket.on(Constants.SocketKeys.UPDATE_CHAT_LOCATION, onNewMessage)
             mSocket.on(Constants.SocketKeys.UPDATE_CHAT_MEDIA, onNewMessage)
             mSocket.on(Constants.SocketKeys.UPDATE_CHAT_POST, onNewMessage)
+            mSocket.on(Constants.SocketKeys.COMMENT, onNewMessage)
             mSocket.on(Constants.SocketKeys.ON_ERROR, onError)
             mIsSocketConnected = true
         }
@@ -176,6 +185,7 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
             mSocket.off(Constants.SocketKeys.UPDATE_CHAT_LOCATION)
             mSocket.off(Constants.SocketKeys.UPDATE_CHAT_MEDIA)
             mSocket.off(Constants.SocketKeys.UPDATE_CHAT_POST)
+            mSocket.off(Constants.SocketKeys.COMMENT)
             mSocket.off(Constants.SocketKeys.ON_ERROR)
             mIsSocketConnected = false
         }
@@ -192,18 +202,16 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
             var userAdded: String? = null
             var userLeaving: String? = null
             try {
-//                mRoomId = data.getInt("roomId")
                 userAdded = data.getString("userAdded")
                 userLeaving = data.getString("userLeaving")
             } catch (e: JSONException) {
                 Log.e(TAG, e.message)
             }
-            //retrieveChatHistory()
             if (userAdded != null) {
-
+                //TODO
             }
             if (userLeaving != null) {
-
+                //TODO
             }
         })
     }
@@ -278,15 +286,16 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
             ChannelsManager.instance.getAllFollowedChannels()?.toMutableList()
 
     /*Chat History*/
-    override fun retrieveChatHistory() {
+    override fun retrieveChatHistory(refresh: Boolean) {
         mView.showProgress()
-        ChannelsManager.instance.getChannelPosts(mRoomId, null, { channelPosts ->
+        ChannelsManager.instance.getChannelPosts(refresh, mRoomId, null, { channelPosts ->
             channelPosts.second?.let {
                 mView.showError(it)
                 mView.hideProgress()
             } ?: run {
                 channelPosts.first?.let {
                     if (it.count() > 0) {
+                        mMessages.clear()
                         it.filter { it.roomId == mRoomId }.forEach { mMessages.add(0, it) }
                         mView.updateContentRecycler()
                     }
@@ -360,6 +369,10 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
                 }
             }
         }
+    }
 
+    //Like
+    override fun likePost(messageId: Int, unlike: Boolean) {
+        ChannelsManager.instance.likeUnlikePost(messageId, unlike)
     }
 }

@@ -16,6 +16,7 @@ import com.phdlabs.sungwon.a8chat_android.structure.channel.mychannel.MyChannelA
 import com.phdlabs.sungwon.a8chat_android.structure.channel.postshow.ChannelPostShowActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseController
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseView
+import java.io.File
 
 /**
  * Created by SungWon on 11/30/2017.
@@ -52,15 +53,15 @@ interface ChannelContract {
             val getActivity: ChannelPostShowActivity
             val getChannelId: Int?
             val getMessageId: Int?
-            fun onLike()
             fun updateCommentsRecycler()
         }
 
         interface Controller : BaseController {
-            fun likePost(messageId: Int?)
             fun commentPost(messageId: String, comment: String)
             fun pullPostComments(messageId: Int)
             fun getPostComments(): ArrayList<Comment>
+            /*Like Post*/
+            fun likePost(messageId: Int, unlike: Boolean)
 
         }
     }
@@ -88,13 +89,13 @@ interface ChannelContract {
             fun sendMessage()
 
             /*File message*/
-            fun sendFile()
+            fun sendFile(file: File, path: String)
 
             /*Get Followed Channels*/
             fun getFollowedChannels(): MutableList<Channel>?
 
             /*Pull Chat History*/
-            fun retrieveChatHistory()
+            fun retrieveChatHistory(refresh: Boolean)
 
             /*Chat History*/
             fun getMessages(): MutableList<Message>
@@ -104,6 +105,9 @@ interface ChannelContract {
 
             /*Create Post*/
             fun createPost(message: String?, filePaths: ArrayList<String>?)
+
+            /*Like Post*/
+            fun likePost(messageId: Int, unlike: Boolean)
 
             /*Keep Channel-Room socket connection if opening a post*/
             fun keepSocketConnection(keepConnection: Boolean)

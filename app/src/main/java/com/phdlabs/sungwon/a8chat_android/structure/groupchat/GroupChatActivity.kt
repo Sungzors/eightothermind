@@ -56,8 +56,8 @@ class GroupChatActivity: CoreActivity(), GroupChatContract.View{
         mChatPic = intent.getStringExtra(Constants.IntentKeys.CHAT_PIC)
         mChatName = intent.getStringExtra(Constants.IntentKeys.CHAT_NAME)
         mRoomId = intent.getIntExtra(Constants.IntentKeys.ROOM_ID, -1)
-        Room().queryFirst { query ->
-            query.equalTo("id", mRoomId) }?.
+        Room().queryFirst {
+            equalTo("id", mRoomId) }?.
                 let {
                     mRoom = it
                 }

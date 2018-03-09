@@ -31,6 +31,7 @@ import java.util.*
 
 /**
  * Created by SungWon on 10/17/2017.
+ * Updated by JPAM on 03/09/2018
  */
 class LobbyFragment : CoreFragment(), LobbyContract.View {
 
@@ -125,7 +126,7 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
         channelName.text = data.name
         profilePic.setOnClickListener {
             val intent = Intent(activity, MyChannelActivity::class.java)
-            intent.putExtra(Constants.IntentKeys.CHANNEL_ID, data.id.toString())
+            intent.putExtra(Constants.IntentKeys.CHANNEL_ID, data.id)
             intent.putExtra(Constants.IntentKeys.CHANNEL_NAME, data.name)
             intent.putExtra(Constants.IntentKeys.ROOM_ID, data.room_id?.toInt())
             intent.putExtra(Constants.IntentKeys.OWNER_ID, data.user_creator_id!!.toInt())
@@ -233,7 +234,7 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
         channelName.text = data.name
         profilePic.setOnClickListener {
             val intent = Intent(activity, MyChannelActivity::class.java)
-            intent.putExtra(Constants.IntentKeys.CHANNEL_ID, data.id.toString())
+            intent.putExtra(Constants.IntentKeys.CHANNEL_ID, data.id)
             intent.putExtra(Constants.IntentKeys.CHANNEL_NAME, data.name)
             intent.putExtra(Constants.IntentKeys.ROOM_ID, data.room_id?.toInt())
             intent.putExtra(Constants.IntentKeys.OWNER_ID, data.user_creator_id?.toInt())

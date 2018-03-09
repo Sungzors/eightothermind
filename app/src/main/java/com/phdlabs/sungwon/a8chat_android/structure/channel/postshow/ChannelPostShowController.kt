@@ -98,23 +98,9 @@ class ChannelPostShowController(val mView: ChannelContract.PostShow.View) : Chan
         })
     }
 
-    /*Like the Post*/
-    override fun likePost(messageId: Int?) {
-//        UserManager.instance.getCurrentUser { success, user, token ->
-//            if (success) {
-//                val call = mCaller.likePost(token?.token, mView.getMessageId!!, user?.id!!)
-//                call.enqueue(object : Callback8<ErrorResponse, PostLikeEvent>(mEventBus) {
-//                    override fun onSuccess(data: ErrorResponse?) {
-//                        mView.onLike()
-//                        Toast.makeText(mView.getContext()!!, "Post Liked!", Toast.LENGTH_SHORT).show()
-//                    }
-//
-//                    override fun onError(response: Response<ErrorResponse>?) {
-//                        Toast.makeText(mView.getContext()!!, "You have already liked this post!", Toast.LENGTH_SHORT).show()
-//                    }
-//                })
-//            }
-//        }
+    /*Like Post*/
+    override fun likePost(messageId: Int, unlike: Boolean) {
+        ChannelsManager.instance.likeUnlikePost(messageId, unlike)
     }
 
 

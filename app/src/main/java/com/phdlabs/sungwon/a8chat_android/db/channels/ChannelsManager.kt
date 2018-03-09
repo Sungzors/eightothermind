@@ -7,6 +7,7 @@ import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
 import com.phdlabs.sungwon.a8chat_android.model.channel.ChannelShowNest
 import com.phdlabs.sungwon.a8chat_android.model.channel.Comment
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
+import com.phdlabs.sungwon.a8chat_android.model.message.liked.LikedMessage
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.phdlabs.sungwon.a8chat_android.model.user.User
 import com.vicpin.krealmextensions.*
@@ -44,7 +45,7 @@ class ChannelsManager {
                 user?.let {
                     if (refresh) { //API Query & caching
                         //Clear my cached "Channels"
-                        Channel().delete { it.equalTo("user_creator_id", user.id) }
+                        Channel().delete { equalTo("user_creator_id", user.id) }
                         //Get Data
                         token?.token?.let {
                             //Which user
@@ -72,7 +73,7 @@ class ChannelsManager {
                                                 }
                                                 //Callback with Realm Query
                                                 callback(Pair((Channel().query {
-                                                    it.equalTo("user_creator_id", userInfoId)
+                                                    equalTo("user_creator_id", userInfoId)
                                                 }), null))
                                             }
                                         } else if (response.isError) {
@@ -85,11 +86,11 @@ class ChannelsManager {
                     } else { //Local query
                         userId?.let {
                             callback(Pair((Channel().query {
-                                it.equalTo("user_creator_id", userId)
+                                equalTo("user_creator_id", userId)
                             }), null))
                         } ?: run {
                             callback(Pair((Channel().query {
-                                it.equalTo("user_creator_id", user.id)
+                                equalTo("user_creator_id", user.id)
                             }), null))
                         }
                     }
@@ -175,29 +176,35 @@ class ChannelsManager {
      * @return Pair<List<Message>?, String?> == Pair<PostsList, ErrorMessage>
      * @see Realm
      * */
-    fun getChannelPosts(roomId: Int, query: String?, callback: (Pair<List<Message>?, String?>) -> Unit) {
+    fun getChannelPosts(refresh: Boolean, roomId: Int, query: String?, callback: (Pair<List<Message>?, String?>) -> Unit) {
         UserManager.instance.getCurrentUser { isSuccess, user, token ->
             if (isSuccess) {
                 user?.let {
                     token?.token?.let {
-                        val call = Rest.getInstance().getmCallerRx().getChannelPosts(
-                                it,
-                                roomId, user.id!!,
-                                query ?: ""
-                        )
-                        call.subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe({ response ->
-                                    if (response.isSuccess) { //Success
-                                        response.messages?.allMessages?.let {
-                                            callback(Pair(it.toList(), null))
+                        if (refresh) {
+                            val call = Rest.getInstance().getmCallerRx().getChannelPosts(
+                                    it,
+                                    roomId, user.id!!,
+                                    query ?: ""
+                            )
+                            call.subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe({ response ->
+                                        if (response.isSuccess) { //Success
+                                            response.messages?.allMessages?.let {
+                                                callback(Pair(it.toList(), null))
+                                                it.saveAll()
+                                            }
+                                        } else if (response.isError) { //Error
+                                            callback(Pair(null, "No posts found"))
                                         }
-                                    } else if (response.isError) { //Error
-                                        callback(Pair(null, "No posts found"))
-                                    }
-                                }, { throwable ->
-                                    callback(Pair(null, throwable.localizedMessage))
-                                })
+                                    }, { throwable ->
+                                        callback(Pair(null, throwable.localizedMessage))
+                                    })
+                        } else {
+                            //Local Query
+                            callback(Pair(getChannelMessages(roomId), null))
+                        }
                     }
                 }
             }
@@ -269,6 +276,49 @@ class ChannelsManager {
     }
 
     /**
+     * [likeUnlikePost]
+     * Like or Unlike a Post[Message] inside a Channel
+     * @param messageId -> Message to be liked || unliked
+     * @param unlike -> Indicate if it's an unlike
+     * @Query Boolean to indicate like || unlike
+     * */
+    fun likeUnlikePost(messageId: Int, unlike: Boolean) {
+        UserManager.instance.getCurrentUser { success, user, token ->
+            if (success) {
+                user?.let {
+                    token?.token?.let {
+                        if (unlike) {
+                            val call = Rest.getInstance().getmCallerRx().likePost(it, messageId, user.id!!, unlike)
+                            call.subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe({ response ->
+                                        if (response.isSuccess) {
+                                            println("Message: " + response.responseMsg)
+                                        }
+
+                                    }, {
+                                        println("Error liking messsage: " + it.localizedMessage)
+                                    })
+                        } else {
+                            val call = Rest.getInstance().getmCallerRx().likePost(it, messageId, user.id!!, null)
+                            call.subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe({ response ->
+                                        if (response.isSuccess) {
+                                            println("Message: " + response.responseMsg)
+                                        }
+
+                                    }, {
+                                        println("Error liking messsage: " + it.localizedMessage)
+                                    })
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * [updateRoom]
      * Used to update room information on pulled [Channel]
      * @see [getUserChannels]
@@ -306,8 +356,8 @@ class ChannelsManager {
      * Popular Channels
      * */
     fun getPopularChannels(): List<Channel>? {
-        return Channel().query { channels ->
-            channels.equalTo("isPopular", true)
+        return Channel().query {
+            equalTo("isPopular", true)
         }
     }
 
@@ -315,9 +365,9 @@ class ChannelsManager {
      * All the channels I Follow
      * */
     fun getAllFollowedChannels(): List<Channel>? {
-        return Channel().query { channels ->
-            channels.equalTo("iFollow", true)
-            channels.equalTo("isPopular", false)
+        return Channel().query {
+            equalTo("iFollow", true)
+            equalTo("isPopular", false)
         }
     }
 
@@ -330,10 +380,10 @@ class ChannelsManager {
      * Unpopular & Unread Followed Channels
      * */
     private fun getCachedUnpopularUnreadFollowedChannels(): List<Channel>? {
-        return Channel().query { channels ->
-            channels.equalTo("iFollow", true)
-            channels.equalTo("isPopular", false)
-            channels.equalTo("unread_messages", true)
+        return Channel().query {
+            equalTo("iFollow", true)
+            equalTo("isPopular", false)
+            equalTo("unread_messages", true)
         }
     }
 
@@ -341,10 +391,22 @@ class ChannelsManager {
      * Unpopular & Read Followed Channels
      * */
     private fun getCachedUnpopularReadFollowedChannels(): List<Channel>? {
-        return Channel().query { channels ->
-            channels.equalTo("iFollow", true)
-            channels.equalTo("isPopular", false)
-            channels.equalTo("unread_messages", false)
+        return Channel().query {
+            equalTo("iFollow", true)
+            equalTo("isPopular", false)
+            equalTo("unread_messages", false)
+        }
+    }
+
+
+    /**
+     * [getChannelMessages]
+     * Used for reading and updating local post & channel's messages copy
+     * Primarily used to manage likes & comments within [MyChannelActivity] & [ChannelPostShowActivity]
+     * */
+    fun getChannelMessages(roomId: Int): List<Message>? {
+        return Message().query {
+            equalTo("roomId", roomId)
         }
     }
 

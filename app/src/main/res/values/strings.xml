@@ -148,6 +148,8 @@
     <string name="create_a_post">Create a Post</string>
     <string name="name">Name</string>
     <string name="date">Date</string>
+    <string name="comment">comment...</string>
+    <string name="cancel">cancel</string>
 
 
 </resources>

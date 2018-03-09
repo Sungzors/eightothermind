@@ -2,7 +2,6 @@ package com.phdlabs.sungwon.a8chat_android.structure.channel.postshow
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.content.DialogInterface
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
@@ -25,6 +24,7 @@ import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseViewHolder
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform
 import com.squareup.picasso.Picasso
 import com.vicpin.krealmextensions.queryFirst
+import com.vicpin.krealmextensions.save
 import cz.intik.overflowindicator.SimpleSnapHelper
 import kotlinx.android.synthetic.main.activity_channel_post_show.*
 
@@ -84,6 +84,7 @@ class ChannelPostShowActivity : CoreActivity(), ChannelContract.PostShow.View {
     override fun onPause() {
         super.onPause()
         controller.pause()
+        mMessage?.save()
     }
 
     override fun onStop() {
@@ -97,7 +98,7 @@ class ChannelPostShowActivity : CoreActivity(), ChannelContract.PostShow.View {
         //Retrieve Message
         mMessageId = intent.getIntExtra(Constants.IntentKeys.MESSAGE_ID, 0)
         if (mMessageId != 0) {
-            mMessage = Message().queryFirst { it.equalTo("id", mMessageId) }
+            mMessage = Message().queryFirst { equalTo("id", mMessageId) }
             controller.pullPostComments(mMessageId)
         }
         mChannelName = intent.getStringExtra(Constants.IntentKeys.CHANNEL_NAME) ?: ""
@@ -136,10 +137,10 @@ class ChannelPostShowActivity : CoreActivity(), ChannelContract.PostShow.View {
         //Post Message
         acps_post_text.text = mMessage?.message ?: ""
         acps_message.text = mMessage?.message ?: ""
-        //Comment Count
-        acps_like_count.text = mMessage?.likes.toString()
         //Post Count
         acps_comment_count.text = mMessage?.comments.toString()
+        //Comment Count
+        acps_like_count.text = mMessage?.likes.toString()
         //UI Control -> Post with || without media
         mMessage?.mediaArray?.let {
             if (it.count() > 0) {
@@ -156,6 +157,7 @@ class ChannelPostShowActivity : CoreActivity(), ChannelContract.PostShow.View {
                 acps_post_text.visibility = View.GONE
             }
         }
+
     }
 
     private fun setupCommentsRecycler() {
@@ -203,14 +205,51 @@ class ChannelPostShowActivity : CoreActivity(), ChannelContract.PostShow.View {
         mCommentRecyclerAdapter?.clear()
         mCommentRecyclerAdapter?.setItems(controller.getPostComments())
         mCommentRecyclerAdapter?.notifyDataSetChanged()
+        acps_comment_count.text = controller.getPostComments().count().toString()
     }
 
     private fun setUpClickers() {
-        acps_like_button.setOnClickListener {
-            /*User safe type for liking post*/
-            controller.likePost(mMessageId)
 
+        /*Like*/
+        var liked = false
+        mMessage?.userLiked?.let {
+            if (it) {
+                //Liked
+                acps_like_button.background = getDrawable(R.drawable.ic_like)
+                liked = true
+            } else {
+                //Not Liked
+                acps_like_button.background = getDrawable(R.drawable.like_empty)
+                liked = false
+            }
         }
+        //Like Post
+        acps_like_button.setOnClickListener {
+            if (liked) {
+                controller.likePost(mMessage?.id!!, true)
+                acps_like_button.background = getDrawable(R.drawable.like_empty)
+                mMessage?.likes?.let {
+                    acps_like_count.text = (acps_like_count.text.toString().toInt() - 1).toString()
+                    mMessage?.likes = acps_like_count.text.toString().toInt()
+                }
+                liked = false
+                mMessage?.userLiked = liked
+                mMessage?.save()
+            } else {
+                controller.likePost(mMessage?.id!!, false)
+                acps_like_count.text = (acps_like_count.text.toString().toInt() + 1).toString()
+                acps_like_button.background = getDrawable(R.drawable.ic_like)
+                mMessage?.likes = acps_like_count.text.toString().toInt()
+                liked = true
+                mMessage?.userLiked = liked
+                mMessage?.save()
+
+            }
+            mMessage?.save()
+        }
+
+
+        /*Comment*/
         acps_comment_button.setOnClickListener {
             //Validate post comment
             isValidPost { comment ->
@@ -219,6 +258,10 @@ class ChannelPostShowActivity : CoreActivity(), ChannelContract.PostShow.View {
                 } else {
                     //Create comment
                     controller.commentPost(mMessageId.toString(), comment)
+                    //Post Count
+                    var commentCount = mMessage?.comments.toString().toInt()
+                    commentCount += 1
+                    acps_comment_count.text = commentCount.toString()
                 }
             }
         }
@@ -231,12 +274,14 @@ class ChannelPostShowActivity : CoreActivity(), ChannelContract.PostShow.View {
      * */
     private fun isValidPost(callback: (String) -> Unit) {
         val alertDialog = AlertDialog.Builder(context)
-        val commentEditText = EditText(context)
+        val inflater = layoutInflater
+        val dialogLayout = inflater.inflate(R.layout.view_dialog_comment, null)
+        alertDialog.setView(dialogLayout)
+        val commentEditText = dialogLayout.findViewById<EditText>(R.id.vdc_comment)
+
         commentEditText.minLines = 2
-        commentEditText.setPadding(10, 0 , 10, 0)
-        alertDialog.setMessage("Type something...")
+        commentEditText.setPadding(10, 0, 10, 0)
         alertDialog.setTitle("Comment")
-        alertDialog.setView(commentEditText)
         alertDialog.setPositiveButton("publish") { p0, p1 ->
             val comment = commentEditText.text.toString()
             callback(comment)
@@ -245,12 +290,6 @@ class ChannelPostShowActivity : CoreActivity(), ChannelContract.PostShow.View {
             callback("")
         }
         alertDialog.show()
-    }
-
-    override fun onLike() {
-        mMessage!!.likes = mMessage!!.likes!! + 1
-        acps_like_count.text = mMessage!!.likes!!.toString()
-        acps_like_button.isEnabled = false
     }
 
     override val getChannelId: Int?

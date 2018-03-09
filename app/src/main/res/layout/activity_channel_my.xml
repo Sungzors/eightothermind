@@ -110,7 +110,8 @@
             android:layout_height="1dp"
             android:layout_marginEnd="20dp"
             android:layout_marginStart="20dp"
-            android:background="@color/separator" />
+            android:background="@color/separator"
+            android:layout_marginTop="5sp"/>
 
         <!--Post Recycler View-->
         <android.support.v7.widget.RecyclerView

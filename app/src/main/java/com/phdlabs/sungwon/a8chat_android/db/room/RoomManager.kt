@@ -101,8 +101,8 @@ class RoomManager {
      * */
     fun getCurrentEnteredUserRoom(roomId: Int): UserRooms? {
         val userRooms = UserRooms().query {
-            it.equalTo("roomId", roomId)
-            it.equalTo("current_room", true)
+            equalTo("roomId", roomId)
+            equalTo("current_room", true)
         }
         if (userRooms.count() > 0) {
             return userRooms[0]
@@ -116,8 +116,8 @@ class RoomManager {
      * */
     fun getCurrentLeftUserRoom(roomId: Int): UserRooms? {
         val userRooms = UserRooms().query {
-            it.equalTo("roomId", roomId)
-            it.equalTo("current_room", false)
+            equalTo("roomId", roomId)
+            equalTo("current_room", false)
         }
         if (userRooms.count() > 0) {
             return userRooms[0]

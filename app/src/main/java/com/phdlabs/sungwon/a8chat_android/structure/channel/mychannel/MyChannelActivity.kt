@@ -90,7 +90,7 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         //Files
         fileListerDialog = FileListerDialog.createFileListerDialog(this)
         fileListerDialog.setOnFileSelectedListener { file, path ->
-            controller.sendFile()
+            controller.sendFile(file, path)
         }
         //Controller
         controller.onCreate()
@@ -199,33 +199,43 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
             }
 
             override fun getItemType(t: Message?): Int {
-                //Check if it's a Message Post
-                if (t!!.mediaArray == null) {
-                    t.post?.let {
-                        return if (it) {
-                            3 //Message Post
+
+                //Check for media
+                t?.mediaArray?.let {
+                    if (it.count() > 0) {
+                        //Media Post || Media
+                        return if (t.post!!) {
+                            //Media Post
+                            2
                         } else {
-                            0 //Message
+                            //Media Only
+                            1
                         }
-                    }
-                    return 0 //Message
-                } else if (t.message == null) { // Media shared -> No post
-                    return 1 //Media
-                } else {
-                    if (t.mediaArray?.size!! > 0) { // Post
-                        t.post?.let {
-                            return if (it) {
-                                2 //Post
+                    } else {
+                        t.let {
+                            return if (t.post!!) {
+                                //Message Post
+                                3
                             } else {
-                                0 //Message
+                                //Message
+                                0
                             }
                         }
-                        return 2 //Post
-                    } else {
-                        return 0 //Message
+                    }
+                } ?: run {
+                    t?.let {
+                        return if (t.post!!) {
+                            //Message Post
+                            3
+                        } else {
+                            //Message
+                            0
+                        }
                     }
                 }
+                return 0 //Message as default
             }
+
 
             override fun viewHolder(inflater: LayoutInflater?, parent: ViewGroup?, type: Int): BaseViewHolder {
                 when (type) {
@@ -319,18 +329,45 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         //Date
         val formatter = SimpleDateFormat("EEE - h:mm aaa")
         postDate.text = formatter.format(data.createdAt)
-
+        var liked = false
+        data.userLiked?.let {
+            if (it) {
+                //Liked
+                likeButton.background = getDrawable(R.drawable.ic_like)
+                liked = true
+            } else {
+                //Not Liked
+                likeButton.background = getDrawable(R.drawable.like_empty)
+                liked = false
+            }
+        }
         //Like Post
         likeButton.setOnClickListener {
-            //            controller.likePost(data.id!!)
-            //TODO -> Only like the post
+            if (liked) {
+                controller.likePost(data.id!!, true)
+                likeButton.background = getDrawable(R.drawable.like_empty)
+                data.likes?.let {
+                    if (it > 0) {
+                        likeCount.text = (likeCount.text.toString().toInt() - 1).toString()
+                        data.likes = likeCount.text.toString().toInt()
+                    }
+                }
+                liked = false
+                data.userLiked = liked
+                data.save()
+            } else {
+                controller.likePost(data.id!!, false)
+                likeCount.text = (likeCount.text.toString().toInt() + 1).toString()
+                data.likes = likeCount.text.toString().toInt()
+                likeButton.background = getDrawable(R.drawable.ic_like)
+                liked = true
+                data.userLiked = liked
+                data.save()
+            }
         }
         //Transition to Full Post View to see the comments
         commentButton.setOnClickListener {
-            val messageQuery = Message().queryFirst { it.equalTo("id", data.id) }
-            if (messageQuery == null) {
-                data.save()
-            }
+            data.save()
             //Transition to Post Show Activity
             val intent = Intent(context, ChannelPostShowActivity::class.java)
             intent.putExtra(Constants.IntentKeys.MESSAGE_ID, data.id)
@@ -353,28 +390,61 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         //Content
         val postText = viewHolder.get<TextView>(R.id.cvpmnm_post_text)
         //Actions
-        val likeButton = viewHolder.get<ImageView>(R.id.cvpmnm_like_button)
+        val likeButton = viewHolder.get<ImageView>(R.id.cvpmnm_like_button)//TODO: LIKE
         val commentButton = viewHolder.get<ImageView>(R.id.cvpmnm_comment_button)
         val likeCount = viewHolder.get<TextView>(R.id.cvpmnm_like_count)
         val commentCount = viewHolder.get<TextView>(R.id.cvpmnm_comment_count)
+
         //Load Info
         data.user?.avatar?.let {
             picasso.load(it).transform(CircleTransform()).into(posterPic)
         }
         posterName.text = data.getUserName()
+
         //Date
         val formatter = SimpleDateFormat("EEE - h:mm aaa")
         postDate.text = formatter.format(data.createdAt)
+
+        var liked = false
+        data.userLiked?.let {
+            if (it) {
+                //Liked
+                likeButton.background = getDrawable(R.drawable.ic_like)
+                liked = true
+            } else {
+                //Not Liked
+                likeButton.background = getDrawable(R.drawable.like_empty)
+                liked = false
+            }
+        }
         //Like Post
         likeButton.setOnClickListener {
-            //TODO: Only like the post
-        }
-        //Transition to Full Post View to see the comments
-        commentButton.setOnClickListener {
-            val messageQuery = Message().queryFirst { it.equalTo("id", data.id) }
-            if (messageQuery == null) {
+            if (liked) {
+                controller.likePost(data.id!!, true)
+                likeButton.background = getDrawable(R.drawable.like_empty)
+                data.likes?.let {
+                    if (it > 0) {
+                        likeCount.text = (likeCount.text.toString().toInt() - 1).toString()
+                        data.likes = likeCount.text.toString().toInt()
+                    }
+                }
+                liked = false
+                data.userLiked = liked
+                data.save()
+            } else {
+                controller.likePost(data.id!!, false)
+                likeCount.text = (likeCount.text.toString().toInt() + 1).toString()
+                likeButton.background = getDrawable(R.drawable.ic_like)
+                data.likes = likeCount.text.toString().toInt()
+                liked = true
+                data.userLiked = liked
                 data.save()
             }
+        }
+
+        //Transition to Full Post View to see the comments
+        commentButton.setOnClickListener {
+            data.save()
             //Transition to Post Show Activity
             val intent = Intent(context, ChannelPostShowActivity::class.java)
             intent.putExtra(Constants.IntentKeys.MESSAGE_ID, data.id)
@@ -417,7 +487,7 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
                         views?.click {
                             controller.keepSocketConnection(true)
                             //Save || Update @see Realm
-                            val messageQuery = Message().queryFirst { it.equalTo("id", message.id) }
+                            val messageQuery = Message().queryFirst { equalTo("id", message.id) }
                             if (messageQuery == null) {
                                 message.save()
                             }

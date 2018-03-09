@@ -53,10 +53,6 @@ public interface Caller {
     @PATCH("/channels/{channelId}/follow")
     Call<RoomResponse> followChannel(@Header(TOKEN) String token, @Path("channelId") int channelId, @Body FollowUserData data);
 
-
-    @PATCH("/channels/{messageId}/like/{userId}/user")
-    Call<ErrorResponse> likePost(@Header(TOKEN) String token, @Path("messageId") int messageId, @Path("userId") int userId);
-
     @POST("/auth/verify")
     Call<TokenResponse> verify(@Body VerifyData verifyData);
 
