@@ -83,7 +83,7 @@ open class Room() : RealmObject() {
 
     @SerializedName("type")
     @Expose
-    var type: String?= null
+    var type: String? = null
 
     /*Local Properties*/
     var isRead: Boolean = true
@@ -96,6 +96,14 @@ open class Room() : RealmObject() {
     @SerializedName("message")
     @Expose
     var message: Message? = null
+
+    /**
+     * [messages]
+     * The collection of messages in a private chat
+     * */
+    @SerializedName("messages")
+    @Expose
+    var messages: RealmList<Message>? = null
 
     /**
      * [User] assigned property when creating a Room

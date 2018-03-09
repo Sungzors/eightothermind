@@ -25,6 +25,8 @@ allprojects {
         maven {
             url 'https://github.com/uPhyca/stetho-realm/raw/master/maven-repo'
         }
+        maven { url "https://jitpack.io" }
+        maven { url "https://dl.bintray.com/firzenyogesh/maven" }
     }
 }
 
@@ -32,6 +34,6 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
-ext{
-    supportLibVersion="27.1.0"
+ext {
+    supportLibVersion = "27.1.0"
 }

@@ -1,18 +1,21 @@
 package com.phdlabs.sungwon.a8chat_android.api.rest
 
 import com.phdlabs.sungwon.a8chat_android.api.data.*
-import com.phdlabs.sungwon.a8chat_android.api.response.GroupChatPostResponse
-import com.phdlabs.sungwon.a8chat_android.api.response.UserDataResponse
-import com.phdlabs.sungwon.a8chat_android.api.response.channels.MyChannelRoomsResponse
+
+import com.phdlabs.sungwon.a8chat_android.api.response.*
+import com.phdlabs.sungwon.a8chat_android.api.response.channels.LikeResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.channels.follow.ChannelFollowResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.createEvent.EventPostResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.createChannel.ChannelResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.media.MediaResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.channels.MyChannelRoomsResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.channels.post.ChannelPostResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.contacts.ContactsInvitedResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.contacts.ContactsPostResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.contacts.UserFriendsResponse
-import com.phdlabs.sungwon.a8chat_android.api.response.createChannel.ChannelResponse
-import com.phdlabs.sungwon.a8chat_android.api.response.createEvent.EventPostResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.eightEvents.EventRetrievalResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.favorite.PrivateChatFavoriteResponse
-import com.phdlabs.sungwon.a8chat_android.api.response.media.MediaResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.media.FileResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.room.EnterLeaveRoomResponse
 import com.phdlabs.sungwon.a8chat_android.api.rest.Caller.TOKEN
 import com.phdlabs.sungwon.a8chat_android.model.user.User
@@ -52,6 +55,26 @@ interface CallerRx {
     fun getSharedMediaPrivate(@Header(TOKEN) token: String, @Path("userId1") userId1: Int,
                               @Path("userId2") userId2: Int): Observable<MediaResponse>
 
+    @POST("/messages/media")
+    fun postChannelMediaPost(@Header(TOKEN) token: String, @Body multipartBody: MultipartBody, @Query("post") post: Boolean): Observable<ChannelPostResponse>
+
+    @POST("/messages/string")
+    fun postChannelMessagePost(@Header(TOKEN) token: String, @Body message: SendMessageStringData, @Query("post") post: Boolean): Observable<ChannelPostResponse>
+
+    /*FILES*/
+
+    /**
+     * [shareFile]
+     * Can be used to share a single or multiple files
+     * @Query selfDestruct -> Message self destruction after an ammount of time
+     * @Query post -> Determines if this is a post on a channel
+     * @Query schedule -> A channel File post can be scheduled to be posted in a date
+     * @Query minutes -> Number of minutes before the message self destructs
+     * */
+    @POST("/messages/file")
+    fun shareFile(@Header(TOKEN) token: String, @Body multipartBody: MultipartBody,
+                  @Query("selfDestruct") selfDestruct: Boolean?, @Query("post") post: Boolean?,
+                  @Query("schedule") schedule: Boolean?, @Query("minutes") minutes: Int?): Observable<FileResponse>
 
     /*CHANNEL*/
     //Create new channel
@@ -65,6 +88,33 @@ interface CallerRx {
     //Get channels I follow
     @GET("/users/{userId}/channels/follows/with_flags")
     fun getMyFollowedChannels(@Header(TOKEN) token: String, @Path("userId") userId: Int): Observable<ChannelFollowResponse>
+
+    //Get All channel Posts
+    @GET("/channels/{roomId}/user/{userId}/messages")
+    fun getChannelPosts(@Header(TOKEN) token: String, @Path("roomId") roomId: Int,
+                        @Path("userId") userId: Int, @Query("messageId") messageId: String): Observable<RoomHistoryResponse>
+
+    @PATCH("/channels/{messageId}/like/{userId}/user")
+    fun likePost(@Header(TOKEN) token: String, @Path("messageId") messageId: Int,
+                 @Path("userId") userId: Int, @Query("unlike") unlike: Boolean?): Observable<LikeResponse>
+
+
+    /**
+     * [getPostComments]
+     * Get last 40 comments from a Channel Post
+     * @Query used for pagination
+     * */
+    @GET("/comments/{messageId}/user/{userId}")
+    fun getPostComments(@Header(TOKEN) token: String, @Path("messageId") messageId: Int,
+                        @Path("userId") userId: Int, @Query("commentId") commentId: String): Observable<CommentArrayResponse>
+
+    /**
+     * [commentOnChannelPost]
+     * Post a comment in a Message flagged as a Post
+     * */
+    @POST("/comments/{messageId}")
+    fun commentOnChannelPost(@Header(TOKEN) token: String, @Path("messageId") messageId: String,
+                             @Body commentPostData: CommentPostData): Observable<CommentArrayResponse>
 
     /*EVENTS*/
     /**[postEvents]
@@ -82,6 +132,16 @@ interface CallerRx {
      * */
     @GET("/users/{userId}/events/with_flags")
     fun getUserEventsWithFlags(@Header(TOKEN) token: String, @Path("userId") userId: Int): Observable<EventRetrievalResponse>
+
+    /*PRIVATE CHATS*/
+
+    /**
+     * [getPrivateChats]
+     * @Get current user's private chat
+     * Should be cached at download.
+     * */
+    @GET("/users/{userId}/privateChats")
+    fun getPrivateChats(@Header(TOKEN) token: String, @Path("userId") userId: Int): Observable<PrivateChatResponse>
 
 
     /*CONTACTS*/

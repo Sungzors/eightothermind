@@ -81,15 +81,15 @@ class ChatSettingController(val mView: SettingContract.Chat.View) : SettingContr
     /*Get contact information from Realm*/
     override fun getContactInfo(id: Int): Contact? {
         if (Contact().queryAll().count() > 0) {
-            return Contact().query { it.equalTo("id", id) }[0]
+            return Contact().query { equalTo("id", id) }[0]
         }
         return null
     }
 
     /*Get room information from Realm*/
     override fun getRoomInfo(id: Int): Room? {
-        if (Room().queryAll().count() > 0) {
-            return Room().query { it.equalTo("id", id) }[0]
+        if (Room().queryAll().isNotEmpty()) {
+            return Room().query { equalTo("id", id) }[0]
         }
         return null
     }

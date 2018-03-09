@@ -8,6 +8,8 @@ import com.phdlabs.sungwon.a8chat_android.model.room.Room
  * Created by SungWon on 12/4/2017.
  * temp until realm is set up
  */
+
+//TODO: Remove Temporary Manager
 class TemporaryManager {
     companion object {
         val instance: TemporaryManager = TemporaryManager()

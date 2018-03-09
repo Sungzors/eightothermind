@@ -61,38 +61,38 @@ class ChannelShowController(val mView : ChannelContract.ChannelShow.View): Chann
     }
 
     override fun loadChannel(roomID: Int) {
-        UserManager.instance.getCurrentUser { success, user, token ->
-            if (success) {
-                mView.showProgress()
-                val call = mCaller.getChannelPosts(token?.token, roomID, user?.id!!, null)
-                call.enqueue(object : Callback8<RoomHistoryResponse, ChannelPostGetEvent>(mEventBus) {
-                    override fun onSuccess(data: RoomHistoryResponse?) {
-                        mView.addToPosts(data!!.messages!!.allMessages!!)
-                        mView.setUpPostRecycler()
-                    }
-                })
-            }
-        }
+//        UserManager.instance.getCurrentUser { success, user, token ->
+//            if (success) {
+//                mView.showProgress()
+//                val call = mCaller.getChannelPosts(token?.token, roomID, user?.id!!, null)
+//                call.enqueue(object : Callback8<RoomHistoryResponse, ChannelPostGetEvent>(mEventBus) {
+//                    override fun onSuccess(data: RoomHistoryResponse?) {
+//                        mView.addToPosts(data!!.messages!!.allMessages!!)
+//                        mView.setUpPostRecycler()
+//                    }
+//                })
+//            }
+//        }
     }
 
     override fun likePost(messageId: Int?) {
-        messageId?.let {
-            UserManager.instance.getCurrentUser { success, user, token ->
-                if (success) {
-                    val call = mCaller.likePost(token?.token, messageId, user?.id!!)
-                    call.enqueue(object : Callback8<ErrorResponse, PostLikeEvent>(mEventBus) {
-                        override fun onSuccess(data: ErrorResponse?) {
-                            mView.onLike(messageId)
-                            Toast.makeText(mView.getContext()!!, "Post Liked!", Toast.LENGTH_SHORT).show()
-                        }
-
-                        override fun onError(response: Response<ErrorResponse>?) {
-                            Toast.makeText(mView.getContext()!!, "You have already liked this post!", Toast.LENGTH_SHORT).show()
-                        }
-                    })
-                }
-            }
-        }
+//        messageId?.let {
+//            UserManager.instance.getCurrentUser { success, user, token ->
+//                if (success) {
+//                    val call = mCaller.likePost(token?.token, messageId, user?.id!!)
+//                    call.enqueue(object : Callback8<ErrorResponse, PostLikeEvent>(mEventBus) {
+//                        override fun onSuccess(data: ErrorResponse?) {
+//                            mView.onLike(messageId)
+//                            Toast.makeText(mView.getContext()!!, "Post Liked!", Toast.LENGTH_SHORT).show()
+//                        }
+//
+//                        override fun onError(response: Response<ErrorResponse>?) {
+//                            Toast.makeText(mView.getContext()!!, "You have already liked this post!", Toast.LENGTH_SHORT).show()
+//                        }
+//                    })
+//                }
+//            }
+//        }
     }
 
     override fun commentPost(messageId: Int?) {

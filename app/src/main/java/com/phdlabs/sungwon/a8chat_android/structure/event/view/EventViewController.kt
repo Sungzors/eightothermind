@@ -210,7 +210,7 @@ class EventViewController(val mView: EventContract.ViewDetail.View) : EventContr
 //                    }
 //                    message.timeDisplayed = mView.lastTimeDisplayed(message)
 //                    mMessages!!.add(message)
-//                    mView.updateRecycler()
+//                    mView.updateContentRecycler()
 //                }
 //                Message.TYPE_CHANNEL -> {
 //                    val channelInfo: JSONObject
@@ -246,7 +246,7 @@ class EventViewController(val mView: EventContract.ViewDetail.View) : EventContr
 //                        return@runOnUiThread
 //                    }
 //                    mMessages!!.add(builder.message(message).channel(channel).build())
-//                    mView.updateRecycler()
+//                    mView.updateContentRecycler()
 //                }
 //                Message.TYPE_CONTACT -> {
 //                    val contactInfo: JSONObject
@@ -299,7 +299,7 @@ class EventViewController(val mView: EventContract.ViewDetail.View) : EventContr
 //                        return@runOnUiThread
 //                    }
 //                    mMessages.add(builder.message(message).contact(contact).build())
-//                    mView.updateRecycler()
+//                    mView.updateContentRecycler()
 //                }
 //                Message.TYPE_LOCATION -> {
 //                    val message = builder.message(message!!).build()
@@ -327,7 +327,7 @@ class EventViewController(val mView: EventContract.ViewDetail.View) : EventContr
 //                    }
 //                    message.timeDisplayed = mView.lastTimeDisplayed(message)
 //                    mMessages.add(message)
-//                    mView.updateRecycler()
+//                    mView.updateContentRecycler()
 //                }
 //
 //            }

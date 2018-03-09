@@ -53,12 +53,6 @@ public interface Caller {
     @PATCH("/channels/{channelId}/follow")
     Call<RoomResponse> followChannel(@Header(TOKEN) String token, @Path("channelId") int channelId, @Body FollowUserData data);
 
-    @GET("/channels/{roomId}/user/{userId}/messages")
-    Call<RoomHistoryResponse> getChannelPosts(@Header(TOKEN) String token, @Path("roomId") int roomId, @Path("userId") int userId, @Query("messageId") String messageId);
-
-    @PATCH("/channels/{messageId}/like/{userId}/user")
-    Call<ErrorResponse> likePost(@Header(TOKEN) String token, @Path("messageId") int messageId, @Path("userId") int userId);
-
     @POST("/auth/verify")
     Call<TokenResponse> verify(@Body VerifyData verifyData);
 
@@ -115,9 +109,6 @@ public interface Caller {
 
     @PATCH("/comments/{commentId}/edit")
     Call<CommentResponse> patchComment(@Header(TOKEN) String token, @Path("commentId") int commentId, @Body CommentPatchData data);
-
-    @GET("/comments/{messageId}/user/{userId}")
-    Call<CommentArrayResponse> getComments(@Header(TOKEN) String token, @Path("messageId") int messageId, @Path("userId") int userId, @Query("commentId") String commentId);
 
     @GET("/events/{roomId}/user/{userId}/messages")
     Call<RoomHistoryResponse> getEventHistory(@Header(TOKEN) String token, @Path("roomId") int roomId, @Path("userId") int userId);

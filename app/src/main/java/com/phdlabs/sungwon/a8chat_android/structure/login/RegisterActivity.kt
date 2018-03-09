@@ -61,8 +61,8 @@ class RegisterActivity : CoreActivity() {
                 var realm: Realm? = null
                 try {
                     realm = Realm.getDefaultInstance()
-                    val realmRegistrationData: RegistrationData? = RegistrationData().queryFirst { query ->
-                        query.equalTo("phone", phone)
+                    val realmRegistrationData: RegistrationData? = RegistrationData().queryFirst {
+                        equalTo("phone", phone)
                     }
                     realmRegistrationData?.let {
                         /*Already registered*/

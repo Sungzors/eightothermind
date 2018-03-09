@@ -103,9 +103,9 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
             }
         }
 
-        try{
+        try {
             mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0L, 0f, locationListener)
-        } catch (ex: SecurityException){
+        } catch (ex: SecurityException) {
             println("No location available: " + ex.message)
         }
         retrieveChatHistory()
@@ -258,7 +258,7 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
 //
 //            }
 //        })
-        if(mLocation == null){
+        if (mLocation == null) {
             Toast.makeText(mView.getContext()!!, "Failed to get location (Try enabling location permissions)", Toast.LENGTH_SHORT).show()
         } else {
             getUserId { id ->
@@ -268,7 +268,7 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
                         if (success) {
                             val call = mCaller.sendMessageLocation(
                                     token?.token,
-                                    SendMessageGeneralData(id.toString(), mRoomId.toString(),mLocation!!.second!!, mLocation!!.first!!)
+                                    SendMessageGeneralData(id.toString(), mRoomId.toString(), mLocation!!.second!!, mLocation!!.first!!)
                             )
                             call.enqueue(object : Callback8<ErrorResponse, MessageLocationSentEvent>(mEventBus) {
                                 override fun onSuccess(data: ErrorResponse?) {
@@ -302,7 +302,7 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
         }
     }
 
-    override fun sendMedia(){
+    override fun sendMedia() {
         mView.getContext()?.let {
             if (ActivityCompat.checkSelfPermission(
                             it, Constants.AppPermissions.CAMERA) != PackageManager.PERMISSION_GRANTED
@@ -348,7 +348,7 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
                 //Upload image
                 Token().queryFirst()?.let {
                     val call = Rest.getInstance().caller.sendMessageMedia(it.token, multipartBodyPart)
-                    call.enqueue(object : Callback8<ErrorResponse, Event>(mEventBus){
+                    call.enqueue(object : Callback8<ErrorResponse, Event>(mEventBus) {
                         override fun onSuccess(data: ErrorResponse?) {
                             mView.hideProgress()
                             mView.hideDrawer()
@@ -485,7 +485,7 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
 //                    }
 //                    message.timeDisplayed = mView.lastTimeDisplayed(message)
 //                    mMessages!!.add(message)
-//                    mView.updateRecycler(mMessages!!.size)
+//                    mView.updateContentRecycler(mMessages!!.size)
 //                }
 //                Message.TYPE_CHANNEL -> {
 //                    val channelInfo: JSONObject
@@ -521,7 +521,7 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
 //                        return@runOnUiThread
 //                    }
 //                    mMessages!!.add(builder.message(message).channel(channel).build())
-//                    mView.updateRecycler(mMessages!!.size)
+//                    mView.updateContentRecycler(mMessages!!.size)
 //                }
 //                Message.TYPE_CONTACT -> {
 //                    val contactInfo: JSONObject
@@ -574,7 +574,7 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
 //                        return@runOnUiThread
 //                    }
 //                    mMessages.add(builder.message(message).contact(contact).build())
-//                    mView.updateRecycler(mMessages.size)
+//                    mView.updateContentRecycler(mMessages.size)
 //                }
 //                Message.TYPE_LOCATION -> {
 //                    val message = builder.message(message!!).build()
@@ -602,7 +602,7 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
 //                    }
 //                    message.timeDisplayed = mView.lastTimeDisplayed(message)
 //                    mMessages.add(message)
-//                    mView.updateRecycler(mMessages.size)
+//                    mView.updateContentRecycler(mMessages.size)
 //                }
 //
 //            }
@@ -611,8 +611,8 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
 
     private val onError = Emitter.Listener { args ->
         mView.getActivity.runOnUiThread {
-//            val message = args[0] as String //args[0] as JSONObject
-//            Toast.makeText(mView.getContext(), message, Toast.LENGTH_SHORT).show()
+            //val message = args[0] as String //args[0] as JSONObject
+            //Toast.makeText(mView.getContext(), message, Toast.LENGTH_SHORT).show()
             //Log.e(TAG, message.getString("message"))
 
         }
@@ -636,7 +636,7 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
             mLocation = (Pair(
                     location.longitude.toString().trim(),
                     location.latitude.toString().trim())
-            )
+                    )
         }
 
         /*Not necessary to handle on single location update*/

@@ -46,4 +46,13 @@
         <item name="android:textSize">14sp</item>
     </style>
 
+    <style name="AppTheme.Louvre.Light" parent="Louvre.Theme.Light">
+        <item name="colorPrimary">@color/white_smoke</item>
+        <item name="colorPrimaryDark">@color/eight_status_bar</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppTheme.Louvre.Preview" parent="Louvre.Theme.Preview">
+        <item name="colorAccent">@color/eight_status_bar</item>
+    </style>
 </resources>

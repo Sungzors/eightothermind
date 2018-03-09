@@ -40,6 +40,7 @@
     <string name="camera_right_tab">Hands Free</string>
     <string name="request_camera_permission">Camera permission needed</string>
     <string name="request_write_external_permission">Storage permission needed</string>
+    <string name="request_read_external_permission">Read storage permission needed</string>
     <string name="request_read_contacts_permissions">Reading contacts permission needed</string>
     <string name="camera_error">This device doesn\'t support Camera</string>
     <string name="camera_action">camera_action</string>
@@ -140,6 +141,16 @@
     <string name="name_your_group">name your group</string>
     <string name="add_people">  Add People</string>
     <string name="popular_channels">Popular Channels</string>
+    <string name="channel_name">Channel Name</string>
+    <string name="add_photos_or_videos">+ Add Photos or Videos</string>
+    <string name="post">Post</string>
+    <string name="remove_media">Remove media</string>
+    <string name="create_a_post">Create a Post</string>
+    <string name="name">Name</string>
+    <string name="date">Date</string>
+    <string name="comment">comment...</string>
+    <string name="cancel">cancel</string>
+    <string name="file_name">File Name</string>
 
 
 </resources>

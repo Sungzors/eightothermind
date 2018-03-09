@@ -26,6 +26,9 @@ object Constants {
         const val MESSAGE_ID = "message_id"
         const val OWNER_ID = "owner_id"
         const val FROM_CONTACTS = "from_contacts"
+        const val MEDIA_POST = "media_post"
+        const val MEDIA_POST_MESSAGE = "media_post_message"
+        const val INCLUDES_MEDIA = "includes_media"
     }
 
     /**
@@ -40,8 +43,21 @@ object Constants {
         const val UPDATE_CHAT_CHANNEL = "update-chat-channel"
         const val UPDATE_CHAT_CONTACT = "update-chat-contact"
         const val UPDATE_CHAT_POST = "update-chat-post"
+        const val UPDATE_CHAT_FILE = "update-chat-file"
         const val USER_ENTERED_8 = "user-entered-8"
         const val ON_ERROR = "on-error"
+        const val COMMENT = "comment"
+        const val EDIT_COMMENT = "edit-comment"
+    }
+
+    /**
+     * [SocketTypes]
+     * */
+    object SocketTypes {
+        const val PRIVATE_CHAT = "privateChat"
+        const val GROUP_CHAT = "groupChat"
+        const val CHANNEL = "channel"
+        const val EVENT = "event"
     }
 
     /**
@@ -56,6 +72,16 @@ object Constants {
          * Starting Navigation through Main Activity (Lobby Frag)
          * */
         const val CREATE_NEW_BACK_REQ_CODE = 13
+
+        /**
+         * Used when creating a new Post inside a channel
+         * */
+        const val CREATE_NEW_POST_REQ_CODE = 14
+        /**
+         * Used when opening a current post
+         * - Possible Post commenting & Liking
+         * */
+        const val VIEW_POST_REQ_CODE = 17
     }
 
     /**
@@ -83,6 +109,7 @@ object Constants {
         val CAMERA = Manifest.permission.CAMERA
         val RECORD_AUDIO = Manifest.permission.RECORD_AUDIO
         val WRITE_EXTERNAL = Manifest.permission.WRITE_EXTERNAL_STORAGE
+        val READ_EXTERNAL = Manifest.permission.READ_EXTERNAL_STORAGE
         val FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION
         val COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION
         val CONTACTS = Manifest.permission.READ_CONTACTS
@@ -95,6 +122,7 @@ object Constants {
         val CAMERA_REQ_CODE = 0
         val RECORD_AUDIO_REQ_CODE = 1
         val WRITE_EXTERNAL_REQ_CODE = 2
+        val READ_EXTERNAL_STORAGE = 16
         val LOCATION_REQ_CODE = 3
         val CONTACTS_REQ_CODE = 4
     }
@@ -108,6 +136,7 @@ object Constants {
         var IS_FROM_CAMERA_ROLL = "is_from_camera_roll"
         val EDITING_REQUEST_CODE = 7
         val CAMERA_REQUEST_CODE = 8
+        val OPEN_MEDIA_PICKER = 15
     }
 
     /**

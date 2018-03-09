@@ -31,6 +31,7 @@ import java.util.*
 
 /**
  * Created by SungWon on 10/17/2017.
+ * Updated by JPAM on 03/09/2018
  */
 class LobbyFragment : CoreFragment(), LobbyContract.View {
 
@@ -58,7 +59,7 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
          * */
         fun newInstance(): LobbyFragment = LobbyFragment()
 
-        fun newInstance(shouldUpdate: Boolean):LobbyFragment {
+        fun newInstance(shouldUpdate: Boolean): LobbyFragment {
             this.refresh = shouldUpdate
             return LobbyFragment()
         }
@@ -110,24 +111,22 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
     }
 
     private fun bindMyChannelViewHolder(viewHolder: BaseViewHolder, data: Channel) {
-        val bg = viewHolder.get<ImageView>(R.id.cvlc_background_unread)
         val profilePic = viewHolder.get<ImageView>(R.id.cvlc_picture_profile)
         val channelName = viewHolder.get<TextView>(R.id.cvlc_name_channel)
         val unreadChannelIndicator = viewHolder.get<ImageView>(R.id.cvlc_background_unread)
         //Unread indicator
         data.unread_messages?.let {
-            if (it){
+            if (it) {
                 unreadChannelIndicator.visibility = View.VISIBLE
-            }else {
+            } else {
                 unreadChannelIndicator.visibility = View.GONE
             }
         }
-        Picasso.with(coreActivity.context).load(R.drawable.bg_circle_orange_lobby).into(bg)
         Picasso.with(coreActivity.context).load(data.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(profilePic)
         channelName.text = data.name
         profilePic.setOnClickListener {
             val intent = Intent(activity, MyChannelActivity::class.java)
-            intent.putExtra(Constants.IntentKeys.CHANNEL_ID, data.id.toString())
+            intent.putExtra(Constants.IntentKeys.CHANNEL_ID, data.id)
             intent.putExtra(Constants.IntentKeys.CHANNEL_NAME, data.name)
             intent.putExtra(Constants.IntentKeys.ROOM_ID, data.room_id?.toInt())
             intent.putExtra(Constants.IntentKeys.OWNER_ID, data.user_creator_id!!.toInt())
@@ -220,15 +219,14 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
 
     //Read channels
     private fun bindReadChannelViewHolder(viewHolder: BaseViewHolder, data: Channel) {
-        val bg = viewHolder.get<ImageView>(R.id.cvlc_background_unread)
         val profilePic = viewHolder.get<ImageView>(R.id.cvlc_picture_profile)
         val channelName = viewHolder.get<TextView>(R.id.cvlc_name_channel)
         val unreadChannelIndicator = viewHolder.get<ImageView>(R.id.cvlc_background_unread)
         //Unread indicator
         data.unread_messages?.let {
-            if (it){
+            if (it) {
                 unreadChannelIndicator.visibility = View.VISIBLE
-            }else {
+            } else {
                 unreadChannelIndicator.visibility = View.GONE
             }
         }
@@ -236,7 +234,7 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
         channelName.text = data.name
         profilePic.setOnClickListener {
             val intent = Intent(activity, MyChannelActivity::class.java)
-            intent.putExtra(Constants.IntentKeys.CHANNEL_ID, data.id.toString())
+            intent.putExtra(Constants.IntentKeys.CHANNEL_ID, data.id)
             intent.putExtra(Constants.IntentKeys.CHANNEL_NAME, data.name)
             intent.putExtra(Constants.IntentKeys.ROOM_ID, data.room_id?.toInt())
             intent.putExtra(Constants.IntentKeys.OWNER_ID, data.user_creator_id?.toInt())

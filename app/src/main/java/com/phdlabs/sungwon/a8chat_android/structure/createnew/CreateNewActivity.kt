@@ -100,7 +100,7 @@ class CreateNewActivity: CoreActivity(){
     private fun queryContacts   (){
         //Cached Contacts
         mContactList = Contact().queryAll()
-        mFavoriteList = Contact().query { it.equalTo("isFavorite", true) }.toMutableList()
+        mFavoriteList = Contact().query { equalTo("isFavorite", true) }.toMutableList()
     }
 
 
