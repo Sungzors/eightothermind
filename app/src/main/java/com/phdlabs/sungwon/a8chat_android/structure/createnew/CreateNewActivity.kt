@@ -78,7 +78,7 @@ class CreateNewActivity: CoreActivity(){
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
         if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == Constants.ChannelRequestCodes.CREATE_NEW_BACK_REQ_CODE) { //Created New Content
+            if (requestCode == Constants.RequestCodes.CREATE_NEW_BACK_REQ_CODE) { //Created New Content
                 setResult(Activity.RESULT_OK)
                 finish()
             }
@@ -114,7 +114,7 @@ class CreateNewActivity: CoreActivity(){
         /*Create new channel*/
         acn_channel_container.setOnClickListener {
             val createChannelIntent = Intent(this, ChannelCreateActivity::class.java)
-            startActivityForResult(createChannelIntent, Constants.ChannelRequestCodes.CREATE_NEW_BACK_REQ_CODE)
+            startActivityForResult(createChannelIntent, Constants.RequestCodes.CREATE_NEW_BACK_REQ_CODE)
         }
         acn_event_container.setOnClickListener {
             startActivity(Intent(this, EventCreateActivity::class.java))

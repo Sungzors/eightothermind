@@ -109,6 +109,10 @@
             android:name=".structure.groupchat.create.GroupCreateActivity"
             android:screenOrientation="portrait"/>
 
+        <activity
+            android:name=".structure.groupchat.groupinvite.GroupInviteActivity"
+            android:screenOrientation="portrait"/>
+
         <!--Photos & Images File Provider-->
         <provider
             android:name=".utility.camera.PhotoFileProvider"

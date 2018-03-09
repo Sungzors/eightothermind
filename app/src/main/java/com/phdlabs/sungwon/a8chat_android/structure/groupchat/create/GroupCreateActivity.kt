@@ -1,14 +1,33 @@
 package com.phdlabs.sungwon.a8chat_android.structure.groupchat.create
 
+import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.support.v7.widget.LinearLayoutManager
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.TextView
 import com.phdlabs.sungwon.a8chat_android.R
-import com.phdlabs.sungwon.a8chat_android.model.contacts.Contact
+import com.phdlabs.sungwon.a8chat_android.api.data.GroupChatPostData
+import com.phdlabs.sungwon.a8chat_android.db.EightQueries
+import com.phdlabs.sungwon.a8chat_android.db.TemporaryManager
+import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
+import com.phdlabs.sungwon.a8chat_android.model.media.Media
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
+import com.phdlabs.sungwon.a8chat_android.structure.groupchat.GroupChatActivity
 import com.phdlabs.sungwon.a8chat_android.structure.groupchat.GroupChatContract
+import com.phdlabs.sungwon.a8chat_android.structure.groupchat.groupinvite.GroupInviteActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
+import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseRecyclerAdapter
+import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseViewHolder
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
+import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_group_create.*
+import kotlinx.android.synthetic.main.toolbar.*
 
 /**
  * Created by SungWon on 3/1/2018.
@@ -21,7 +40,8 @@ class GroupCreateActivity : CoreActivity(), GroupChatContract.Create.View{
 
     override fun contentContainerId(): Int = 0
 
-    private val mMembersList = mutableListOf<Contact>()
+    private var mAdapter : BaseRecyclerAdapter<Triple<Int, String, String>, BaseViewHolder>? = null
+    private var mMedia: Media? = null
 
     override fun onStart() {
         super.onStart()
@@ -29,6 +49,7 @@ class GroupCreateActivity : CoreActivity(), GroupChatContract.Create.View{
         controller.start()
         setUpViews()
         setUpClickers()
+        agc_divider.visibility = View.GONE
     }
 
     override fun onResume() {
@@ -46,10 +67,103 @@ class GroupCreateActivity : CoreActivity(), GroupChatContract.Create.View{
         controller.stop()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        TemporaryManager.instance.mMemberList.clear()
+    }
+
+    private fun setUpViews() {
+        setToolbarTitle(getString(R.string.create_event))
+        showRightTextToolbar(getString(R.string.create))
+        showBackArrow(R.drawable.ic_back)
+    }
+
+    private fun setUpClickers() {
+        agc_group_picture.setOnClickListener {
+            controller.showPicture()
+        }
+        agc_add_people_container.setOnClickListener {
+            val intent = Intent(this, GroupInviteActivity::class.java)
+            startActivityForResult(intent, Constants.RequestCodes.INVITE_GROUP)
+        }
+        toolbar_right_text.setOnClickListener {
+            showProgress()
+            UserManager.instance.getCurrentUser{ success, user, token ->
+                if (success) {
+                    token?.token?.let {
+                        user?.id?.let {
+                            val idlist = mutableListOf<Int>()
+                            for (triple in TemporaryManager.instance.mMemberList) {
+                                idlist.add(triple.first)
+                            }
+                            controller.createGroupChat(GroupChatPostData(
+                                    idlist,
+                                    agc_group_name.text.toString().trim(),
+                                    it,
+                                    mMedia?.id
+
+                            ))
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+
+    private fun setUpRecycler(){
+        mAdapter = object : BaseRecyclerAdapter<Triple<Int, String, String>, BaseViewHolder>() {
+            override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: Triple<Int, String, String>, position: Int, type: Int) {
+                val pic = viewHolder?.get<ImageView>(R.id.cvgc_friend_profile_picture)
+                val name = viewHolder?.get<TextView>(R.id.cvgc_friend_name)
+                val duhleeete = viewHolder?.get<ImageButton>(R.id.cvgc_delet_dis)
+                Picasso.with(context).load(data.third).resize(45, 45).centerCrop().placeholder(R.drawable.addphoto).transform(CircleTransform()).into(pic)
+                name?.text = data.second
+                duhleeete?.setOnClickListener {
+                    TemporaryManager.instance.mMemberList.remove(data)
+                    mAdapter?.notifyDataSetChanged()
+                }
+            }
+
+            override fun viewHolder(inflater: LayoutInflater?, parent: ViewGroup?, type: Int): BaseViewHolder {
+                return object : BaseViewHolder(R.layout.card_view_group_invite, inflater!!, parent){
+
+                }
+            }
+        }
+        mAdapter?.setItems(TemporaryManager.instance.mMemberList)
+        mAdapter?.setSortComparator(EightQueries.Comparators.alphabetComparatorGroupCreate)
+        agc_add_people_recycler.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        agc_add_people_recycler.adapter = mAdapter
+    }
+
+    override fun setChannelImage(filePath: String) {
+        Picasso.with(context)
+                .load("file://" + filePath)
+                .placeholder(R.drawable.addphoto)
+                .transform(CircleTransform())
+                .into(agc_group_picture)
+    }
+
+    override fun setMedia(media: Media) {
+        mMedia = media
+    }
+
+    override fun onCreateGroup(name: String, id: Int, pic: String) {
+        setResult(Activity.RESULT_OK)
+        val intent = Intent(context, GroupChatActivity::class.java)
+        intent.putExtra(Constants.IntentKeys.CHAT_NAME, name)
+        intent.putExtra(Constants.IntentKeys.ROOM_ID, id)
+        intent.putExtra(Constants.IntentKeys.CHAT_PIC, pic)
+        startActivity(intent)
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == CameraControl.instance.requestCode()) {
             controller.onPictureResult(requestCode, resultCode, data)
+        } else if (requestCode == Constants.RequestCodes.INVITE_GROUP){
+            if(mAdapter == null) setUpRecycler() else mAdapter?.notifyDataSetChanged()
         }
     }
 
@@ -65,18 +179,6 @@ class GroupCreateActivity : CoreActivity(), GroupChatContract.Create.View{
         }
     }
 
-    private fun setUpViews() {
-        setToolbarTitle(getString(R.string.create_event))
-        showRightTextToolbar(getString(R.string.create))
-        showBackArrow(R.drawable.ic_back)
-    }
-
-    private fun setUpClickers() {
-        agc_group_picture.setOnClickListener {
-            controller.showPicture()
-        }
-        agc_add_people_container.setOnClickListener {
-
-        }
-    }
+    override val getActivity: GroupCreateActivity
+        get() = this
 }

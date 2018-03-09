@@ -45,10 +45,11 @@ object Constants {
     }
 
     /**
-     * [ChannelRequestCodes]
+     * [RequestCodes]
      * */
-    object ChannelRequestCodes {
+    object RequestCodes {
         const val MY_CHANNELS_LIST = 1
+        const val INVITE_GROUP = 2
 
         /**
          * Used when creating a new Channel, Event or GroupChat

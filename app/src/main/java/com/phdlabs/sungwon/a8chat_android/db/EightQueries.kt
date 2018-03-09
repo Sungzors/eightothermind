@@ -25,6 +25,10 @@ object EightQueries {
                 return 0
             }
         }
+
+        val alphabetComparatorGroupCreate = Comparator<Triple<Int, String, String>> { a, b ->
+            return@Comparator a.second.compareTo(b.second)
+        }
     }
 
 }
