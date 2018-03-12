@@ -17,6 +17,7 @@ import android.view.inputmethod.InputMethodManager
 import android.webkit.MimeTypeMap
 import android.widget.*
 import com.phdlabs.sungwon.a8chat_android.R
+import com.phdlabs.sungwon.a8chat_android.db.channels.ChannelsManager
 import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
 import com.phdlabs.sungwon.a8chat_android.model.media.Media
@@ -41,6 +42,7 @@ import cz.intik.overflowindicator.OverflowPagerIndicator
 import cz.intik.overflowindicator.SimpleSnapHelper
 import io.realm.RealmList
 import kotlinx.android.synthetic.main.activity_channel_my.*
+import kotlinx.android.synthetic.main.toolbar.*
 import yogesh.firzen.filelister.FileListerDialog
 import java.text.SimpleDateFormat
 
@@ -85,8 +87,7 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         mRoomId = intent.getIntExtra(Constants.IntentKeys.ROOM_ID, 0)
         mOwnerId = intent.getIntExtra(Constants.IntentKeys.OWNER_ID, 0)
         //UI
-        showBackArrow(R.drawable.ic_back)
-        setToolbarTitle(mChannelName)
+        setupToolbar()
         setupFollowedChannelsRecycler()
         setupContentRecycler()
         //File sharing
@@ -102,6 +103,23 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         }
         //Controller
         controller.onCreate()
+    }
+
+    private fun setupToolbar() {
+        showBackArrow(R.drawable.ic_back)
+        setToolbarTitle(mChannelName)
+        toolbar_right_picture.visibility = View.VISIBLE
+        //Channel Picture -> Access to settings
+        ChannelsManager.instance.getSingleChannel(mChannelId)?.avatar?.let {
+            Picasso.with(this)
+                    .load(it)
+                    .transform(CircleTransform())
+                    .into(toolbar_right_picture)
+        }
+        //Access to Channel Settings
+        toolbar_right_picture.setOnClickListener {
+            //TODO: Access Channel Settings
+        }
     }
 
     override fun onStart() {
@@ -139,6 +157,7 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
     override fun onDestroy() {
         super.onDestroy()
         controller.destroy()
+        overridePendingTransition(0, 0)
     }
 
     /*FOLLOWED CHANNELS*/
@@ -173,6 +192,8 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
                             intent.putExtra(Constants.IntentKeys.ROOM_ID, channel?.room_id?.toInt())
                             intent.putExtra(Constants.IntentKeys.OWNER_ID, channel?.user_creator_id?.toInt())
                             startActivity(intent)
+                            overridePendingTransition(0, 0)
+                            this@MyChannelActivity.finish()
                         }
                         super.addClicks(views)
                     }

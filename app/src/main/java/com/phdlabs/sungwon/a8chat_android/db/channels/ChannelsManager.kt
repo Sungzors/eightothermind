@@ -410,6 +410,13 @@ class ChannelsManager {
         }
     }
 
+    /**
+     * [getSingleChannel]
+     * @return channel that matches the provided ID
+     * */
+    fun getSingleChannel(channelId: Int): Channel? =
+            Channel().queryFirst { equalTo("id", channelId) }
+
 }
 
 
