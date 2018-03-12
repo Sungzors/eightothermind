@@ -21,15 +21,31 @@ class SuffixDetector {
     enum class FileType {
         JPEG,
         PDF,
+        PNG,
         UNKOWN
     }
 
+    /**
+     * [getFileSuffix]
+     * Return File Suffix
+     * @return file suffix
+     * */
+    fun getFileSuffix(filepath: String): String? =
+            filepath.substring(filepath.lastIndexOf("."))
 
+    /**
+     *
+     * */
+
+    /***/
     fun fileTypeDetector(fileName: String): FileType {
         val extension = fileName.substring(fileName.lastIndexOf(".") + 1, fileName.count())
         when (extension) {
             "jpeg" -> {
                 return FileType.JPEG
+            }
+            "png" -> {
+                return FileType.PNG
             }
             else -> {
                 return FileType.UNKOWN

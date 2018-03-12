@@ -1,8 +1,11 @@
 package com.phdlabs.sungwon.a8chat_android.structure.channel.mychannel
 
 import android.app.Activity
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
@@ -11,10 +14,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.webkit.MimeTypeMap
+import android.widget.*
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
@@ -26,6 +27,7 @@ import com.phdlabs.sungwon.a8chat_android.structure.channel.createPost.CreatePos
 import com.phdlabs.sungwon.a8chat_android.structure.channel.postshow.ChannelPostShowActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
+import com.phdlabs.sungwon.a8chat_android.utility.SuffixDetector
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseRecyclerAdapter
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseViewHolder
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.ViewMap
@@ -87,10 +89,16 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         setToolbarTitle(mChannelName)
         setupFollowedChannelsRecycler()
         setupContentRecycler()
-        //Files
+        //File sharing
         fileListerDialog = FileListerDialog.createFileListerDialog(this)
         fileListerDialog.setOnFileSelectedListener { file, path ->
-            controller.sendFile(file, path)
+            //File Permissions
+            if (ContextCompat.checkSelfPermission(this, Constants.AppPermissions.READ_EXTERNAL) ==
+                    PackageManager.PERMISSION_GRANTED) {
+                controller.sendFile(file, path)
+            } else {
+                controller.requestReadingExternalStorage()
+            }
         }
         //Controller
         controller.onCreate()
@@ -98,7 +106,6 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
 
     override fun onStart() {
         super.onStart()
-
         /*Show || Hide -> Bottom Drawer*/
         UserManager.instance.getCurrentUser { success, user, _ ->
             if (success) {
@@ -138,6 +145,7 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
     private fun setupFollowedChannelsRecycler() {
         mFollowedChanellsAdapter = object : BaseRecyclerAdapter<Channel, BaseViewHolder>() {
             override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: Channel?, position: Int, type: Int) {
+
                 val profilePic = viewHolder?.get<ImageView>(R.id.cvlc_picture_profile)
                 val channelName = viewHolder?.get<TextView>(R.id.cvlc_name_channel)
                 val unreadChannelIndicator = viewHolder?.get<ImageView>(R.id.cvlc_background_unread)
@@ -151,6 +159,7 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
                 }
                 Picasso.with(context).load(data?.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(profilePic)
                 channelName?.text = data?.name
+
             }
 
             override fun viewHolder(inflater: LayoutInflater?, parent: ViewGroup?, type: Int): BaseViewHolder {
@@ -159,7 +168,7 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
                         views?.click {
                             val channel = getItem(adapterPosition)
                             val intent = Intent(context, MyChannelActivity::class.java)
-                            intent.putExtra(Constants.IntentKeys.CHANNEL_ID, channel?.id.toString())
+                            intent.putExtra(Constants.IntentKeys.CHANNEL_ID, channel?.id)
                             intent.putExtra(Constants.IntentKeys.CHANNEL_NAME, channel?.name)
                             intent.putExtra(Constants.IntentKeys.ROOM_ID, channel?.room_id?.toInt())
                             intent.putExtra(Constants.IntentKeys.OWNER_ID, channel?.user_creator_id?.toInt())
@@ -504,16 +513,23 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         postDate.text = formatter.format(data.createdAt)
         //File
         data.files?.let {
-            //TODO: Check for storage permissions
             if (it.count() > 0) {
-                //TODO: Issues with file type being posted
                 fileName.text = it[0]?.file_string ?: "n/a"
             }
         }
         //Open File
         container.setOnClickListener {
-            //TODO: Open File Preview Screen
             println("TAPPED FILE: " + fileName.text)
+            val mime = MimeTypeMap.getSingleton()
+            val intent = Intent(Intent.ACTION_VIEW)
+            val mimeType = mime.getMimeTypeFromExtension(SuffixDetector.instance.getFileSuffix(data.files?.get(0)?.file_string.toString()))
+            intent.setDataAndType(Uri.parse(data.files?.get(0)?.s3_url), mimeType)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            try {
+                context?.startActivity(intent)
+            } catch (e: ActivityNotFoundException) {
+                Toast.makeText(this, "Can't open this type of File", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
