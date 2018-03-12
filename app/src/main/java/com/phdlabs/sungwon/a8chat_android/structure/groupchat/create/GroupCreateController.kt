@@ -148,7 +148,7 @@ class GroupCreateController(val mView: GroupChatContract.Create.View) : GroupCha
                                     response.newChannelGroupOrEvent?.save()
 
                                     mView.hideProgress()
-                                    mView.onCreateGroup(,, )
+                                    mView.onCreateGroup(response.newChannelGroupOrEvent?.name!!,response.newChannelGroupOrEvent?.id!!, response.newChannelGroupOrEvent?.avatar!!)
                                 }
                             }
                     )
