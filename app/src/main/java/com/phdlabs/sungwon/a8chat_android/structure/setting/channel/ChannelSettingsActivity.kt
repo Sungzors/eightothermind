@@ -2,12 +2,17 @@ package com.phdlabs.sungwon.a8chat_android.structure.setting.channel
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import com.phdlabs.sungwon.a8chat_android.R
+import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.phdlabs.sungwon.a8chat_android.model.user.User
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.structure.setting.SettingContract
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
+import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform
+import com.squareup.picasso.Picasso
+import com.vicpin.krealmextensions.queryFirst
 import kotlinx.android.synthetic.main.activity_channel_settings.*
 
 /**
@@ -33,6 +38,7 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
 
     /*Properties*/
     var mChannelName = ""
+    var mChannelId = 0
     var mRoomId = 0
     var mOwnerId = 0
     var mOwner: User? = null
@@ -68,6 +74,7 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
     private fun getIntentInfo() {
         //Channel Name
         mChannelName = intent.getStringExtra(Constants.IntentKeys.CHANNEL_NAME)
+        mChannelId = intent.getIntExtra(Constants.IntentKeys.CHANNEL_ID, 0)
         //Room
         mRoomId = intent.getIntExtra(Constants.IntentKeys.ROOM_ID, 0)
         mRoom = controller.getRoomInfo(mRoomId) //Get Room from controller
@@ -85,6 +92,38 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
     /*Display User Info*/
     override fun updateChannelOwnerInfo(channelOwner: User) {
         mOwner = channelOwner
+        //UI
+        mOwner?.hasFullName()?.let {
+            //Full Name
+            if (it.first) {
+                it.second?.let { achs_profile_name.text = it }
+            }
+            //Channel
+            mRoom?.let {
+                it.channel?.let {
+                    //Num. Followers
+                    if (it) {
+                        achs_followers_number.text = resources.getString(
+                                R.string.channel_followers,
+                                mRoom?.participantsId?.count().toString().trim()
+                        )
+                    }
+                    //Channel Info
+                    if (mChannelId != 0) {
+                        Channel().queryFirst { equalTo("id", mChannelId) }.let {
+                            //Channel Pic
+                            Picasso.with(context).load(it?.avatar)
+                                    .transform(CircleTransform())
+                                    .into(asc_chat_picture)
+                            //Channel Description
+                            achs_channel_description.text = it?.description
+                        }
+                    }
+                }
+            }
+        }
+
+
     }
 
     /*Clickers*/
@@ -109,26 +148,26 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
         when (p0) {
         /*Fav Messages*/
             achs_favemsg_container -> {
-
+                Toast.makeText(this, "In Progress", Toast.LENGTH_SHORT).show()
             }
 
         /*Share Channel*/
             achs_share_container -> {
-
+                Toast.makeText(this, "In Progress", Toast.LENGTH_SHORT).show()
             }
 
         /*Clear Channel Feed*/
             achs_clear_conv_container -> {
-
+                Toast.makeText(this, "In Progress", Toast.LENGTH_SHORT).show()
             }
 
         /*Report Channel*/
             achs_block_container -> {
-
+                Toast.makeText(this, "In Progress", Toast.LENGTH_SHORT).show()
             }
         /*Follow Channel*/
             achs_follow_button -> {
-
+                Toast.makeText(this, "In Progress", Toast.LENGTH_SHORT).show()
             }
         }
     }

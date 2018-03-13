@@ -122,6 +122,7 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
             //Chat Name
             val intent = Intent(context, ChannelSettingsActivity::class.java)
             intent.putExtra(Constants.IntentKeys.CHANNEL_NAME, mChannelName)
+            intent.putExtra(Constants.IntentKeys.CHANNEL_ID, mChannelId)
             intent.putExtra(Constants.IntentKeys.ROOM_ID, mRoomId)
             intent.putExtra(Constants.IntentKeys.OWNER_ID, mOwnerId)
             startActivityForResult(intent, Constants.RequestCodes.CHANNEL_SETTINGS)

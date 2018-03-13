@@ -29,7 +29,7 @@
     <string name="fave_messages">Favorite Messages (%1$s)</string>
     <string name="medianum">Media (%1$s)</string>
     <string name="filenum">File (%1$s)</string>
-    <string name="channel_followers">(%1$s) Followers</string>
+    <string name="channel_followers"> %1$s Followers</string>
 
     <!--Camera Control-->
     <string name="pick_image_intent_text">Choose an image</string>

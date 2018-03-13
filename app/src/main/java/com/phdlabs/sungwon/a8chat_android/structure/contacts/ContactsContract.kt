@@ -26,9 +26,6 @@ interface ContactsContract {
 
             fun updateChannelsSelector(string: String, channelCount: Int)
 
-            /*Refresh data*/
-            fun stopRefreshing()
-
         }
 
         interface Controller : BaseController {

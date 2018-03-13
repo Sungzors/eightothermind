@@ -78,9 +78,6 @@ class ContactsActivity : CoreActivity(), ContactsContract.EightFriends.View, Vie
         toolbar_leftoolbart_action.setImageDrawable(getDrawable(R.drawable.ic_back))
         toolbar_leftoolbart_action.scaleType = ImageView.ScaleType.CENTER
         toolbar_left_action_container.setOnClickListener(this)
-        //Refresh fragment
-        ac_swipe_refresh.setOnRefreshListener(this)
-        ac_swipe_refresh.setColorSchemeResources(R.color.blue_color_picker, R.color.sky_blue_color_picker)
         //Segmented control default state
         ac_button_contacts.text = getString(R.string.contacts_selector_default_text)
         ac_button_channels.text = getString(R.string.channels_selector_default_text)
@@ -91,11 +88,6 @@ class ContactsActivity : CoreActivity(), ContactsContract.EightFriends.View, Vie
     }
 
     override fun updateContactSelector(string: String, contactCount: Int) {
-        /**
-         * First loading happens with [shwoProgress] @progress_view
-         * After the first load we switch to @ac_swipe_refresh
-         * */
-        ac_swipe_refresh.visibility = View.VISIBLE
 
         if (contactCount > 0) {
             //Visible container
@@ -156,10 +148,6 @@ class ContactsActivity : CoreActivity(), ContactsContract.EightFriends.View, Vie
             //Todo: refreshChannels channels
             controller.loadChannels()
         }
-    }
-
-    override fun stopRefreshing() {
-        ac_swipe_refresh.isRefreshing = false
     }
 
     /**
