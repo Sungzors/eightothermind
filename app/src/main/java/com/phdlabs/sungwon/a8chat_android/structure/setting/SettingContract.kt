@@ -2,6 +2,7 @@ package com.phdlabs.sungwon.a8chat_android.structure.setting
 
 import com.phdlabs.sungwon.a8chat_android.model.contacts.Contact
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
+import com.phdlabs.sungwon.a8chat_android.model.user.User
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseController
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseView
 import com.phdlabs.sungwon.a8chat_android.structure.setting.chat.ChatSettingActivity
@@ -11,6 +12,10 @@ import com.phdlabs.sungwon.a8chat_android.structure.setting.chat.ChatSettingActi
  * Updated by JPAM on 02/22/2018
  */
 interface SettingContract {
+
+    /**
+     * Chat Settings
+     * */
     interface Chat {
         interface View : BaseView<Controller> {
 
@@ -42,6 +47,29 @@ interface SettingContract {
         }
     }
 
+    /**
+     * Channel Settings
+     * */
+    interface Channel {
+
+        interface View : BaseView<Controller> {
+            fun updateChannelOwnerInfo(channelOwner: User)
+        }
+
+        interface Controller : BaseController {
+
+            /*Retrieve room Info*/
+            fun getRoomInfo(id: Int): Room?
+
+            /*Channel Owner Information*/
+            fun getChannelOwnerInfo(ownerId: Int)
+        }
+
+    }
+
+    /**
+     * Media Fragment
+     * */
     interface MediaFragment {
         interface View : BaseView<Controller> {
 

@@ -29,6 +29,7 @@
     <string name="fave_messages">Favorite Messages (%1$s)</string>
     <string name="medianum">Media (%1$s)</string>
     <string name="filenum">File (%1$s)</string>
+    <string name="channel_followers">(%1$s) Followers</string>
 
     <!--Camera Control-->
     <string name="pick_image_intent_text">Choose an image</string>
@@ -67,7 +68,7 @@
     <string name="share_contact">Share Contact</string>
     <string name="share_location">Share Location</string>
     <string name="share_file">Share File</string>
-    <string name="share_chennal">Share Channel</string>
+    <string name="share_channel">Share Channel</string>
     <string name="share_money">Share Money</string>
     <string name="accept">Accept</string>
     <string name="decline">Decline</string>
@@ -151,6 +152,9 @@
     <string name="comment">comment...</string>
     <string name="cancel">cancel</string>
     <string name="file_name">File Name</string>
+    <string name="follow">Follow</string>
+    <string name="channel_description">Channel Description</string>
+    <string name="report_channel">Report Channel</string>
 
 
 </resources>

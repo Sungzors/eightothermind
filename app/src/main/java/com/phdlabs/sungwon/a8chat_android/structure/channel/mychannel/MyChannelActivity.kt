@@ -27,6 +27,7 @@ import com.phdlabs.sungwon.a8chat_android.structure.channel.ChannelContract
 import com.phdlabs.sungwon.a8chat_android.structure.channel.createPost.CreatePostActivity
 import com.phdlabs.sungwon.a8chat_android.structure.channel.postshow.ChannelPostShowActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
+import com.phdlabs.sungwon.a8chat_android.structure.setting.channel.ChannelSettingsActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.SuffixDetector
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseRecyclerAdapter
@@ -118,7 +119,12 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         }
         //Access to Channel Settings
         toolbar_right_picture.setOnClickListener {
-            //TODO: Access Channel Settings
+            //Chat Name
+            val intent = Intent(context, ChannelSettingsActivity::class.java)
+            intent.putExtra(Constants.IntentKeys.CHANNEL_NAME, mChannelName)
+            intent.putExtra(Constants.IntentKeys.ROOM_ID, mRoomId)
+            intent.putExtra(Constants.IntentKeys.OWNER_ID, mOwnerId)
+            startActivityForResult(intent, Constants.RequestCodes.CHANNEL_SETTINGS)
         }
     }
 
@@ -688,11 +694,13 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         if (acm_the_daddy_drawer.panelState == SlidingUpPanelLayout.PanelState.EXPANDED) {
             acm_the_daddy_drawer.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED
         }
+
         //Picture
         if (requestCode == CameraControl.instance.requestCode()) {
             controller.onPictureOnlyResult(requestCode, resultCode, data)
             controller.keepSocketConnection(false)
         }
+
         //Back from creating a post
         else if (requestCode == Constants.RequestCodes.CREATE_NEW_POST_REQ_CODE) {
             if (resultCode == Activity.RESULT_OK) {
@@ -703,10 +711,18 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
                 controller.keepSocketConnection(false)
             }
         }
+
         //Back from viewing a post
         else if (requestCode == Constants.RequestCodes.VIEW_POST_REQ_CODE) {
             if (resultCode == Activity.RESULT_OK || resultCode == Activity.RESULT_CANCELED) {
                 controller.keepSocketConnection(false)
+            }
+        }
+
+        //Back from Channel Settings
+        else if (requestCode == Constants.RequestCodes.CHANNEL_SETTINGS) {
+            if (resultCode == Activity.RESULT_OK || resultCode == Activity.RESULT_CANCELED) {
+                //todo: actions after returning from channel settings
             }
         }
     }

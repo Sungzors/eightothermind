@@ -138,8 +138,7 @@ class ChatSettingActivity : CoreActivity(), SettingContract.Chat.View, View.OnCl
     }
 
     private fun setUpClickers() {
-
-        //Notifications switch
+        //Notifications switch //TODO: Notifications
         asc_notif_switch.isSelected = false
         asc_notif_switch.setOnCheckedChangeListener { compoundButton, b ->
             if (b) { //Notifications ON

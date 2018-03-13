@@ -59,4 +59,31 @@ class UserManager {
         }
     }
 
+    /**
+     * [getSpecificUserInfo]
+     * Retrieve information for a specific user & Map it to a User Object
+     * @return User @see Realm , ErrorMessage
+     * */
+    fun getSpecificUserInfo(userId: Int, callback: (User?, String?) -> Unit) {
+        //Current User
+        getCurrentUser { success, user, token ->
+            token?.token?.let {
+                val call = Rest.getInstance().getmCallerRx().getUser(it, userId)
+                call.subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({ response ->
+                            if (response.isSuccess) {
+                                response?.user?.let {
+                                    callback(it, null)
+                                }
+                            } else if (response.isError) {
+                                callback(null, "Did not find user")
+                            }
+                        }, { throwable ->
+                            callback(null, throwable.localizedMessage)
+                        })
+            }
+        }
+    }
+
 }
