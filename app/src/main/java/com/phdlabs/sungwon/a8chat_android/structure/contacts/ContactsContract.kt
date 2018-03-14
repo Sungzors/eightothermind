@@ -7,7 +7,7 @@ import com.phdlabs.sungwon.a8chat_android.structure.core.BaseController
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseView
 
 /**
- * Created by paix on 2/13/18.
+ * Created by JPAM on 2/13/18.
  * Contacts Interface [ContactsActivity] & [ContactsAController]
  */
 interface ContactsContract {

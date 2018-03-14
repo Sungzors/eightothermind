@@ -9,7 +9,7 @@ import io.realm.annotations.PrimaryKey
 import io.realm.annotations.RealmClass
 
 /**
- * Created by paix on 3/8/18.
+ * Created by JPAM on 3/8/18.
  * [LikedMessage]
  * Used to collect liked messages by the user on the [Channel] feed
  */

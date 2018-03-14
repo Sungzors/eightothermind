@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import com.phdlabs.sungwon.a8chat_android.R
+import com.phdlabs.sungwon.a8chat_android.db.channels.ChannelsManager
 import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.phdlabs.sungwon.a8chat_android.model.user.User
@@ -16,7 +17,7 @@ import com.vicpin.krealmextensions.queryFirst
 import kotlinx.android.synthetic.main.activity_channel_settings.*
 
 /**
- * Created by paix on 3/12/18.
+ * Created by JPAM on 3/12/18.
  * [ChannelSettingsActivity]
  * Used to display Channel settings content & actions
  */
@@ -101,7 +102,7 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
             //Channel
             mRoom?.let {
                 it.channel?.let {
-                    //Num. Followers
+                    //Num. Followers //TODO: Ask Tomer if Followers === num of participants ?
                     if (it) {
                         achs_followers_number.text = resources.getString(
                                 R.string.channel_followers,
@@ -109,21 +110,17 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
                         )
                     }
                     //Channel Info
-                    if (mChannelId != 0) {
-                        Channel().queryFirst { equalTo("id", mChannelId) }.let {
-                            //Channel Pic
-                            Picasso.with(context).load(it?.avatar)
-                                    .transform(CircleTransform())
-                                    .into(asc_chat_picture)
-                            //Channel Description
-                            achs_channel_description.text = it?.description
-                        }
+                    ChannelsManager.instance.getSingleChannel(mChannelId)?.let {
+                        //Channel Pic
+                        Picasso.with(context).load(it?.avatar)
+                                .transform(CircleTransform())
+                                .into(asc_chat_picture)
+                        //Channel Description
+                        achs_channel_description.text = it?.description
                     }
                 }
             }
         }
-
-
     }
 
     /*Clickers*/

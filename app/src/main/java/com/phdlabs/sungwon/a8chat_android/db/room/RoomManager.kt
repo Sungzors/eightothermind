@@ -9,7 +9,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
 /**
- * Created by paix on 2/28/18.
+ * Created by JPAM on 2/28/18.
  * [RoomManager]
  * Used for alerting entering or leaving a room
  * It is also used for CRUD with [Room]s

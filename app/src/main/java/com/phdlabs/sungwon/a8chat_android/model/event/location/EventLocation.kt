@@ -8,7 +8,7 @@ import io.realm.RealmObject
 import io.realm.annotations.RealmClass
 
 /**
- * Created by paix on 1/30/18.
+ * Created by JPAM on 1/30/18.
  * [EventLocation]
  * @see RealmObject
  * used to define user location & match

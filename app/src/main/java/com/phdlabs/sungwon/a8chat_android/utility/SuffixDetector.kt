@@ -1,7 +1,7 @@
 package com.phdlabs.sungwon.a8chat_android.utility
 
 /**
- * Created by paix on 2/7/18.
+ * Created by JPAM on 2/7/18.
  * [SuffixDetector] used to analyze file types
  * TODO: Not currently used, could work for sending media with different specs on rooms
  */

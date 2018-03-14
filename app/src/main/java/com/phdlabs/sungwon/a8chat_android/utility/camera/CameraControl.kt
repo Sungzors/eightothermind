@@ -29,7 +29,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 /**
- * Created by paix on 11/8/17.
+ * Created by JPAM on 11/8/17.
  * Camera Control written in Kotlin
  * A group of *methods* to control
  * camera & gallery intents & data

@@ -6,7 +6,7 @@ import com.phdlabs.sungwon.a8chat_android.structure.setting.SettingContract
 import com.vicpin.krealmextensions.queryFirst
 
 /**
- * Created by paix on 3/12/18.
+ * Created by JPAM on 3/12/18.
  * [ChannelSettingsController]
  * Used for business logic on [ChannelSettingsActivity]
  */

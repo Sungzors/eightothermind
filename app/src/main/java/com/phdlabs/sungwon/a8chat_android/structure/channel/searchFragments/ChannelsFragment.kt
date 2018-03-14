@@ -28,7 +28,7 @@ import kotlinx.android.synthetic.main.activity_contacts.*
 import kotlinx.android.synthetic.main.fragment_channels.*
 
 /**
- * Created by paix on 2/13/18.
+ * Created by JPAM on 2/13/18.
  * [ChannelsFragment]
  * - Shows the channels I'm following
  * - Selecting a channel will take me to the channel detail view

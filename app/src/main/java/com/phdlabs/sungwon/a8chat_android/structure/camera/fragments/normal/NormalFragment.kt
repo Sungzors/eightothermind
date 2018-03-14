@@ -31,7 +31,7 @@ import kotlin.Comparator
 import kotlin.collections.ArrayList
 
 /**
- * Created by paix on 12/28/17.
+ * Created by JPAM on 12/28/17.
  * Camera Preview in Camera-Normal-Fragment with Camera API 2
  */
 class NormalFragment() : CameraBaseFragment() {

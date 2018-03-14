@@ -24,7 +24,7 @@ import kotlinx.android.synthetic.main.activity_create_post.*
 import kotlinx.android.synthetic.main.toolbar.*
 
 /**
- * Created by paix on 3/5/18.
+ * Created by JPAM on 3/5/18.
  * [CreatePostActivity] used to manage media & create a post
  */
 class CreatePostActivity : CoreActivity(), ChannelContract.CreatePost.View, View.OnClickListener {

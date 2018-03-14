@@ -7,7 +7,7 @@ import io.realm.annotations.RealmClass
 import io.realm.annotations.Required
 
 /**
- * Created by paix on 1/27/18.
+ * Created by JPAM on 1/27/18.
  * @RealmObject for RealmList used in [Room] @RealmObject
  */
 

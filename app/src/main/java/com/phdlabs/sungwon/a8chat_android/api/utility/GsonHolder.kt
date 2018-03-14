@@ -3,7 +3,7 @@ package com.phdlabs.sungwon.a8chat_android.api.utility
 import com.google.gson.Gson
 
 /**
- * Created by paix on 12/20/17.
+ * Created by JPAM on 12/20/17.
  * Gson Singleton
  */
 class GsonHolder {

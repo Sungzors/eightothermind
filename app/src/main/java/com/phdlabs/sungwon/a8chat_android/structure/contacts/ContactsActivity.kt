@@ -14,7 +14,7 @@ import kotlinx.android.synthetic.main.activity_contacts.*
 import kotlinx.android.synthetic.main.toolbar.*
 
 /**
- * Created by paix on 2/13/18.
+ * Created by JPAM on 2/13/18.
  * [ContactsActivity] This activity holds separate fragments to display
  * user contacts & user channels
  */
@@ -142,10 +142,8 @@ class ContactsActivity : CoreActivity(), ContactsContract.EightFriends.View, Vie
     /*Refresh current screen*/
     override fun onRefresh() {
         if (ac_button_contacts.isChecked && !ac_button_channels.isChecked) {
-            //Todo: refreshChannels contacts
             controller.loadContactsFromApi()
         } else if (ac_button_channels.isChecked && !ac_button_contacts.isChecked) {
-            //Todo: refreshChannels channels
             controller.loadChannels()
         }
     }

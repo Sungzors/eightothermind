@@ -21,7 +21,7 @@ import com.transitionseverywhere.TransitionManager
 import com.transitionseverywhere.extra.Scale
 
 /**
- * Created by paix on 2/19/18.
+ * Created by JPAM on 2/19/18.
  * [InviteContactsActivity] used to invite firends to join Eight App
  * This activity will trigger an sms through the API to invite friends
  */

@@ -7,7 +7,7 @@ import android.widget.FrameLayout
 import com.phdlabs.sungwon.a8chat_android.R
 
 /**
- * Created by paix on 1/14/18.
+ * Created by JPAM on 1/14/18.
  * Custom [FrameLayout] for camera-photo editing controls
 
  */

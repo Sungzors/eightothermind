@@ -25,7 +25,7 @@ import okhttp3.MultipartBody
 import retrofit2.http.*
 
 /**
- * Created by paix on 12/20/17.
+ * Created by JPAM on 12/20/17.
  * API calls using RXJava with purpose of User Mapping & Local Cache system
  * [CallerRx] User Observable functions for Retrofit, Kotlin & Rx mapping Realm
 

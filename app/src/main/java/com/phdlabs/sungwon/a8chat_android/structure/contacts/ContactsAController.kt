@@ -23,7 +23,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
 /**
- * Created by paix on 2/13/18.
+ * Created by JPAM on 2/13/18.
  * ContractsActivityController for [ContactsActivity]
  */
 class ContactsAController(val mView: ContactsContract.EightFriends.View) :

@@ -15,7 +15,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
 /**
- * Created by paix on 2/26/18.
+ * Created by JPAM on 2/26/18.
  * [ChannelsManager]
  * Used for downloading & caching [Room] [Channel] information
  */

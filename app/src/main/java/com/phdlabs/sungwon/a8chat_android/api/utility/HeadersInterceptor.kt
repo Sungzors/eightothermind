@@ -5,7 +5,7 @@ import okhttp3.Request
 import okhttp3.Response
 
 /**
- * Created by paix on 12/20/17.
+ * Created by JPAM on 12/20/17.
  * Headers Interceptor for HttpManager
  */
 class HeadersInterceptor : Interceptor {

@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 import com.phdlabs.sungwon.a8chat_android.api.response.ErrorResponse
 
 /**
- * Created by paix on 2/20/18.
+ * Created by JPAM on 2/20/18.
  * [ContactsInvitedResponse] used to serialize valid contact information
  * when contacts are invited to Eight
  */

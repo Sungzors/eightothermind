@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 import io.realm.RealmObject
 
 /**
- * Created by paix on 2/13/18.
+ * Created by JPAM on 2/13/18.
  * [LocalContact] represents the local phone contact query used for the [ContactsFileProvider]
  * - Only the phone number is required, but the [ContactsFileProvider] can return number & name
  */

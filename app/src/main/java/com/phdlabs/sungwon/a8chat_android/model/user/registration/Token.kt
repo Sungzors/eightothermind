@@ -7,7 +7,7 @@ import io.realm.annotations.PrimaryKey
 import io.realm.annotations.RealmClass
 
 /**
- * Created by paix on 12/21/17.
+ * Created by JPAM on 12/21/17.
  * Cached Token
  */
 @RealmClass

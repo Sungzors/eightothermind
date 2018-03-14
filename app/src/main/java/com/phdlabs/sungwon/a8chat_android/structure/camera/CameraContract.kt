@@ -8,7 +8,7 @@ import com.phdlabs.sungwon.a8chat_android.structure.core.BaseController
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseView
 
 /**
- * Created by paix on 12/28/17.
+ * Created by JPAM on 12/28/17.
  */
 interface CameraContract {
 

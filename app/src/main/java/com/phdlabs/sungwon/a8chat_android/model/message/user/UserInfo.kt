@@ -6,7 +6,7 @@ import io.realm.RealmObject
 import io.realm.annotations.RealmClass
 
 /**
- * Created by paix on 1/31/18.
+ * Created by JPAM on 1/31/18.
  * [UserInfo] provides specific user information
  * only for the [Message] @Realm model
  */

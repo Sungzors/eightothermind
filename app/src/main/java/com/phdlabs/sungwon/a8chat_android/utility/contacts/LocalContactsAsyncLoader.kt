@@ -5,7 +5,7 @@ import android.content.Context
 import com.phdlabs.sungwon.a8chat_android.model.contacts.LocalContact
 
 /**
- * Created by paix on 2/13/18.
+ * Created by JPAM on 2/13/18.
  * [LocalContactsAsyncLoader] used to load local contacts resources in the background of a Fragment
  * @param mContext
  */
