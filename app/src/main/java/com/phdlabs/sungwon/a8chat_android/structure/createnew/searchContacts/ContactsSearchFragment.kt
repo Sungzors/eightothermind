@@ -83,9 +83,13 @@ class ContactsSearchFragment : CoreFragment(), CreateNewContract.ContactSearch.V
     /*UI Changes*/
     private fun hideFavoritesCard(isHidden: Boolean) {
         if (isHidden) {
-            fcnc_fav_contacts_card.visibility = View.GONE
+            fcnc_fav_contacts_card?.let {
+                it.visibility = View.GONE
+            }
         } else {
-            fcnc_fav_contacts_card.visibility = View.VISIBLE
+            fcnc_fav_contacts_card?.let {
+                it.visibility = View.VISIBLE
+            }
         }
     }
 
@@ -215,13 +219,14 @@ class ContactsSearchFragment : CoreFragment(), CreateNewContract.ContactSearch.V
     override fun filterContactsAdapter(p0: String?) {
         //UI
         p0?.let {
-            hideFavoritesCard(true)
             //Filter Adapter
             mContactAdapter?.setFilter { filter ->
                 filter?.first_name?.toLowerCase()?.startsWith(p0.toLowerCase(), false)
             }
             if (p0.isBlank()) {
                 hideFavoritesCard(false)
+            } else {
+                hideFavoritesCard(true)
             }
         }
     }

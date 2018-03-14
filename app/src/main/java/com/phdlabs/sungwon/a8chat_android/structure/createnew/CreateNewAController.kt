@@ -1,6 +1,9 @@
 package com.phdlabs.sungwon.a8chat_android.structure.createnew
 
+import android.content.Intent
 import com.phdlabs.sungwon.a8chat_android.model.contacts.Contact
+import com.phdlabs.sungwon.a8chat_android.structure.channel.mychannel.MyChannelActivity
+import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.vicpin.krealmextensions.query
 import com.vicpin.krealmextensions.queryAll
 
@@ -31,6 +34,15 @@ class CreateNewAController(val mView: CreateNewContract.CreateNew.View) : Create
                 Contact().queryAll().toMutableList(),
                 Contact().query { equalTo("isFavorite", true) }.toMutableList())
         )
+    }
+
+    override fun openChannel(channelId: Int?, channelName: String?, channelRoomId: Int?, channelCreatorId: Int?) {
+        val intent = Intent(mView.getContext(), MyChannelActivity::class.java)
+        intent.putExtra(Constants.IntentKeys.CHANNEL_ID, channelId)
+        intent.putExtra(Constants.IntentKeys.CHANNEL_NAME, channelName)
+        intent.putExtra(Constants.IntentKeys.ROOM_ID, channelRoomId)
+        intent.putExtra(Constants.IntentKeys.OWNER_ID, channelCreatorId)
+        mView.getAct.startActivityForResult(intent, Constants.RequestCodes.OPEN_CHANNEL)
     }
 
 }

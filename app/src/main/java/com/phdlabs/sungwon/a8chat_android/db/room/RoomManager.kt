@@ -2,6 +2,7 @@ package com.phdlabs.sungwon.a8chat_android.db.room
 
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
 import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
+import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.phdlabs.sungwon.a8chat_android.model.user.UserRooms
 import com.vicpin.krealmextensions.query
 import com.vicpin.krealmextensions.save
@@ -90,7 +91,35 @@ class RoomManager {
                 }
             }
         }
+    }
 
+    /**
+     * [getRoomInfo]
+     *
+     * */
+    fun getRoomInfo(roomId: Int, callback: (Pair<Room?, String?>) -> Unit) {
+        UserManager.instance.getCurrentUser { success, user, token ->
+            if (success) {
+                user?.let {
+                    token?.token?.let {
+                        val call = Rest.getInstance().getmCallerRx().getRoomById(it, roomId)
+                        call.subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe({ response ->
+                                    if (response.isSuccess) {
+                                        response?.room?.let {
+                                            callback(Pair(it, null))
+                                        }
+                                    } else if (response.isError) {
+                                        callback(Pair(null, "Room not found"))
+                                    }
+                                }, { throwable ->
+                                    callback(Pair(null, throwable.localizedMessage))
+                                })
+                    }
+                }
+            }
+        }
     }
 
     /*Queries*/

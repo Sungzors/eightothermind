@@ -1,4 +1,4 @@
-package com.phdlabs.sungwon.a8chat_android.structure.channel.searchFragments
+package com.phdlabs.sungwon.a8chat_android.structure.contacts.searchFragments
 
 import android.app.SearchManager
 import android.content.Context
@@ -11,7 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.db.channels.ChannelsManager
@@ -134,7 +133,6 @@ class ChannelsFragment : CoreFragment() {
             override fun viewHolder(inflater: LayoutInflater?, parent: ViewGroup?, type: Int): BaseViewHolder {
                 return object : BaseViewHolder(R.layout.view_eight_channel_card, inflater!!, parent) {
                     override fun addClicks(views: ViewMap?) {
-                        //Open Channel
                         //Open Channel
                         views?.click {
                             openChannel(getItem(adapterPosition))

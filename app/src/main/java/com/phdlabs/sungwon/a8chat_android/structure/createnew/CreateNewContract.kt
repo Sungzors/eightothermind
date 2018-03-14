@@ -1,5 +1,6 @@
 package com.phdlabs.sungwon.a8chat_android.structure.createnew
 
+import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
 import com.phdlabs.sungwon.a8chat_android.model.contacts.Contact
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseController
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseView
@@ -13,6 +14,7 @@ interface CreateNewContract {
     interface CreateNew {
 
         interface View : BaseView<Controller> {
+            val getAct: CreateNewActivity
             //Default UI
             fun setupDefaultUI()
 
@@ -24,7 +26,9 @@ interface CreateNewContract {
         interface Controller : BaseController {
             //Contacts
             fun queryContacts(callback: (Pair<MutableList<Contact>?, MutableList<Contact>?>) -> Unit)
+
             //Channels
+            fun openChannel(channelId: Int?, channelName: String?, channelRoomId: Int?, channelCreatorId: Int?)
         }
 
     }
@@ -32,11 +36,17 @@ interface CreateNewContract {
     //Channels Fragment
     interface ChannelSearch {
         interface View : BaseView<Controller> {
-
+            var getAct: CreateNewActivity
+            //Update Channel Data
+            fun updateChannelRecycler(channels: MutableList<Channel>?)
         }
 
         interface Controller : BaseController {
+            //Filter Channel Data
+            fun pushChannelFilterChanges(p0: String?)
 
+            //Download Room Info
+            fun pullChannelRoom(roomId: Int, callback: (Boolean) -> Unit)
         }
     }
 

@@ -88,6 +88,11 @@ object Constants {
          * Used when opening Channel Settings
          * */
         const val CHANNEL_SETTINGS = 18
+
+        /**
+         * Opened new channel after search
+         * */
+        const val OPEN_CHANNEL = 19
     }
 
     /**

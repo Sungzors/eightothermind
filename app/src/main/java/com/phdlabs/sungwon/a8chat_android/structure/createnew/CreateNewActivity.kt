@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import com.phdlabs.sungwon.a8chat_android.R
@@ -24,7 +25,6 @@ import kotlinx.android.synthetic.main.toolbar_create_new.*
  * Updated by JPAM on 2/25/2018
  */
 class CreateNewActivity : CoreActivity(), CreateNewContract.CreateNew.View, View.OnClickListener {
-
     /*Controller*/
     override lateinit var controller: CreateNewContract.CreateNew.Controller
 
@@ -34,10 +34,12 @@ class CreateNewActivity : CoreActivity(), CreateNewContract.CreateNew.View, View
     override fun contentContainerId(): Int = R.id.acn_fragment_container
 
     /*Properties*/
+    override lateinit var getAct: CreateNewActivity
     private lateinit var mContactList: MutableList<Contact>
     private lateinit var mFavoriteList: MutableList<Contact>
     private var contactSearchFragment: ContactsSearchFragment
     private var channelSearchFragment: ChannelSearchFragment
+    private var mLastQuery: String = ""
 
     init {
         CreateNewAController(this)
@@ -45,7 +47,11 @@ class CreateNewActivity : CoreActivity(), CreateNewContract.CreateNew.View, View
         channelSearchFragment = ChannelSearchFragment()
     }
 
-    /*LifeCycle*/
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        getAct = this
+    }
+
     override fun onStart() {
         super.onStart()
         //Default UI
@@ -80,6 +86,12 @@ class CreateNewActivity : CoreActivity(), CreateNewContract.CreateNew.View, View
                 setResult(Activity.RESULT_OK)
                 finish()
             }
+        } else if (resultCode == Activity.RESULT_CANCELED) {
+            if (requestCode == Constants.RequestCodes.OPEN_CHANNEL) {
+                //Clear Search
+                tcn_searchview?.setQuery("", false)
+                tcn_searchview?.clearFocus()
+            }
         } else {
             super.onActivityResult(requestCode, resultCode, data)
         }
@@ -98,11 +110,21 @@ class CreateNewActivity : CoreActivity(), CreateNewContract.CreateNew.View, View
             acn_contacts_selector.isChecked = true
             acn_channels_selector.isChecked = false
             replaceFragment(contentContainerId(), contactSearchFragment, false)
+            //Create a Query if there is text in the SearchBar
+            if (mLastQuery.isNotBlank()) {
+                tcn_searchview?.setQuery("", false)
+                tcn_searchview?.clearFocus()
+
+            }
         }
         acn_channels_selector.setOnClickListener {
             acn_contacts_selector.isChecked = false
             acn_channels_selector.isChecked = true
-            //replaceFragment(contentContainerId(), channelSearchFragment, false)
+            replaceFragment(contentContainerId(), channelSearchFragment, false)
+            //Create a Query if there is text in the SearchBar
+            if (mLastQuery.isNotBlank()) {
+                tcn_searchview?.setQuery(mLastQuery, true)
+            }
         }
         //Default -> Contacts
         acn_contacts_selector.isChecked = true
@@ -166,13 +188,14 @@ class CreateNewActivity : CoreActivity(), CreateNewContract.CreateNew.View, View
                     override fun onQueryTextSubmit(p0: String?): Boolean {
                         //Hide search options
                         p0?.let {
+                            mLastQuery = it
                             acn_search_selector_container.visibility = View.VISIBLE
                             if (acn_contacts_selector.isChecked) {//Contacts
                                 contactSearchFragment.controller.pushContactFilterChanges(p0)
                             } else if (acn_channels_selector.isChecked) {//Channels
-
+                                channelSearchFragment.controller.pushChannelFilterChanges(p0)
                             }
-                            if (it.isBlank()) {
+                            if (it.isBlank() && acn_contacts_selector.isChecked) {
                                 ca_searchView?.clearFocus()
                                 //Selector Menu
                                 acn_search_selector_container.visibility = View.GONE
@@ -189,15 +212,14 @@ class CreateNewActivity : CoreActivity(), CreateNewContract.CreateNew.View, View
                     override fun onQueryTextChange(p0: String?): Boolean {
                         //Hide search options
                         p0?.let {
+                            mLastQuery = it
                             acn_search_selector_container.visibility = View.VISIBLE
                             if (acn_contacts_selector.isChecked) {//Contacts
-                                if (p0 != "") {
-                                    contactSearchFragment.controller.pushContactFilterChanges(p0)
-                                }
+                                contactSearchFragment.controller.pushContactFilterChanges(p0)
                             } else if (acn_channels_selector.isChecked) {//Channels
-
+                                channelSearchFragment.controller.pushChannelFilterChanges(p0)
                             }
-                            if (it.isBlank()) {
+                            if (it.isBlank() && acn_contacts_selector.isChecked) {
                                 //Selector Menu
                                 acn_search_selector_container.visibility = View.GONE
                                 contactSearchFragment.controller.getContactData()

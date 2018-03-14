@@ -7,7 +7,7 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.ImageView
 import com.phdlabs.sungwon.a8chat_android.R
-import com.phdlabs.sungwon.a8chat_android.structure.channel.searchFragments.ChannelsFragment
+import com.phdlabs.sungwon.a8chat_android.structure.contacts.searchFragments.ChannelsFragment
 import com.phdlabs.sungwon.a8chat_android.structure.contacts.searchFragments.ContactsFragment
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import kotlinx.android.synthetic.main.activity_contacts.*

@@ -10,6 +10,7 @@ import com.phdlabs.sungwon.a8chat_android.api.response.createChannel.ChannelResp
 import com.phdlabs.sungwon.a8chat_android.api.response.media.MediaResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.channels.MyChannelRoomsResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.channels.post.ChannelPostResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.channels.search.SearchChannelsResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.contacts.ContactsInvitedResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.contacts.ContactsPostResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.contacts.UserFriendsResponse
@@ -62,7 +63,6 @@ interface CallerRx {
     fun postChannelMessagePost(@Header(TOKEN) token: String, @Body message: SendMessageStringData, @Query("post") post: Boolean): Observable<ChannelPostResponse>
 
     /*FILES*/
-
     /**
      * [shareFile]
      * Can be used to share a single or multiple files
@@ -98,6 +98,8 @@ interface CallerRx {
     fun likePost(@Header(TOKEN) token: String, @Path("messageId") messageId: Int,
                  @Path("userId") userId: Int, @Query("unlike") unlike: Boolean?): Observable<LikeResponse>
 
+    @GET("/channels/search")
+    fun searchChannel(@Header(TOKEN) token: String, @Query("search") search: String?): Observable<SearchChannelsResponse>
 
     /**
      * [getPostComments]
@@ -168,6 +170,9 @@ interface CallerRx {
     @PATCH("/privateChats/{roomId}/favorite")
     fun favoritePrivateChatRoom(@Header(TOKEN) token: String, @Path("roomId") roomId: Int,
                                 @Body privateChatPatchData: PrivateChatPatchData): Observable<PrivateChatFavoriteResponse>
+
+    @GET("/rooms/{roomId}")
+    fun getRoomById(@Header(TOKEN) token: String, @Path("roomId") roomId: Int):Observable<RoomResponse>
 
     /*GROUP*/
     @POST("/groupChats")
