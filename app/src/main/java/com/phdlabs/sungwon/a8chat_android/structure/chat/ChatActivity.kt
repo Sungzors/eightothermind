@@ -4,14 +4,17 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
+import cn.zjy.actionsheet.ActionSheet
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.model.media.Media
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
@@ -202,6 +205,35 @@ class ChatActivity : CoreActivity(), ChatContract.View {
                 } else {
                     return 1
                 }
+            }
+
+            override fun onLongPressItem(e: MotionEvent?, position: Int) {
+                val message = mAdapter.getItem(position)
+                val choiceArray = mutableListOf<String>()
+                var colorArray = intArrayOf(Color.BLUE)
+                choiceArray.add("Favorite Message")
+                if (message.userId == mUserId) {
+                    choiceArray.add("Delete Message")
+                    colorArray = intArrayOf(Color.BLUE, Color.RED)
+                }
+                val actionSheet = ActionSheet.Builder()
+                        .setTitle("Select Action", Color.BLACK)
+                        .setOtherBtn(choiceArray.toTypedArray(), colorArray)
+                        .setCancelBtn("Cancel", Color.BLACK)
+                        .setCancelableOnTouchOutside(true)
+                        .setActionSheetListener( object : ActionSheet.ActionSheetListener{
+                            override fun onButtonClicked(actionSheet: ActionSheet?, index: Int) {
+                                when (index){
+                                    0 -> controller.favoriteMessage(message)
+                                    1 -> controller.deleteMessage(message)
+                                }
+                            }
+
+                            override fun onDismiss(actionSheet: ActionSheet?, isByBtn: Boolean) {
+                            }
+                        })
+                        .build()
+                actionSheet.show(fragmentManager)
             }
 
             override fun viewHolder(inflater: LayoutInflater?, parent: ViewGroup?, type: Int): BaseViewHolder {

@@ -1,21 +1,20 @@
 package com.phdlabs.sungwon.a8chat_android.api.rest
 
 import com.phdlabs.sungwon.a8chat_android.api.data.*
-
 import com.phdlabs.sungwon.a8chat_android.api.response.*
 import com.phdlabs.sungwon.a8chat_android.api.response.channels.LikeResponse
-import com.phdlabs.sungwon.a8chat_android.api.response.channels.follow.ChannelFollowResponse
-import com.phdlabs.sungwon.a8chat_android.api.response.createEvent.EventPostResponse
-import com.phdlabs.sungwon.a8chat_android.api.response.createChannel.ChannelResponse
-import com.phdlabs.sungwon.a8chat_android.api.response.media.MediaResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.channels.MyChannelRoomsResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.channels.follow.ChannelFollowResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.channels.post.ChannelPostResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.contacts.ContactsInvitedResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.contacts.ContactsPostResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.contacts.UserFriendsResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.createChannel.ChannelResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.createEvent.EventPostResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.eightEvents.EventRetrievalResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.favorite.PrivateChatFavoriteResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.media.FileResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.media.MediaResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.room.EnterLeaveRoomResponse
 import com.phdlabs.sungwon.a8chat_android.api.rest.Caller.TOKEN
 import com.phdlabs.sungwon.a8chat_android.model.user.User
@@ -75,6 +74,12 @@ interface CallerRx {
     fun shareFile(@Header(TOKEN) token: String, @Body multipartBody: MultipartBody,
                   @Query("selfDestruct") selfDestruct: Boolean?, @Query("post") post: Boolean?,
                   @Query("schedule") schedule: Boolean?, @Query("minutes") minutes: Int?): Observable<FileResponse>
+
+    @PATCH("/messages/{messageId}/favorite")
+    fun favoriteMessagio(@Header(TOKEN) token: String, @Path("messageId") messageId: Int, @Body data: FavoriteData): Observable<ErrorResponse>
+
+    @DELETE("/messages/{messageId}/user/{userId}")
+    fun deleteMessagio(@Header(TOKEN) token: String, @Path("messageId") messageId: Int, @Path("userId") userId: Int): Observable<ErrorResponse>
 
     /*CHANNEL*/
     //Create new channel

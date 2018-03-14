@@ -5,6 +5,7 @@ import android.content.Context
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.SearchView
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.CheckBox
@@ -42,6 +43,7 @@ class GroupInviteActivity : CoreActivity(), GroupChatContract.Invite.View {
 
     override fun onStart() {
         super.onStart()
+        setToolbarTitle(getString(R.string.invite_friends))
         setUpRecycler()
         setupSearchBar()
         UserManager.instance.getCurrentUser { isSuccess, user, _ ->
@@ -68,7 +70,7 @@ class GroupInviteActivity : CoreActivity(), GroupChatContract.Invite.View {
 
     private fun loadAndGroupContacts() {
         //Query realm eight contacts
-        mEightContacts = Contact().queryAll()
+        mEightContacts = Contact().queryAll().toMutableList()
 
         /*Create Separators by first name -> first character*/
         val firstCharFirstName: MutableList<String> = mutableListOf() //Number of contacts
@@ -143,7 +145,7 @@ class GroupInviteActivity : CoreActivity(), GroupChatContract.Invite.View {
                         //Search
                         mAdapter?.setFilter { filter ->
                             p0?.let {
-                                filter?.first_name?.toLowerCase()?.startsWith(it, false)
+                                filter?.first_name?.toLowerCase()?.startsWith(it.toLowerCase(), false)
                             }
                         }
                         activity.agi_searchView?.clearFocus()
@@ -156,7 +158,7 @@ class GroupInviteActivity : CoreActivity(), GroupChatContract.Invite.View {
                     override fun onQueryTextChange(p0: String?): Boolean {
                         mAdapter?.setFilter { filter ->
                             p0?.let {
-                                filter?.first_name?.toLowerCase()?.startsWith(it,false)
+                                filter?.first_name?.toLowerCase()?.startsWith(it.toLowerCase(),false)
                             }
                         }
                         return true
@@ -165,6 +167,10 @@ class GroupInviteActivity : CoreActivity(), GroupChatContract.Invite.View {
 
                 }
         )
+    }
+
+    fun searchClicked(v: View){
+        agi_searchView.isIconified = false
     }
 
     override fun refreshRecycler() {
