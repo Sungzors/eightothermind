@@ -23,9 +23,8 @@ import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.model.user.UserRooms
 import com.phdlabs.sungwon.a8chat_android.structure.channel.ChannelContract
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
+import com.phdlabs.sungwon.a8chat_android.utility.SuffixDetector
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
-import com.vicpin.krealmextensions.queryFirst
-import com.vicpin.krealmextensions.save
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import okhttp3.MediaType
@@ -35,7 +34,6 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 import java.io.File
-import java.io.FileOutputStream
 
 /**
  * Created by SungWon on 12/20/2017.
@@ -77,11 +75,11 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
     override fun start() {
         if (ContextCompat.checkSelfPermission(mView.getActivity, Constants.AppPermissions.READ_EXTERNAL) !=
                 PackageManager.PERMISSION_GRANTED) {
-            requestReadingContactsPermissions()
+            requestReadingExternalStorage()
         }
     }
 
-    private fun requestReadingContactsPermissions() {
+    override fun requestReadingExternalStorage() {
         //Required permissions
         val whatPermissions = arrayOf(Constants.AppPermissions.READ_EXTERNAL)
         mView.getActivity.context?.let {
@@ -184,7 +182,7 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
                                 .addFormDataPart("userId", user.id!!.toString())
                                 .addFormDataPart("roomId", mView.getRoomId.toString())
                                 .addFormDataPart("file[0]",
-                                        "8_" + System.currentTimeMillis(),
+                                        "8_" + System.currentTimeMillis() + SuffixDetector.instance.getFileSuffix(path),
                                         RequestBody.create(MediaType.parse("application/*"), file))
                                 .build()
 
@@ -334,8 +332,16 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
     }
 
     /*Channels*/
-    override fun getFollowedChannels(): MutableList<Channel>? =
-            ChannelsManager.instance.getAllFollowedChannels()?.toMutableList()
+    override fun getFollowedChannels(): MutableList<Channel>? {
+        val channels = ChannelsManager.instance.getAllFollowedChannels()?.toMutableList()
+        channels?.let {
+            //Filter the current channel from the favorites shown at the top Recycler View
+            channels
+                    .filter { it.id == mView.getChannelId }
+                    .forEach { channels.remove(it) }
+        }
+        return channels
+    }
 
     /*Chat History*/
     override fun retrieveChatHistory(refresh: Boolean) {

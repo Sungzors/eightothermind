@@ -12,7 +12,7 @@ import io.michaelrocks.libphonenumber.android.PhoneNumberUtil
 import io.michaelrocks.libphonenumber.android.Phonenumber
 
 /**
- * Created by paix on 2/13/18.
+ * Created by JPAM on 2/13/18.
  * Phone contacts file provider
  */
 class ContactsFileProvider : FileProvider() {

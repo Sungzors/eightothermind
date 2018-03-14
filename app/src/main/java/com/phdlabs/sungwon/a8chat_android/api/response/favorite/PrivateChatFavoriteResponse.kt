@@ -7,7 +7,7 @@ import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.phdlabs.sungwon.a8chat_android.model.user.UserRooms
 
 /**
- * Created by paix on 2/22/18.
+ * Created by JPAM on 2/22/18.
  * Updated favorite room returned by API
  */
 class PrivateChatFavoriteResponse : ErrorResponse() {

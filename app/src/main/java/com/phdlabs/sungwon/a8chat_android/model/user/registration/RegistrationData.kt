@@ -6,7 +6,7 @@ import io.realm.RealmObject
 import io.realm.annotations.RealmClass
 
 /**
- * Created by paix on 12/21/17.
+ * Created by JPAM on 12/21/17.
  * Registration data for new users
  *
  * Model extends RealmObject & is annotated with @open class (Kotlin class is final by default)

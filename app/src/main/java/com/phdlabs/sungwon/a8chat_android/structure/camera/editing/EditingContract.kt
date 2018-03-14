@@ -8,7 +8,7 @@ import com.phdlabs.sungwon.a8chat_android.structure.core.BaseController
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseView
 
 /**
- * Created by paix on 1/15/18.
+ * Created by JPAM on 1/15/18.
  * EditingActivity Contract
  */
 interface EditingContract {

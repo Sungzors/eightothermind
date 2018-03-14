@@ -5,7 +5,7 @@ import android.util.AttributeSet
 import android.view.TextureView
 
 /**
- * Created by paix on 1/2/18.
+ * Created by JPAM on 1/2/18.
  * A [TextureView] that can be adjusted to a specified aspect ratio
  * Used for Camera Preview
  */

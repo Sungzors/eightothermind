@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.Toolbar
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/toolbar"
     android:layout_width="match_parent"
     android:layout_height="60dp"
@@ -13,38 +12,40 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:layout_marginBottom="10dp"
             android:layout_marginEnd="10dp"
             android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
             android:layout_weight="1"
-            android:background="@drawable/bg_15dp_curve_shadow_greybg">
-            <SearchView
+            android:background="@drawable/bg_15dp_curve_shadow_greybg"
+            android:orientation="horizontal">
+
+            <android.support.v7.widget.SearchView
                 android:id="@+id/tcn_searchview"
                 android:layout_width="1000dp"
                 android:layout_height="40dp"
                 android:layout_gravity="center_vertical"
-                android:padding="0dp"
-                android:inputType="text"
-                android:queryHint="@string/searchcontacthint"
-                android:maxLines="1"
                 android:imeOptions="actionSearch"
-                android:onClick="searchClicked"/>
+                android:inputType="text"
+                android:maxLines="1"
+                android:onClick="searchClicked"
+                android:padding="0dp"
+                android:queryHint="@string/searchcontacthint" />
         </LinearLayout>
+
         <TextView
             android:id="@+id/tcn_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:layout_marginEnd="10dp"
             android:text="Cancel"
             android:textColor="@color/white"
-            android:textSize="18sp"
-            android:layout_gravity="center_vertical"/>
+            android:textSize="18sp" />
     </LinearLayout>
-
 
 
 </android.support.v7.widget.Toolbar>

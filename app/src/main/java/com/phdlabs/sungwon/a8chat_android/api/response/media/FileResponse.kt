@@ -6,7 +6,7 @@ import com.phdlabs.sungwon.a8chat_android.api.response.ErrorResponse
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
 
 /**
- * Created by paix on 3/9/18.
+ * Created by JPAM on 3/9/18.
  * Shared File Response
  */
 class FileResponse : ErrorResponse() {

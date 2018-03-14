@@ -18,7 +18,7 @@ import kotlinx.android.synthetic.main.view_camera_control_close.*
 import kotlinx.android.synthetic.main.view_camera_control_tabs.*
 
 /**
- * Created by paix on 12/28/17.
+ * Created by JPAM on 12/28/17.
  * CameraActivity for controlling CameraPagerAdapter with structure:
  * [Camera Roll - Normal - Hands Free]
  */

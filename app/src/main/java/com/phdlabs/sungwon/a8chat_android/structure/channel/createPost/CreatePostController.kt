@@ -20,7 +20,7 @@ import okhttp3.RequestBody
 import java.io.ByteArrayOutputStream
 
 /**
- * Created by paix on 3/5/18.
+ * Created by JPAM on 3/5/18.
  * [CreatePostController] for [CreatePostActivity]
  */
 class CreatePostController(val mView: ChannelContract.CreatePost.View) : ChannelContract.CreatePost.Controller {

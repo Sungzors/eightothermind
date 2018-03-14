@@ -12,7 +12,7 @@ import io.realm.annotations.PrimaryKey
 import io.realm.annotations.RealmClass
 
 /**
- * Created by paix on 1/31/18.
+ * Created by JPAM on 1/31/18.
  * Similar model as the User model
  * used on [Message] & Contact management
  * @Warning many properties will probably be null when received

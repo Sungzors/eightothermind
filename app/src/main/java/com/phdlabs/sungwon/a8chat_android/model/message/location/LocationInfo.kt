@@ -6,7 +6,7 @@ import io.realm.RealmObject
 import io.realm.annotations.RealmClass
 
 /**
- * Created by paix on 1/31/18.
+ * Created by JPAM on 1/31/18.
  * [LocationInfo] provides specific location information
  * only for the [Message] @Realm model
  * @Warning this class is different from the [EventLocation]

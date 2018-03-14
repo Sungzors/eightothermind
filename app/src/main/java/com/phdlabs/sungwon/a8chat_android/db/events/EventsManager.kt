@@ -11,7 +11,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
 /**
- * Created by paix on 2/27/18.
+ * Created by JPAM on 2/27/18.
  * [EventsManager]
  * Used for downloading & Caching [Event] & [Room]
  */

@@ -113,6 +113,7 @@ interface ChannelContract {
             fun keepSocketConnection(keepConnection: Boolean)
 
             /*Read Files Permissions*/
+            fun requestReadingExternalStorage()
             fun permissionResults(requestCode: Int, permissions: Array<out String>, grantResults: IntArray): Boolean
         }
     }

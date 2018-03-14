@@ -8,7 +8,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 
 /**
- * Created by paix on 11/8/17.
+ * Created by JPAM on 11/8/17.
  * [ImageUtils] Used to provide temporary file naming convention to
  * images & an ordered file saving system
  *

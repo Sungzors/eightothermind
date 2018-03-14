@@ -9,7 +9,7 @@ import io.realm.RealmList
 import java.lang.reflect.Type
 
 /**
- * Created by paix on 1/29/18.
+ * Created by JPAM on 1/29/18.
  * Helper class for [Gson] so we can deserialize [RealmList] of [RealmInt] &
  * save directly to Realm when using Kotlin RX callbacks
  */

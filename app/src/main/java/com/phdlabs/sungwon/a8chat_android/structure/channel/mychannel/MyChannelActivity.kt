@@ -1,8 +1,11 @@
 package com.phdlabs.sungwon.a8chat_android.structure.channel.mychannel
 
 import android.app.Activity
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
@@ -11,11 +14,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.webkit.MimeTypeMap
+import android.widget.*
 import com.phdlabs.sungwon.a8chat_android.R
+import com.phdlabs.sungwon.a8chat_android.db.channels.ChannelsManager
 import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
 import com.phdlabs.sungwon.a8chat_android.model.media.Media
@@ -25,7 +27,9 @@ import com.phdlabs.sungwon.a8chat_android.structure.channel.ChannelContract
 import com.phdlabs.sungwon.a8chat_android.structure.channel.createPost.CreatePostActivity
 import com.phdlabs.sungwon.a8chat_android.structure.channel.postshow.ChannelPostShowActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
+import com.phdlabs.sungwon.a8chat_android.structure.setting.channel.ChannelSettingsActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
+import com.phdlabs.sungwon.a8chat_android.utility.SuffixDetector
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseRecyclerAdapter
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseViewHolder
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.ViewMap
@@ -39,6 +43,7 @@ import cz.intik.overflowindicator.OverflowPagerIndicator
 import cz.intik.overflowindicator.SimpleSnapHelper
 import io.realm.RealmList
 import kotlinx.android.synthetic.main.activity_channel_my.*
+import kotlinx.android.synthetic.main.toolbar.*
 import yogesh.firzen.filelister.FileListerDialog
 import java.text.SimpleDateFormat
 
@@ -83,22 +88,49 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         mRoomId = intent.getIntExtra(Constants.IntentKeys.ROOM_ID, 0)
         mOwnerId = intent.getIntExtra(Constants.IntentKeys.OWNER_ID, 0)
         //UI
-        showBackArrow(R.drawable.ic_back)
-        setToolbarTitle(mChannelName)
+        setupToolbar()
         setupFollowedChannelsRecycler()
         setupContentRecycler()
-        //Files
+        //File sharing
         fileListerDialog = FileListerDialog.createFileListerDialog(this)
         fileListerDialog.setOnFileSelectedListener { file, path ->
-            controller.sendFile(file, path)
+            //File Permissions
+            if (ContextCompat.checkSelfPermission(this, Constants.AppPermissions.READ_EXTERNAL) ==
+                    PackageManager.PERMISSION_GRANTED) {
+                controller.sendFile(file, path)
+            } else {
+                controller.requestReadingExternalStorage()
+            }
         }
         //Controller
         controller.onCreate()
     }
 
+    private fun setupToolbar() {
+        showBackArrow(R.drawable.ic_back)
+        setToolbarTitle(mChannelName)
+        toolbar_right_picture.visibility = View.VISIBLE
+        //Channel Picture -> Access to settings
+        ChannelsManager.instance.getSingleChannel(mChannelId)?.avatar?.let {
+            Picasso.with(this)
+                    .load(it)
+                    .transform(CircleTransform())
+                    .into(toolbar_right_picture)
+        }
+        //Access to Channel Settings
+        toolbar_right_picture.setOnClickListener {
+            //Chat Name
+            val intent = Intent(context, ChannelSettingsActivity::class.java)
+            intent.putExtra(Constants.IntentKeys.CHANNEL_NAME, mChannelName)
+            intent.putExtra(Constants.IntentKeys.CHANNEL_ID, mChannelId)
+            intent.putExtra(Constants.IntentKeys.ROOM_ID, mRoomId)
+            intent.putExtra(Constants.IntentKeys.OWNER_ID, mOwnerId)
+            startActivityForResult(intent, Constants.RequestCodes.CHANNEL_SETTINGS)
+        }
+    }
+
     override fun onStart() {
         super.onStart()
-
         /*Show || Hide -> Bottom Drawer*/
         UserManager.instance.getCurrentUser { success, user, _ ->
             if (success) {
@@ -132,12 +164,14 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
     override fun onDestroy() {
         super.onDestroy()
         controller.destroy()
+        overridePendingTransition(0, 0)
     }
 
     /*FOLLOWED CHANNELS*/
     private fun setupFollowedChannelsRecycler() {
         mFollowedChanellsAdapter = object : BaseRecyclerAdapter<Channel, BaseViewHolder>() {
             override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: Channel?, position: Int, type: Int) {
+
                 val profilePic = viewHolder?.get<ImageView>(R.id.cvlc_picture_profile)
                 val channelName = viewHolder?.get<TextView>(R.id.cvlc_name_channel)
                 val unreadChannelIndicator = viewHolder?.get<ImageView>(R.id.cvlc_background_unread)
@@ -151,6 +185,7 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
                 }
                 Picasso.with(context).load(data?.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(profilePic)
                 channelName?.text = data?.name
+
             }
 
             override fun viewHolder(inflater: LayoutInflater?, parent: ViewGroup?, type: Int): BaseViewHolder {
@@ -159,11 +194,13 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
                         views?.click {
                             val channel = getItem(adapterPosition)
                             val intent = Intent(context, MyChannelActivity::class.java)
-                            intent.putExtra(Constants.IntentKeys.CHANNEL_ID, channel?.id.toString())
+                            intent.putExtra(Constants.IntentKeys.CHANNEL_ID, channel?.id)
                             intent.putExtra(Constants.IntentKeys.CHANNEL_NAME, channel?.name)
                             intent.putExtra(Constants.IntentKeys.ROOM_ID, channel?.room_id?.toInt())
                             intent.putExtra(Constants.IntentKeys.OWNER_ID, channel?.user_creator_id?.toInt())
                             startActivity(intent)
+                            overridePendingTransition(0, 0)
+                            this@MyChannelActivity.finish()
                         }
                         super.addClicks(views)
                     }
@@ -504,16 +541,23 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         postDate.text = formatter.format(data.createdAt)
         //File
         data.files?.let {
-            //TODO: Check for storage permissions
             if (it.count() > 0) {
-                //TODO: Issues with file type being posted
                 fileName.text = it[0]?.file_string ?: "n/a"
             }
         }
         //Open File
         container.setOnClickListener {
-            //TODO: Open File Preview Screen
             println("TAPPED FILE: " + fileName.text)
+            val mime = MimeTypeMap.getSingleton()
+            val intent = Intent(Intent.ACTION_VIEW)
+            val mimeType = mime.getMimeTypeFromExtension(SuffixDetector.instance.getFileSuffix(data.files?.get(0)?.file_string.toString()))
+            intent.setDataAndType(Uri.parse(data.files?.get(0)?.s3_url), mimeType)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            try {
+                context?.startActivity(intent)
+            } catch (e: ActivityNotFoundException) {
+                Toast.makeText(this, "Can't open this type of File", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -651,11 +695,13 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         if (acm_the_daddy_drawer.panelState == SlidingUpPanelLayout.PanelState.EXPANDED) {
             acm_the_daddy_drawer.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED
         }
+
         //Picture
         if (requestCode == CameraControl.instance.requestCode()) {
             controller.onPictureOnlyResult(requestCode, resultCode, data)
             controller.keepSocketConnection(false)
         }
+
         //Back from creating a post
         else if (requestCode == Constants.RequestCodes.CREATE_NEW_POST_REQ_CODE) {
             if (resultCode == Activity.RESULT_OK) {
@@ -666,10 +712,18 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
                 controller.keepSocketConnection(false)
             }
         }
+
         //Back from viewing a post
         else if (requestCode == Constants.RequestCodes.VIEW_POST_REQ_CODE) {
             if (resultCode == Activity.RESULT_OK || resultCode == Activity.RESULT_CANCELED) {
                 controller.keepSocketConnection(false)
+            }
+        }
+
+        //Back from Channel Settings
+        else if (requestCode == Constants.RequestCodes.CHANNEL_SETTINGS) {
+            if (resultCode == Activity.RESULT_OK || resultCode == Activity.RESULT_CANCELED) {
+                //todo: actions after returning from channel settings
             }
         }
     }

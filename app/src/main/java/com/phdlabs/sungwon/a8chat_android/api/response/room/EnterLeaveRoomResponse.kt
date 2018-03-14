@@ -6,7 +6,7 @@ import com.phdlabs.sungwon.a8chat_android.api.response.ErrorResponse
 import com.phdlabs.sungwon.a8chat_android.model.user.UserRooms
 
 /**
- * Created by paix on 2/28/18.
+ * Created by JPAM on 2/28/18.
  * [EnterLeaveRoomResponse]
  * Maps the [UserRooms] the user has entered or left
  */

@@ -3,7 +3,7 @@ package com.phdlabs.sungwon.a8chat_android.utility
 import android.os.Build
 
 /**
- * Created by paix on 1/16/18.
+ * Created by JPAM on 1/16/18.
  * Device Management for Android
  */
 class DeviceInfo {

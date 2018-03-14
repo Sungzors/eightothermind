@@ -13,7 +13,7 @@ import com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.EmptyFragme
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 
 /**
- * Created by paix on 12/28/17.
+ * Created by JPAM on 12/28/17.
  * Pager Adapter controlling CameraRoll (left) - Normal (center) - HandsFree (right)
  */
 class CameraPagerAdapter(val fm: FragmentManager, val context: Context) : FragmentPagerAdapter(fm) {

@@ -8,7 +8,7 @@ import io.realm.annotations.PrimaryKey
 import io.realm.annotations.RealmClass
 
 /**
- * Created by paix on 1/29/18.
+ * Created by JPAM on 1/29/18.
  */
 @RealmClass
 open class Channel : RealmObject() {

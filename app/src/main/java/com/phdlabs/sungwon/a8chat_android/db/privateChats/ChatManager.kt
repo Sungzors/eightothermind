@@ -3,7 +3,7 @@ package com.phdlabs.sungwon.a8chat_android.db.privateChats
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
 
 /**
- * Created by paix on 3/2/18.
+ * Created by JPAM on 3/2/18.
  * Network & Caching for [Message] [Room]in Private Chats
  */
 class ChatManager {

@@ -29,7 +29,7 @@ import java.io.File
 
 
 /**
- * Created by paix on 12/28/17.
+ * Created by JPAM on 12/28/17.
  * [CameraRollFragment] showing available pictures sectioned by date
  * for the user to select & then preview after selection
  */

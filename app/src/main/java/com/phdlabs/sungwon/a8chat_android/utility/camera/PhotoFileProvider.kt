@@ -8,7 +8,7 @@ import android.support.v4.content.FileProvider
 import com.phdlabs.sungwon.a8chat_android.model.media.GalleryPhoto
 
 /**
- * Created by paix on 11/8/17.
+ * Created by JPAM on 11/8/17.
  * Custom App File Provider
  */
 class PhotoFileProvider : FileProvider() {

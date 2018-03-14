@@ -9,7 +9,7 @@ import com.phdlabs.sungwon.a8chat_android.structure.camera.editing.EditingActivi
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 
 /**
- * Created by paix on 12/28/17.
+ * Created by JPAM on 12/28/17.
  */
 class CameraAController(val mView: CameraContract.View) : CameraContract.Controller {
 

@@ -42,7 +42,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 /**
- * Created by paix on 1/15/18.
+ * Created by JPAM on 1/15/18.
  * [EditingActivity] shows the picture taken from the [NormalFragment]
  * or the picture selected from the [CameraRollFragment]
  */

@@ -15,7 +15,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
 /**
- * Created by paix on 2/26/18.
+ * Created by JPAM on 2/26/18.
  * [ChannelsManager]
  * Used for downloading & caching [Room] [Channel] information
  */
@@ -205,6 +205,37 @@ class ChannelsManager {
                             //Local Query
                             callback(Pair(getChannelMessages(roomId), null))
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * [searchChannels]
+     * Query for channels
+     * @param query -> Single to multiple characters string
+     * @callback Pair(Channels?, ErrorMessage?)
+     * */
+    fun searchChannels(query: String?, callback: (Pair<List<Channel>?, String?>) -> Unit) {
+        UserManager.instance.getCurrentUser { success, user, token ->
+            if (success) {
+                user?.let {
+                    token?.token?.let {
+                        val call = Rest.getInstance().getmCallerRx().searchChannel(it, query)
+                        call.subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe({ response ->
+                                    if (response.isSuccess) {
+                                        response.channels?.let {
+                                            callback(Pair(it.toList(), null))
+                                        }
+                                    } else if (response.isError) {
+                                        callback(Pair(null, "No Channels for query"))
+                                    }
+                                }, { throwable ->
+                                    callback(Pair(null, throwable.localizedMessage))
+                                })
                     }
                 }
             }
@@ -409,6 +440,13 @@ class ChannelsManager {
             equalTo("roomId", roomId)
         }
     }
+
+    /**
+     * [getSingleChannel]
+     * @return channel that matches the provided ID
+     * */
+    fun getSingleChannel(channelId: Int): Channel? =
+            Channel().queryFirst { equalTo("id", channelId) }
 
 }
 

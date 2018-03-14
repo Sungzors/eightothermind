@@ -4,7 +4,7 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
 /**
- * Created by paix on 3/9/18.
+ * Created by JPAM on 3/9/18.
  * [PostedFileResponse]
  */
 class PostedFileResponse {

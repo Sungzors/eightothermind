@@ -7,7 +7,7 @@ import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.CameraBaseFragment
 
 /**
- * Created by paix on 12/28/17.
+ * Created by JPAM on 12/28/17.
  */
 class HandsFreeFragment : CameraBaseFragment() {
 
