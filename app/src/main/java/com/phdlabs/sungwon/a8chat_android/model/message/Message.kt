@@ -12,6 +12,7 @@ import com.phdlabs.sungwon.a8chat_android.model.message.user.UserInfo
 import io.realm.RealmList
 import io.realm.RealmObject
 import io.realm.annotations.Ignore
+import io.realm.annotations.PrimaryKey
 import io.realm.annotations.RealmClass
 import java.util.*
 
@@ -29,6 +30,7 @@ open class Message : RealmObject() {
 
     @SerializedName("id")
     @Expose
+    @PrimaryKey
     var id: Int? = null
 
     @SerializedName("message")
@@ -95,7 +97,7 @@ open class Message : RealmObject() {
      * */
     @SerializedName("files")
     @Expose
-    var files:RealmList<File>? = null
+    var files: RealmList<File>? = null
 
     /**
      * [likes]
@@ -105,6 +107,14 @@ open class Message : RealmObject() {
     @SerializedName("likes")
     @Expose
     var likes: Int? = null
+
+    /**
+     * [userLiked]
+     * If current user has liked the message
+     * */
+    @SerializedName("userLiked")
+    @Expose
+    var userLiked: Boolean? = null
 
     /**
      * [comments]

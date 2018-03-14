@@ -4,7 +4,7 @@ import android.graphics.*
 import android.hardware.camera2.CameraCharacteristics
 
 /**
- * Created by paix on 1/16/18.
+ * Created by JPAM on 1/16/18.
  * Simple class to scale & compress images taken by the user & provide an overall best performance
  */
 class ImageScaling {

@@ -132,14 +132,14 @@ class GroupCreateController(val mView: GroupChatContract.Create.View) : GroupCha
 
     override fun createGroupChat(data: GroupChatPostData) {
         val info: Triple<Token?, GroupChatPostData?, User?> = groupDataValidation(data)
-        if(info.first?.token != null && info.second != null && info.third != null){
+        if (info.first?.token != null && info.second != null && info.third != null) {
             mView.showProgress()
 
             val call = Rest.getInstance().getmCallerRx().createGroupChat(info.first?.token!!, info.second!!)
             call.subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
-                            {response ->
+                            { response ->
                                 if (response.isSuccess) {
                                     response.room?.let {
                                         it.user = info.third
@@ -148,19 +148,22 @@ class GroupCreateController(val mView: GroupChatContract.Create.View) : GroupCha
                                     response.newChannelGroupOrEvent?.save()
 
                                     mView.hideProgress()
-                                    mView.onCreateGroup(response.newChannelGroupOrEvent?.name!!,response.newChannelGroupOrEvent?.id!!, response.newChannelGroupOrEvent?.avatar!!)
+                                    mView.onCreateGroup(
+                                            response.newChannelGroupOrEvent?.name!!,
+                                            response.newChannelGroupOrEvent?.roomId!!,
+                                            response.newChannelGroupOrEvent?.avatar!!)
                                 }
                             }
                     )
         }
     }
 
-    private fun groupDataValidation(data: GroupChatPostData): Triple<Token?, GroupChatPostData?, User?>{
+    private fun groupDataValidation(data: GroupChatPostData): Triple<Token?, GroupChatPostData?, User?> {
 
         var mToken: Token? = null
         var currentUser: User? = null
 
-        if (data.name.isNullOrBlank() || data.adminId == null ||  data.userIds.isEmpty()){
+        if (data.name.isNullOrBlank() || data.adminId == null || data.userIds.isEmpty()) {
             Toast.makeText(mView.getContext(), mView.getContext()?.getString(R.string.incomplete_information), Toast.LENGTH_SHORT).show()
             return Triple(null, null, null)
         } else if (data.mediaId == null) {
@@ -169,7 +172,7 @@ class GroupCreateController(val mView: GroupChatContract.Create.View) : GroupCha
         }
 
         UserManager.instance.getCurrentUser { success, user, token ->
-            if(success) {
+            if (success) {
                 mToken = token
                 currentUser = user
             }

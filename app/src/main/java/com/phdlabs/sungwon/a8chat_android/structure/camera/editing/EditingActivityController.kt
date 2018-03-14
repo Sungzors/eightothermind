@@ -16,7 +16,7 @@ import com.squareup.picasso.Picasso
 import java.io.File
 
 /**
- * Created by paix on 1/15/18.
+ * Created by JPAM on 1/15/18.
  * [EditingActivityController] manages business logic
  * for [EditingActivity], including [PhotoEditorSDK]
  */

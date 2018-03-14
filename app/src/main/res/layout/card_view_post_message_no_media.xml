@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp"
+    android:background="@color/white">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!--Friend Profile-->
+        <ImageView
+            android:id="@+id/cvpmnm_poster_pic"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="20dp"
+            android:src="@drawable/addphoto" />
+
+        <!--Post Message Content-->
+        <TextView
+            android:id="@+id/cvpmnm_post_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/cvpmnm_poster_pic"
+            android:layout_marginBottom="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/black" />
+
+        <LinearLayout
+            android:id="@+id/cvpmnm_top_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/cvpmnm_post_text"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_toEndOf="@id/cvpmnm_poster_pic"
+            android:orientation="vertical">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/cvpmnm_poster_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/name"
+                android:textColor="@color/black" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/cvpmnm_post_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/date" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/cvpmnm_like_button"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_below="@id/cvpmnm_post_text"
+            android:layout_marginBottom="15dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="25dp"
+            android:background="@drawable/like_empty" />
+
+        <ImageView
+            android:id="@+id/cvpmnm_comment_button"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_below="@id/cvpmnm_post_text"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="25dp"
+            android:layout_toEndOf="@id/cvpmnm_like_button"
+            android:background="@drawable/ic_comment" />
+
+
+        <View
+            android:id="@+id/cvpmnm_separator"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/cvpmnm_like_button"
+            android:layout_marginEnd="20dp"
+            android:layout_marginStart="20dp"
+            android:background="@color/grey" />
+
+        <ImageView
+            android:id="@+id/cvpmnm_like_icon"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:layout_below="@id/cvpmnm_separator"
+            android:layout_marginBottom="20dp"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/ic_like_small" />
+
+        <TextView
+            android:id="@+id/cvpmnm_like_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/cvpmnm_separator"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="15dp"
+            android:layout_toEndOf="@id/cvpmnm_like_icon" />
+
+        <ImageView
+            android:id="@+id/cvpmnm_comment_icon"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:layout_below="@id/cvpmnm_separator"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="15dp"
+            android:layout_toEndOf="@id/cvpmnm_like_count"
+            android:background="@drawable/ic_comment_small" />
+
+        <TextView
+            android:id="@+id/cvpmnm_comment_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/cvpmnm_separator"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="15dp"
+            android:layout_toEndOf="@id/cvpmnm_comment_icon" />
+
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

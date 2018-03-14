@@ -46,6 +46,9 @@ interface ChatContract {
 
         fun onPictureResult(requestCode: Int, resultCode: Int, data: Intent?)
 
+        fun favoriteMessage(message: Message)
+        fun deleteMessage(message: Message)
+
         fun sendChannel(channelId: Int)
         fun sendMessage()
         fun sendLocation()

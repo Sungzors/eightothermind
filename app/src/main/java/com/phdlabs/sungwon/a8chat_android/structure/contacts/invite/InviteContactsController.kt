@@ -19,7 +19,7 @@ import io.reactivex.schedulers.Schedulers
 
 
 /**
- * Created by paix on 2/19/18.
+ * Created by JPAM on 2/19/18.
  * [InviteContactsController] for [InviteContactsActivity]
  */
 class InviteContactsController(val mView: ContactsContract.InviteContacts.View) :

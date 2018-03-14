@@ -32,7 +32,7 @@ import kotlinx.android.synthetic.main.activity_contacts.*
 import kotlinx.android.synthetic.main.fragment_contacts.*
 
 /**
- * Created by paix on 2/13/18.
+ * Created by JPAM on 2/13/18.
  * [ContactsFragment]
  * - Will load local contacts & send phone numbers to server.
  * - Server will return id for users available in 8.
@@ -141,7 +141,7 @@ class ContactsFragment : CoreFragment() {
                             intent.putExtra(Constants.IntentKeys.PARTICIPANT_ID, contact.id)
                             intent.putExtra(Constants.IntentKeys.FROM_CONTACTS, true)
                             var roomId: Int? = 0
-                            val availableRooms = Room().query { it.findAll() }
+                            val availableRooms = Room().query { findAll() }
                             for (roomElement in availableRooms) {
                                 //Check if this is a private chat
                                 roomElement.chatType?.let {
@@ -192,14 +192,14 @@ class ContactsFragment : CoreFragment() {
         activity?.ca_searchView?.queryHint = resources.getString(R.string.contacts)
         activity?.ca_searchView?.isSubmitButtonEnabled = true
         activity?.ca_searchView?.setOnQueryTextListener(
-                object : SearchView.OnQueryTextListener{
+                object : SearchView.OnQueryTextListener {
 
                     //Text Submit
                     override fun onQueryTextSubmit(p0: String?): Boolean {
                         //Search
                         mAdapter?.setFilter { filter ->
                             p0?.let {
-                                filter?.first_name?.toLowerCase()?.startsWith(it, false)
+                                filter?.first_name?.toLowerCase()?.startsWith(it.toLowerCase(), false)
                             }
                         }
                         activity?.ca_searchView?.clearFocus()
@@ -212,7 +212,7 @@ class ContactsFragment : CoreFragment() {
                     override fun onQueryTextChange(p0: String?): Boolean {
                         mAdapter?.setFilter { filter ->
                             p0?.let {
-                                filter?.first_name?.toLowerCase()?.startsWith(it,false)
+                                filter?.first_name?.toLowerCase()?.startsWith(it.toLowerCase(), false)
                             }
                         }
                         return true

@@ -1,129 +1,161 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
-    android:layout_margin="10dp">
+    android:layout_margin="10dp"
+    android:background="@color/white">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <ImageView
             android:id="@+id/cvpm_poster_pic"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_margin="20dp"
-            android:src="@drawable/addphoto"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <ImageView
-            android:id="@+id/cvpm_post_pic"
+            android:src="@drawable/addphoto" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/cvpm_post_pic_recycler"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/cvpm_poster_pic"/>
+            android:layout_height="170sp"
+            android:layout_below="@+id/cvpm_poster_pic"
+            android:layout_marginBottom="10sp" />
+
+
+        <cz.intik.overflowindicator.OverflowPagerIndicator
+            android:layout_centerInParent="true"
+            android:id="@+id/cvpm_view_pager_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="20sp"
+            android:layout_below="@+id/cvpm_post_pic_recycler"
+            android:layout_gravity="center_horizontal|bottom"
+            android:layout_marginBottom="5sp"
+            android:background="@drawable/media_indicator_background"
+            android:gravity="center"
+            android:foregroundGravity="center_horizontal"
+            android:visibility="visible" />
+
+
         <ImageView
             android:id="@+id/cvpm_like_button"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_below="@id/cvpm_post_pic"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="15dp"
+            android:layout_below="@id/cvpm_post_pic_recycler"
             android:layout_marginBottom="15dp"
-            android:background="@drawable/ic_like"/>
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="25dp"
+            android:background="@drawable/like_empty" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@id/cvpm_post_pic"
-            android:layout_toEndOf="@id/cvpm_poster_pic"
-            android:layout_marginTop="20dp"
+            android:layout_above="@id/cvpm_post_pic_recycler"
             android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_toEndOf="@id/cvpm_poster_pic"
             android:orientation="vertical">
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1"/>
+                android:layout_weight="1" />
+
             <TextView
                 android:id="@+id/cvpm_poster_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="tjoaiewjwer"
-                android:textColor="@color/black"/>
+                android:text="Name"
+                android:textColor="@color/black" />
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1"/>
+                android:layout_weight="1" />
+
             <TextView
                 android:id="@+id/cvpm_post_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="aofiweoj"/>
+                android:text="Date" />
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1"/>
+                android:layout_weight="1" />
 
         </LinearLayout>
+
         <ImageView
             android:id="@+id/cvpm_comment_button"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_toEndOf="@id/cvpm_like_button"
+            android:layout_below="@id/cvpm_post_pic_recycler"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="15dp"
-            android:layout_below="@id/cvpm_post_pic"
-            android:background="@drawable/ic_comment"/>
+            android:layout_marginTop="25dp"
+            android:layout_toEndOf="@id/cvpm_like_button"
+            android:background="@drawable/ic_comment" />
+
         <TextView
             android:id="@+id/cvpm_post_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/cvpm_like_button"
-            android:layout_marginStart="20dp"
             android:layout_marginBottom="15dp"
-            android:textColor="@color/black"/>
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:textColor="@color/black" />
+
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/grey"
             android:layout_below="@id/cvpm_post_text"
+            android:layout_marginEnd="20dp"
             android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"/>
+            android:background="@color/grey" />
+
         <ImageView
             android:id="@+id/cvpm_like_icon"
             android:layout_width="10dp"
             android:layout_height="10dp"
             android:layout_below="@id/cvpm_post_text"
-            android:layout_marginTop="15dp"
-            android:layout_marginStart="20dp"
             android:layout_marginBottom="20dp"
-            android:background="@drawable/ic_like_small"/>
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/ic_like_small" />
+
         <TextView
             android:id="@+id/cvpm_like_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/cvpm_like_icon"
             android:layout_below="@id/cvpm_post_text"
+            android:layout_marginStart="10dp"
             android:layout_marginTop="15dp"
-            android:layout_marginStart="10dp"/>
+            android:layout_toEndOf="@id/cvpm_like_icon" />
+
         <ImageView
             android:id="@+id/cvpm_comment_icon"
             android:layout_width="10dp"
             android:layout_height="10dp"
             android:layout_below="@id/cvpm_post_text"
-            android:layout_toEndOf="@id/cvpm_like_count"
+            android:layout_marginStart="25dp"
             android:layout_marginTop="15dp"
-            android:layout_marginStart="15dp"
-            android:background="@drawable/ic_comment_small"/>
+            android:layout_toEndOf="@id/cvpm_like_count"
+            android:background="@drawable/ic_comment_small" />
+
         <TextView
-            android:id="@+id/cvpm_comment_count"
+            android:id="@+id/cvpmnm_comment_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/cvpm_comment_icon"
             android:layout_below="@id/cvpm_post_text"
+            android:layout_marginStart="10dp"
             android:layout_marginTop="15dp"
-            android:layout_marginStart="10dp"/>
+            android:layout_toEndOf="@id/cvpm_comment_icon" />
+
 
     </RelativeLayout>
+
 
 </android.support.v7.widget.CardView>

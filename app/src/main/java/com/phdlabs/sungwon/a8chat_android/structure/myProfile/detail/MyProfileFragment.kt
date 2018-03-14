@@ -16,7 +16,7 @@ import kotlinx.android.synthetic.main.fragment_my_profile.*
 import java.util.*
 
 /**
- * Created by paix on 2/16/18.
+ * Created by JPAM on 2/16/18.
  * [MyProfileFragment]
  * managed from MainActivity Tab Bar
  */

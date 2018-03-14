@@ -52,7 +52,7 @@ class MediaSettingFragment : CoreFragment(), SettingContract.MediaFragment.View 
         MediaSettingController(this)
         controller.start()
 
-        mMediaList = Media().query { it.equalTo("sharedWithUserId", mContactId) ?: -1}
+        mMediaList = Media().query { equalTo("sharedWithUserId", mContactId) ?: -1}
         val csa = activity as ChatSettingActivity
         csa.updateMenuTitle(String.format(getString(R.string.medianum, mMediaList.size.toString())),
                 String.format(getString(R.string.filenum, mFileList.size.toString())))

@@ -1,7 +1,7 @@
 package com.phdlabs.sungwon.a8chat_android.db.notifications
 
 /**
- * Created by paix on 2/28/18.
+ * Created by JPAM on 2/28/18.
  * [NotificationsManager]
  * Used for [Notification] CRUD with API
  */

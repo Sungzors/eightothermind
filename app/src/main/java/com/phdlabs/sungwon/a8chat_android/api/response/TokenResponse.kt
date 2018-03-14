@@ -3,7 +3,7 @@ package com.phdlabs.sungwon.a8chat_android.api.response
 import com.phdlabs.sungwon.a8chat_android.model.user.User
 
 /**
- * Created by paix on 12/21/17.
+ * Created by JPAM on 12/21/17.
  */
 class TokenResponse : ErrorResponse() {
     /*Token used to store a Realm Token*/

@@ -8,7 +8,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
 /**
- * Created by paix on 2/23/18.
+ * Created by JPAM on 2/23/18.
  * [MediaManager]
  * Data Download & Upload between Eight API
  * @Realm for Data Caching

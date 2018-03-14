@@ -8,7 +8,8 @@
     <RelativeLayout
         android:id="@+id/cvlc_fav_pic_profile_container"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true">
 
         <ImageView
             android:id="@+id/cvlc_background_unread"
@@ -25,7 +26,8 @@
             android:layout_centerInParent="true"
             android:elevation="4dp"
             android:padding="3sp"
-            android:src="@drawable/addphoto" />
+            android:src="@drawable/addphoto"
+            android:layout_marginBottom="10sp"/>
     </RelativeLayout>
 
     <TextView
@@ -34,7 +36,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/cvlc_fav_pic_profile_container"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="15dp"
         android:ellipsize="end"
         android:gravity="center"
         android:maxLines="1"

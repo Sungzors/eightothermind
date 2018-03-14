@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat.requestPermissions
 import android.support.v4.content.ContextCompat
+import android.widget.Toast
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.api.data.ContactsPostData
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
@@ -22,7 +23,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
 /**
- * Created by paix on 2/13/18.
+ * Created by JPAM on 2/13/18.
  * ContractsActivityController for [ContactsActivity]
  */
 class ContactsAController(val mView: ContactsContract.EightFriends.View) :
@@ -106,7 +107,6 @@ class ContactsAController(val mView: ContactsContract.EightFriends.View) :
         ChannelsManager.instance.getMyFollowedChannels(true, { popular, followed, errorMessage ->
             errorMessage?.let {
                 mView.showError(errorMessage)
-                mView.stopRefreshing()
             } ?: run {
                 //Channel Count
                 var channelCount = 0
@@ -130,7 +130,6 @@ class ContactsAController(val mView: ContactsContract.EightFriends.View) :
                 if (channelCount > 0) {
                     mView.updateChannelsSelector("Channels ($channelCount)", channelCount)
                 }
-                mView.stopRefreshing()
             }
         })
     }
@@ -183,27 +182,12 @@ class ContactsAController(val mView: ContactsContract.EightFriends.View) :
             //Process contacts with API
             if (mLocalContacts.count() == 0 && !hasRepeatedMethodCall && !hasAskedToRetry) {
 
-                val dialogBuilder = AlertDialog.Builder(mView.activity)
+                Toast.makeText(mView.getContext(), "Scanning your contacts", Toast.LENGTH_SHORT).show()
                 hasRepeatedMethodCall = !hasRepeatedMethodCall
-                hasAskedToRetry = !hasAskedToRetry
-                dialogBuilder.setMessage("You don't have any more Eight contacts")
-                        .setPositiveButton("ok") { _, _ ->
-                            /*Update UI*/
-                            mView.updateContactSelector("Contacts",
-                                    0)
-                            /*Dismiss alert*/
-                        }
-                        .setNegativeButton("retry", { _, _ ->
-                            loadContactsFromApi()
-                        })
-                dialogBuilder.create().show()
-                mView.stopRefreshing()
-                mView.hideProgress()
 
             } else if (mLocalContacts.count() > 0 && hasRepeatedMethodCall) {
                 hasRepeatedMethodCall = !hasRepeatedMethodCall
                 getEightContacts(mLocalContacts)
-                mView.stopRefreshing()
                 mView.hideProgress()
             }
         }
@@ -247,7 +231,6 @@ class ContactsAController(val mView: ContactsContract.EightFriends.View) :
                                                         getEightFriends()
                                                     } else {
                                                         mView.hideProgress()
-                                                        mView.stopRefreshing()
                                                     }
                                                     //Dev
                                                     println("Successfull number of accounts: " + validContacts.count())
@@ -264,7 +247,6 @@ class ContactsAController(val mView: ContactsContract.EightFriends.View) :
                                                 }
 
                                             } else if (response.isError) { //Error
-                                                mView.stopRefreshing()
                                                 mView.hideProgress()
                                                 mView.showError(response.message)
                                             }
@@ -272,7 +254,6 @@ class ContactsAController(val mView: ContactsContract.EightFriends.View) :
                                         //On error implementation
                                         { throwable ->
                                             mView.hideProgress()
-                                            mView.stopRefreshing()
                                             println("Error downloading contacts: " + throwable.message)
                                         })
                     }
@@ -308,14 +289,11 @@ class ContactsAController(val mView: ContactsContract.EightFriends.View) :
                                                     /*Update UI*/
                                                     mView.updateContactSelector("Contacts (" + it.count() + ")",
                                                             it.count())
-
-                                                    mView.stopRefreshing()
                                                     mView.hideProgress()
                                                 }
 
                                             } else if (response.isError) { //Error
 
-                                                mView.stopRefreshing()
                                                 mView.hideProgress()
                                                 mView.showError(response.message)
 
@@ -325,7 +303,6 @@ class ContactsAController(val mView: ContactsContract.EightFriends.View) :
 
                                         //On error implementation
                                         { throwable ->
-                                            mView.stopRefreshing()
                                             mView.hideProgress()
                                             println("Error downloading friends: " + throwable.message)
                                         })

@@ -9,81 +9,7 @@
     android:id="@+id/acm_the_daddy_drawer"
     app:umanoDragView="@id/acm_the_drawer">
 
-    <!--<RelativeLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent">-->
-        <!--<ImageView-->
-            <!--android:id="@+id/acm_post_pic"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_below="@id/acm_toolbar"/>-->
-        <!--<ImageView-->
-            <!--android:id="@+id/acm_like_button"-->
-            <!--android:layout_width="30dp"-->
-            <!--android:layout_height="30dp"-->
-            <!--android:layout_below="@id/acm_post_pic"-->
-            <!--android:layout_marginStart="20dp"-->
-            <!--android:layout_marginTop="15dp"-->
-            <!--android:layout_marginBottom="15dp"-->
-            <!--android:background="@drawable/ic_like"/>-->
-        <!--<ImageView-->
-            <!--android:id="@+id/acm_comment_button"-->
-            <!--android:layout_width="30dp"-->
-            <!--android:layout_height="30dp"-->
-            <!--android:layout_toEndOf="@id/acm_like_button"-->
-            <!--android:layout_marginStart="20dp"-->
-            <!--android:layout_marginTop="15dp"-->
-            <!--android:layout_below="@id/acm_post_pic"-->
-            <!--android:background="@drawable/ic_comment"/>-->
-        <!--<TextView-->
-            <!--android:id="@+id/acm_post_text"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_below="@id/acm_like_button"-->
-            <!--android:layout_marginStart="20dp"-->
-            <!--android:layout_marginBottom="15dp"/>-->
-        <!--<View-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="1dp"-->
-            <!--android:background="@color/grey"-->
-            <!--android:layout_below="@id/acm_post_text"-->
-            <!--android:layout_marginStart="20dp"-->
-            <!--android:layout_marginEnd="20dp"/>-->
-        <!--<ImageView-->
-            <!--android:id="@+id/acm_like_icon"-->
-            <!--android:layout_width="10dp"-->
-            <!--android:layout_height="10dp"-->
-            <!--android:layout_below="@id/acm_post_text"-->
-            <!--android:layout_marginTop="15dp"-->
-            <!--android:layout_marginStart="20dp"-->
-            <!--android:background="@drawable/ic_like_small"/>-->
-        <!--<TextView-->
-            <!--android:id="@+id/acm_like_count"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_toEndOf="@id/acm_like_icon"-->
-            <!--android:layout_below="@id/acm_post_text"-->
-            <!--android:layout_marginTop="15dp"-->
-            <!--android:layout_marginStart="10dp"/>-->
-        <!--<ImageView-->
-            <!--android:id="@+id/acm_comment_icon"-->
-            <!--android:layout_width="10dp"-->
-            <!--android:layout_height="10dp"-->
-            <!--android:layout_below="@id/acm_post_text"-->
-            <!--android:layout_toEndOf="@id/acm_like_count"-->
-            <!--android:layout_marginTop="15dp"-->
-            <!--android:layout_marginStart="15dp"-->
-            <!--android:background="@drawable/ic_comment_small"/>-->
-        <!--<TextView-->
-            <!--android:id="@+id/acm_comment_count"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_toEndOf="@id/acm_comment_icon"-->
-            <!--android:layout_below="@id/acm_post_text"-->
-            <!--android:layout_marginTop="15dp"-->
-            <!--android:layout_marginStart="10dp"/>-->
-    <!--</RelativeLayout>-->
-
+    <!--Toolbar-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -96,13 +22,32 @@
             <include layout="@layout/toolbar"/>
         </android.support.design.widget.AppBarLayout>
 
+        <!--Followed Channels Recycler-->
         <android.support.v7.widget.RecyclerView
+            android:id="@+id/acm_fav_channel_recycler"
+            android:layout_marginTop="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <!--Separator-->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginStart="20dp"
+            android:background="@color/separator"
+            android:layout_marginTop="5sp"/>
+
+        <!--Post Recycler View-->
+        <android.support.v7.widget.RecyclerView
+            android:layout_marginTop="10dp"
             android:id="@+id/acm_post_recycler"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
     </LinearLayout>
 
+    <!--Drawer-->
     <LinearLayout
         android:id="@+id/acm_the_drawer"
         android:layout_width="match_parent"

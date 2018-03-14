@@ -6,7 +6,7 @@ import com.phdlabs.sungwon.a8chat_android.api.response.ErrorResponse
 import com.phdlabs.sungwon.a8chat_android.model.contacts.LocalContact
 
 /**
- * Created by paix on 2/14/18.
+ * Created by JPAM on 2/14/18.
  * [ContactsPostResponse] used to serialize valid contact information
  * when contacts are signed up to Eight
  */

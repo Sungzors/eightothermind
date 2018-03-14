@@ -76,6 +76,11 @@
         <activity
             android:name=".structure.channel.mychannel.MyChannelActivity"
             android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".structure.setting.channel.ChannelSettingsActivity"
+            android:screenOrientation="portrait" />
+
         <activity
             android:name=".structure.event.create.EventCreateActivity"
             android:screenOrientation="portrait" />
@@ -96,22 +101,38 @@
 
         <activity
             android:name=".structure.createnew.CreateNewActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
 
-        <activity android:name=".structure.contacts.invite.InviteContactsActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".structure.contacts.invite.InviteContactsActivity"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".structure.groupchat.GroupChatActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".structure.groupchat.create.GroupCreateActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".structure.channel.createPost.CreatePostActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!--Gallery Previews used for Channel Post-->
+        <activity
+            android:name="com.andremion.louvre.home.GalleryActivity"
+            android:theme="@style/AppTheme.Louvre.Light" />
+        <activity
+            android:name="com.andremion.louvre.preview.PreviewActivity"
+            android:theme="@style/AppTheme.Louvre.Preview" />
+        <!--Gallery Previews used for Channel Post-->
+
 
         <activity
             android:name=".structure.groupchat.groupinvite.GroupInviteActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
 
         <!--Photos & Images File Provider-->
         <provider

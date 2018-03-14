@@ -8,7 +8,7 @@ import io.realm.annotations.PrimaryKey
 import io.realm.annotations.RealmClass
 
 /**
- * Created by paix on 12/21/17.
+ * Created by JPAM on 12/21/17.
  * Model extends RealmObject & is annotated with @open class (Kotlin class is final by default)
  * @RealmClass inheriting RealModel, using serialized naming convention with API & Exposed names
  * for automatic mapping with Gson, Rx & Retrofit2

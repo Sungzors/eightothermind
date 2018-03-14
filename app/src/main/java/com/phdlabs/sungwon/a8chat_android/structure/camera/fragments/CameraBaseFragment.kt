@@ -12,7 +12,7 @@ import com.phdlabs.sungwon.a8chat_android.structure.core.CoreFragment
 import javax.annotation.Nullable
 
 /**
- * Created by paix on 12/28/17.
+ * Created by JPAM on 12/28/17.
  */
 abstract class CameraBaseFragment() : CoreFragment() {
 
