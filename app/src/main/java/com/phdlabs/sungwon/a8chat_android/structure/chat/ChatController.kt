@@ -14,11 +14,8 @@ import android.util.Log
 import android.widget.Toast
 import com.github.nkzawa.emitter.Emitter
 import com.github.nkzawa.socketio.client.Socket
+import com.phdlabs.sungwon.a8chat_android.api.data.*
 import com.phdlabs.sungwon.a8chat_android.R
-import com.phdlabs.sungwon.a8chat_android.api.data.PrivateChatCreateData
-import com.phdlabs.sungwon.a8chat_android.api.data.SendMessageChannelData
-import com.phdlabs.sungwon.a8chat_android.api.data.SendMessageGeneralData
-import com.phdlabs.sungwon.a8chat_android.api.data.SendMessageStringData
 import com.phdlabs.sungwon.a8chat_android.api.event.*
 import com.phdlabs.sungwon.a8chat_android.api.response.ErrorResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.RoomHistoryResponse
@@ -233,6 +230,59 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
 //        }
     }
 
+
+    override fun favoriteMessage(message: Message) {
+        getUserId { id ->
+            id?.let {
+                UserManager.instance.getCurrentUser{ success, _, token ->
+                    if (success) {
+                        val call = Rest.getInstance().getmCallerRx().favoriteMessagio(token?.token!!, message.id!!, FavoriteData(it))
+                        call.subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(
+                                        {response ->
+                                            if (response.isSuccess) {
+                                                Toast.makeText(mView.getContext(), "Message Favorited!", Toast.LENGTH_SHORT).show()
+                                            }
+                                        }, { throwable ->
+                                            mView.hideProgress()
+                                            mView.showError("Unable to favorite, try again later")
+                                            println("Error creating channel: " + throwable.message)
+                                        }
+                                )
+                    }
+                }
+            }
+        }
+
+    }
+
+    override fun deleteMessage(message: Message) {
+        getUserId { id ->
+            id?.let {
+                UserManager.instance.getCurrentUser{ success, _, token ->
+                    if (success) {
+                        val call = Rest.getInstance().getmCallerRx().deleteMessagio(token?.token!!, message.id!!, it)
+                        call.subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(
+                                        {response ->
+                                            if (response.isSuccess) {
+                                                mMessages.remove(message)
+                                                mView.updateRecycler()
+                                            }
+                                        }, { throwable ->
+                                            mView.hideProgress()
+                                            mView.showError("Unable to delete, try again later")
+                                            println("Error creating channel: " + throwable.message)
+                                        }
+                                )
+                    }
+                }
+            }
+        }
+    }
+
     override fun sendChannel(channelId: Int) {
         getUserId { id ->
             id?.let {
@@ -276,14 +326,6 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
     }
 
     override fun sendLocation() {
-//        if (ActivityCompat.checkSelfPermission(mRoot.getContext()!!, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mRoot.getContext()!!, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            return
-//        }
-//        mFusedLocationClient.lastLocation.addOnSuccessListener({ location ->
-//            if(location != null){
-//
-//            }
-//        })
         if (mLocation == null) {
             Toast.makeText(mView.getContext()!!, "Failed to get location (Try enabling location permissions)", Toast.LENGTH_SHORT).show()
         } else {

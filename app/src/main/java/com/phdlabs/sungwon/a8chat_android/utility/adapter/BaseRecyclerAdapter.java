@@ -148,6 +148,8 @@ public abstract class BaseRecyclerAdapter<T, VH extends RecyclerView.ViewHolder>
             return false;
         }
 
+
+
         @Override
         public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
             if(direction == ItemTouchHelper.LEFT){
@@ -208,13 +210,21 @@ public abstract class BaseRecyclerAdapter<T, VH extends RecyclerView.ViewHolder>
 
         @Override
         public void onLongPress(MotionEvent e) {
-
+            View view = recyclerView.findChildViewUnder(e.getX(), e.getY());
+            if(view != null){
+                int position = recyclerView.getChildAdapterPosition(view);
+                onLongPressItem(e, position);
+            }
         }
 
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
             return false;
         }
+
+    }
+
+    public void onLongPressItem(MotionEvent e, int position){
 
     }
 

@@ -73,7 +73,7 @@ class GroupCreateActivity : CoreActivity(), GroupChatContract.Create.View{
     }
 
     private fun setUpViews() {
-        setToolbarTitle(getString(R.string.create_event))
+        setToolbarTitle(getString(R.string.create_group))
         showRightTextToolbar(getString(R.string.create))
         showBackArrow(R.drawable.ic_back)
     }
@@ -117,16 +117,20 @@ class GroupCreateActivity : CoreActivity(), GroupChatContract.Create.View{
                 val pic = viewHolder?.get<ImageView>(R.id.cvgc_friend_profile_picture)
                 val name = viewHolder?.get<TextView>(R.id.cvgc_friend_name)
                 val duhleeete = viewHolder?.get<ImageButton>(R.id.cvgc_delet_dis)
-                Picasso.with(context).load(data.third).resize(45, 45).centerCrop().placeholder(R.drawable.addphoto).transform(CircleTransform()).into(pic)
+                data.third.let {
+                    Picasso.with(context).load(it).resize(45, 45).centerCrop().placeholder(R.drawable.addphoto).transform(CircleTransform()).into(pic)
+                }
                 name?.text = data.second
                 duhleeete?.setOnClickListener {
                     TemporaryManager.instance.mMemberList.remove(data)
-                    mAdapter?.notifyDataSetChanged()
+                    notifyItemRemoved(position)
+                    mAdapter?.setItems(TemporaryManager.instance.mMemberList)
+//                    notifyItemRangeChanged(position, TemporaryManager.instance.mMemberList.size)
                 }
             }
 
             override fun viewHolder(inflater: LayoutInflater?, parent: ViewGroup?, type: Int): BaseViewHolder {
-                return object : BaseViewHolder(R.layout.card_view_group_invite, inflater!!, parent){
+                return object : BaseViewHolder(R.layout.card_view_group_create, inflater!!, parent){
 
                 }
             }
