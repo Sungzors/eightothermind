@@ -20,6 +20,7 @@
 
     <!--Toolbar title-->
     <ImageView
+        android:id="@+id/debug_access"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

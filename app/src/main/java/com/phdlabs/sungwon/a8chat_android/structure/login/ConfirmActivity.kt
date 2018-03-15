@@ -1,5 +1,6 @@
 package com.phdlabs.sungwon.a8chat_android.structure.login
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
@@ -34,6 +35,7 @@ import org.greenrobot.eventbus.Subscribe
  * Created by SungWon on 9/26/2017.
  * Updated by JPAM on 12/21/2017
  */
+//TODO: Remove EventBus & Switch to Reactive Kotlin
 
 class ConfirmActivity : CoreActivity() {
 
@@ -61,15 +63,31 @@ class ConfirmActivity : CoreActivity() {
         mDataEventBus.unregister(this)
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == Constants.RequestCodes.MY_PROFILE_UPDATE_REGISTER) {
+                finish()
+            }
+        }
+
+        super.onActivityResult(requestCode, resultCode, data)
+    }
+
 
     @Subscribe
     public fun onEventUIThread(event: ConfirmEvent) {
         if (event.isSuccess) {
             hideProgress()
-            if(isRegister){
-                startActivity(Intent(this, MyProfileUpdateActivity::class.java))
+            if (isRegister) {
+                val intent = Intent(this, MyProfileUpdateActivity::class.java)
+                setResult(Activity.RESULT_OK)
+                startActivityForResult(intent, Constants.RequestCodes.MY_PROFILE_UPDATE_REGISTER)
             } else {
-                startActivity(Intent(this, MainActivity::class.java))
+                val intent = Intent(this, MainActivity::class.java)
+                setResult(Activity.RESULT_OK)
+                startActivity(intent)
+                finish()
             }
 
         } else {

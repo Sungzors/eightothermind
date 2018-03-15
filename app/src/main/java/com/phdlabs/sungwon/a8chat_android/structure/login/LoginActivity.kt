@@ -1,15 +1,18 @@
 package com.phdlabs.sungwon.a8chat_android.structure.login
 
+import android.app.Activity
 import android.content.Intent
-import android.os.Bundle
-import android.support.v4.content.ContextCompat
+import android.text.InputFilter
 import android.text.SpannableString
 import android.text.style.UnderlineSpan
-import android.view.WindowManager
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import kotlinx.android.synthetic.main.activity_login.*
+
+/**
+ * Created by JPAM on 03/15/2018
+ * */
 
 class LoginActivity : CoreActivity() {
 
@@ -23,21 +26,30 @@ class LoginActivity : CoreActivity() {
         al_login_button.setOnClickListener({
             val intent = Intent(this, RegisterActivity::class.java)
             intent.putExtra(Constants.IntentKeys.LOGIN_KEY, "register")
-            startActivity(intent)
+            startActivityForResult(intent, Constants.RequestCodes.LOGIN_SIGNUP)
         })
         /*LogIn*/
         al_signin_button.setOnClickListener({
             val intent = Intent(this, RegisterActivity::class.java)
             intent.putExtra(Constants.IntentKeys.LOGIN_KEY, "login")
-            startActivity(intent)
+            startActivityForResult(intent, Constants.RequestCodes.LOGIN_SIGNUP)
         })
         setupUI()
     }
 
-    private fun setupUI(){
+    private fun setupUI() {
         val content = SpannableString(getString(R.string.sign_in))
         content.setSpan(UnderlineSpan(), 0, content.length, 0)
         al_signin_button.text = content
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == Constants.RequestCodes.LOGIN_SIGNUP) {
+                finish()
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data)
     }
 
 }

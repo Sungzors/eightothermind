@@ -8,9 +8,12 @@ import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import com.phdlabs.sungwon.a8chat_android.R
+import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
 import com.phdlabs.sungwon.a8chat_android.structure.contacts.ContactsActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.structure.createnew.CreateNewActivity
+import com.phdlabs.sungwon.a8chat_android.structure.debug.DebugActivity
+import com.phdlabs.sungwon.a8chat_android.structure.login.LoginActivity
 import com.phdlabs.sungwon.a8chat_android.structure.main.lobby.LobbyFragment
 import com.phdlabs.sungwon.a8chat_android.structure.myProfile.detail.MyProfileFragment
 import com.phdlabs.sungwon.a8chat_android.structure.myProfile.update.MyProfileUpdateActivity
@@ -40,13 +43,19 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
     /*Instances*/
     private var mLobbyFragment: LobbyFragment = LobbyFragment.newInstance()
 
-    init {
-        //Fresh data on launch
-    }
 
     /*LifeCycle*/
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        //Check Credentials
+        UserManager.instance.getCurrentUser { success, _, _ ->
+            if (!success) {
+                val intent = Intent(this, LoginActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
+        }
+
         //Default toolbar
         setupToolbars()
         toolbarControl(true)
@@ -132,6 +141,12 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
         profile_toolbar.toolbar_right_text.text = getString(R.string.my_profile_edit)
         profile_toolbar.toolbar_right_text.visibility = View.VISIBLE
         profile_toolbar.toolbar_right_text.setTextColor(ContextCompat.getColor(this, R.color.confirmText))
+        //Debug Activity Access
+        debug_access.setOnLongClickListener {
+            val intent = Intent(Intent(context, DebugActivity::class.java))
+            startActivity(intent)
+            true
+        }
     }
 
     private fun toolbarControl(homeToolbar: Boolean) {

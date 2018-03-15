@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Bundle
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
+import com.phdlabs.sungwon.a8chat_android.structure.application.Application
 import com.phdlabs.sungwon.a8chat_android.structure.camera.CameraActivity
 import com.phdlabs.sungwon.a8chat_android.structure.channel.channelshow.ChannelShowActivity
 import com.phdlabs.sungwon.a8chat_android.structure.channel.create.ChannelCreateActivity
@@ -17,8 +18,6 @@ import com.phdlabs.sungwon.a8chat_android.structure.main.MainActivity
 import com.phdlabs.sungwon.a8chat_android.structure.myProfile.update.MyProfileUpdateActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import io.realm.Realm
-import io.realm.RealmConfiguration
-import io.realm.rx.RealmObservableFactory
 import kotlinx.android.synthetic.main.activity_debug.*
 import java.io.File
 
@@ -31,19 +30,8 @@ class DebugActivity : CoreActivity() {
 
     override fun contentContainerId() = 0
 
-    private lateinit var realmConfig: RealmConfiguration
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        /*Realm*/ //TODO: Remove for production, this should be in Application()
-        Realm.init(this)
-        realmConfig = RealmConfiguration.Builder().rxFactory(RealmObservableFactory())
-                .deleteRealmIfMigrationNeeded()
-                .build()
-        Realm.setDefaultConfiguration(realmConfig)
-        //DEV
-        print("REALM PATH: " + realmConfig.path) //Path for realm browser
 
     }
 
@@ -90,13 +78,15 @@ class DebugActivity : CoreActivity() {
             startActivity(Intent(this, ChannelShowActivity::class.java))
         }
         ad_sandbox_button.setOnClickListener({
-            var realm = Realm.getInstance(realmConfig)
-            var exportFile : File? = null
-            try{
+            //Send Realm Config File to Sung's Email
+            val app = application as Application
+            val realm = Realm.getInstance(app.realmConfig)
+            var exportFile: File? = null
+            try {
                 exportFile = File(this.externalCacheDir, "export.realm")
                 exportFile.delete()
                 realm.writeCopyTo(exportFile)
-            } catch (e : io.realm.internal.IOException){
+            } catch (e: io.realm.internal.IOException) {
                 e.printStackTrace()
             }
 

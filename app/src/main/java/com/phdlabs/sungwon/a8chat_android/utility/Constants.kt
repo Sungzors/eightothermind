@@ -93,6 +93,21 @@ object Constants {
          * Opened new channel after search
          * */
         const val OPEN_CHANNEL = 19
+
+        /**
+         * Used for LogIn & SignUp
+         * */
+        const val LOGIN_SIGNUP = 20
+
+        /**
+         * Used for LogIn & Signup Confirmation
+         * */
+        const val SIGNUP_CONFIRMATION = 21
+
+        /**
+         * Used for LogIn & SignUp Transition to Update Profile
+         * */
+        const val MY_PROFILE_UPDATE_REGISTER = 22
     }
 
     /**

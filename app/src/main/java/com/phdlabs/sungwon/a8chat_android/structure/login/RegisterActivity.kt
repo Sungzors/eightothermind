@@ -1,5 +1,6 @@
 package com.phdlabs.sungwon.a8chat_android.structure.login
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
@@ -34,6 +35,7 @@ class RegisterActivity : CoreActivity() {
     /*LifeCycle*/
     override fun onStart() {
         super.onStart()
+        //Not a first Time user
         if (intent.getStringExtra(Constants.IntentKeys.LOGIN_KEY) != "register") {
             isRegister = false
         }
@@ -42,11 +44,21 @@ class RegisterActivity : CoreActivity() {
         setOnClickers()
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == Constants.RequestCodes.SIGNUP_CONFIRMATION) {
+                finish()
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data)
+    }
+
     private fun confirmation() {
         hideProgress()
         val intent = Intent(this, ConfirmActivity::class.java)
         intent.putExtra(Constants.IntentKeys.LOGIN_KEY, isRegister)
-        startActivity(intent)
+        startActivityForResult(intent, Constants.RequestCodes.SIGNUP_CONFIRMATION)
+        setResult(Activity.RESULT_OK)
     }
 
     private fun setOnClickers() {

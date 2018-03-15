@@ -21,7 +21,7 @@
         <item name="android:textColor">@color/colorPrimary</item>
         <!--<item name="fontPath">fonts/avenir-light-webfont.ttf</item>-->
     </style>
-    
+
     <style name="CardView.SettingCards">
         <item name="android:layout_marginTop">20dp</item>
         <item name="android:layout_marginStart">15dp</item>
@@ -46,6 +46,7 @@
         <item name="android:textSize">14sp</item>
     </style>
 
+    <!--Louvre-->
     <style name="AppTheme.Louvre.Light" parent="Louvre.Theme.Light">
         <item name="colorPrimary">@color/white_smoke</item>
         <item name="colorPrimaryDark">@color/eight_status_bar</item>
@@ -55,4 +56,15 @@
     <style name="AppTheme.Louvre.Preview" parent="Louvre.Theme.Preview">
         <item name="colorAccent">@color/eight_status_bar</item>
     </style>
+
+    <!--Splash Screen-->
+    <style name="SplashTheme" parent="AppTheme">
+        <item name="android:windowBackground">@drawable/splash_screen_background</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowTranslucentStatus">true</item>
+    </style>
+
 </resources>

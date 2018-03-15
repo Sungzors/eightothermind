@@ -1,5 +1,6 @@
 package com.phdlabs.sungwon.a8chat_android.structure.myProfile.update
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
@@ -103,6 +104,8 @@ class MyProfileUpdateActivity : CoreActivity(), ProfileContract.Update.View,
 
     override fun startApp() {
         startActivity(Intent(this, MainActivity::class.java))
+        setResult(Activity.RESULT_OK)
+        finish()
     }
 
     /*Data*/

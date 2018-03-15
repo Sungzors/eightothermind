@@ -1,21 +1,42 @@
 package com.phdlabs.sungwon.a8chat_android.structure.application
 
 import android.app.Application
+import android.content.Intent
+import android.net.Uri
 import com.github.nkzawa.socketio.client.IO
 import com.github.nkzawa.socketio.client.Socket
 import com.phdlabs.sungwon.a8chat_android.R
+import io.realm.Realm
+import io.realm.RealmConfiguration
+import io.realm.rx.RealmObservableFactory
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig
+import java.io.File
 import java.net.URISyntaxException
 
 /**
  * Created by SungWon on 9/19/2017.
+ * Updated by JPAM on 03/15/2018
+ * Application Init
  */
 class Application : Application() {
 
+    /*Properties*/
+    lateinit var realmConfig: RealmConfiguration
     private lateinit var mSocket: Socket
 
+    /*LifeCycle*/
     override fun onCreate() {
         super.onCreate()
+
+        /*Realm*/
+        Realm.init(this)
+        realmConfig = RealmConfiguration.Builder().rxFactory(RealmObservableFactory())
+                .deleteRealmIfMigrationNeeded()
+                .build()
+        Realm.setDefaultConfiguration(realmConfig)
+        //DEV
+        print("REALM PATH: " + realmConfig.path) //Path for realm browser
+
 
         /*Sockets*/
         try {
@@ -25,28 +46,15 @@ class Application : Application() {
         }
         mSocket.connect()
 
-//        Stetho.initialize(
-//                Stetho.newInitializerBuilder(this)
-//                        .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
-//                        .enableWebKitInspector(RealmInspectorModulesProvider.builder(this).build())
-//                        .build()
-//        )
-
-
         /*Fonts*/
         CalligraphyConfig.initDefault(CalligraphyConfig.Builder()
                 .setDefaultFontPath("")
                 .setFontAttrId(R.attr.fontPath)
                 .build())
 
-//        /*Realm*/ //TODO: Uncomment for production -> Comment on DebugActivity.kt
-//        Realm.init(this)
-//        val realmConfig: RealmConfiguration = RealmConfiguration.Builder().
-//                name("8_Realm").deleteRealmIfMigrationNeeded().build()
-//        Realm.setDefaultConfiguration(realmConfig)
-
     }
 
-
+    /*Get Socket*/
     fun getSocket(): Socket = mSocket
+
 }
