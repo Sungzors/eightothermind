@@ -124,8 +124,8 @@ class GroupCreateActivity : CoreActivity(), GroupChatContract.Create.View{
                 duhleeete?.setOnClickListener {
                     TemporaryManager.instance.mMemberList.remove(data)
                     notifyItemRemoved(position)
-                    notifyItemRangeChanged(position, TemporaryManager.instance.mMemberList.size)
-                    viewHolder.itemView.visibility = View.GONE
+                    mAdapter?.setItems(TemporaryManager.instance.mMemberList)
+//                    notifyItemRangeChanged(position, TemporaryManager.instance.mMemberList.size)
                 }
             }
 
