@@ -241,7 +241,7 @@ class ChatSettingActivity : CoreActivity(), SettingContract.Chat.View, View.OnCl
             }
         /*Files Right Tab*/
             acs_button_files -> {
-                controller.getSharedFilesPrivate(contactId)
+                controller.getSharedFilesPrivate(mRoomId)
             }
         }
     }

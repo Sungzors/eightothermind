@@ -5,10 +5,12 @@ import com.phdlabs.sungwon.a8chat_android.api.data.PrivateChatPatchData
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
 import com.phdlabs.sungwon.a8chat_android.db.channels.ChannelsManager
 import com.phdlabs.sungwon.a8chat_android.db.media.MediaManager
+import com.phdlabs.sungwon.a8chat_android.db.room.RoomManager
 import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.contacts.Contact
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.phdlabs.sungwon.a8chat_android.structure.setting.SettingContract
+import com.phdlabs.sungwon.a8chat_android.structure.setting.fileFragments.FileSettingsFragment
 import com.phdlabs.sungwon.a8chat_android.structure.setting.mediaFragments.MediaSettingFragment
 import com.vicpin.krealmextensions.query
 import com.vicpin.krealmextensions.queryAll
@@ -99,13 +101,18 @@ class ChatSettingController(val mView: SettingContract.Chat.View) : SettingContr
         MediaManager.instance.getPrivateMedia(contactId, {
             if (it.second == null) { //Success
                 //Set fragment
-                mView.activity?.addFragment(R.id.asc_fragment_container,
+                mView.activity?.replaceFragment(R.id.asc_fragment_container,
                         MediaSettingFragment.newInstanceChatRoom(contactId), false)
             }
         })
     }
 
-    override fun getSharedFilesPrivate(contactId: Int) {
-
+    override fun getSharedFilesPrivate(chatRoomId: Int) {
+        RoomManager.instance.getFilesFromPrivateChat(chatRoomId)?.let {
+            if (it.count() > 0) {
+                mView.activity?.replaceFragment(R.id.asc_fragment_container,
+                        FileSettingsFragment.newInstanceChatRoom(chatRoomId), false)
+            }
+        }
     }
 }

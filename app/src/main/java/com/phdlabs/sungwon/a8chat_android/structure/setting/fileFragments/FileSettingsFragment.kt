@@ -47,11 +47,11 @@ class FileSettingsFragment : CoreFragment(), SettingContract.FileFragment.View {
 
         /**
          * [newInstanceChatRoom]
-         * @param contactId
+         * @param chatRoomId
          * - Prepares the fragment to display files shared in a Private Chat Room
          * */
-        fun newInstanceChatRoom(contactId: Int): FileSettingsFragment {
-            mContactId = contactId
+        fun newInstanceChatRoom(chatRoomId: Int): FileSettingsFragment {
+            this.mChatRoomId = chatRoomId
             return FileSettingsFragment()
         }
 
@@ -65,11 +65,19 @@ class FileSettingsFragment : CoreFragment(), SettingContract.FileFragment.View {
             return FileSettingsFragment()
         }
 
-        var mContactId: Int? = null
+        var mChatRoomId: Int? = null
         var mRoomId: Int? = null
     }
 
-    /*LifeCycle*/
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        mChatRoomId?.let {
+            chatActivity = activity as ChatSettingActivity
+        }
+        mRoomId?.let {
+            channelActivity = activity as ChannelSettingsActivity
+        }
+    }
 
     override fun onStart() {
         super.onStart()
@@ -77,12 +85,10 @@ class FileSettingsFragment : CoreFragment(), SettingContract.FileFragment.View {
         //Adapter
         setupFileAdapter()
         //Only a single value should be initialized
-        mContactId?.let {
-            chatActivity = activity as ChatSettingActivity
+        mChatRoomId?.let {
             controller.queryFiilesForChatRoom(it)
         }
         mRoomId?.let {
-            channelActivity = activity as ChannelSettingsActivity
             controller.queryFilesForChannelRoom(it)
         }
     }
@@ -101,7 +107,7 @@ class FileSettingsFragment : CoreFragment(), SettingContract.FileFragment.View {
         super.onStop()
         controller.stop()
         mRoomId = null
-        mContactId = null
+        mChatRoomId = null
     }
 
     /*ADAPTER*/
@@ -152,7 +158,14 @@ class FileSettingsFragment : CoreFragment(), SettingContract.FileFragment.View {
                 mFileAdapter.setItems(mFileList)
                 mFileAdapter.notifyDataSetChanged()
             }
-            channelActivity.updateSelectorTitle(null, String.format(getString(R.string.filenum, mFileList.size.toString())))
+
+            mRoomId?.let {
+                channelActivity.updateSelectorTitle(null, String.format(getString(R.string.filenum, mFileList.size.toString())))
+            }
+            mChatRoomId?.let {
+                chatActivity.updateSelectorTitle(null, String.format(getString(R.string.filenum, mFileList.size.toString())))
+            }
+
         }
     }
 

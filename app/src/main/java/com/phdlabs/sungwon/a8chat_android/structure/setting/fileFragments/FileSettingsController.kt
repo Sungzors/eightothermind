@@ -1,6 +1,7 @@
 package com.phdlabs.sungwon.a8chat_android.structure.setting.fileFragments
 
 import com.phdlabs.sungwon.a8chat_android.db.channels.ChannelsManager
+import com.phdlabs.sungwon.a8chat_android.db.room.RoomManager
 import com.phdlabs.sungwon.a8chat_android.model.files.File
 import com.phdlabs.sungwon.a8chat_android.structure.setting.SettingContract
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
@@ -32,8 +33,12 @@ class FileSettingsController(val mView: SettingContract.FileFragment.View) :
     }
 
     /*FILES*/
-    override fun queryFiilesForChatRoom(contactId: Int) {
-
+    override fun queryFiilesForChatRoom(chatRoomId: Int) {
+        RoomManager.instance.getFilesFromPrivateChat(chatRoomId)?.let {
+            if (it.count() > 0) {
+                mView.updateFileAdapter(it)
+            }
+        }
     }
 
     override fun queryFilesForChannelRoom(roomId: Int) {

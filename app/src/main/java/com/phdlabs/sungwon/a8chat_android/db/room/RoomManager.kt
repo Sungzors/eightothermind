@@ -2,10 +2,13 @@ package com.phdlabs.sungwon.a8chat_android.db.room
 
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
 import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
+import com.phdlabs.sungwon.a8chat_android.model.files.File
+import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.phdlabs.sungwon.a8chat_android.model.user.UserRooms
 import com.vicpin.krealmextensions.query
 import com.vicpin.krealmextensions.save
+import com.vicpin.krealmextensions.saveAll
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
@@ -95,7 +98,7 @@ class RoomManager {
 
     /**
      * [getRoomInfo]
-     *
+     * - Used to pull room information
      * */
     fun getRoomInfo(roomId: Int, callback: (Pair<Room?, String?>) -> Unit) {
         UserManager.instance.getCurrentUser { success, user, token ->
@@ -122,13 +125,44 @@ class RoomManager {
         }
     }
 
+    /**
+     * [getRoomMessageHistory]
+     * - Used to pull messages from a Room -> Currently used for Private Chats
+     * */
+    fun getRoomMessageHistory(roomId: Int, callback: (Pair<List<Message>?, String?>) -> Unit) {
+        UserManager.instance.getCurrentUser { success, user, token ->
+            if (success) {
+                user?.let {
+                    token?.token?.let {
+                        val call = Rest.getInstance().getmCallerRx().getChatHistory(it, roomId, user.id!!)
+                        call.subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe({ response ->
+                                    if (response.isSuccess) {
+                                        response?.messages?.allMessages?.let {
+                                            it.saveAll()
+                                            callback(Pair(it.toList(), null))
+                                        }
+                                    } else if (response.isError) {
+                                        callback(Pair(null, "Could not retrieve Chat history"))
+                                    }
+                                }, { throwable ->
+                                    callback(Pair(null, throwable.localizedMessage))
+                                })
+                    }
+                }
+            }
+        }
+    }
+
+
     /*Queries*/
 
     /**
      * [getCurrentEnteredUserRoom]
      * @return [UserRooms] object
      * */
-    fun getCurrentEnteredUserRoom(roomId: Int): UserRooms? {
+    private fun getCurrentEnteredUserRoom(roomId: Int): UserRooms? {
         val userRooms = UserRooms().query {
             equalTo("roomId", roomId)
             equalTo("current_room", true)
@@ -143,7 +177,7 @@ class RoomManager {
      * [getCurrentLeftUserRoom]
      * @return [UserRooms] object
      * */
-    fun getCurrentLeftUserRoom(roomId: Int): UserRooms? {
+    private fun getCurrentLeftUserRoom(roomId: Int): UserRooms? {
         val userRooms = UserRooms().query {
             equalTo("roomId", roomId)
             equalTo("current_room", false)
@@ -154,5 +188,22 @@ class RoomManager {
         return null
     }
 
-
+    /**
+     * [getFilesFromPrivateChat]
+     * Retrieves a File List from all messages cached in a Private Chat thread
+     * */
+    fun getFilesFromPrivateChat(roomId: Int): List<File>? {
+        var fileList = mutableListOf<File>()
+        var messages = Message().query {
+            equalTo("roomId", roomId)
+        }
+        for (message in messages) {
+            message.files?.let {
+                if (it.count() > 0) {
+                    fileList.addAll(it)
+                }
+            }
+        }
+        return fileList
+    }
 }

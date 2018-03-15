@@ -14,6 +14,7 @@ import android.util.Log
 import android.widget.Toast
 import com.github.nkzawa.emitter.Emitter
 import com.github.nkzawa.socketio.client.Socket
+import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.api.data.PrivateChatCreateData
 import com.phdlabs.sungwon.a8chat_android.api.data.SendMessageChannelData
 import com.phdlabs.sungwon.a8chat_android.api.data.SendMessageGeneralData
@@ -27,12 +28,16 @@ import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
 import com.phdlabs.sungwon.a8chat_android.api.utility.Callback8
 import com.phdlabs.sungwon.a8chat_android.api.utility.GsonHolder
 import com.phdlabs.sungwon.a8chat_android.db.EventBusManager
+import com.phdlabs.sungwon.a8chat_android.db.room.RoomManager
 import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.model.user.registration.Token
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
+import com.phdlabs.sungwon.a8chat_android.utility.SuffixDetector
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
 import com.vicpin.krealmextensions.queryFirst
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -167,44 +172,65 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
     }
 
     override fun retrieveChatHistory() {
-        getUserId { id ->
-            id?.let {
-                UserManager.instance.getCurrentUser { success, _, token ->
-                    if (success) {
-                        val call = mCaller.getMessageHistory(
-                                token?.token,
-                                mRoomId,
-                                id
-                        )
-                        call.enqueue(object : Callback8<RoomHistoryResponse, RoomHistoryEvent>(mEventBus) {
-                            override fun onSuccess(data: RoomHistoryResponse?) {
-                                mMessages.clear()
-                                //TODO: need to add read first then unread always, but check for unread null instead.
-                                for (item in data!!.messages!!.allMessages!!) {
-                                    if (item.roomId == mRoomId) {
-                                        mMessages.add(item)
-                                    }
-                                }
-                                var i = 0
-                                for (item in mMessages!!) {
-                                    item.timeDisplayed = mView.lastTimeDisplayed(i)
-                                    setMessageObject(i, item)
-                                    i++
-                                }
-                                mView.updateRecycler()
-                                mView.hideProgress()
-                            }
 
-                            override fun onError(response: Response<RoomHistoryResponse>?) {
-                                super.onError(response)
-                                Log.e(TAG, response!!.message())
-                                mView.hideProgress()
-                            }
-                        })
+        RoomManager.instance.getRoomMessageHistory(mRoomId, { messageHistory ->
+            messageHistory.second?.let {
+                //Error
+                //mView.showError(it)
+                mView.hideProgress()
+            } ?: run {
+                // Success
+                messageHistory.first?.let {
+                    mMessages.clear()
+                    mMessages.addAll(it)
+                    for ((i, message) in mMessages.withIndex()) {
+                        message.timeDisplayed = mView.lastTimeDisplayed(i)
+                        setMessageObject(i, message)
                     }
+                    mView.updateRecycler()
+                    mView.hideProgress()
                 }
             }
-        }
+        })
+
+//        getUserId { id ->
+//            id?.let {
+//                UserManager.instance.getCurrentUser { success, _, token ->
+//                    if (success) {
+//                        val call = mCaller.getMessageHistory(
+//                                token?.token,
+//                                mRoomId,
+//                                id
+//                        )
+//                        call.enqueue(object : Callback8<RoomHistoryResponse, RoomHistoryEvent>(mEventBus) {
+//                            override fun onSuccess(data: RoomHistoryResponse?) {
+//                                mMessages.clear()
+//                                //TODO: need to add read first then unread always, but check for unread null instead.
+//                                for (item in data!!.messages!!.allMessages!!) {
+//                                    if (item.roomId == mRoomId) {
+//                                        mMessages.add(item)
+//                                    }
+//                                }
+//                                var i = 0
+//                                for (item in mMessages!!) {
+//                                    item.timeDisplayed = mView.lastTimeDisplayed(i)
+//                                    setMessageObject(i, item)
+//                                    i++
+//                                }
+//                                mView.updateRecycler()
+//                                mView.hideProgress()
+//                            }
+//
+//                            override fun onError(response: Response<RoomHistoryResponse>?) {
+//                                super.onError(response)
+//                                Log.e(TAG, response!!.message())
+//                                mView.hideProgress()
+//                            }
+//                        })
+//                    }
+//                }
+//            }
+//        }
     }
 
     override fun sendChannel(channelId: Int) {
@@ -315,6 +341,42 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
                 "Choose an event picture",
                 CameraControl.instance.requestCode(),
                 false)
+    }
+
+    /*Send File*/
+    override fun sendFile(file: File, path: String) {
+        UserManager.instance.getCurrentUser { success, user, token ->
+            if (success) {
+                user?.let {
+                    token?.token?.let {
+                        //Single file upload only supported
+                        val formBodyBuilder = MultipartBody.Builder().setType(MultipartBody.FORM)
+                                .addFormDataPart("userId", user.id!!.toString())
+                                .addFormDataPart("roomId", mRoomId.toString())
+                                .addFormDataPart("file[0]",
+                                        "8_" + System.currentTimeMillis() + SuffixDetector.instance.getFileSuffix(path),
+                                        RequestBody.create(MediaType.parse("application/*"), file))
+                                .build()
+
+                        val call = Rest.getInstance().getmCallerRx().shareFile(
+                                it, formBodyBuilder, null, false, null, null)
+                        call.subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe({ response ->
+                                    if (response.isSuccess) {
+                                        response?.newlyCreatedMsg?.let {
+                                            println("File Sent: " + it)
+                                        }
+                                    } else {
+                                        mView.showError("Can't upload file at this time")
+                                    }
+                                }, { throwable ->
+                                    mView.showError(throwable.localizedMessage)
+                                })
+                    }
+                }
+            }
+        }
     }
 
     override fun onPictureResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -618,6 +680,8 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
         }
     }
 
+    /*Permissions*/
+
     private fun requestLocationPermissions() {
         val whatPermissions = arrayOf(Constants.AppPermissions.FINE_LOCATION,
                 Constants.AppPermissions.COARSE_LOCATION)
@@ -655,6 +719,28 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
             if (ContextCompat.checkSelfPermission(it, whatPermissions.get(0)) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(mView.getActivity, whatPermissions, Constants.PermissionsReqCode.CAMERA_REQ_CODE)
             }
+        }
+    }
+
+    override fun requestReadingExternalStorage() {
+        //Required permissions
+        val whatPermissions = arrayOf(Constants.AppPermissions.READ_EXTERNAL)
+        mView.getActivity.context?.let {
+            //Request Permissions
+            if (ContextCompat.checkSelfPermission(it, whatPermissions.get(0)) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(mView.getActivity, whatPermissions, Constants.PermissionsReqCode.READ_EXTERNAL_STORAGE)
+            }
+        }
+    }
+
+    override fun permissionResults(requestCode: Int, permissions: Array<out String>, grantResults: IntArray): Boolean {
+        if (requestCode == Constants.PermissionsReqCode.READ_EXTERNAL_STORAGE) {
+            if (grantResults.size != 1 || grantResults.get(0) != PackageManager.PERMISSION_GRANTED) {
+                mView.showError(mView.getActivity.getString(R.string.request_read_external_permission))
+            }
+            return true
+        } else {
+            return false
         }
     }
 }

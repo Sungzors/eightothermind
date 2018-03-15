@@ -48,7 +48,7 @@ interface SettingContract {
             fun getSharedMediaPrivate(contactId: Int)
 
             /*Get shared files between two users*/
-            fun getSharedFilesPrivate(contactId: Int)
+            fun getSharedFilesPrivate(chatRoomId: Int)
 
         }
     }
@@ -116,7 +116,7 @@ interface SettingContract {
         }
 
         interface Controller : BaseController {
-            fun queryFiilesForChatRoom(contactId: Int)
+            fun queryFiilesForChatRoom(chatRoomId: Int)
             fun queryFilesForChannelRoom(roomId: Int)
         }
 

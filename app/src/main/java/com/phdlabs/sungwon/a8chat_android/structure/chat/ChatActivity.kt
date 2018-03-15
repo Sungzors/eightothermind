@@ -1,9 +1,11 @@
 package com.phdlabs.sungwon.a8chat_android.structure.chat
 
 import android.app.Activity
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
@@ -11,6 +13,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.webkit.MimeTypeMap
 import android.widget.*
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.model.media.Media
@@ -22,6 +25,7 @@ import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.structure.setting.chat.ChatSettingActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.RoundedCornersTransform
+import com.phdlabs.sungwon.a8chat_android.utility.SuffixDetector
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseRecyclerAdapter
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseViewHolder
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.ViewMap
@@ -31,6 +35,7 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_chat.*
 import kotlinx.android.synthetic.main.toolbar.*
+import yogesh.firzen.filelister.FileListerDialog
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -40,12 +45,18 @@ import java.util.*
  */
 class ChatActivity : CoreActivity(), ChatContract.View {
 
+
     override lateinit var controller: ChatContract.Controller
     private lateinit var mAdapter: BaseRecyclerAdapter<Message, BaseViewHolder>
+
+    /*Properties*/
     private var mChatPic: String = ""
     private var mChatName: String = ""
     private var mUserId: Int = -1
     private var mParticipantId: Int = 8
+
+    /*Files*/
+    lateinit var fileListerDialog: FileListerDialog
 
     private var mMedia = mutableListOf<Media>()
 
@@ -168,8 +179,9 @@ class ChatActivity : CoreActivity(), ChatContract.View {
         ac_drawer_contact.setOnClickListener {
 
         }
+        //File Sharing
         ac_drawer_file.setOnClickListener {
-
+            fileListerDialog.show()
         }
         ac_drawer_location.setOnClickListener {
             controller.sendLocation()
@@ -179,6 +191,18 @@ class ChatActivity : CoreActivity(), ChatContract.View {
         }
         ac_drawer_money.setOnClickListener {
 
+        }
+
+        /*File Sharing*/
+        fileListerDialog = FileListerDialog.createFileListerDialog(this)
+        fileListerDialog.setOnFileSelectedListener { file, path ->
+            //File Permissions
+            if (ContextCompat.checkSelfPermission(this, Constants.AppPermissions.READ_EXTERNAL) ==
+                    PackageManager.PERMISSION_GRANTED) {
+                controller.sendFile(file, path)
+            } else {
+                controller.requestReadingExternalStorage()
+            }
         }
     }
 
@@ -457,8 +481,20 @@ class ChatActivity : CoreActivity(), ChatContract.View {
         }
         messagetv.setTextColor(ContextCompat.getColor(this, R.color.confirmText))
         Picasso.with(this).load(R.drawable.ic_attachment_file).into(messagePic)
+        /*Open File*/
         messagetv.setOnClickListener({
-            Toast.makeText(this, "this needs to dl", Toast.LENGTH_SHORT).show()
+            message?.files?.let {
+                val mime = MimeTypeMap.getSingleton()
+                val intent = Intent(Intent.ACTION_VIEW)
+                val mimeType = mime.getMimeTypeFromExtension(SuffixDetector.instance.getFileSuffix(it[0]?.file_string.toString()))
+                intent.setDataAndType(Uri.parse(it[0]?.s3_url), mimeType)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                try {
+                    context?.startActivity(intent)
+                } catch (e: ActivityNotFoundException) {
+                    Toast.makeText(this, "Can't open this type of File", Toast.LENGTH_SHORT).show()
+                }
+            }
         })
         controller.getUserId { id ->
             id?.let {
@@ -490,29 +526,29 @@ class ChatActivity : CoreActivity(), ChatContract.View {
         picContainer2.visibility = LinearLayout.VISIBLE
         moneyButtonAccept.visibility = Button.GONE
         moneyButtonDecline.visibility = Button.GONE
-        if(picContainer1.childCount>0){
+        if (picContainer1.childCount > 0) {
             picContainer1.removeAllViews()
         }
-        if(picContainer2.childCount>0){
+        if (picContainer2.childCount > 0) {
             picContainer2.removeAllViews()
         }
         var i = 0
-        for(media in message!!.mediaArray!!){
+        for (media in message!!.mediaArray!!) {
             val iv = ImageView(context)
-            if(i<3){
+            if (i < 3) {
                 val lp = LinearLayout.LayoutParams(240, 240)
                 lp.marginEnd = 15
                 lp.bottomMargin = 15
                 iv.layoutParams = lp
                 picContainer1.addView(iv)
-                Picasso.with(context).load(media.media_file).resize(240,240).centerCrop().transform(RoundedCornersTransform(7,0)).into(iv)
-            } else if (i>2 || i<7){
+                Picasso.with(context).load(media.media_file).resize(240, 240).centerCrop().transform(RoundedCornersTransform(7, 0)).into(iv)
+            } else if (i > 2 || i < 7) {
                 val lp = LinearLayout.LayoutParams(180, 180)
                 lp.marginEnd = 10
                 lp.bottomMargin = 15
                 iv.layoutParams = lp
                 picContainer2.addView(iv)
-                Picasso.with(context).load(media.media_file).resize(240,240).centerCrop().transform(RoundedCornersTransform(7,0)).into(iv)
+                Picasso.with(context).load(media.media_file).resize(240, 240).centerCrop().transform(RoundedCornersTransform(7, 0)).into(iv)
             }
             i++
         }
@@ -626,7 +662,7 @@ class ChatActivity : CoreActivity(), ChatContract.View {
     }
 
     override fun setMedia(mediaList: MutableList<Media>) {
-        for(media in mediaList){
+        for (media in mediaList) {
             setMedia(media)
         }
     }
@@ -682,8 +718,11 @@ class ChatActivity : CoreActivity(), ChatContract.View {
             } else {
                 controller.sendMedia()
             }
+        } else if (!controller.permissionResults(requestCode, permissions, grantResults)) {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }
     }
+
 }
