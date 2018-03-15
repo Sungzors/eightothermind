@@ -150,6 +150,12 @@ interface CallerRx {
     @GET("/users/{userId}/privateChats")
     fun getPrivateChats(@Header(TOKEN) token: String, @Path("userId") userId: Int): Observable<PrivateChatResponse>
 
+    /**
+     * [getChatHistory]
+     * Used to retrieve all messages in a PrivateChat thread
+     * */
+    @GET("/privateChats/{roomId}/user/{userId}/messages")
+    fun getChatHistory(@Header(TOKEN) token: String, @Path("roomId") roomId: Int, @Path("userId") userId: Int): Observable<RoomHistoryResponse>
 
     /*CONTACTS*/
     /**
@@ -177,7 +183,7 @@ interface CallerRx {
                                 @Body privateChatPatchData: PrivateChatPatchData): Observable<PrivateChatFavoriteResponse>
 
     @GET("/rooms/{roomId}")
-    fun getRoomById(@Header(TOKEN) token: String, @Path("roomId") roomId: Int):Observable<RoomResponse>
+    fun getRoomById(@Header(TOKEN) token: String, @Path("roomId") roomId: Int): Observable<RoomResponse>
 
     /*GROUP*/
     @POST("/groupChats")
@@ -189,6 +195,7 @@ interface CallerRx {
     /**
      * [updateReceipt]
      * Turns on or off read receipts for every chat the user is in
+     * TODO: Implement this with UI changes & User Settings
      * */
     @PATCH("/users/{userId}/receipts")
     fun updateReceipt(@Header(TOKEN) token: String, @Path("userId") userId: Int,

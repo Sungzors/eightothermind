@@ -25,7 +25,7 @@ import kotlinx.android.synthetic.main.toolbar.*
 
 /**
  * Created by JPAM on 3/5/18.
- * [CreatePostActivity] used to manage media & create a post
+ * [CreatePostActivity] used to manage media & newInstanceChannelRoom a post
  */
 class CreatePostActivity : CoreActivity(), ChannelContract.CreatePost.View, View.OnClickListener {
 

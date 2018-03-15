@@ -68,8 +68,6 @@ public interface Caller {
     @PATCH("/privateChats/{roomId}/incognito_mode")
     Call<RoomResponse> hidePrivateChatRoom(@Header(TOKEN) String token, @Path("roomId") int roomId, @Body PrivateChatPatchData body);
 
-    @GET("/privateChats/{roomId}/user/{userId}/messages")
-    Call<RoomHistoryResponse> getMessageHistory(@Header(TOKEN) String token, @Path("roomId") int roomId, @Path("userId") int userId);
 
     @GET("/groupChats/{roomId}/user/{userId}/messages")
     Call<RoomHistoryResponse> getGCMessageHistory(@Header(TOKEN) String token, @Path("roomId") int roomId, @Path("userId") int userId);

@@ -178,7 +178,7 @@ class ChatSettingActivity : CoreActivity(), SettingContract.Chat.View, View.OnCl
         acs_button_media.text = "Media"
         acs_button_files.text = "Files"
         //Init state
-        acs_button_media.isChecked = true //Default //TODO: Save button state to avoid multiple frag loading
+        acs_button_media.isChecked = true //Default
         acs_button_media.performClick()
         acs_button_files.isChecked = false
 
@@ -241,7 +241,7 @@ class ChatSettingActivity : CoreActivity(), SettingContract.Chat.View, View.OnCl
             }
         /*Files Right Tab*/
             acs_button_files -> {
-                //TODO: Files
+                controller.getSharedFilesPrivate(mRoomId)
             }
         }
     }
@@ -251,17 +251,14 @@ class ChatSettingActivity : CoreActivity(), SettingContract.Chat.View, View.OnCl
         asc_favorite_button.isPressed = false
     }
 
-    //
-    fun updateMenuTitle(title1: String?, title2: String?) {
-        title1.let {
+    /*Media Selectors Count*/
+    fun updateSelectorTitle(title1: String?, title2: String?) {
+        title1?.let {
             acs_button_media.text = it
         }
-        title2.let {
+        title2?.let {
             acs_button_files.text = it
         }
-    }
-
-    override fun finishActivity() {
     }
 
     /*User feedback*/

@@ -2,6 +2,7 @@ package com.phdlabs.sungwon.a8chat_android.structure.setting.mediaFragments
 
 import android.graphics.Color
 import android.graphics.PorterDuff
+import android.os.Bundle
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -10,6 +11,7 @@ import com.phdlabs.sungwon.a8chat_android.model.files.File
 import com.phdlabs.sungwon.a8chat_android.model.media.Media
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreFragment
 import com.phdlabs.sungwon.a8chat_android.structure.setting.SettingContract
+import com.phdlabs.sungwon.a8chat_android.structure.setting.channel.ChannelSettingsActivity
 import com.phdlabs.sungwon.a8chat_android.structure.setting.chat.ChatSettingActivity
 import com.phdlabs.sungwon.a8chat_android.utility.RoundedCornersTransform
 import com.squareup.picasso.Picasso
@@ -31,40 +33,94 @@ class MediaSettingFragment : CoreFragment(), SettingContract.MediaFragment.View 
 
     //singleton
     companion object {
-        fun newInstance(contactId: Int): MediaSettingFragment {
+        /**
+         * [newInstanceChatRoom]
+         * @param contactId
+         * Prepares the fragment to show the media shared between two people in a private chat
+         * */
+        fun newInstanceChatRoom(contactId: Int): MediaSettingFragment {
             mContactId = contactId
-            return  MediaSettingFragment()
+            return MediaSettingFragment()
         }
+
+        /**
+         * [newInstanceChannelRoom]
+         * @param roomId
+         * Prepares the fragment to show the media shared in a Room (Channel)
+         * */
+        fun newInstanceChannelRoom(roomId: Int): MediaSettingFragment {
+            mRoomId = roomId
+            return MediaSettingFragment()
+        }
+
+        var mRoomId: Int? = null
         var mContactId: Int? = null
     }
 
     /*Properties*/
-    private var mMediaList:List<Media> = emptyList()
-    private val mFileList = mutableListOf<File>()
+    private var mMediaList: List<Media> = emptyList()
     private val mIVList = mutableListOf<ImageView>()
+    override lateinit var chatActivity: ChatSettingActivity
+    override lateinit var channelActivity: ChannelSettingsActivity
 
     private var mContainerHeight = 0
     private var mContainerWidth = 0
 
+    init {
+        MediaSettingController(this)
+    }
+
     /*LifeCycle*/
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        //Only a singlel value should be initialized
+        mContactId?.let {
+            chatActivity = activity as ChatSettingActivity
+        }
+        mRoomId?.let {
+            channelActivity = activity as ChannelSettingsActivity
+        }
+    }
+
     override fun onStart() {
         super.onStart()
-        MediaSettingController(this)
         controller.start()
-
-        mMediaList = Media().query { equalTo("sharedWithUserId", mContactId) ?: -1}
-        val csa = activity as ChatSettingActivity
-        csa.updateMenuTitle(String.format(getString(R.string.medianum, mMediaList.size.toString())),
-                String.format(getString(R.string.filenum, mFileList.size.toString())))
-        fcsm_container1.viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
-            override fun onGlobalLayout() {
-                fcsm_container1.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                mContainerWidth = fcsm_container1.measuredWidth
-                mContainerHeight = fcsm_container2.measuredHeight
-                setUpIVs()
+        //Chat Room
+        mContactId?.let {
+            controller.queryMediaForChatRoom(it)?.let {
+                mMediaList = it
+                fcsm_container1.viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
+                    override fun onGlobalLayout() {
+                        fcsm_container1.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                        mContainerWidth = fcsm_container1.measuredWidth
+                        mContainerHeight = fcsm_container2.measuredHeight
+                        setUpIVs()
+                    }
+                })
+                //Update Media count in UI
+                chatActivity.updateSelectorTitle(String.format(getString(R.string.medianum, mMediaList.size.toString())), null)
             }
-        })
-//        setUpIVs()
+        }
+        //Channel Room
+        mRoomId?.let {
+            controller.queryMediaForChannelRoom(it, {
+                it?.let {
+                    mMediaList = it
+                    fcsm_container1.viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
+                        override fun onGlobalLayout() {
+                            fcsm_container1.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                            mContainerWidth = fcsm_container1.measuredWidth
+                            mContainerHeight = fcsm_container2.measuredHeight
+                            setUpIVs()
+                        }
+                    })
+                    //Update Media count in UI
+                    channelActivity.updateSelectorTitle(String.format(getString(R.string.medianum, mMediaList.size.toString())), null)
+                }
+            })
+        }
+
     }
 
     override fun onResume() {
@@ -80,6 +136,8 @@ class MediaSettingFragment : CoreFragment(), SettingContract.MediaFragment.View 
     override fun onStop() {
         super.onStop()
         controller.stop()
+        mRoomId = null
+        mContactId = null
     }
 
     private fun setUpIVs() {

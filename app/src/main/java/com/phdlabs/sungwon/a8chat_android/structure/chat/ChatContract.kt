@@ -7,6 +7,7 @@ import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.structure.application.Application
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseController
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseView
+import java.io.File
 
 /**
  * Created by SungWon on 10/18/2017.
@@ -53,5 +54,12 @@ interface ChatContract {
         fun sendMessage()
         fun sendLocation()
         fun sendMedia()
+
+        /*Permissions*/
+        fun requestReadingExternalStorage()
+        fun permissionResults(requestCode: Int, permissions: Array<out String>, grantResults: IntArray): Boolean
+
+        /*File*/
+        fun sendFile(file: File, path: String)
     }
 }

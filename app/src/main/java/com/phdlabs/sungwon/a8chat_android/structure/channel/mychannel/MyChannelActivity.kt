@@ -664,7 +664,7 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
             }
         }
         acm_drawer_broadcast.setOnClickListener {
-
+            //TODO: Video Broadcasting
         }
         /*File*/
         acm_drawer_file.setOnClickListener {

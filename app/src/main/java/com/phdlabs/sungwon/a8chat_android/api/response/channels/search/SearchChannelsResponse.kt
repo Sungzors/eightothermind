@@ -6,7 +6,7 @@ import com.phdlabs.sungwon.a8chat_android.api.response.ErrorResponse
 import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
 
 /**
- * Created by paix on 3/13/18.
+ * Created by JPAM on 3/13/18.
  */
 class SearchChannelsResponse : ErrorResponse() {
     @SerializedName("channels")

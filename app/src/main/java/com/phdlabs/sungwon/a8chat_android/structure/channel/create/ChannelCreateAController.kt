@@ -86,7 +86,7 @@ class ChannelCreateAController(val mView: ChannelContract.Create.View) : Channel
         }
 
         mChannelPostData = channelPostData
-        //Finish Building Data to create channel
+        //Finish Building Data to newInstanceChannelRoom channel
         UserManager.instance.getCurrentUser { success, user, token ->
             if (success) {
                 //Available data
@@ -154,7 +154,7 @@ class ChannelCreateAController(val mView: ChannelContract.Create.View) : Channel
                             { throwable ->
 
                                 mView.hideProgress()
-                                mView.showError("Unable to create a channel, try again later")
+                                mView.showError("Unable to newInstanceChannelRoom a channel, try again later")
                                 println("Error creating channel: " + throwable.message)
                             }
                     )
