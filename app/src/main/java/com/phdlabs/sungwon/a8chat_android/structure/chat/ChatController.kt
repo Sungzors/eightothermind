@@ -220,6 +220,10 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
                                             if (response.isSuccess) {
                                                 Toast.makeText(mView.getContext(), "Message Favorited!", Toast.LENGTH_SHORT).show()
                                             }
+                                        }, { throwable ->
+                                            mView.hideProgress()
+                                            mView.showError("Unable to favorite, try again later")
+                                            println("Error creating channel: " + throwable.message)
                                         }
                                 )
                     }
@@ -243,6 +247,10 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
                                                 mMessages.remove(message)
                                                 mView.updateRecycler()
                                             }
+                                        }, { throwable ->
+                                            mView.hideProgress()
+                                            mView.showError("Unable to delete, try again later")
+                                            println("Error creating channel: " + throwable.message)
                                         }
                                 )
                     }

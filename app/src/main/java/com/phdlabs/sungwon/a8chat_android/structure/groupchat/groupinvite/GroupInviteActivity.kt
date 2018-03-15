@@ -24,6 +24,7 @@ import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform
 import com.squareup.picasso.Picasso
 import com.vicpin.krealmextensions.queryAll
 import kotlinx.android.synthetic.main.activity_group_invite.*
+import kotlinx.android.synthetic.main.toolbar.*
 
 /**
  * Created by SungWon on 3/5/2018.
@@ -44,6 +45,7 @@ class GroupInviteActivity : CoreActivity(), GroupChatContract.Invite.View {
     override fun onStart() {
         super.onStart()
         setToolbarTitle(getString(R.string.invite_friends))
+        showRightTextToolbar("Add Users")
         setUpRecycler()
         setupSearchBar()
         UserManager.instance.getCurrentUser { isSuccess, user, _ ->
@@ -52,6 +54,9 @@ class GroupInviteActivity : CoreActivity(), GroupChatContract.Invite.View {
                     currentUserId = it
                 }
             }
+        }
+        toolbar_right_text.setOnClickListener {
+            finish()
         }
     }
 

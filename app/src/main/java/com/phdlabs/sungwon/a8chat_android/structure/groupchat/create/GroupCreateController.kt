@@ -153,6 +153,10 @@ class GroupCreateController(val mView: GroupChatContract.Create.View) : GroupCha
                                             response.newChannelGroupOrEvent?.roomId!!,
                                             response.newChannelGroupOrEvent?.avatar!!)
                                 }
+                            }, { throwable ->
+                                mView.hideProgress()
+                                mView.showError("Unable to create a group, try again later")
+                                println("Error creating channel: " + throwable.message)
                             }
                     )
         }
