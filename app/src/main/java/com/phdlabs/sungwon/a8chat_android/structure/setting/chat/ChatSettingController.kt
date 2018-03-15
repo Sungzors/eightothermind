@@ -3,6 +3,7 @@ package com.phdlabs.sungwon.a8chat_android.structure.setting.chat
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.api.data.PrivateChatPatchData
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
+import com.phdlabs.sungwon.a8chat_android.db.channels.ChannelsManager
 import com.phdlabs.sungwon.a8chat_android.db.media.MediaManager
 import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.contacts.Contact
@@ -99,8 +100,12 @@ class ChatSettingController(val mView: SettingContract.Chat.View) : SettingContr
             if (it.second == null) { //Success
                 //Set fragment
                 mView.activity?.addFragment(R.id.asc_fragment_container,
-                        MediaSettingFragment.newInstance(contactId), false)
+                        MediaSettingFragment.newInstanceChatRoom(contactId), false)
             }
         })
+    }
+
+    override fun getSharedFilesPrivate(contactId: Int) {
+
     }
 }

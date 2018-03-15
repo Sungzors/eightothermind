@@ -193,10 +193,10 @@ class NormalFragment() : CameraBaseFragment() {
 //         * @param cameraOrientation based on [CameraCharacteristics]
 //         * @return [NormalFragment] with [Bundle]
 //         * */
-//        fun create(cameraOrientation: Int): NormalFragment {
+//        fun newInstanceChannelRoom(cameraOrientation: Int): NormalFragment {
 //            val args = Bundle()
 //            args.putSerializable(Constants.CameraIntents.LENS_FACING, cameraOrientation)
-//            val normalFragment = create()
+//            val normalFragment = newInstanceChannelRoom()
 //            normalFragment.arguments = args
 //            return normalFragment
 //        }

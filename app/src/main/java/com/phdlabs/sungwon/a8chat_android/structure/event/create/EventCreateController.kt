@@ -131,7 +131,7 @@ class EventCreateController(val mView: EventContract.Create.View) : EventContrac
         /*Location*/
         mEventPostData = eventPostData
 
-        //Finish building data to create Event
+        //Finish building data to newInstanceChannelRoom Event
         UserManager.instance.getCurrentUser { success, user, token ->
             if (success) {
                 //Available data
@@ -192,7 +192,7 @@ class EventCreateController(val mView: EventContract.Create.View) : EventContrac
                             { throwable ->
 
                                 mView.hideProgress()
-                                mView.showError("Unable to create an event, try again later")
+                                mView.showError("Unable to newInstanceChannelRoom an event, try again later")
                                 println("Error creating event: " + throwable.message)
                             }
                     )

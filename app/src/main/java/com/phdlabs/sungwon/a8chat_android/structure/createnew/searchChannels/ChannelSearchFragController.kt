@@ -6,7 +6,7 @@ import com.phdlabs.sungwon.a8chat_android.structure.createnew.CreateNewContract
 import com.vicpin.krealmextensions.save
 
 /**
- * Created by paix on 3/13/18.
+ * Created by JPAM on 3/13/18.
  */
 class ChannelSearchFragController(val mView: CreateNewContract.ChannelSearch.View) :
         CreateNewContract.ChannelSearch.Controller {

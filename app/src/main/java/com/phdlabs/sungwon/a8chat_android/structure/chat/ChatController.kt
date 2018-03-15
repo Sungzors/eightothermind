@@ -330,7 +330,7 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
 //                val multipartBodyPart = MultipartBody.Part.createFormData(
 //                        "file",
 //                        file.name,
-//                        RequestBody.create(MediaType.parse("image/*"), file)
+//                        RequestBody.newInstanceChannelRoom(MediaType.parse("image/*"), file)
 //                )
                 var userId = -1
                 getUserId { id ->

@@ -184,6 +184,7 @@ interface CallerRx {
     /**
      * [updateReceipt]
      * Turns on or off read receipts for every chat the user is in
+     * TODO: Implement this with UI changes & User Settings
      * */
     @PATCH("/users/{userId}/receipts")
     fun updateReceipt(@Header(TOKEN) token: String, @Path("userId") userId: Int,

@@ -10,6 +10,7 @@ import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.model.message.liked.LikedMessage
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.phdlabs.sungwon.a8chat_android.model.user.User
+import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.vicpin.krealmextensions.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -448,7 +449,24 @@ class ChannelsManager {
     fun getSingleChannel(channelId: Int): Channel? =
             Channel().queryFirst { equalTo("id", channelId) }
 
+
+    /**
+     * [getChannelMessagesByType]
+     * Used to retrieve the messages from a Channel & then Query Media OR Files based on Message Type
+     * @param roomId
+     * @param type
+     * @return List<Message>?
+     * */
+    fun getChannelMessagesByType(roomId: Int, type: String): List<Message>? {
+        return Message().query {
+            equalTo("roomId", roomId)
+            equalTo("type", type)
+        }
+    }
+
 }
+
+
 
 
 

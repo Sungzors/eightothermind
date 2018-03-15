@@ -4,7 +4,7 @@ import com.phdlabs.sungwon.a8chat_android.model.contacts.Contact
 import com.phdlabs.sungwon.a8chat_android.structure.createnew.CreateNewContract
 
 /**
- * Created by paix on 3/13/18.
+ * Created by JPAM on 3/13/18.
  */
 class ContactSearchFragController(val mView: CreateNewContract.ContactSearch.View) :
         CreateNewContract.ContactSearch.Controller {

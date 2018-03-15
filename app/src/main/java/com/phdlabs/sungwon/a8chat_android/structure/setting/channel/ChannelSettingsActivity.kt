@@ -5,7 +5,6 @@ import android.view.View
 import android.widget.Toast
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.db.channels.ChannelsManager
-import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.phdlabs.sungwon.a8chat_android.model.user.User
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
@@ -13,7 +12,6 @@ import com.phdlabs.sungwon.a8chat_android.structure.setting.SettingContract
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform
 import com.squareup.picasso.Picasso
-import com.vicpin.krealmextensions.queryFirst
 import kotlinx.android.synthetic.main.activity_channel_settings.*
 
 /**
@@ -31,6 +29,10 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
 
     override fun contentContainerId(): Int = R.id.achs_fragment_container
 
+    /*Parameters*/
+    override var activity: ChannelSettingsActivity? = this
+
+
     /*Init*/
     init {
         //Controller
@@ -40,7 +42,7 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
     /*Properties*/
     var mChannelName = ""
     var mChannelId = 0
-    var mRoomId = 0
+    var mRoomId: Int? = null
     var mOwnerId = 0
     var mOwner: User? = null
     var mRoom: Room? = null
@@ -78,7 +80,9 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
         mChannelId = intent.getIntExtra(Constants.IntentKeys.CHANNEL_ID, 0)
         //Room
         mRoomId = intent.getIntExtra(Constants.IntentKeys.ROOM_ID, 0)
-        mRoom = controller.getRoomInfo(mRoomId) //Get Room from controller
+        mRoomId?.let {
+            mRoom = controller.getRoomInfo(it) //Get Room from controller
+        }
         //Contact Id & Contact Info
         mOwnerId = intent.getIntExtra(Constants.IntentKeys.OWNER_ID, 0)
         controller.getChannelOwnerInfo(mOwnerId)
@@ -123,6 +127,7 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
         }
     }
 
+
     /*Clickers*/
     private fun setupClickers() {
         //Notifications Switch//TODO: Notifications
@@ -134,11 +139,23 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
                 //TODO: Disable Notifications
             }
         }
+
+        //TODO: Follow Channel
+
+        //Listeners
         achs_favemsg_container.setOnClickListener(this)
         achs_share_container.setOnClickListener(this)
         achs_clear_conv_container.setOnClickListener(this)
         achs_block_container.setOnClickListener(this)
         achs_follow_button.setOnClickListener(this)
+        //Media & Files (Fragments)
+        achs_button_media.setOnClickListener(this)
+        achs_button_files.setOnClickListener(this)
+        achs_button_media.text = "Media"
+        achs_button_files.text = "Files"
+        achs_button_media.isChecked = true
+        achs_button_media.performClick()
+        achs_button_files.isChecked = false
     }
 
     override fun onClick(p0: View?) {
@@ -166,7 +183,32 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
             achs_follow_button -> {
                 Toast.makeText(this, "In Progress", Toast.LENGTH_SHORT).show()
             }
+
+        /*Media*/
+            achs_button_media -> {
+                mRoomId?.let {
+                    controller.getMedia(it)
+                }
+            }
+        /*Files*/
+            achs_button_files -> {
+                mRoomId?.let {
+                    controller.getFiles(it)
+                }
+            }
         }
     }
+
+    /*MEDIA*/
+    /*Media Selectors Count*/
+    fun updateSelectorTitle(title1: String?, title2: String?) {
+        title1?.let {
+            achs_button_media.text = it
+        }
+        title2?.let {
+            achs_button_files.text = it
+        }
+    }
+
 
 }

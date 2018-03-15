@@ -16,7 +16,7 @@ class LocalContactsAsyncLoader(mContext: Context) : AsyncTaskLoader<List<LocalCo
 
     /**
      * Called in background & generates all of the [LocalContact]
-     * data needed to be uploaded to server & create eight [Contact] on callback
+     * data needed to be uploaded to server & newInstanceChannelRoom eight [Contact] on callback
      * */
     override fun loadInBackground(): List<LocalContact> =
             ContactsFileProvider.instance.loadLocalContacts(context)

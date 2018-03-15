@@ -91,7 +91,7 @@ class RegisterActivity : CoreActivity() {
                                         }, { throwable ->
                                     hideProgress()
                                     if (isRegister) {
-                                        showError("Could not create account, try again later")
+                                        showError("Could not newInstanceChannelRoom account, try again later")
                                     } else {
                                         showError("Could not sign in, try again later")
                                     }

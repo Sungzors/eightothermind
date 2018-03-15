@@ -338,7 +338,7 @@ public class ViewDragHelper {
     };
 
     /**
-     * Factory method to create a new ViewDragHelper.
+     * Factory method to newInstanceChannelRoom a new ViewDragHelper.
      *
      * @param forParent Parent view to monitor
      * @param cb Callback to provide information and receive events
@@ -349,7 +349,7 @@ public class ViewDragHelper {
     }
 
     /**
-     * Factory method to create a new ViewDragHelper.
+     * Factory method to newInstanceChannelRoom a new ViewDragHelper.
      *
      * @param forParent Parent view to monitor
      * @param sensitivity Multiplier for how sensitive the helper should be about detecting
@@ -364,7 +364,7 @@ public class ViewDragHelper {
     }
 
     /**
-     * Apps should use ViewDragHelper.create() to get a new instance.
+     * Apps should use ViewDragHelper.newInstanceChannelRoom() to get a new instance.
      * This will allow VDH to use internal compatibility implementations for different
      * platform versions.
      *
