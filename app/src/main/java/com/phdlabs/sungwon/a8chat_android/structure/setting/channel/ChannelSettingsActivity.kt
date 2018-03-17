@@ -12,6 +12,8 @@ import com.phdlabs.sungwon.a8chat_android.structure.setting.SettingContract
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform
 import com.squareup.picasso.Picasso
+import com.vicpin.krealmextensions.query
+import com.vicpin.krealmextensions.queryFirst
 import kotlinx.android.synthetic.main.activity_channel_settings.*
 
 /**
@@ -46,6 +48,7 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
     var mOwnerId = 0
     var mOwner: User? = null
     var mRoom: Room? = null
+    var mRoomParticipants: MutableList<Int>? = null
 
 
     /*LifeCycle*/
@@ -53,9 +56,6 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
         super.onCreate(savedInstanceState)
         //Info & Channel Owner update
         getIntentInfo()
-        //UI
-        setupToolbar()
-        setupClickers()
     }
 
     override fun onStart() {
@@ -75,17 +75,31 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
 
     /*Intent Info*/
     private fun getIntentInfo() {
+        showProgress()
         //Channel Name
         mChannelName = intent.getStringExtra(Constants.IntentKeys.CHANNEL_NAME)
         mChannelId = intent.getIntExtra(Constants.IntentKeys.CHANNEL_ID, 0)
         //Room
         mRoomId = intent.getIntExtra(Constants.IntentKeys.ROOM_ID, 0)
         mRoomId?.let {
-            mRoom = controller.getRoomInfo(it) //Get Room from controller
+            controller.getRoomInfo(it, {
+                it?.let {
+                    mRoom = it
+                }
+            })
+            controller.getRoomParticipants(it, {
+                it?.let {
+                    mRoomParticipants = it
+                    //Contact Id & Contact Info
+                    mOwnerId = intent.getIntExtra(Constants.IntentKeys.OWNER_ID, 0)
+                    controller.getChannelOwnerInfo(mOwnerId)
+                    //UI
+                    setupToolbar()
+                    setupClickers()
+                    hideProgress()
+                }
+            })
         }
-        //Contact Id & Contact Info
-        mOwnerId = intent.getIntExtra(Constants.IntentKeys.OWNER_ID, 0)
-        controller.getChannelOwnerInfo(mOwnerId)
     }
 
     /*Toolbar*/
@@ -106,7 +120,7 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
             //Channel
             mRoom?.let {
                 it.channel?.let {
-                    //Num. Followers //TODO: Ask Tomer if Followers === num of participants ?
+                    //Num. Followers
                     if (it) {
                         achs_followers_number.text = resources.getString(
                                 R.string.channel_followers,
@@ -125,6 +139,26 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
                 }
             }
         }
+
+        //Update UI
+        controller.getAppUserId { id ->
+            //Hide or show Follow button
+            if (id == mOwnerId) {
+                achs_follow_button.visibility = View.GONE
+            } else {
+                achs_follow_button.visibility = View.VISIBLE
+                //Follow || Un-followed channel state
+                id?.let {
+                    mRoomParticipants?.let {
+                        if (it.contains(id)) { //Is following
+                            achs_follow_button.text = getString(R.string.unfollow)
+                        } else {//Isn't following
+                            achs_follow_button.text = getString(R.string.follow)
+                        }
+                    }
+                }
+            }
+        }
     }
 
 
@@ -139,8 +173,6 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
                 //TODO: Disable Notifications
             }
         }
-
-        //TODO: Follow Channel
 
         //Listeners
         achs_favemsg_container.setOnClickListener(this)
@@ -181,9 +213,22 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
             }
         /*Follow Channel*/
             achs_follow_button -> {
-                Toast.makeText(this, "In Progress", Toast.LENGTH_SHORT).show()
+                controller.getAppUserId { id ->
+                    //Owner can't follow it's own channel
+                    id?.let {
+                        mRoomParticipants?.let {
+                            if (it.contains(id)) { //Un-Follow
+                                achs_follow_button.text = getString(R.string.follow)
+                                //TODO: Unfollow -> Same route as leaving groupchat
+                                //TODO: Remember to set the iFollow property of the channel to false so changes show in the lobby wihtoug having to pull all the channels again
+                            } else { //Follow
+                                achs_follow_button.text = getString(R.string.unfollow)
+                                controller.followChannel(mChannelId, id)
+                            }
+                        }
+                    }
+                }
             }
-
         /*Media*/
             achs_button_media -> {
                 mRoomId?.let {
@@ -208,6 +253,19 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
         title2?.let {
             achs_button_files.text = it
         }
+    }
+
+    /*ROOM*/
+
+    override fun updateRoomInfo() {
+        Room().queryFirst() { equalTo("id", mRoomId) }?.let {
+            mRoom = it
+        }
+    }
+
+    /*User Feedback*/
+    override fun userFeedback(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
 

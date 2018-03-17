@@ -129,7 +129,6 @@
                                     android:layout_gravity="center|end"
                                     android:background="@color/transparent"
                                     android:contentDescription="@string/favorites"
-                                    android:text="@string/follow"
                                     android:textColor="@color/blue_color_picker"
                                     android:textSize="14sp"
                                     android:textStyle="bold" />

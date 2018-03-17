@@ -7,13 +7,12 @@ import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
 import com.phdlabs.sungwon.a8chat_android.model.channel.ChannelShowNest
 import com.phdlabs.sungwon.a8chat_android.model.channel.Comment
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
-import com.phdlabs.sungwon.a8chat_android.model.message.liked.LikedMessage
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
-import com.phdlabs.sungwon.a8chat_android.model.user.User
-import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.vicpin.krealmextensions.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 
 /**
  * Created by JPAM on 2/26/18.
@@ -349,6 +348,52 @@ class ChannelsManager {
             }
         }
     }
+
+
+    /**
+     * [followChannel]
+     * Used to follow or un-follow channel
+     * Business logic for following || un-following a Channel is located at [MyChannelActivity]
+     *
+     * If successful the function will cache the new room information
+     *
+     * @param channelId Int?
+     * @param participantId: List<Int>?
+     * @callback success -> Will return a success or error Boolean value of the transaction
+     * */
+    fun followChannel(channelId: Int, participantId: Int, callback: (String) -> Unit) {
+        UserManager.instance.getCurrentUser { success, user, token ->
+            if (success) {
+                user?.let {
+                    token?.token?.let {
+                        var multipartBodyPart = MultipartBody.Part.createFormData(
+                                "userIds[]",
+                                "$participantId"
+                        )
+                        val multipartForm = MultipartBody.Builder().setType(MultipartBody.FORM)
+                                .addPart(multipartBodyPart)
+                                .build()
+                        val call = Rest.getInstance().getmCallerRx().followChannel(it, channelId, multipartForm)
+                        call.subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe({
+                                    if (it.isSuccess) {
+                                        it?.room?.let {
+                                            it.save()
+                                            callback("Following Channel")
+                                        }
+                                    } else if (it.isError) {
+                                        callback("Could not follow channel at this time")
+                                    }
+                                }, { throwable ->
+                                    callback(throwable.localizedMessage)
+                                })
+                    }
+                }
+            }
+        }
+    }
+
 
     /**
      * [updateRoom]

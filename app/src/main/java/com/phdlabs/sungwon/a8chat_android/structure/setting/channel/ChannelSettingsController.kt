@@ -2,8 +2,10 @@ package com.phdlabs.sungwon.a8chat_android.structure.setting.channel
 
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.db.channels.ChannelsManager
+import com.phdlabs.sungwon.a8chat_android.db.room.RoomManager
 import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
+import com.phdlabs.sungwon.a8chat_android.model.user.User
 import com.phdlabs.sungwon.a8chat_android.structure.setting.SettingContract
 import com.phdlabs.sungwon.a8chat_android.structure.setting.fileFragments.FileSettingsFragment
 import com.phdlabs.sungwon.a8chat_android.structure.setting.mediaFragments.MediaSettingFragment
@@ -16,6 +18,9 @@ import com.vicpin.krealmextensions.queryFirst
  * Used for business logic on [ChannelSettingsActivity]
  */
 class ChannelSettingsController(val mView: SettingContract.Channel.View) : SettingContract.Channel.Controller {
+
+    /*Properties*/
+    private var mUser: User? = null
 
     /*Init*/
     init {
@@ -35,8 +40,46 @@ class ChannelSettingsController(val mView: SettingContract.Channel.View) : Setti
     override fun stop() {
     }
 
+    /*Application User*/
+    override fun getAppUserId(callback: (userId: Int?) -> Unit) {
+        UserManager.instance.getCurrentUser { success, user, _ ->
+            if (success) {
+                user?.let {
+                    mUser = user
+                    user.id?.let {
+                        callback(it)
+                    }
+                }
+            }
+        }
+    }
+
     /*Get room information from Realm*/
-    override fun getRoomInfo(id: Int): Room? = Room().queryFirst { equalTo("id", id) }
+
+    override fun getRoomInfo(id: Int, callback: (Room?) -> Unit) {
+        RoomManager.instance.getRoomInfo(id, { response ->
+            response.second?.let {
+                mView.showError(it)
+            } ?: run {
+                response.first?.let(callback)
+            }
+        })
+    }
+
+
+    override fun getRoomParticipants(id: Int, callback: (MutableList<Int>?) -> Unit) {
+        getRoomInfo(id, {
+            val participantsId = mutableListOf<Int>()
+            it?.participantsId?.let {
+                for (participantId in it) {
+                    participantId?.intValue?.let {
+                        participantsId.add(it)
+                    }
+                }
+                callback(participantsId)
+            }
+        })
+    }
 
     /*Get Channel Owner Information*/
     override fun getChannelOwnerInfo(ownerId: Int) {
@@ -91,6 +134,14 @@ class ChannelSettingsController(val mView: SettingContract.Channel.View) : Setti
                         FileSettingsFragment.newInstanceChannelRoom(roomId), false)
             }
         }
+    }
+
+    /*Channel*/
+    override fun followChannel(channelId: Int, followerId: Int) {
+        ChannelsManager.instance.followChannel(channelId, followerId, {
+            mView.userFeedback(it)
+            mView.updateRoomInfo()
+        })
     }
 
 }

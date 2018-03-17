@@ -106,6 +106,10 @@ interface CallerRx {
     @GET("/channels/search")
     fun searchChannel(@Header(TOKEN) token: String, @Query("search") search: String?): Observable<SearchChannelsResponse>
 
+    @PATCH("/channels/{channelId}/follow")
+    fun followChannel(@Header(TOKEN) token: String, @Path("channelId") channelId: Int,
+                      @Body userIds: MultipartBody): Observable<RoomResponse>
+
     /**
      * [getPostComments]
      * Get last 40 comments from a Channel Post

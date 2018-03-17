@@ -50,6 +50,7 @@ interface SettingContract {
             /*Get shared files between two users*/
             fun getSharedFilesPrivate(chatRoomId: Int)
 
+
         }
     }
 
@@ -64,13 +65,21 @@ interface SettingContract {
             //Channel Owner Info
             fun updateChannelOwnerInfo(channelOwner: User)
 
+            /*Room*/
+            fun updateRoomInfo()
+
+            /*Feedback*/
+            fun userFeedback(message: String)
+
 
         }
 
         interface Controller : BaseController {
 
             /*Retrieve room Info*/
-            fun getRoomInfo(id: Int): Room?
+            fun getRoomInfo(id: Int, callback: (Room?) -> Unit)
+
+            fun getRoomParticipants(id: Int, callback: (MutableList<Int>?) -> Unit)
 
             /*Channel Owner Information*/
             fun getChannelOwnerInfo(ownerId: Int)
@@ -79,6 +88,12 @@ interface SettingContract {
             fun getMedia(roomId: Int)
 
             fun getFiles(roomId: Int)
+
+            /*App User*/
+            fun getAppUserId(callback: (userId: Int?) -> Unit)
+
+            /*Follow Channel*/
+            fun followChannel(channelId: Int, followerId: Int)
         }
 
     }

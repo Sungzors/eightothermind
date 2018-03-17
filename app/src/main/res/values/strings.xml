@@ -154,6 +154,7 @@
     <string name="cancel">cancel</string>
     <string name="file_name">File Name</string>
     <string name="follow">Follow</string>
+    <string name="unfollow">Unfollow</string>
     <string name="channel_description">Channel Description</string>
     <string name="report_channel">Report Channel</string>
 
