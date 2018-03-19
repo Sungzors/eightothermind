@@ -116,7 +116,7 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
                 showTabs(false, true)
             } else if (requestCode == Constants.RequestCodes.CREATE_NEW_BACK_REQ_CODE) {
                 //Don't refreshChannels Lobby
-                mLobbyFragment.controller.setRefreshFlag(false)
+                mLobbyFragment.controller.setRefreshFlag(true)
                 //Set home button selected
                 am_bottom_tab_nav.setOnNavigationItemSelectedListener(null)
                 showTabs(false, false)

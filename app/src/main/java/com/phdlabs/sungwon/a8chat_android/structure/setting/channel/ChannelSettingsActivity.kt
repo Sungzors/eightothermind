@@ -106,7 +106,6 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
     private fun setupToolbar() {
         setToolbarTitle(mChannelName)
         showBackArrow(R.drawable.ic_back)
-        showRightTextToolbar("Edit")
     }
 
     /*Display User Info*/
@@ -144,9 +143,12 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
         //Update UI
         controller.getAppUserId { id ->
             //Hide or show Follow button
-            if (id == mOwnerId) {
+            if (id == mOwnerId) { //Channel Owner
                 achs_follow_button.visibility = View.GONE
-            } else {
+                showRightTextToolbar("Edit")
+                toolbar_right_text.setTextColor(resources.getColor(R.color.blue_color_picker))
+                toolbar_right_text.setOnClickListener(this)
+            } else { //Channel Visitor
                 achs_follow_button.visibility = View.VISIBLE
                 //Follow || Un-followed channel state
                 id?.let {
@@ -165,8 +167,6 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
 
     /*Clickers*/
     private fun setupClickers() {
-        //Toolbar
-        toolbar_right_text.setOnClickListener(this)
         //Notifications Switch//TODO: Notifications
         achs_notif_switch.isSelected = false
         achs_notif_switch.setOnCheckedChangeListener { compoundButton, b ->
@@ -180,8 +180,6 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
         //Listeners
         achs_favemsg_container.setOnClickListener(this)
         achs_share_container.setOnClickListener(this)
-//        achs_clear_conv_container.setOnClickListener(this)
-//        achs_block_container.setOnClickListener(this)
         achs_follow_button.setOnClickListener(this)
         //Media & Files (Fragments)
         achs_button_media.setOnClickListener(this)
@@ -244,16 +242,6 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
                 }
             }
         }
-
-//        /*Clear Channel Feed*/
-//            achs_clear_conv_container -> {
-//                Toast.makeText(this, "In Progress", Toast.LENGTH_SHORT).show()
-//            }
-//
-//        /*Report Channel*/
-//            achs_block_container -> {
-//                Toast.makeText(this, "In Progress", Toast.LENGTH_SHORT).show()
-//            }
     }
 
     /*MEDIA*/
@@ -283,12 +271,15 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
         } else {
             mRoomParticipants?.add(participantId)
         }
+        //Update Followers Number
+        achs_followers_number.text = resources.getString(
+                R.string.channel_followers,
+                mRoomParticipants?.count().toString().trim())
     }
 
     /*User Feedback*/
     override fun userFeedback(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
-
 
 }
