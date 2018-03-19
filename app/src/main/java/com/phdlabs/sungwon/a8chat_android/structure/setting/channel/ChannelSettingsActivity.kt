@@ -12,7 +12,6 @@ import com.phdlabs.sungwon.a8chat_android.structure.setting.SettingContract
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform
 import com.squareup.picasso.Picasso
-import com.vicpin.krealmextensions.query
 import com.vicpin.krealmextensions.queryFirst
 import kotlinx.android.synthetic.main.activity_channel_settings.*
 
@@ -219,8 +218,9 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
                         mRoomParticipants?.let {
                             if (it.contains(id)) { //Un-Follow
                                 achs_follow_button.text = getString(R.string.follow)
-                                //TODO: Unfollow -> Same route as leaving groupchat
-                                //TODO: Remember to set the iFollow property of the channel to false so changes show in the lobby wihtoug having to pull all the channels again
+                                mRoomId?.let {
+                                    controller.unfollowChannel(it)
+                                }
                             } else { //Follow
                                 achs_follow_button.text = getString(R.string.unfollow)
                                 controller.followChannel(mChannelId, id)

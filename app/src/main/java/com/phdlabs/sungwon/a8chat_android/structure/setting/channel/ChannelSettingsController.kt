@@ -144,4 +144,12 @@ class ChannelSettingsController(val mView: SettingContract.Channel.View) : Setti
         })
     }
 
+    override fun unfollowChannel(roomId: Int) {
+        ChannelsManager.instance.unfollowChannel(roomId, { message ->
+            message?.let {
+                mView.userFeedback(it)
+            }
+        })
+    }
+
 }

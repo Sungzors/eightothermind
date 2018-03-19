@@ -7,6 +7,7 @@ import com.phdlabs.sungwon.a8chat_android.api.response.channels.MyChannelRoomsRe
 import com.phdlabs.sungwon.a8chat_android.api.response.channels.follow.ChannelFollowResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.channels.post.ChannelPostResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.channels.search.SearchChannelsResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.channels.unfollow.UnFollowChannelResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.contacts.ContactsInvitedResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.contacts.ContactsPostResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.contacts.UserFriendsResponse
@@ -109,6 +110,13 @@ interface CallerRx {
     @PATCH("/channels/{channelId}/follow")
     fun followChannel(@Header(TOKEN) token: String, @Path("channelId") channelId: Int,
                       @Body userIds: MultipartBody): Observable<RoomResponse>
+
+    /**
+     * Used for leaving groupchat & un-following channel
+     * */
+    @DELETE("/groupChats/{roomId}/users/{userId}")
+    fun unfollowChannel(@Header(TOKEN) token: String, @Path("roomId") roomId: Int,
+                        @Path("userId") userId: Int): Observable<UnFollowChannelResponse>
 
     /**
      * [getPostComments]

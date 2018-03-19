@@ -8,6 +8,7 @@ import com.phdlabs.sungwon.a8chat_android.model.channel.ChannelShowNest
 import com.phdlabs.sungwon.a8chat_android.model.channel.Comment
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
+import com.phdlabs.sungwon.a8chat_android.model.user.UserRooms
 import com.vicpin.krealmextensions.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -352,9 +353,7 @@ class ChannelsManager {
 
     /**
      * [followChannel]
-     * Used to follow or un-follow channel
-     * Business logic for following || un-following a Channel is located at [MyChannelActivity]
-     *
+     * Used to follow channel*
      * If successful the function will cache the new room information
      *
      * @param channelId Int?
@@ -394,6 +393,50 @@ class ChannelsManager {
         }
     }
 
+    /**
+     * [unfollowChannel]
+     * Usued to un-follow a specific channel
+     *
+     * @param roomId
+     * @param userId
+     * @return message: String? of currently un-followed channel
+     * */
+    fun unfollowChannel(roomId: Int, callback: (String?) -> Unit) {
+        UserManager.instance.getCurrentUser { success, user, token ->
+            if (success) {
+                user?.let {
+                    token?.token?.let {
+                        val call = Rest.getInstance().getmCallerRx().unfollowChannel(it, roomId, user.id!!)
+                        call.subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe({ response ->
+                                    if (response.isSuccess) {
+                                        //Remove iFollow channel property for Lobby purposes
+                                        Room().queryFirst { equalTo("id", roomId) }?.let {
+                                            it.channel?.let {
+                                                if (it) {
+                                                    Channel().queryFirst { equalTo("room_id", roomId) }?.let {
+                                                        if (it.iFollow) {
+                                                            it.iFollow = false
+                                                            it.save()
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        //Callback
+                                        response?.message?.let(callback)
+                                    } else if (response.isError) {
+                                        callback("Could not un-follow channel")
+                                    }
+                                }, { throwable ->
+                                    callback(throwable.localizedMessage)
+                                })
+                    }
+                }
+            }
+        }
+    }
 
     /**
      * [updateRoom]

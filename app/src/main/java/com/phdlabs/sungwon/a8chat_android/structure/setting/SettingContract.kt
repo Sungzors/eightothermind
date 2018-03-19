@@ -94,6 +94,9 @@ interface SettingContract {
 
             /*Follow Channel*/
             fun followChannel(channelId: Int, followerId: Int)
+
+            /*Un-follow Channel*/
+            fun unfollowChannel(roomId: Int)
         }
 
     }
