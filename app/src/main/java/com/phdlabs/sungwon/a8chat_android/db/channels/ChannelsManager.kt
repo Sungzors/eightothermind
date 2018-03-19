@@ -8,12 +8,10 @@ import com.phdlabs.sungwon.a8chat_android.model.channel.ChannelShowNest
 import com.phdlabs.sungwon.a8chat_android.model.channel.Comment
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
-import com.phdlabs.sungwon.a8chat_android.model.user.UserRooms
 import com.vicpin.krealmextensions.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 
 /**
  * Created by JPAM on 2/26/18.

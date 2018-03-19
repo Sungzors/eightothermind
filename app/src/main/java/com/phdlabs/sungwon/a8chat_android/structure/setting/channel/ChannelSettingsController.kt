@@ -148,6 +148,7 @@ class ChannelSettingsController(val mView: SettingContract.Channel.View) : Setti
         ChannelsManager.instance.unfollowChannel(roomId, { message ->
             message?.let {
                 mView.userFeedback(it)
+                mView.updateRoomInfo()
             }
         })
     }

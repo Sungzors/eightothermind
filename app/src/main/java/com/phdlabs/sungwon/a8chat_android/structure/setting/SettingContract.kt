@@ -68,6 +68,8 @@ interface SettingContract {
             /*Room*/
             fun updateRoomInfo()
 
+            fun updateRoomParticipants(participantId: Int, remove: Boolean)
+
             /*Feedback*/
             fun userFeedback(message: String)
 

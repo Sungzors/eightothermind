@@ -14,6 +14,7 @@ import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform
 import com.squareup.picasso.Picasso
 import com.vicpin.krealmextensions.queryFirst
 import kotlinx.android.synthetic.main.activity_channel_settings.*
+import kotlinx.android.synthetic.main.toolbar.*
 
 /**
  * Created by JPAM on 3/12/18.
@@ -41,13 +42,13 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
     }
 
     /*Properties*/
-    var mChannelName = ""
-    var mChannelId = 0
-    var mRoomId: Int? = null
-    var mOwnerId = 0
-    var mOwner: User? = null
-    var mRoom: Room? = null
-    var mRoomParticipants: MutableList<Int>? = null
+    private var mChannelName = ""
+    private var mChannelId = 0
+    private var mRoomId: Int? = null
+    private var mOwnerId = 0
+    private var mOwner: User? = null
+    private var mRoom: Room? = null
+    private var mRoomParticipants: MutableList<Int>? = null
 
 
     /*LifeCycle*/
@@ -60,6 +61,9 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
     override fun onStart() {
         super.onStart()
         controller.start()
+        //UI
+        setupToolbar()
+        setupClickers()
     }
 
     override fun onPause() {
@@ -92,9 +96,6 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
                     //Contact Id & Contact Info
                     mOwnerId = intent.getIntExtra(Constants.IntentKeys.OWNER_ID, 0)
                     controller.getChannelOwnerInfo(mOwnerId)
-                    //UI
-                    setupToolbar()
-                    setupClickers()
                     hideProgress()
                 }
             })
@@ -105,6 +106,7 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
     private fun setupToolbar() {
         setToolbarTitle(mChannelName)
         showBackArrow(R.drawable.ic_back)
+        showRightTextToolbar("Edit")
     }
 
     /*Display User Info*/
@@ -163,6 +165,8 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
 
     /*Clickers*/
     private fun setupClickers() {
+        //Toolbar
+        toolbar_right_text.setOnClickListener(this)
         //Notifications Switch//TODO: Notifications
         achs_notif_switch.isSelected = false
         achs_notif_switch.setOnCheckedChangeListener { compoundButton, b ->
@@ -176,8 +180,8 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
         //Listeners
         achs_favemsg_container.setOnClickListener(this)
         achs_share_container.setOnClickListener(this)
-        achs_clear_conv_container.setOnClickListener(this)
-        achs_block_container.setOnClickListener(this)
+//        achs_clear_conv_container.setOnClickListener(this)
+//        achs_block_container.setOnClickListener(this)
         achs_follow_button.setOnClickListener(this)
         //Media & Files (Fragments)
         achs_button_media.setOnClickListener(this)
@@ -191,6 +195,10 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
 
     override fun onClick(p0: View?) {
         when (p0) {
+        /*Edit Channel Name, Description & Photo*/
+            toolbar_right_text -> {
+                Toast.makeText(this, "In Progress", Toast.LENGTH_SHORT).show()
+            }
         /*Fav Messages*/
             achs_favemsg_container -> {
                 Toast.makeText(this, "In Progress", Toast.LENGTH_SHORT).show()
@@ -201,15 +209,6 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
                 Toast.makeText(this, "In Progress", Toast.LENGTH_SHORT).show()
             }
 
-        /*Clear Channel Feed*/
-            achs_clear_conv_container -> {
-                Toast.makeText(this, "In Progress", Toast.LENGTH_SHORT).show()
-            }
-
-        /*Report Channel*/
-            achs_block_container -> {
-                Toast.makeText(this, "In Progress", Toast.LENGTH_SHORT).show()
-            }
         /*Follow Channel*/
             achs_follow_button -> {
                 controller.getAppUserId { id ->
@@ -220,10 +219,13 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
                                 achs_follow_button.text = getString(R.string.follow)
                                 mRoomId?.let {
                                     controller.unfollowChannel(it)
+                                    updateRoomParticipants(id, true)
                                 }
+
                             } else { //Follow
                                 achs_follow_button.text = getString(R.string.unfollow)
                                 controller.followChannel(mChannelId, id)
+                                updateRoomParticipants(id, false)
                             }
                         }
                     }
@@ -242,6 +244,16 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
                 }
             }
         }
+
+//        /*Clear Channel Feed*/
+//            achs_clear_conv_container -> {
+//                Toast.makeText(this, "In Progress", Toast.LENGTH_SHORT).show()
+//            }
+//
+//        /*Report Channel*/
+//            achs_block_container -> {
+//                Toast.makeText(this, "In Progress", Toast.LENGTH_SHORT).show()
+//            }
     }
 
     /*MEDIA*/
@@ -258,8 +270,18 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
     /*ROOM*/
 
     override fun updateRoomInfo() {
-        Room().queryFirst() { equalTo("id", mRoomId) }?.let {
+        Room().queryFirst { equalTo("id", mRoomId) }?.let {
+            //Update Room Info
             mRoom = it
+        }
+    }
+
+    override fun updateRoomParticipants(participantId: Int, remove: Boolean) {
+        //Remove
+        if (remove) {
+            mRoomParticipants?.remove(participantId)
+        } else {
+            mRoomParticipants?.add(participantId)
         }
     }
 
