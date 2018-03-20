@@ -471,6 +471,34 @@ class ChannelsManager {
     }
 
     /**
+     * [deleteChannel]
+     * Delete channel from Channel settings
+     * @param channelId [Int]
+     * */
+    fun deleteChannel(channelId: Int, callback: (String?) -> Unit) {
+        UserManager.instance.getCurrentUser { success, user, token ->
+            if (success) {
+                user?.let {
+                    token?.token?.let {
+                        val call = Rest.getInstance().getmCallerRx().deleteChannel(it, channelId)
+                        call.subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe({ response ->
+                                    if (response.isSuccess) {
+                                        response.message?.let(callback)
+                                    } else if (response.isError) {
+                                        callback("Could not delete Channel")
+                                    }
+                                }, { throwable ->
+                                    callback(throwable.localizedMessage)
+                                })
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * [updateRoom]
      * Used to update room information on pulled [Channel]
      * @see [getUserChannels]

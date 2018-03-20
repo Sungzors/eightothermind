@@ -149,4 +149,11 @@ class ChannelSettingsController(val mView: SettingContract.Channel.View) : Setti
         })
     }
 
+    override fun deleteChannel(channelId: Int) {
+        ChannelsManager.instance.deleteChannel(channelId, {
+            //Channel Deleted
+            mView.channelDeleted()
+        })
+    }
+
 }

@@ -724,8 +724,12 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
 
         //Back from Channel Settings
         else if (requestCode == Constants.RequestCodes.CHANNEL_SETTINGS) {
-            if (resultCode == Activity.RESULT_OK || resultCode == Activity.RESULT_CANCELED) {
-                //todo: actions after returning from channel settings
+            if (resultCode == Activity.RESULT_OK) {
+                data?.getBooleanExtra(Constants.IntentKeys.CHANNEL_DELETED, false)?.let {
+                    if (it){
+                        onBackPressed()
+                    }
+                }
             }
         }
     }

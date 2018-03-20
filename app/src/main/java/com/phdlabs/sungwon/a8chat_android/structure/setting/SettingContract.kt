@@ -73,6 +73,8 @@ interface SettingContract {
             /*Feedback*/
             fun userFeedback(message: String)
 
+            /*Channel Deleted*/
+            fun channelDeleted()
 
         }
 
@@ -99,6 +101,9 @@ interface SettingContract {
 
             /*Un-follow Channel*/
             fun unfollowChannel(roomId: Int)
+
+            /*Delete Channel*/
+            fun deleteChannel(channelId: Int)
         }
 
     }

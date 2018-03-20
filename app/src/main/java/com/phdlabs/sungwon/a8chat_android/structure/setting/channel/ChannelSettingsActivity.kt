@@ -1,6 +1,8 @@
 package com.phdlabs.sungwon.a8chat_android.structure.setting.channel
 
 import android.app.Activity
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -161,8 +163,11 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
                 showRightTextToolbar("Edit")
                 toolbar_right_text.setTextColor(resources.getColor(R.color.blue_color_picker))
                 toolbar_right_text.setOnClickListener(this)
+                achs_delete_container.visibility = View.VISIBLE
+                achs_delete_container.setOnClickListener(this)
             } else { //Channel Visitor
                 achs_follow_button.visibility = View.VISIBLE
+                achs_delete_container.visibility = View.GONE
                 //Follow || Un-followed channel state
                 id?.let {
                     mRoomParticipants?.let {
@@ -246,6 +251,15 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
                     }
                 }
             }
+        /*Delete Channel*/
+            achs_delete_container -> {
+                val builder = AlertDialog.Builder(this)
+                        .setMessage(getString(R.string.confirm_channel_deletion))
+                        .setPositiveButton(R.string.delete) { _, _ -> controller.deleteChannel(mChannelId) }
+                        .setNegativeButton(R.string.cancel) { _, _ -> /*Nothing*/ }
+                builder.create()
+                builder.show()
+            }
         /*Media*/
             achs_button_media -> {
                 mRoomId?.let {
@@ -273,7 +287,6 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
     }
 
     /*ROOM*/
-
     override fun updateRoomInfo() {
         Room().queryFirst { equalTo("id", mRoomId) }?.let {
             //Update Room Info
@@ -297,6 +310,13 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
     /*User Feedback*/
     override fun userFeedback(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun channelDeleted() {
+        val deletedChannelIntent = Intent()
+        deletedChannelIntent.putExtra(Constants.IntentKeys.CHANNEL_DELETED, true)
+        setResult(Activity.RESULT_OK, deletedChannelIntent)
+        finish()
     }
 
 }

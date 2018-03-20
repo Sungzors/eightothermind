@@ -6,6 +6,7 @@ import com.phdlabs.sungwon.a8chat_android.api.data.channel.CommentPostData
 import com.phdlabs.sungwon.a8chat_android.api.response.*
 import com.phdlabs.sungwon.a8chat_android.api.response.channels.LikeResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.channels.MyChannelRoomsResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.channels.delete.DeleteChannelResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.channels.edit.ChannelEditResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.channels.follow.ChannelFollowResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.channels.post.ChannelPostResponse
@@ -146,6 +147,14 @@ interface CallerRx {
     @PATCH("/channels/{channelId}")
     fun updateChannel(@Header(TOKEN) token: String, @Path("channelId") channelId: Int,
                       @Body channelPostData: ChannelPostData): Observable<ChannelEditResponse>
+
+    /**
+     * [deleteChannel]
+     * Delete Channel
+     * @param channelId [Int]
+     * */
+    @DELETE("/channels/{channelId}")
+    fun deleteChannel(@Header(TOKEN) token: String, @Path("channelId") channelId: Int): Observable<DeleteChannelResponse>
 
 
     /*EVENTS*/

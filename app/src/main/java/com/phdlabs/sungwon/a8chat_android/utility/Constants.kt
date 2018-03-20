@@ -29,6 +29,7 @@ object Constants {
         const val MEDIA_POST = "media_post"
         const val MEDIA_POST_MESSAGE = "media_post_message"
         const val INCLUDES_MEDIA = "includes_media"
+        const val CHANNEL_DELETED = "channel_deleted"
     }
 
     /**

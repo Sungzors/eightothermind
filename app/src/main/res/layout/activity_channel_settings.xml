@@ -260,6 +260,27 @@
                             android:layout_toEndOf="@id/achs_share_icon"
                             android:text="@string/share_channel" />
                     </RelativeLayout>
+                    <!--Delete Channel-->
+                    <RelativeLayout
+                        android:id="@+id/achs_delete_container"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:id="@+id/achs_delete_icon"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_margin="20dp"
+                            android:contentDescription="@string/share"
+                            android:src="@drawable/ic_setting_block" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="20dp"
+                            android:layout_toEndOf="@id/achs_delete_icon"
+                            android:text="@string/delete_channel" />
+                    </RelativeLayout>
                 </LinearLayout>
             </android.support.v7.widget.CardView>
 
