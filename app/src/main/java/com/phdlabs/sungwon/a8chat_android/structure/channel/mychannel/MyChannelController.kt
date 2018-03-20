@@ -103,8 +103,6 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
 
     override fun resume() {
         retrieveChatHistory(false)
-        //Socket io ON
-        socketOn()
         //Api -> Enter Room
         RoomManager.instance.enterRoom(mRoomId, { userRooms ->
             userRooms?.let {
@@ -115,6 +113,8 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
         UserManager.instance.getCurrentUser { success, user, _ ->
             if (success) {
                 mSocket.emit("connect-rooms", user?.id, "channel")
+                //Socket io ON
+                socketOn()
             }
         }
     }

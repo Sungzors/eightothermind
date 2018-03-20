@@ -1,7 +1,7 @@
 package com.phdlabs.sungwon.a8chat_android.api.rest;
 
-import com.phdlabs.sungwon.a8chat_android.api.data.CommentPatchData;
-import com.phdlabs.sungwon.a8chat_android.api.data.CommentPostData;
+import com.phdlabs.sungwon.a8chat_android.api.data.channel.CommentPatchData;
+import com.phdlabs.sungwon.a8chat_android.api.data.channel.CommentPostData;
 import com.phdlabs.sungwon.a8chat_android.api.data.FollowUserData;
 import com.phdlabs.sungwon.a8chat_android.api.data.LoginData;
 import com.phdlabs.sungwon.a8chat_android.api.data.PrivateChatCreateData;
@@ -14,7 +14,6 @@ import com.phdlabs.sungwon.a8chat_android.api.data.SendMessageStringData;
 import com.phdlabs.sungwon.a8chat_android.api.data.VerifyData;
 import com.phdlabs.sungwon.a8chat_android.api.response.ChannelArrayResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.ChatsRetrievalResponse;
-import com.phdlabs.sungwon.a8chat_android.api.response.CommentArrayResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.CommentResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.ErrorResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.PrivateChatResponse;
@@ -33,7 +32,6 @@ import retrofit2.http.Header;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
-import retrofit2.http.Query;
 
 /**
  * Created by SungWon on 9/18/2017.

@@ -3,7 +3,7 @@ package com.phdlabs.sungwon.a8chat_android.structure.channel
 import android.content.Intent
 import android.net.Uri
 import android.widget.EditText
-import com.phdlabs.sungwon.a8chat_android.api.data.ChannelPostData
+import com.phdlabs.sungwon.a8chat_android.api.data.channel.ChannelPostData
 import com.phdlabs.sungwon.a8chat_android.model.channel.Comment
 import com.phdlabs.sungwon.a8chat_android.model.channel.ChannelShowNest
 import com.phdlabs.sungwon.a8chat_android.model.channel.Channel

@@ -1,14 +1,11 @@
 package com.phdlabs.sungwon.a8chat_android.structure.channel.postshow
 
-import android.widget.Toast
 import com.github.nkzawa.emitter.Emitter
 import com.github.nkzawa.socketio.client.Socket
-import com.phdlabs.sungwon.a8chat_android.api.data.CommentPostData
 import com.phdlabs.sungwon.a8chat_android.api.utility.GsonHolder
 import com.phdlabs.sungwon.a8chat_android.db.channels.ChannelsManager
 import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.channel.Comment
-import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.structure.channel.ChannelContract
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import org.json.JSONObject
@@ -31,27 +28,27 @@ class ChannelPostShowController(val mView: ChannelContract.PostShow.View) : Chan
 
     /*LifeCycle*/
     override fun start() {
+    }
+
+    override fun resume() {
         //Emmit socket room connectivity
         UserManager.instance.getCurrentUser { success, user, _ ->
             if (success) {
                 mSocket.emit("connect-rooms", user?.id, "channel")
+                //Sockets ON
+                mSocket.on(Constants.SocketKeys.COMMENT, onCommentUpdate)
+                mSocket.on(Constants.SocketKeys.EDIT_COMMENT, onCommentUpdate)
             }
         }
     }
 
-    override fun resume() {
-        //Sockets ON
-        mSocket.on(Constants.SocketKeys.COMMENT, onCommentUpdate)
-        mSocket.on(Constants.SocketKeys.EDIT_COMMENT, onCommentUpdate)
-    }
-
     override fun pause() {
-        //Sockets Off
-        mSocket.off(Constants.SocketKeys.COMMENT)
-        mSocket.off(Constants.SocketKeys.EDIT_COMMENT)
     }
 
     override fun stop() {
+        //Sockets Off
+        mSocket.off(Constants.SocketKeys.COMMENT)
+        mSocket.off(Constants.SocketKeys.EDIT_COMMENT)
     }
 
     private val onCommentUpdate = Emitter.Listener { args ->

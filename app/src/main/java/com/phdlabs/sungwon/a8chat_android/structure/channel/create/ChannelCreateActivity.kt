@@ -6,7 +6,7 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
 import com.phdlabs.sungwon.a8chat_android.R
-import com.phdlabs.sungwon.a8chat_android.api.data.ChannelPostData
+import com.phdlabs.sungwon.a8chat_android.api.data.channel.ChannelPostData
 import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
 import com.phdlabs.sungwon.a8chat_android.model.media.Media
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
@@ -150,7 +150,14 @@ class ChannelCreateActivity : CoreActivity(), ChannelContract.Create.View {
                 setToolbarTitle(getString(R.string.edit_channel))
                 showRightTextToolbar(getString(R.string.done))
                 /*Form*/
-                acc_card_2.visibility = View.GONE
+                channel.add_to_profile?.let {
+                    if (it) {
+                        acc_add_to_profile_button.isChecked = it
+                    }
+                }
+                acc_add_to_profile_button.setOnCheckedChangeListener { _, b ->
+                    isCheckedAddToProf = b
+                }
                 //Channel Information
                 acc_channel_name.setText(channel.name)
                 acc_unique_id.setText(channel.unique_id)
@@ -174,11 +181,20 @@ class ChannelCreateActivity : CoreActivity(), ChannelContract.Create.View {
 
     /*Set Channel Image*/
     override fun setChannelImage(filePath: String) {
-        Picasso.with(context)
-                .load("file://" + filePath)
-                .placeholder(R.drawable.addphoto)
-                .transform(CircleTransform())
-                .into(acc_channel_picture)
+        if (isEdit) {//TODO: Test
+            Picasso.with(context)
+                    .load(filePath)
+                    .placeholder(R.drawable.addphoto)
+                    .transform(CircleTransform())
+                    .into(acc_channel_picture)
+        } else {
+            Picasso.with(context)
+                    .load("file://" + filePath)
+                    .placeholder(R.drawable.addphoto)
+                    .transform(CircleTransform())
+                    .into(acc_channel_picture)
+
+        }
     }
 
     /*Get uploaded media & Persist in lifecycle*/
@@ -191,18 +207,16 @@ class ChannelCreateActivity : CoreActivity(), ChannelContract.Create.View {
         toolbar_right_text.setOnClickListener {
             if (isEdit) { //Editing Channel
                 mChannelId?.let {
-                    controller.getUserId { id ->
-                        controller.updateChannel(it,
-                                ChannelPostData(
-                                        mMedia?.id.toString().trim(),
-                                        acc_channel_name.text.toString().trim(),
-                                        acc_unique_id.text.toString().trim(),
-                                        acc_short_description.text.toString().trim(),
-                                        mChannel?.add_to_profile ?: false,
-                                        id
-                                )
-                        )
-                    }
+                    controller.updateChannel(it,
+                            ChannelPostData(
+                                    mMedia?.id.toString().trim(),
+                                    acc_channel_name.text.toString().trim(),
+                                    acc_unique_id.text.toString().trim(),
+                                    acc_short_description.text.toString().trim(),
+                                    mChannel?.add_to_profile ?: false,
+                                    null
+                            )
+                    )
                 }
             } else { //Creating Channel
                 controller.getUserId { id ->

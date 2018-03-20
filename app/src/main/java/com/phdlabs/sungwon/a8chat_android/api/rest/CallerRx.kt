@@ -1,6 +1,8 @@
 package com.phdlabs.sungwon.a8chat_android.api.rest
 
 import com.phdlabs.sungwon.a8chat_android.api.data.*
+import com.phdlabs.sungwon.a8chat_android.api.data.channel.ChannelPostData
+import com.phdlabs.sungwon.a8chat_android.api.data.channel.CommentPostData
 import com.phdlabs.sungwon.a8chat_android.api.response.*
 import com.phdlabs.sungwon.a8chat_android.api.response.channels.LikeResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.channels.MyChannelRoomsResponse
@@ -20,7 +22,6 @@ import com.phdlabs.sungwon.a8chat_android.api.response.media.FileResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.media.MediaResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.room.EnterLeaveRoomResponse
 import com.phdlabs.sungwon.a8chat_android.api.rest.Caller.TOKEN
-import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
 import com.phdlabs.sungwon.a8chat_android.model.user.User
 import com.phdlabs.sungwon.a8chat_android.model.user.registration.RegistrationData
 import io.reactivex.Observable
@@ -139,12 +140,13 @@ interface CallerRx {
 
     /**
      * [updateChannel]
-     * Update Channel with new info
+     * Update Channel with new info & new media
      * @param channelId
      * */
-    @POST("/channels/{channelId}")
+    @PATCH("/channels/{channelId}")
     fun updateChannel(@Header(TOKEN) token: String, @Path("channelId") channelId: Int,
                       @Body channelPostData: ChannelPostData): Observable<ChannelEditResponse>
+
 
     /*EVENTS*/
     /**[postEvents]

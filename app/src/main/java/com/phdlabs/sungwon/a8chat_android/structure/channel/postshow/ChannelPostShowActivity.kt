@@ -113,13 +113,13 @@ class ChannelPostShowActivity : CoreActivity(), ChannelContract.PostShow.View {
         mMediaRecyclerAdapter = object : BaseRecyclerAdapter<Media, BaseViewHolder>() {
             override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: Media?, position: Int, type: Int) {
                 val imageView = viewHolder?.get<ImageView>(R.id.vmfpi_imageView)
-                data?.media_file?.let {
-                    Picasso.with(context)
-                            .load(it)
-                            .resize(250, 250)
-                            .centerInside()
-                            .into(imageView)
-                }
+                Picasso.with(context)
+                        .load(data?.media_file)
+                        .placeholder(R.drawable.addphoto)
+                        .resize(250, 250)
+                        .centerInside()
+                        .into(imageView)
+
             }
 
             override fun viewHolder(inflater: LayoutInflater?, parent: ViewGroup?, type: Int): BaseViewHolder =
@@ -168,15 +168,14 @@ class ChannelPostShowActivity : CoreActivity(), ChannelContract.PostShow.View {
                 val comment = viewHolder?.get<TextView>(R.id.vpc_commment)
                 //Load Commenter Information
                 data?.user?.let {
-                    it.avatar?.let {
-                        Picasso.with(context)
-                                .load(it)
-                                .resize(45, 45)
-                                .centerCrop()
-                                .placeholder(R.drawable.addphoto)
-                                .transform(CircleTransform())
-                                .into(profileImage)
-                    }
+                    Picasso.with(context)
+                            .load(it.avatar)
+                            .placeholder(R.drawable.addphoto)
+                            .resize(45, 45)
+                            .centerCrop()
+                            .placeholder(R.drawable.addphoto)
+                            .transform(CircleTransform())
+                            .into(profileImage)
                     it.hasFullName().let {
                         if (it.first) {
                             it.second?.let {

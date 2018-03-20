@@ -1,7 +1,7 @@
 package com.phdlabs.sungwon.a8chat_android.db.channels
 
-import com.phdlabs.sungwon.a8chat_android.api.data.ChannelPostData
-import com.phdlabs.sungwon.a8chat_android.api.data.CommentPostData
+import com.phdlabs.sungwon.a8chat_android.api.data.channel.ChannelPostData
+import com.phdlabs.sungwon.a8chat_android.api.data.channel.CommentPostData
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
 import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
@@ -439,7 +439,7 @@ class ChannelsManager {
 
     /**
      * [updateChannel]
-     * Update a current owner channel
+     * Update a current owner channel with new media update
      * @param channelId [Int]
      * @param channelPostData [ChannelPostData]
      * @callback Pair<Channel?, String?> -> Pair<UpdatedChannel, ErrorMessage>

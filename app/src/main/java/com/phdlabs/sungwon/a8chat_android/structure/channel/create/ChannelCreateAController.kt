@@ -5,10 +5,9 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
-import android.view.View
 import android.widget.Toast
 import com.phdlabs.sungwon.a8chat_android.R
-import com.phdlabs.sungwon.a8chat_android.api.data.ChannelPostData
+import com.phdlabs.sungwon.a8chat_android.api.data.channel.ChannelPostData
 import com.phdlabs.sungwon.a8chat_android.api.rest.Caller
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
 import com.phdlabs.sungwon.a8chat_android.db.channels.ChannelsManager
@@ -303,19 +302,23 @@ class ChannelCreateAController(val mView: ChannelContract.Create.View) : Channel
     }
 
     override fun updateChannel(channelId: Int, channelPostData: ChannelPostData) {
-        //Edit channel data validation
+        //TODO: Review functionality when Tomer fixed the @Patch channel route -> First chek in Postman
         if (channelEditDataValidation(channelPostData) != null) {
-            ChannelsManager.instance.updateChannel(channelId, channelPostData, {
-                it.second?.let {
+            mView.showProgress()
+            ChannelsManager.instance.updateChannel(channelId, channelPostData, { response ->
+                response.second?.let {
                     //Error
-                    mView.showError(it) //TODO: Error 404 Not found
+                    mView.hideProgress()
+                    mView.showError(it)
                 } ?: run {
-                    it.first?.let {
+                    response.first?.let { response ->
+                        mView.hideProgress()
                         mView.onUpdateChannel(
-                                it.id,
-                                it.name,
-                                it.room_id,
-                                it.user_creator_id)
+                                response.id,
+                                response.name,
+                                response.room_id,
+                                response.user_creator_id
+                        )
                     }
                 }
             })

@@ -111,12 +111,13 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         setToolbarTitle(mChannelName)
         toolbar_right_picture.visibility = View.VISIBLE
         //Channel Picture -> Access to settings
-        ChannelsManager.instance.getSingleChannel(mChannelId)?.avatar?.let {
-            Picasso.with(this)
-                    .load(it)
-                    .transform(CircleTransform())
-                    .into(toolbar_right_picture)
-        }
+        Picasso.with(this)
+                .load(ChannelsManager.instance.getSingleChannel(mChannelId)?.avatar)
+                .placeholder(R.drawable.addphoto)
+                .transform(CircleTransform())
+                .into(toolbar_right_picture)
+
+
         //Access to Channel Settings
         toolbar_right_picture.setOnClickListener {
             //Chat Name

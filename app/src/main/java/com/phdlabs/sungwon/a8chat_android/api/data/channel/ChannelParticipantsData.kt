@@ -1,4 +1,4 @@
-package com.phdlabs.sungwon.a8chat_android.api.data
+package com.phdlabs.sungwon.a8chat_android.api.data.channel
 
 import java.util.*
 

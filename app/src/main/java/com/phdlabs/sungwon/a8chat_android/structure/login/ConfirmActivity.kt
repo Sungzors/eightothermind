@@ -117,6 +117,7 @@ class ConfirmActivity : CoreActivity() {
     }
 
     private fun setupClickers() {
+        //TODO: This network call doesn't have error handling, if the wrong verification code is entered the progress doesn't stop.
         ac_button_create_profile.setOnClickListener({
             showProgress()
             user?.let {
