@@ -143,7 +143,7 @@ class FileSettingsFragment : CoreFragment(), SettingContract.FileFragment.View {
             }
         }
         mFileAdapter.setItems(mFileList)
-        fsf_file_recyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        fsf_file_recyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         fsf_file_recyclerView.adapter = mFileAdapter
         fsf_file_recyclerView.isNestedScrollingEnabled = false
     }

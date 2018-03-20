@@ -109,10 +109,8 @@ class ChannelSettingsController(val mView: SettingContract.Channel.View) : Setti
                 }
             }
             //If media is available set the fragment
-            if (mediaCount > 0) {
-                mView.activity?.replaceFragment(R.id.achs_fragment_container,
-                        MediaSettingFragment.newInstanceChannelRoom(roomId), false)
-            }
+            mView.activity?.replaceFragment(R.id.achs_fragment_container,
+                    MediaSettingFragment.newInstanceChannelRoom(roomId), false)
         }
     }
 
@@ -129,10 +127,8 @@ class ChannelSettingsController(val mView: SettingContract.Channel.View) : Setti
                 }
             }
             //If files are available set the fragment
-            if (fileCount > 0) {
-                mView.activity?.replaceFragment(R.id.achs_fragment_container,
-                        FileSettingsFragment.newInstanceChannelRoom(roomId), false)
-            }
+            mView.activity?.replaceFragment(R.id.achs_fragment_container,
+                    FileSettingsFragment.newInstanceChannelRoom(roomId), false)
         }
     }
 
