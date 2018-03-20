@@ -1,5 +1,7 @@
 package com.phdlabs.sungwon.a8chat_android.structure.setting.channel
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -7,6 +9,7 @@ import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.db.channels.ChannelsManager
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.phdlabs.sungwon.a8chat_android.model.user.User
+import com.phdlabs.sungwon.a8chat_android.structure.channel.create.ChannelCreateActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.structure.setting.SettingContract
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
@@ -74,6 +77,16 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
     override fun onStop() {
         super.onStop()
         controller.stop()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == Constants.RequestCodes.EDIT_CHANNEL) {
+                getIntentInfo()
+                //TODO: Update UI
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data)
     }
 
     /*Intent Info*/
@@ -195,7 +208,11 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
         when (p0) {
         /*Edit Channel Name, Description & Photo*/
             toolbar_right_text -> {
-                Toast.makeText(this, "In Progress", Toast.LENGTH_SHORT).show()
+                val intent = Intent(context, ChannelCreateActivity::class.java)
+                intent.putExtra(Constants.IntentKeys.CHANNEL_ID, mChannelId)
+                intent.putExtra(Constants.IntentKeys.ROOM_ID, mRoomId)
+                startActivityForResult(intent, Constants.RequestCodes.EDIT_CHANNEL)
+
             }
         /*Fav Messages*/
             achs_favemsg_container -> {

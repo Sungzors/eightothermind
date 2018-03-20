@@ -108,6 +108,11 @@ object Constants {
          * Used for LogIn & SignUp Transition to Update Profile
          * */
         const val MY_PROFILE_UPDATE_REGISTER = 22
+
+        /**
+         * Edit Channel
+         * */
+        const val EDIT_CHANNEL = 23
     }
 
     /**

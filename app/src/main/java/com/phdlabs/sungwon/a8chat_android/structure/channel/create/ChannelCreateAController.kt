@@ -11,6 +11,8 @@ import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.api.data.ChannelPostData
 import com.phdlabs.sungwon.a8chat_android.api.rest.Caller
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
+import com.phdlabs.sungwon.a8chat_android.db.channels.ChannelsManager
+import com.phdlabs.sungwon.a8chat_android.db.room.RoomManager
 import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
@@ -100,6 +102,22 @@ class ChannelCreateAController(val mView: ChannelContract.Create.View) : Channel
     }
 
     /**
+     * [channelEditDataValidation]
+     * Validate editing data -> Only validate Name, UniqueId & Description (Media has been already validated)
+     * @param channelPostData [ChannelPostData]
+     * */
+    private fun channelEditDataValidation(channelPostData: ChannelPostData): ChannelPostData? {
+        /*Info Validation*/
+        if (channelPostData.name.isNullOrBlank() ||
+                channelPostData.unique_id.isNullOrBlank() ||
+                channelPostData.description.isNullOrBlank()) {
+            Toast.makeText(mView.getContext(), mView.getContext()?.getString(R.string.incomplete_information), Toast.LENGTH_SHORT).show()
+            return null
+        }
+        return channelPostData
+    }
+
+    /**
      * [createChannel] defined in Controller interface to @Post channel
      * */
     override fun createChannel(channelPostData: ChannelPostData) {
@@ -168,8 +186,8 @@ class ChannelCreateAController(val mView: ChannelContract.Create.View) : Channel
     override fun showPicture() {
         mView.getContext()?.let {
             if (ActivityCompat.checkSelfPermission(
-                    it, Constants.AppPermissions.CAMERA) != PackageManager.PERMISSION_GRANTED
-                    ) {
+                            it, Constants.AppPermissions.CAMERA) != PackageManager.PERMISSION_GRANTED
+            ) {
                 requestCameraPermissions()
                 return
             }
@@ -179,7 +197,6 @@ class ChannelCreateAController(val mView: ChannelContract.Create.View) : Channel
                 CameraControl.instance.requestCode(),
                 false)
     }
-
 
 
     /**
@@ -269,4 +286,40 @@ class ChannelCreateAController(val mView: ChannelContract.Create.View) : Channel
             }
         }
     }
+
+    /*EDITING*/
+    override fun getRoomInfo(id: Int, callback: (Room?) -> Unit) {
+        RoomManager.instance.getRoomInfo(id, { response ->
+            response.second?.let {
+                mView.showError(it)
+            } ?: run {
+                response.first?.let(callback)
+            }
+        })
+    }
+
+    override fun getChannelInfo(id: Int, callback: (Channel?) -> Unit) {
+        callback(ChannelsManager.instance.getSingleChannel(id))
+    }
+
+    override fun updateChannel(channelId: Int, channelPostData: ChannelPostData) {
+        //Edit channel data validation
+        if (channelEditDataValidation(channelPostData) != null) {
+            ChannelsManager.instance.updateChannel(channelId, channelPostData, {
+                it.second?.let {
+                    //Error
+                    mView.showError(it) //TODO: Error 404 Not found
+                } ?: run {
+                    it.first?.let {
+                        mView.onUpdateChannel(
+                                it.id,
+                                it.name,
+                                it.room_id,
+                                it.user_creator_id)
+                    }
+                }
+            })
+        }
+    }
+
 }

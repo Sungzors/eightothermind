@@ -9,6 +9,7 @@ import com.phdlabs.sungwon.a8chat_android.model.channel.ChannelShowNest
 import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
 import com.phdlabs.sungwon.a8chat_android.model.media.Media
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
+import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.phdlabs.sungwon.a8chat_android.structure.application.Application
 import com.phdlabs.sungwon.a8chat_android.structure.channel.create.ChannelCreateActivity
 import com.phdlabs.sungwon.a8chat_android.structure.channel.createPost.CreatePostActivity
@@ -37,13 +38,23 @@ interface ChannelContract {
 
             /*LifeCycle*/
             fun onCreateChannel(chanId: Int?, chanName: String?, roomId: Int?, ownerId: Int?)
+
+            fun onUpdateChannel(chanId: Int?, chanName: String?, roomId: Int?, ownerId: Int?)
         }
 
         interface Controller : BaseController {
+            /*Create Channel*/
             fun getUserId(callback: (Int?) -> Unit)
+
             fun createChannel(channelPostData: ChannelPostData)
             fun onPictureResult(requestCode: Int, resultCode: Int, data: Intent?)
             fun showPicture()
+
+            /*Edit Channel*/
+            fun getRoomInfo(id: Int, callback: (Room?) -> Unit)
+
+            fun getChannelInfo(id: Int, callback: (Channel?) -> Unit)
+            fun updateChannel(channelId: Int, channelPostData: ChannelPostData)
         }
     }
 
@@ -114,6 +125,7 @@ interface ChannelContract {
 
             /*Read Files Permissions*/
             fun requestReadingExternalStorage()
+
             fun permissionResults(requestCode: Int, permissions: Array<out String>, grantResults: IntArray): Boolean
         }
     }

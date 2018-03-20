@@ -1,5 +1,6 @@
 package com.phdlabs.sungwon.a8chat_android.db.channels
 
+import com.phdlabs.sungwon.a8chat_android.api.data.ChannelPostData
 import com.phdlabs.sungwon.a8chat_android.api.data.CommentPostData
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
 import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
@@ -429,6 +430,39 @@ class ChannelsManager {
                                     }
                                 }, { throwable ->
                                     callback(throwable.localizedMessage)
+                                })
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * [updateChannel]
+     * Update a current owner channel
+     * @param channelId [Int]
+     * @param channelPostData [ChannelPostData]
+     * @callback Pair<Channel?, String?> -> Pair<UpdatedChannel, ErrorMessage>
+     * */
+    fun updateChannel(channelId: Int, channelPostData: ChannelPostData, callback: (Pair<Channel?, String?>) -> Unit) {
+        UserManager.instance.getCurrentUser { success, user, token ->
+            if (success) {
+                user?.let {
+                    token?.token?.let {
+                        val call = Rest.getInstance().getmCallerRx().updateChannel(it, channelId, channelPostData)
+                        call.subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe({ response ->
+                                    if (response.isSuccess) {
+                                        response?.channel?.let {
+                                            it.save()
+                                            callback(Pair(it, null))
+                                        }
+                                    } else if (response.isError) {
+                                        callback(Pair(null, "Could not update channel"))
+                                    }
+                                }, { throwable ->
+                                    callback(Pair(null, throwable.localizedMessage))
                                 })
                     }
                 }
