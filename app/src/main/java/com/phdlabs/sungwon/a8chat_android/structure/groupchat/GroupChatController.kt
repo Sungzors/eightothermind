@@ -309,8 +309,8 @@ class GroupChatController(val mView: GroupChatContract.View): GroupChatContract.
 
     private val onError = Emitter.Listener { args ->
         mView.getActivity.runOnUiThread {
-            val message = args[0] as String //args[0] as JSONObject
-            Toast.makeText(mView.getContext(), message, Toast.LENGTH_SHORT).show()
+//            val message = args[0] as String //args[0] as JSONObject
+//            Toast.makeText(mView.getContext(), message, Toast.LENGTH_SHORT).show()
             //Log.e(TAG, message.getString("message"))
 
         }
