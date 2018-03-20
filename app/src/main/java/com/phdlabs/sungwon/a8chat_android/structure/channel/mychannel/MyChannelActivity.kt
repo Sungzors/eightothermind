@@ -718,6 +718,7 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         else if (requestCode == Constants.RequestCodes.VIEW_POST_REQ_CODE) {
             if (resultCode == Activity.RESULT_OK || resultCode == Activity.RESULT_CANCELED) {
                 controller.keepSocketConnection(false)
+                controller.retrieveChatHistory(true)
             }
         }
 
