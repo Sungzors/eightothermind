@@ -726,7 +726,7 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         else if (requestCode == Constants.RequestCodes.CHANNEL_SETTINGS) {
             if (resultCode == Activity.RESULT_OK) {
                 data?.getBooleanExtra(Constants.IntentKeys.CHANNEL_DELETED, false)?.let {
-                    if (it){
+                    if (it) {
                         onBackPressed()
                     }
                 }

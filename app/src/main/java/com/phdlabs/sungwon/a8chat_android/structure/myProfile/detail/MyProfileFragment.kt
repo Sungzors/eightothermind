@@ -9,6 +9,7 @@ import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
 import com.phdlabs.sungwon.a8chat_android.structure.contacts.invite.InviteContactsActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreFragment
+import com.phdlabs.sungwon.a8chat_android.structure.myProfile.notifications.NotificationsGlobalSettings
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform
 import com.squareup.picasso.Picasso
@@ -92,8 +93,8 @@ class MyProfileFragment : CoreFragment(), View.OnClickListener {
             }
         /*Notification Settings*/
             fmp_container_notifications_settings -> {
-                //Todo: Notification settings
-                Toast.makeText(context, "In progress", Toast.LENGTH_SHORT).show()
+                val intent = Intent(context, NotificationsGlobalSettings::class.java)
+                startActivity(intent)
             }
         /*Favorite Messages*/
             fmp_container_fav_messages -> {

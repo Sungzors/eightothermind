@@ -142,6 +142,11 @@
             android:name=".structure.groupchat.groupinvite.GroupInviteActivity"
             android:screenOrientation="portrait" />
 
+        <!--Global Notifications-->
+        <activity
+            android:name=".structure.myProfile.notifications.NotificationsGlobalSettings"
+            android:screenOrientation="portrait" />
+
         <!--Photos & Images File Provider-->
         <provider
             android:name=".utility.camera.PhotoFileProvider"
@@ -164,10 +169,16 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-        <!--Firebase Cloud Messaging Service-->
+        <!--Firebase Cloud Messaging Service for Notifications-->
         <service android:name=".structure.notifications.EightFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <!--Firebase Instance ID Service for Notifications-->
+        <service android:name=".structure.notifications.EightFirebaseInstanceIdService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
 

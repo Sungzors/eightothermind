@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <!--Toolbar-->
+    <include layout="@layout/toolbar" />
+
+    <!--Global Notifications Card-->
+    <android.support.v7.widget.CardView
+        style="@style/CardView.SettingCards"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15sp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <!--Message Notifications-->
+            <RelativeLayout
+                android:id="@+id/ang_message_notification_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/ang_message_notif_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_margin="20dp"
+                    android:contentDescription="@string/notification"
+                    android:src="@drawable/ic_setting_notif" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="20dp"
+                    android:layout_toEndOf="@id/ang_message_notif_icon"
+                    android:text="@string/msg_notif"
+                    tools:ignore="RelativeOverlap" />
+
+                <Switch
+                    android:id="@+id/ang_msg_notif_switch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="20dp" />
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginStart="20dp"
+                android:background="@color/grey" />
+
+            <!--Like Notifications-->
+            <RelativeLayout
+                android:id="@+id/ang_like_notification_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/ang_like_notif_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_margin="20dp"
+                    android:contentDescription="@string/notification"
+                    android:src="@drawable/ic_setting_notif" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="20dp"
+                    android:layout_toEndOf="@id/ang_like_notif_icon"
+                    android:text="Like notifications"
+                    tools:ignore="RelativeOverlap" />
+
+                <Switch
+                    android:id="@+id/ang_like_notif_switch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="20dp" />
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginStart="20dp"
+                android:background="@color/grey" />
+
+            <!--Comment Notifications-->
+            <RelativeLayout
+                android:id="@+id/ang_comment_notification_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/ang_comment_notif_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_margin="20dp"
+                    android:contentDescription="@string/notification"
+                    android:src="@drawable/ic_setting_notif" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="20dp"
+                    android:layout_toEndOf="@id/ang_comment_notif_icon"
+                    android:text="@string/comment_notifications"
+                    tools:ignore="RelativeOverlap" />
+
+                <Switch
+                    android:id="@+id/achs_comment_notif_switch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="20dp" />
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginStart="20dp"
+                android:background="@color/grey" />
+
+            <!--Follow Notifications-->
+            <RelativeLayout
+                android:id="@+id/achs_notification_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/ang_followed_notif_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_margin="20dp"
+                    android:contentDescription="@string/notification"
+                    android:src="@drawable/ic_setting_notif" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="20dp"
+                    android:layout_toEndOf="@id/ang_followed_notif_icon"
+                    android:text="@string/followed_notifications"
+                    tools:ignore="RelativeOverlap" />
+
+                <Switch
+                    android:id="@+id/achs_followed_notif_switch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="20dp" />
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginStart="20dp"
+                android:background="@color/grey" />
+
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>

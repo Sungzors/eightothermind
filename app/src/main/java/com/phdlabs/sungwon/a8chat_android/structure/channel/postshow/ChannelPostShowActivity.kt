@@ -196,7 +196,7 @@ class ChannelPostShowActivity : CoreActivity(), ChannelContract.PostShow.View {
                     BaseViewHolder(R.layout.view_post_comment, inflater!!, parent)
         }
         mCommentRecyclerAdapter?.setItems(controller.getPostComments())
-        acps_comment_recycler.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, true)
+        acps_comment_recycler.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         acps_comment_recycler.adapter = mCommentRecyclerAdapter
     }
 

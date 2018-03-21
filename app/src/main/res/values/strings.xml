@@ -161,6 +161,9 @@
     <string name="delete_channel">Delete Channel</string>
     <string name="confirm_channel_deletion">Are you sure you want to delete this channel?</string>
     <string name="delete">Delete</string>
+    <string name="msg_notif">Message notifications</string>
+    <string name="comment_notifications">Comment notifications</string>
+    <string name="followed_notifications">Followed notifications</string>
 
 
 </resources>
