@@ -136,7 +136,7 @@
 
             <!--Follow Notifications-->
             <RelativeLayout
-                android:id="@+id/achs_notification_container"
+                android:id="@+id/ang_followed_notification_container"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
