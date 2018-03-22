@@ -129,6 +129,10 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
 
+        <activity
+            android:name=".structure.favorite.message.FavoriteMessageActivity"
+            android:screenOrientation="portrait"/>
+
         <!--Gallery Previews used for Channel Post-->
         <activity
             android:name="com.andremion.louvre.home.GalleryActivity"

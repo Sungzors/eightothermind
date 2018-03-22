@@ -21,6 +21,7 @@ import com.phdlabs.sungwon.a8chat_android.api.response.eightEvents.EventRetrieva
 import com.phdlabs.sungwon.a8chat_android.api.response.favorite.PrivateChatFavoriteResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.media.FileResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.media.MediaResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.messages.FavoriteMessageResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.room.EnterLeaveRoomResponse
 import com.phdlabs.sungwon.a8chat_android.api.rest.Caller.TOKEN
 import com.phdlabs.sungwon.a8chat_android.model.user.User
@@ -85,6 +86,9 @@ interface CallerRx {
 
     @DELETE("/messages/{messageId}/user/{userId}")
     fun deleteMessagio(@Header(TOKEN) token: String, @Path("messageId") messageId: Int, @Path("userId") userId: Int): Observable<ErrorResponse>
+
+    @GET("/rooms/{roomId}/favorite_messages/user/{userId}")
+    fun getRoomFaveMsg(@Header(TOKEN) token: String, @Path("roomId") roomId: Int, @Path("userId") userId: Int) : Observable<FavoriteMessageResponse>
 
     /*CHANNEL*/
     //Create new channel

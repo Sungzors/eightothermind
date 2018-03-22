@@ -14,11 +14,13 @@ import android.util.Log
 import android.widget.Toast
 import com.github.nkzawa.emitter.Emitter
 import com.github.nkzawa.socketio.client.Socket
-import com.phdlabs.sungwon.a8chat_android.api.data.*
 import com.phdlabs.sungwon.a8chat_android.R
-import com.phdlabs.sungwon.a8chat_android.api.event.*
+import com.phdlabs.sungwon.a8chat_android.api.data.*
+import com.phdlabs.sungwon.a8chat_android.api.event.Event
+import com.phdlabs.sungwon.a8chat_android.api.event.MessageLocationSentEvent
+import com.phdlabs.sungwon.a8chat_android.api.event.MessageSentEvent
+import com.phdlabs.sungwon.a8chat_android.api.event.PrivateChatCreateEvent
 import com.phdlabs.sungwon.a8chat_android.api.response.ErrorResponse
-import com.phdlabs.sungwon.a8chat_android.api.response.RoomHistoryResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.RoomResponse
 import com.phdlabs.sungwon.a8chat_android.api.rest.Caller
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
@@ -241,13 +243,11 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(
                                         {response ->
-                                            if (response.isSuccess) {
-                                                Toast.makeText(mView.getContext(), "Message Favorited!", Toast.LENGTH_SHORT).show()
-                                            }
+                                            Toast.makeText(mView.getContext(), "Message Favorited!", Toast.LENGTH_SHORT).show()
                                         }, { throwable ->
                                             mView.hideProgress()
-                                            mView.showError("Unable to favorite, try again later")
                                             println("Error creating channel: " + throwable.message)
+                                            mView.showError("Unable to favorite, try again later")
                                         }
                                 )
                     }
@@ -267,14 +267,12 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(
                                         {response ->
-                                            if (response.isSuccess) {
-                                                mMessages.remove(message)
-                                                mView.updateRecycler()
-                                            }
+                                            mMessages.remove(message)
+                                            mView.updateRecycler()
                                         }, { throwable ->
                                             mView.hideProgress()
-                                            mView.showError("Unable to delete, try again later")
                                             println("Error creating channel: " + throwable.message)
+                                            mView.showError("Unable to delete, try again later")
                                         }
                                 )
                     }

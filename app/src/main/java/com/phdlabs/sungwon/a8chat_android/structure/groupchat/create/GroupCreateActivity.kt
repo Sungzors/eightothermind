@@ -93,6 +93,7 @@ class GroupCreateActivity : CoreActivity(), GroupChatContract.Create.View{
                     token?.token?.let {
                         user?.id?.let {
                             val idlist = mutableListOf<Int>()
+                            idlist.add(it)
                             for (triple in TemporaryManager.instance.mMemberList) {
                                 idlist.add(triple.first)
                             }

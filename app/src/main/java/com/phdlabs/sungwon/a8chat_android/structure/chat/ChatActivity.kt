@@ -440,7 +440,6 @@ class ChatActivity : CoreActivity(), ChatContract.View {
         picContainer2.visibility = LinearLayout.GONE
         moneyButtonAccept.visibility = Button.GONE
         moneyButtonDecline.visibility = Button.GONE
-        messagetv.visibility = TextView.VISIBLE
         messagetv.text = message!!.locationInfo!!.streetAddress
         messagetv.setTextColor(ContextCompat.getColor(this, R.color.confirmText))
         controller.getUserId { id ->
