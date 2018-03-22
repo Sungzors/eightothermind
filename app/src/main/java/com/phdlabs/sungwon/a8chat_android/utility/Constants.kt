@@ -72,8 +72,8 @@ object Constants {
      * Notifications
      * */
     object Notifications {
-        var USER_ADDED = null //TODO: Talk with Tomer about user added payload notification type attribute
-        var PRIVATE_CHAT = "privateChat" //TODO: OR Private Chat
+        var USER_ADDED = "user_added" //TODO: Talk with Tomer about user added payload notification type attribute
+        var PRIVATE_CHAT = "private_chat" //TODO: OR Private Chat
         var COMMENT = "comment"
         var LIKE = "like"
         var POST = "post"
