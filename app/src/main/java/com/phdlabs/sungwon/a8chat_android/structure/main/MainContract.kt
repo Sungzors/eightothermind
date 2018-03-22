@@ -14,6 +14,7 @@ interface MainContract {
     }
 
     interface Controller: BaseController{
+        fun onCreate()
         fun showHome()
         fun showCamera()
         fun getUserId(callback: (Int?) -> Unit)

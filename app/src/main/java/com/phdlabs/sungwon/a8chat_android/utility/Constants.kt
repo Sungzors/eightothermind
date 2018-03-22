@@ -20,7 +20,7 @@ object Constants {
         const val EVENT_NAME = "event_name"
         const val EVENT_LOCATION = "event_location"
         const val CHAT_NAME = "chat_name"
-        const val PARTICIPANT_ID = "dunga" //todo: what is this?
+        const val PARTICIPANT_ID = "dunga"
         const val CHAT_PIC = "chat_pic"
         const val ROOM_ID = "room_id"
         const val MESSAGE_ID = "message_id"
@@ -59,6 +59,29 @@ object Constants {
         const val GROUP_CHAT = "groupChat"
         const val CHANNEL = "channel"
         const val EVENT = "event"
+    }
+
+    /**
+     * Google Play Services
+     * */
+    object GPServices {
+        const val GPS_DOWNLOAD = "play.google.com/store/apps/details?id=com.google.android.gms&hl=en"
+    }
+
+    /**
+     * Notifications
+     * */
+    object Notifications {
+        var USER_ADDED = null //TODO: Talk with Tomer about user added payload notification type attribute
+        var PRIVATE_CHAT = "privateChat" //TODO: OR Private Chat
+        var COMMENT = "comment"
+        var LIKE = "like"
+        var POST = "post"
+        var VIDEO_CALL = "incoming_video_call"
+        var VOICE_CALL = "incoming_voice_call"
+        var MISSED_VIDEO_CALL = "missed_video_call"
+        var MISSED_VOICE_CALL = "missed_video_call"
+        var MESSAGE = "message"
     }
 
     /**
@@ -114,6 +137,14 @@ object Constants {
          * Edit Channel
          * */
         const val EDIT_CHANNEL = 23
+
+        /**
+         * Google Play Services
+         * Used for error handling
+         * [onActivityResult] [MainActivity]
+         * */
+        const val VALIDATE_GOOGLE_PLAY_SERVICES = 24
+
     }
 
     /**

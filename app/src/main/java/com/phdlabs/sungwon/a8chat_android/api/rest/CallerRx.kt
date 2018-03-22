@@ -3,6 +3,7 @@ package com.phdlabs.sungwon.a8chat_android.api.rest
 import com.phdlabs.sungwon.a8chat_android.api.data.*
 import com.phdlabs.sungwon.a8chat_android.api.data.channel.ChannelPostData
 import com.phdlabs.sungwon.a8chat_android.api.data.channel.CommentPostData
+import com.phdlabs.sungwon.a8chat_android.api.data.notifications.UserFBToken
 import com.phdlabs.sungwon.a8chat_android.api.response.*
 import com.phdlabs.sungwon.a8chat_android.api.response.channels.LikeResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.channels.MyChannelRoomsResponse
@@ -42,11 +43,20 @@ interface CallerRx {
     @POST("/users")
     fun login(@Body registrationData: RegistrationData): Observable<UserDataResponse>
 
-    @PATCH("/users/{userid}")
-    fun updateUser(@Header(TOKEN) token: String, @Path("userid") userId: Int, @Body userData: UserData): Observable<UserDataResponse>
+    /**
+     * Update User Profile
+     * */
+    @PATCH("/users/{userId}")
+    fun updateUser(@Header(TOKEN) token: String, @Path("userId") userId: Int, @Body userData: UserData): Observable<UserDataResponse>
 
-    @GET("/users/{userid}")
-    fun getUser(@Header(TOKEN) token: String, @Path("userid") userId: Int): Observable<UserDataResponse>
+    /**
+     * Update Firebase Token
+     * */
+    @PATCH("/users/{userId}")
+    fun updateFBToken(@Header(TOKEN) token: String, @Path("userId") userId: Int, @Body userFBToken: UserFBToken): Observable<UserDataResponse>
+
+    @GET("/users/{userId}")
+    fun getUser(@Header(TOKEN) token: String, @Path("userId") userId: Int): Observable<UserDataResponse>
 
     @GET("/users/{userId}/friends")
     fun getUserFriends(@Header(TOKEN) token: String, @Path("userId") userId: Int): Observable<UserFriendsResponse>
