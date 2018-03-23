@@ -9,14 +9,19 @@ import com.phdlabs.sungwon.a8chat_android.structure.core.BaseView
  */
 interface MainContract {
 
-    interface View: BaseView<Controller>{
+    interface View : BaseView<Controller> {
         val activity: MainActivity
     }
 
-    interface Controller: BaseController{
+    interface Controller : BaseController {
+        /*LifeCycle*/
         fun onCreate()
         fun showHome()
         fun showCamera()
         fun getUserId(callback: (Int?) -> Unit)
+        /*Firebase & Dwolla Tokens*/
+        fun updateTokens()
+        /*Notifications*/
+        fun updateNotificationBadges()
     }
 }

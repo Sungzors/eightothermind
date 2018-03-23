@@ -55,19 +55,13 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
          *Check Credentials -> This should always be the first method inside the [onCreate]
          * */
         UserManager.instance.getCurrentUser { success, user, _ ->
-            if (!success) {
+            if (!success) { //User doesn't have an account
                 val intent = Intent(this, LoginActivity::class.java)
                 startActivity(intent)
                 finish()
             } else {
-                //Notifications
-                user?.let {
-                    if (it.fcm_token == null) {
-                        FirebaseInstanceId.getInstance().token?.let {
-                            UserManager.instance.updateFirebaseToken(it)
-                        }
-                    }
-                }
+               controller.updateTokens()
+                controller.updateNotificationBadges()
             }
         }
         controller.onCreate()

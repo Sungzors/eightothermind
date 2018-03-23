@@ -22,6 +22,7 @@ import com.phdlabs.sungwon.a8chat_android.api.response.eightEvents.EventRetrieva
 import com.phdlabs.sungwon.a8chat_android.api.response.favorite.PrivateChatFavoriteResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.media.FileResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.media.MediaResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.notifications.ClearBadgeCountResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.room.EnterLeaveRoomResponse
 import com.phdlabs.sungwon.a8chat_android.api.rest.Caller.TOKEN
 import com.phdlabs.sungwon.a8chat_android.model.user.User
@@ -60,6 +61,9 @@ interface CallerRx {
 
     @GET("/users/{userId}/friends")
     fun getUserFriends(@Header(TOKEN) token: String, @Path("userId") userId: Int): Observable<UserFriendsResponse>
+
+    //TODO: Get user global settings
+
 
     /*MEDIA*/
     @Multipart
@@ -236,6 +240,32 @@ interface CallerRx {
 
     /*NOTIFICATIONS*/
 
+    //TODO: Notification Settins on Each Settings Screen -> Channel, PrivateChat, GroupChat & Event
+
+    /**
+     * Clear Notification badge count when the user enteres the App
+     * */
+    @PATCH("/users/{userId}/clear_badge_count")
+    fun clearNotificationBadgeCount(@Header(TOKEN) token: String, @Path("userId") userId: Int): Observable<ClearBadgeCountResponse>
+
+    /**
+     * [changeGlobalNotificationSettings]
+     * Used to change global notifications settings from User Profile
+     * All query parameters are Strings based on Boolean values -> true || false
+     * @query messageNotifications
+     * @query likeNotifications
+     * @query commentNotifications
+     * @query userAddedNotification
+     * */
+    @PATCH("/users/{userId}/notifications/global")
+    fun changeGlobalNotificationSettings(@Header(TOKEN) token: String, @Path("userId") userId: Int,
+                                         @Query("message_notifications") messageNotifications: String?,
+                                         @Query("like_notifications") likeNotifications: String?,
+                                         @Query("comment_notifications") commentNotifications: String?,
+                                         @Query("user_added_notifications") userAddedNotification: String?): Observable<UserDataResponse>
+
+
+
     /**
      * [updateReceipt]
      * Turns on or off read receipts for every chat the user is in
@@ -244,7 +274,6 @@ interface CallerRx {
     @PATCH("/users/{userId}/receipts")
     fun updateReceipt(@Header(TOKEN) token: String, @Path("userId") userId: Int,
                       @Body receiptData: ReceiptPatchData): Observable<User>
-
 
     /*ROOM CONTROL*/
 

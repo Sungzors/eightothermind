@@ -141,7 +141,7 @@
                 android:layout_height="wrap_content">
 
                 <ImageView
-                    android:id="@+id/ang_followed_notif_icon"
+                    android:id="@+id/ang_invited_notif_icon"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_margin="20dp"
@@ -152,12 +152,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="20dp"
-                    android:layout_toEndOf="@id/ang_followed_notif_icon"
-                    android:text="@string/followed_notifications"
+                    android:layout_toEndOf="@id/ang_invited_notif_icon"
+                    android:text="@string/invited_notifications"
                     tools:ignore="RelativeOverlap" />
 
                 <Switch
-                    android:id="@+id/achs_followed_notif_switch"
+                    android:id="@+id/achs_invited_notif_switch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"

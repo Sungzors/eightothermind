@@ -72,8 +72,9 @@ object Constants {
      * Notifications
      * */
     object Notifications {
-        var USER_ADDED = "user_added" //TODO: Talk with Tomer about user added payload notification type attribute
-        var PRIVATE_CHAT = "private_chat" //TODO: OR Private Chat
+        //Notification Types
+        var USER_ADDED = "user_added"
+        var PRIVATE_CHAT = "private_chat"
         var COMMENT = "comment"
         var LIKE = "like"
         var POST = "post"
@@ -82,6 +83,9 @@ object Constants {
         var MISSED_VIDEO_CALL = "missed_video_call"
         var MISSED_VOICE_CALL = "missed_video_call"
         var MESSAGE = "message"
+        //Notification Classifiers
+        var TYPE = "notification_type"
+        var BADGES = "badges"
     }
 
     /**

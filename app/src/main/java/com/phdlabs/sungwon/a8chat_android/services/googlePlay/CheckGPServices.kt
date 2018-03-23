@@ -7,7 +7,7 @@ import com.google.android.gms.common.GoogleApiAvailability
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 
 /**
- * Created by paix on 3/21/18.
+ * Created by JPAM on 3/21/18.
  * Singleton Helper class to provide
  * information & access to GooglePlay Services
  */

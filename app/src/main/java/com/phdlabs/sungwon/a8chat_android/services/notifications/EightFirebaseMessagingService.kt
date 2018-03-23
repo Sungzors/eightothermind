@@ -1,11 +1,14 @@
 package com.phdlabs.sungwon.a8chat_android.services.notifications
 
+import android.content.Intent
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.phdlabs.sungwon.a8chat_android.structure.main.MainActivity
+import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import org.json.JSONObject
 
 /**
- * Created by paix on 3/19/18.
+ * Created by JPAM on 3/19/18.
  * [EightFirebaseMessagingService] makes use of [FirebaseMessagingService]
  * to provide messaging handling beyond receiving notifications whtn the
  * app is in the background.
@@ -48,12 +51,45 @@ class EightFirebaseMessagingService : FirebaseMessagingService() {
      * @param -> Probably add the Data payload to be added on a pending intent
      * */
     private fun showNotification(notification: RemoteMessage.Notification?, data: MutableMap<String, String>?) {
+        var displayIntent: Intent? = null
         //Check for Data Payload
         data?.let {
             if (it.count() > 0) {
-                //Get Notification Type
+                //Build Notification based on Type
                 val jsonObject = JSONObject(it)
-
+                when (jsonObject.getString(Constants.Notifications.TYPE)) {
+                    Constants.Notifications.USER_ADDED -> {//GroupChat & Event
+                        //TODO: Navigates to the Contacts page
+                    }
+                    Constants.Notifications.PRIVATE_CHAT -> {//Private Chat Created -> Room
+                        //TODO: Navigates to the Chat Screen
+                    }
+                    Constants.Notifications.COMMENT -> {//Channel
+                        //TODO: Navigates to the Commented Post
+                    }
+                    Constants.Notifications.LIKE -> {//Channel
+                        //TODO: Navigates to the Liked Post
+                    }
+                    Constants.Notifications.POST -> {//Channel
+                        //TODO: Navigates to the Channel
+                    }
+                    Constants.Notifications.VOICE_CALL -> {
+                        //TODO: Navigate to App's Phone Extension screen
+                    }
+                    Constants.Notifications.MISSED_VOICE_CALL -> {
+                        //TODO: Navigate to Contact's page
+                    }
+                    Constants.Notifications.VIDEO_CALL -> {
+                        //TODO: Navigate to App's Video Call Extension screen
+                    }
+                    Constants.Notifications.MISSED_VIDEO_CALL -> {
+                        //TODO: Navigate to Contact's page
+                    }
+                    Constants.Notifications.MESSAGE -> {//Any Kind of message
+                        //TODO: Check the Room ID & Message Type to define where Navigation should be
+                        //QUERY ROOM ID
+                    }
+                }
                 //Dev
                 println("Remote Message Data: " + jsonObject.toString())
             }
@@ -61,7 +97,7 @@ class EightFirebaseMessagingService : FirebaseMessagingService() {
         //Check for Notification Payload
         notification?.let {
             //TODO: Handle Notification body payload
-
         }
+        //TODO: Clear notifications badges on pending intent opened ->
     }
 }
