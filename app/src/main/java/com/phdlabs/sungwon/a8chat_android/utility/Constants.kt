@@ -155,6 +155,11 @@ object Constants {
          * Notification Request Code
          * */
         const val NOTIF_REQUEST_CODE = 25
+
+        /**
+         * Share media from Camera App
+         * */
+        const val SHARE_MEDIA = 26
     }
 
     /**

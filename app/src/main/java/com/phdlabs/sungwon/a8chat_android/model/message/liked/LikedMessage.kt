@@ -60,7 +60,7 @@ open class LikedMessage: RealmObject() {
     @Expose
     var contactId: Int? = null
 
-    @SerializedName("moneyInfo")
+    @SerializedName("invoice")
     @Expose
     var moneyInfo: String? = null
 

@@ -7,7 +7,7 @@ import com.phdlabs.sungwon.a8chat_android.model.contacts.Contact
 import com.phdlabs.sungwon.a8chat_android.model.files.File
 import com.phdlabs.sungwon.a8chat_android.model.media.Media
 import com.phdlabs.sungwon.a8chat_android.model.message.location.LocationInfo
-import com.phdlabs.sungwon.a8chat_android.model.message.money.MoneyInfo
+import com.phdlabs.sungwon.a8chat_android.model.message.money.Invoice
 import com.phdlabs.sungwon.a8chat_android.model.message.user.UserInfo
 import io.realm.RealmList
 import io.realm.RealmObject
@@ -74,14 +74,14 @@ open class Message : RealmObject() {
     var contactInfo: Contact? = null
 
     /**
-     * [moneyInfo] maps [MoneyInfo]
+     * [invoice] maps [Invoice]
      * @see RealmClass
      * @warning This attribute is currently @Deprecated
      * */
-    @SerializedName("moneyInfo")
+    @SerializedName("invoice")
     @Expose
     @Ignore
-    var moneyInfo: MoneyInfo? = null
+    var invoice: Invoice? = null
 
     /**
      * [mediaArray] maps [Media]

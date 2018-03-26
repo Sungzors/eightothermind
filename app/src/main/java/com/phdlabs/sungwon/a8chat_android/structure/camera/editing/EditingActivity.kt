@@ -117,6 +117,13 @@ class EditingActivity : CoreActivity(),
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+
+        //Sharing
+        if (requestCode == Constants.RequestCodes.SHARE_MEDIA && resultCode == Activity.RESULT_OK) {
+            //Close Camera Activity -> Back to Lobby
+            finish()
+        }
+        //Editing
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             val result: CropImage.ActivityResult = CropImage.getActivityResult(data)
             if (resultCode == Activity.RESULT_OK) {
@@ -166,8 +173,6 @@ class EditingActivity : CoreActivity(),
         ll_camera_draw.setOnClickListener(this)
         //Send
         iv_camera_send.setOnClickListener(this)
-        //UI top & bottom shadows
-
     }
 
     /**
@@ -391,6 +396,11 @@ class EditingActivity : CoreActivity(),
         /*Undo Last Change*/
             iv_undo -> {
                 controller.undoViews()
+            }
+
+        /*Share Image*/
+            iv_camera_send -> {
+                controller.sendImage()
             }
         }
     }
