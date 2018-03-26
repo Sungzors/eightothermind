@@ -2,11 +2,13 @@ package com.phdlabs.sungwon.a8chat_android.structure.main
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
+import com.google.firebase.iid.FirebaseInstanceId
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
 import com.phdlabs.sungwon.a8chat_android.structure.contacts.ContactsActivity
@@ -47,15 +49,23 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
     /*LifeCycle*/
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //Check Credentials
+        //Controller
+        MainAController(this)
+        /**
+         * Check Credentials -> This should always be the first method inside the [onCreate]
+         * */
         UserManager.instance.getCurrentUser { success, _, _ ->
-            if (!success) {
+            if (!success) { //User doesn't have an account
                 val intent = Intent(this, LoginActivity::class.java)
                 startActivity(intent)
                 finish()
+            } else {
+               controller.updateTokens()
+                controller.updateNotificationBadges()
+                controller.readGlobalSettings()
             }
         }
-
+        controller.onCreate()
         //Default toolbar
         setupToolbars()
         toolbarControl(true)
@@ -67,7 +77,6 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
 
     override fun onStart() {
         super.onStart()
-        MainAController(this)
         controller.start()
     }
 
@@ -88,46 +97,67 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
-        if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == Constants.CameraIntents.CAMERA_REQUEST_CODE) { //Camera
-                //Set home button selected
-                am_bottom_tab_nav.setOnNavigationItemSelectedListener(null)
-                showTabs(false, true)
-            } else if (requestCode == Constants.ContactItems.CONTACTS_REQ_CODE) { //Contacts-Eight Friends
-                //todo: required contacts action if needed
-            } else if (requestCode == Constants.ProfileIntents.EDIT_MY_PROFIILE) { //Profile
-                //todo: required profile action if needed
-            } else if (requestCode == Constants.ContactItems.INVITE_CONTACTS_REQ_CODE) { //Invite Contact
-                //todo: required invite contact action if needed
-            } else if (requestCode == Constants.RequestCodes.CREATE_NEW_BACK_REQ_CODE) {
-                //Refresh Lobby if coming back from Create New screen
-                mLobbyFragment.controller.setRefreshFlag(true)
-                am_bottom_tab_nav.setOnNavigationItemSelectedListener(null)
-                showTabs(false, false)
+        //Google Play Services Failed -> Update from Play Store
+        if (requestCode == Constants.RequestCodes.VALIDATE_GOOGLE_PLAY_SERVICES) {
+            try {
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://" + Constants.GPServices.GPS_DOWNLOAD)))
+            } catch (exception: android.content.ActivityNotFoundException) {
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://" + Constants.GPServices.GPS_DOWNLOAD)))
+            }
+        }
+
+        //Result OK
+        when (resultCode) {
+            Activity.RESULT_OK -> when (requestCode) {
+                Constants.CameraIntents.CAMERA_REQUEST_CODE -> { //Camera
+                    //Set home button selected
+                    am_bottom_tab_nav.setOnNavigationItemSelectedListener(null)
+                    showTabs(false, true)
+                }
+                Constants.ContactItems.CONTACTS_REQ_CODE -> { //Contacts-Eight Friends
+                    //todo: required contacts action if needed
+                }
+                Constants.ProfileIntents.EDIT_MY_PROFIILE -> { //Profile
+                    //todo: required profile action if needed
+                }
+                Constants.ContactItems.INVITE_CONTACTS_REQ_CODE -> { //Invite Contact
+                    //todo: required invite contact action if needed
+                }
+                Constants.RequestCodes.CREATE_NEW_BACK_REQ_CODE -> {//Created New
+                    //Refresh Lobby if coming back from Create New screen
+                    mLobbyFragment.controller.setRefreshFlag(true)
+                    am_bottom_tab_nav.setOnNavigationItemSelectedListener(null)
+                    showTabs(false, false)
+                }
+
+            //Result Cancelled
             }
 
-        } else if (resultCode == Activity.RESULT_CANCELED) {
-            //Actions
-            if (requestCode == Constants.CameraIntents.CAMERA_REQUEST_CODE) { //Camera
-                //Don't refreshChannels Lobby
-                mLobbyFragment.controller.setRefreshFlag(false)
-                //Set home button selected
-                am_bottom_tab_nav.setOnNavigationItemSelectedListener(null)
-                showTabs(false, true)
-            } else if (requestCode == Constants.RequestCodes.CREATE_NEW_BACK_REQ_CODE) {
-                //Don't refreshChannels Lobby
-                mLobbyFragment.controller.setRefreshFlag(true)
-                //Set home button selected
-                am_bottom_tab_nav.setOnNavigationItemSelectedListener(null)
-                showTabs(false, false)
-            } else if (requestCode == Constants.ContactItems.CONTACTS_REQ_CODE) {
-                //Don't refreshChannels Lobby
-                mLobbyFragment.controller.setRefreshFlag(false)
-                am_bottom_tab_nav.setOnNavigationItemSelectedListener(null)
-                showTabs(false, true) //Preserve last selected tab
-            }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data)
+        //Result Cancelled
+            Activity.RESULT_CANCELED -> //Actions
+                when (requestCode) {
+                    Constants.CameraIntents.CAMERA_REQUEST_CODE -> { //Camera
+                        //Don't refreshChannels Lobby
+                        mLobbyFragment.controller.setRefreshFlag(false)
+                        //Set home button selected
+                        am_bottom_tab_nav.setOnNavigationItemSelectedListener(null)
+                        showTabs(false, true)
+                    }
+                    Constants.RequestCodes.CREATE_NEW_BACK_REQ_CODE -> {
+                        //Don't refreshChannels Lobby
+                        mLobbyFragment.controller.setRefreshFlag(true)
+                        //Set home button selected
+                        am_bottom_tab_nav.setOnNavigationItemSelectedListener(null)
+                        showTabs(false, false)
+                    }
+                    Constants.ContactItems.CONTACTS_REQ_CODE -> {
+                        //Don't refreshChannels Lobby
+                        mLobbyFragment.controller.setRefreshFlag(false)
+                        am_bottom_tab_nav.setOnNavigationItemSelectedListener(null)
+                        showTabs(false, true) //Preserve last selected tab
+                    }
+                }
+            else -> super.onActivityResult(requestCode, resultCode, data)
         }
     }
 

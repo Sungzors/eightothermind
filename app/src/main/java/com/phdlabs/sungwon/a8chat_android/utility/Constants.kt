@@ -62,6 +62,35 @@ object Constants {
     }
 
     /**
+     * Google Play Services
+     * */
+    object GPServices {
+        const val GPS_DOWNLOAD = "play.google.com/store/apps/details?id=com.google.android.gms&hl=en"
+    }
+
+    /**
+     * Notifications
+     * */
+    object Notifications {
+        //Notification Types
+        var USER_ADDED = "user_added"
+        var PRIVATE_CHAT = "private_chat"
+        var COMMENT = "comment"
+        var LIKE = "like"
+        var POST = "post"
+        var VIDEO_CALL = "incoming_video_call"
+        var VOICE_CALL = "incoming_voice_call"
+        var MISSED_VIDEO_CALL = "missed_video_call"
+        var MISSED_VOICE_CALL = "missed_video_call"
+        var MESSAGE = "message"
+        //Notification Classifiers
+        var TYPE = "notification_type"
+        var BADGES = "badges"
+        //Notification Channels
+        var GLOBAL_CHANNEL = "globalChannel"
+    }
+
+    /**
      * [RequestCodes]
      * */
     object RequestCodes {
@@ -114,6 +143,18 @@ object Constants {
          * Edit Channel
          * */
         const val EDIT_CHANNEL = 23
+
+        /**
+         * Google Play Services
+         * Used for error handling
+         * [onActivityResult] [MainActivity]
+         * */
+        const val VALIDATE_GOOGLE_PLAY_SERVICES = 24
+
+        /**
+         * Notification Request Code
+         * */
+        const val NOTIF_REQUEST_CODE = 25
     }
 
     /**

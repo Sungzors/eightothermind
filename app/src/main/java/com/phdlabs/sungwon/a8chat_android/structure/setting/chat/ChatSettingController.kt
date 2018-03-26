@@ -14,6 +14,7 @@ import com.phdlabs.sungwon.a8chat_android.structure.setting.fileFragments.FileSe
 import com.phdlabs.sungwon.a8chat_android.structure.setting.mediaFragments.MediaSettingFragment
 import com.vicpin.krealmextensions.query
 import com.vicpin.krealmextensions.queryAll
+import com.vicpin.krealmextensions.queryFirst
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
@@ -84,7 +85,7 @@ class ChatSettingController(val mView: SettingContract.Chat.View) : SettingContr
     /*Get contact information from Realm*/
     override fun getContactInfo(id: Int): Contact? {
         if (Contact().queryAll().count() > 0) {
-            return Contact().query { equalTo("id", id) }[0]
+            return Contact().queryFirst { equalTo("id", id) }
         }
         return null
     }
@@ -92,7 +93,7 @@ class ChatSettingController(val mView: SettingContract.Chat.View) : SettingContr
     /*Get room information from Realm*/
     override fun getRoomInfo(id: Int): Room? {
         if (Room().queryAll().isNotEmpty()) {
-            return Room().query { equalTo("id", id) }[0]
+            return Room().queryFirst { equalTo("id", id) }
         }
         return null
     }

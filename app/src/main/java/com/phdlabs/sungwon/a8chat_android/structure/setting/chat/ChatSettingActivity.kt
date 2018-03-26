@@ -3,6 +3,7 @@ package com.phdlabs.sungwon.a8chat_android.structure.setting.chat
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
 import android.telephony.PhoneNumberUtils
 import android.view.MotionEvent
 import android.view.View
@@ -126,6 +127,14 @@ class ChatSettingActivity : CoreActivity(), SettingContract.Chat.View, View.OnCl
                 Picasso.with(context).load(it).resize(70, 70).onlyScaleDown()
                         .centerCrop().transform(CircleTransform()).into(asc_chat_picture)
             }
+        } ?: run {
+            //Not a contact
+            val alertDialog = AlertDialog.Builder(this)
+            alertDialog.setTitle("Please add $mChatName using a phone number in your Contacts App")
+            alertDialog.setPositiveButton("OK") { _, _ ->
+                onBackPressed()
+            }
+            alertDialog.show()
         }
         //Display Room State info (favorite room)
         mRoom?.let {

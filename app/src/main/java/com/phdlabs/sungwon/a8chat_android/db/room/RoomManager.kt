@@ -155,6 +155,84 @@ class RoomManager {
         }
     }
 
+    /**
+     * [getPrivateAndGroupChats]
+     * Retrieve private chats information & GroupChats information
+     * Used for notifications access to designated Activity
+     * */
+    fun getPrivateAndGroupChats(callback: (Pair<List<Room>?, String?>) -> Unit) {
+        UserManager.instance.getCurrentUser { success, user, token ->
+            if (success) {
+                user?.let {
+                    token?.token?.let {
+                        val call = Rest.getInstance().getmCallerRx().getPrivateAndGroupChats(it, user.id!!)
+                        call.subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe({ response ->
+                                    if (response.isSuccess) {
+                                        response.chats?.let {
+                                            if (it.count() > 0) {
+                                                callback(Pair(it.toList(), null))
+                                            }
+                                        }
+                                    } else if (response.isError) {
+                                        callback(Pair(null, "Could not download private & group chats"))
+                                    }
+                                }, { throwable ->
+                                    callback(Pair(null, throwable.localizedMessage))
+                                })
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * [getPrivateChats]
+     * Retrieve & Cache active private chats information
+     * @callback Pair(Rooms, ErrorMessage)
+     * WARNING -> NOT CURRENTLY USED - IT DOESN'T CONFORM TO [Room] Model
+     * */
+    fun getPrivateChats(callback: (Pair<List<Room>?, String?>) -> Unit) {
+        UserManager.instance.getCurrentUser { success, user, token ->
+            if (success) {
+                user?.let {
+                    token?.token?.let {
+                        val call = Rest.getInstance().getmCallerRx().getPrivateChats(it, user.id!!)
+                        call.subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe({ response ->
+                                    if (response.isSuccess) {
+                                        var rooms: MutableList<Room> = mutableListOf()
+                                        //Unread & Favorites
+                                        response.privateChats?.unreadAndFavorite?.let {
+                                            rooms.addAll(it)
+                                        }
+                                        //Favorites
+                                        response.privateChats?.favorite?.let {
+                                            rooms.addAll(it)
+                                        }
+                                        //Unread
+                                        response.privateChats?.unread?.let {
+                                            rooms.addAll(it)
+                                        }
+                                        //Read
+                                        response.privateChats?.read?.let {
+                                            rooms.addAll(it)
+                                        }
+                                        callback(Pair(rooms, null))
+                                    } else if (response.isError) {
+                                        callback(Pair(null, "Could not download private chats"))
+                                    }
+                                }, { throwable ->
+                                    callback(Pair(null, throwable.localizedMessage))
+                                })
+                    }
+                }
+            }
+        }
+    }
+
 
     /*Queries*/
 

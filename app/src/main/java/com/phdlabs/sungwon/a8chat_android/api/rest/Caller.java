@@ -16,12 +16,12 @@ import com.phdlabs.sungwon.a8chat_android.api.response.ChannelArrayResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.ChatsRetrievalResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.CommentResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.ErrorResponse;
-import com.phdlabs.sungwon.a8chat_android.api.response.PrivateChatResponse;
+import com.phdlabs.sungwon.a8chat_android.api.response.privateChat.PrivateChatResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.ResendResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.RoomHistoryResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.RoomResponse;
 import com.phdlabs.sungwon.a8chat_android.api.response.TokenResponse;
-import com.phdlabs.sungwon.a8chat_android.api.response.UserDataResponse;
+import com.phdlabs.sungwon.a8chat_android.api.response.user.UserDataResponse;
 
 import okhttp3.RequestBody;
 import retrofit2.Call;
