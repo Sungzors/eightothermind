@@ -16,12 +16,17 @@ interface MainContract {
     interface Controller : BaseController {
         /*LifeCycle*/
         fun onCreate()
+
         fun showHome()
         fun showCamera()
         fun getUserId(callback: (Int?) -> Unit)
         /*Firebase & Dwolla Tokens*/
         fun updateTokens()
+
         /*Notifications*/
         fun updateNotificationBadges()
+
+        /*Global Settings*/
+        fun readGlobalSettings()
     }
 }

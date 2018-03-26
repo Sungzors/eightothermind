@@ -52,9 +52,9 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
         //Controller
         MainAController(this)
         /**
-         *Check Credentials -> This should always be the first method inside the [onCreate]
+         * Check Credentials -> This should always be the first method inside the [onCreate]
          * */
-        UserManager.instance.getCurrentUser { success, user, _ ->
+        UserManager.instance.getCurrentUser { success, _, _ ->
             if (!success) { //User doesn't have an account
                 val intent = Intent(this, LoginActivity::class.java)
                 startActivity(intent)
@@ -62,6 +62,7 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
             } else {
                controller.updateTokens()
                 controller.updateNotificationBadges()
+                controller.readGlobalSettings()
             }
         }
         controller.onCreate()

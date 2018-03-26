@@ -86,6 +86,8 @@ object Constants {
         //Notification Classifiers
         var TYPE = "notification_type"
         var BADGES = "badges"
+        //Notification Channels
+        var GLOBAL_CHANNEL = "globalChannel"
     }
 
     /**
@@ -149,6 +151,10 @@ object Constants {
          * */
         const val VALIDATE_GOOGLE_PLAY_SERVICES = 24
 
+        /**
+         * Notification Request Code
+         * */
+        const val NOTIF_REQUEST_CODE = 25
     }
 
     /**

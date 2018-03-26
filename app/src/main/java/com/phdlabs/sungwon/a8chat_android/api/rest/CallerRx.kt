@@ -23,8 +23,12 @@ import com.phdlabs.sungwon.a8chat_android.api.response.favorite.PrivateChatFavor
 import com.phdlabs.sungwon.a8chat_android.api.response.media.FileResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.media.MediaResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.notifications.ClearBadgeCountResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.privateChat.PrivateChatResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.room.EnterLeaveRoomResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.user.GlobalSettingsResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.user.UserDataResponse
 import com.phdlabs.sungwon.a8chat_android.api.rest.Caller.TOKEN
+import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.phdlabs.sungwon.a8chat_android.model.user.User
 import com.phdlabs.sungwon.a8chat_android.model.user.registration.RegistrationData
 import io.reactivex.Observable
@@ -193,10 +197,18 @@ interface CallerRx {
     /**
      * [getPrivateChats]
      * @Get current user's private chat
-     * Should be cached at download.
+     * WARNING -> NOT CURRENTLY USED - IT DOESN'T CONFORM TO [Room] Model
      * */
     @GET("/users/{userId}/privateChats")
     fun getPrivateChats(@Header(TOKEN) token: String, @Path("userId") userId: Int): Observable<PrivateChatResponse>
+
+    /**
+     * [getPrivateAndGroupChats]
+     * @Get current user's private chats & group chats
+     * Used for current [Room] Model
+     * */
+    @GET("/users/{userId}/private&group_chats")
+    fun getPrivateAndGroupChats(@Header(TOKEN) token: String, @Path("userId") userId: Int): Observable<ChatsRetrievalResponse>
 
     /**
      * [getChatHistory]
@@ -264,7 +276,12 @@ interface CallerRx {
                                          @Query("comment_notifications") commentNotifications: String?,
                                          @Query("user_added_notifications") userAddedNotification: String?): Observable<UserDataResponse>
 
-
+    /**
+     * []
+     * Read user's global settings for caching
+     * */
+    @GET("/users/{userId}/settings/global")
+    fun readGlobalNotificationSettings(@Header(TOKEN) token: String, @Path("userId") userId: Int): Observable<GlobalSettingsResponse>
 
     /**
      * [updateReceipt]

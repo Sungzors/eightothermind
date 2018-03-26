@@ -4,6 +4,8 @@ import android.content.Intent
 import com.github.nkzawa.socketio.client.Socket
 import com.google.firebase.iid.FirebaseInstanceId
 import com.phdlabs.sungwon.a8chat_android.db.notifications.NotificationsManager
+import com.phdlabs.sungwon.a8chat_android.db.room.RoomManager
+import com.phdlabs.sungwon.a8chat_android.db.user.SettingsManager
 import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
 import com.phdlabs.sungwon.a8chat_android.services.googlePlay.CheckGPServices
 import com.phdlabs.sungwon.a8chat_android.structure.camera.CameraActivity
@@ -62,7 +64,7 @@ class MainAController(val mView: MainContract.View) : MainContract.Controller {
     }
 
     /**
-     * Update Firebase, Dwalla & other needed tokens to keep the cached user tokens updated
+     *  Update Firebase, Dwalla & other needed tokens to keep the cached user tokens updated
      * */
     override fun updateTokens() {
         //Notifications
@@ -80,8 +82,17 @@ class MainAController(val mView: MainContract.View) : MainContract.Controller {
         }
     }
 
+    /**
+     *  Reset Global Notification badge count
+     * */
     override fun updateNotificationBadges() {
         NotificationsManager.instance.clearNotificationBadges()
     }
 
+    /**
+     *  Global User Settings Refresh
+     * */
+    override fun readGlobalSettings() {
+        SettingsManager.instance.readUserSettings()
+    }
 }

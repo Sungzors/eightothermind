@@ -4,6 +4,9 @@ import android.os.Bundle
 import android.widget.CompoundButton
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.db.notifications.NotificationsManager
+import com.phdlabs.sungwon.a8chat_android.db.user.SettingsManager
+import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
+import com.phdlabs.sungwon.a8chat_android.model.user.settings.GlobalSettings
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import kotlinx.android.synthetic.main.activity_notifications_global.*
 
@@ -30,6 +33,12 @@ class NotificationsGlobalSettings : CoreActivity(), CompoundButton.OnCheckedChan
         setupClickers()
     }
 
+    override fun onStop() {
+        super.onStop()
+        //Cache Notification changes
+        SettingsManager.instance.readUserSettings()
+    }
+
     /*Toolbar*/
     private fun setupToolbar() {
         setToolbarTitle(getString(R.string.notification_settings))
@@ -37,15 +46,38 @@ class NotificationsGlobalSettings : CoreActivity(), CompoundButton.OnCheckedChan
     }
 
     private fun setNotificationPref() {
-        //TODO: Set switches to user preferences
+        UserManager.instance.getCurrentUser { success, user, _ ->
+            if (success) {
+                user?.id?.let {
+                    SettingsManager.instance.globalUserSettings(it)?.let {
+                        //Message Notifications
+                        it.message_notifications?.let {
+                            ang_msg_notif_switch.isChecked = it
+                        }
+                        //Like Notifications
+                        it.like_notifications?.let {
+                            ang_like_notif_switch.isChecked = it
+                        }
+                        //Comment Notifications
+                        it.comment_notifications?.let {
+                            ang_comment_notif_switch.isChecked = it
+                        }
+                        //Followed Notifications
+                        it.user_added_notifications?.let {
+                            ang_invited_notif_switch.isChecked = it
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /*On Click*/
     private fun setupClickers() {
         ang_msg_notif_switch.setOnCheckedChangeListener(this)
         ang_like_notif_switch.setOnCheckedChangeListener(this)
-        achs_comment_notif_switch.setOnCheckedChangeListener(this)
-        achs_invited_notif_switch.setOnCheckedChangeListener(this)
+        ang_comment_notif_switch.setOnCheckedChangeListener(this)
+        ang_invited_notif_switch.setOnCheckedChangeListener(this)
     }
 
 
@@ -61,11 +93,11 @@ class NotificationsGlobalSettings : CoreActivity(), CompoundButton.OnCheckedChan
                 mNotMan.changeGlobalNotificationSettings(null, p1.toString(), null, null)
             }
         /*Comment Notifications*/
-            achs_comment_notif_switch -> {
+            ang_comment_notif_switch -> {
                 mNotMan.changeGlobalNotificationSettings(null, null, p1.toString(), null)
             }
         /*Followed Notifications*/
-            achs_invited_notif_switch -> {
+            ang_invited_notif_switch -> {
                 mNotMan.changeGlobalNotificationSettings(null, null, null, p1.toString())
             }
         }
