@@ -26,23 +26,30 @@
 
             <!--Media thumbnail & comment-->
             <FrameLayout
+                android:id="@+id/asc_thumbnail_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
             <!--Channels selection-->
             <FrameLayout
+                android:id="@+id/asc_channels_container"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/asc_thumbnail_container"/>
 
             <!--Events selection-->
             <FrameLayout
+                android:id="@+id/asc_events_container"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/asc_channels_container"/>
 
             <!--Contacts selection-->
             <FrameLayout
+                android:id="@+id/asc_contacts_container"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/asc_events_container"/>
 
         </RelativeLayout>
 

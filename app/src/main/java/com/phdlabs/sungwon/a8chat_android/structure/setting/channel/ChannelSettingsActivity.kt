@@ -2,7 +2,6 @@ package com.phdlabs.sungwon.a8chat_android.structure.setting.channel
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -143,7 +142,7 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
                         )
                     }
                     //Channel Info
-                    ChannelsManager.instance.getSingleChannel(mChannelId)?.let {
+                    ChannelsManager.instance.querySingleChannel(mChannelId)?.let {
                         //Channel Pic
                         Picasso.with(context).load(it?.avatar)
                                 .transform(CircleTransform())

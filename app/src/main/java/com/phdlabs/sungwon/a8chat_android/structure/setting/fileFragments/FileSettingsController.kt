@@ -43,7 +43,7 @@ class FileSettingsController(val mView: SettingContract.FileFragment.View) :
 
     override fun queryFilesForChannelRoom(roomId: Int) {
         val fileList = mutableListOf<File>()
-        ChannelsManager.instance.getChannelMessagesByType(roomId, Constants.MessageTypes.TYPE_FILE)?.let {
+        ChannelsManager.instance.queryChannelMessagesByType(roomId, Constants.MessageTypes.TYPE_FILE)?.let {
             //Iterate over messages for a file count
             for (message in it) {
                 message.files?.let {

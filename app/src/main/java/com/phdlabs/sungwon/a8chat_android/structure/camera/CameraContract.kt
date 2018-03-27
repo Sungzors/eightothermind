@@ -58,10 +58,19 @@ interface CameraContract {
         interface View : BaseView<Controller> {
             //Fragment Management
             fun swapContainer(@IdRes contentContainer: Int): Int
+
+            //Content
+            fun showMyChannels()
+            fun showMyEvents()
+            fun showMyContacts()
+
         }
 
         interface Controller : BaseController {
             fun onCreate()
+            fun loadMyChannels()
+            fun loadMyEvents()
+            fun loadMyContacts()
         }
     }
 

@@ -2,7 +2,6 @@ package com.phdlabs.sungwon.a8chat_android.structure.setting.mediaFragments
 
 import com.phdlabs.sungwon.a8chat_android.db.channels.ChannelsManager
 import com.phdlabs.sungwon.a8chat_android.model.media.Media
-import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.structure.setting.SettingContract
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.vicpin.krealmextensions.query
@@ -35,7 +34,7 @@ class MediaSettingController(val mView: SettingContract.MediaFragment.View) : Se
 
     /*Files*/
     override fun queryMediaForChannelRoom(roomId: Int, callback: (List<Media>?) -> Unit) {
-        ChannelsManager.instance.getChannelMessagesByType(roomId, Constants.MessageTypes.TYPE_MEDIA)?.let {
+        ChannelsManager.instance.queryChannelMessagesByType(roomId, Constants.MessageTypes.TYPE_MEDIA)?.let {
             var collectedMedia: MutableList<Media> = mutableListOf()
             for (message in it) {
                 message.mediaArray?.let {

@@ -147,8 +147,8 @@ class ChannelsManager {
                                             }
                                             //Query
                                             callback(
-                                                    getPopularChannels(),
-                                                    Pair(getCachedUnpopularUnreadFollowedChannels(), getCachedUnpopularReadFollowedChannels()),
+                                                    queryPopularChannels(),
+                                                    Pair(queryCachedUnpopularUnreadFollowedChannels(), queryCachedUnpopularReadFollowedChannels()),
                                                     null
                                             )
                                         } else if (response.isError) {
@@ -160,8 +160,8 @@ class ChannelsManager {
                         }
                     } else { //Local Query
                         callback(
-                                getPopularChannels(),
-                                Pair(getCachedUnpopularUnreadFollowedChannels(), getCachedUnpopularReadFollowedChannels()),
+                                queryPopularChannels(),
+                                Pair(queryCachedUnpopularUnreadFollowedChannels(), queryCachedUnpopularReadFollowedChannels()),
                                 null
                         )
                     }
@@ -203,7 +203,7 @@ class ChannelsManager {
                                     })
                         } else {
                             //Local Query
-                            callback(Pair(getChannelMessages(roomId), null))
+                            callback(Pair(queryChannelMessages(roomId), null))
                         }
                     }
                 }
@@ -533,9 +533,24 @@ class ChannelsManager {
      * */
 
     /**
+     * My Channels
+     * */
+    fun queryMyChannels(): List<Channel>? {
+        return Channel().query {
+            UserManager.instance.getCurrentUser { success, user, token ->
+                if (success) {
+                    user?.id?.let {
+                        equalTo("user_creator_id", it)
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * Popular Channels
      * */
-    fun getPopularChannels(): List<Channel>? {
+    fun queryPopularChannels(): List<Channel>? {
         return Channel().query {
             equalTo("isPopular", true)
         }
@@ -544,7 +559,7 @@ class ChannelsManager {
     /**
      * All the channels I Follow
      * */
-    fun getAllFollowedChannels(): List<Channel>? {
+    fun queryFollowedChannels(): List<Channel>? {
         return Channel().query {
             equalTo("iFollow", true)
             equalTo("isPopular", false)
@@ -554,12 +569,12 @@ class ChannelsManager {
     /**
      * All channels
      * */
-    fun getAllChannels(): List<Channel>? = Channel().queryAll()
+    fun queryAllChannels(): List<Channel>? = Channel().queryAll()
 
     /**
      * Unpopular & Unread Followed Channels
      * */
-    private fun getCachedUnpopularUnreadFollowedChannels(): List<Channel>? {
+    private fun queryCachedUnpopularUnreadFollowedChannels(): List<Channel>? {
         return Channel().query {
             equalTo("iFollow", true)
             equalTo("isPopular", false)
@@ -570,7 +585,7 @@ class ChannelsManager {
     /**
      * Unpopular & Read Followed Channels
      * */
-    private fun getCachedUnpopularReadFollowedChannels(): List<Channel>? {
+    private fun queryCachedUnpopularReadFollowedChannels(): List<Channel>? {
         return Channel().query {
             equalTo("iFollow", true)
             equalTo("isPopular", false)
@@ -580,45 +595,38 @@ class ChannelsManager {
 
 
     /**
-     * [getChannelMessages]
+     * [queryChannelMessages]
      * Used for reading and updating local post & channel's messages copy
      * Primarily used to manage likes & comments within [MyChannelActivity] & [ChannelPostShowActivity]
      * */
-    fun getChannelMessages(roomId: Int): List<Message>? {
+    fun queryChannelMessages(roomId: Int): List<Message>? {
         return Message().query {
             equalTo("roomId", roomId)
         }
     }
 
     /**
-     * [getSingleChannel]
+     * [querySingleChannel]
      * @return channel that matches the provided ID
      * */
-    fun getSingleChannel(channelId: Int): Channel? =
+    fun querySingleChannel(channelId: Int): Channel? =
             Channel().queryFirst { equalTo("id", channelId) }
 
 
     /**
-     * [getChannelMessagesByType]
+     * [queryChannelMessagesByType]
      * Used to retrieve the messages from a Channel & then Query Media OR Files based on Message Type
      * @param roomId
      * @param type
      * @return List<Message>?
      * */
-    fun getChannelMessagesByType(roomId: Int, type: String): List<Message>? {
+    fun queryChannelMessagesByType(roomId: Int, type: String): List<Message>? {
         return Message().query {
             equalTo("roomId", roomId)
             equalTo("type", type)
         }
     }
 
-    /**
-     * [findRoomWithMessageId]
-     *
-     * */
-    fun findRoomWithMessageId(messageId: Int){
-
-    }
 }
 
 

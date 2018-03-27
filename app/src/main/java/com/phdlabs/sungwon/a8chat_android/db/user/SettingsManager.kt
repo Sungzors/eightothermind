@@ -10,7 +10,7 @@ import io.reactivex.schedulers.Schedulers
 
 
 /**
- * Created by paix on 3/24/18.
+ * Created by JPAM on 3/24/18.
  */
 class SettingsManager {
 

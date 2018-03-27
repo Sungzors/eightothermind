@@ -121,6 +121,7 @@ class EditingActivity : CoreActivity(),
         //Sharing
         if (requestCode == Constants.RequestCodes.SHARE_MEDIA && resultCode == Activity.RESULT_OK) {
             //Close Camera Activity -> Back to Lobby
+            //TODO: Probably set result OK to finish camera App or restart camera App -> Ask Design Team.
             finish()
         }
         //Editing

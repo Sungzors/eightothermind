@@ -10,7 +10,6 @@ import com.phdlabs.sungwon.a8chat_android.structure.setting.SettingContract
 import com.phdlabs.sungwon.a8chat_android.structure.setting.fileFragments.FileSettingsFragment
 import com.phdlabs.sungwon.a8chat_android.structure.setting.mediaFragments.MediaSettingFragment
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
-import com.vicpin.krealmextensions.queryFirst
 
 /**
  * Created by JPAM on 3/12/18.
@@ -99,7 +98,7 @@ class ChannelSettingsController(val mView: SettingContract.Channel.View) : Setti
     /*MEDIA*/
     override fun getMedia(roomId: Int) {
         var mediaCount = 0
-        ChannelsManager.instance.getChannelMessagesByType(roomId, Constants.MessageTypes.TYPE_MEDIA)?.let {
+        ChannelsManager.instance.queryChannelMessagesByType(roomId, Constants.MessageTypes.TYPE_MEDIA)?.let {
             //Iterate over messages for media count
             for (message in it) {
                 message.mediaArray?.let {
@@ -117,7 +116,7 @@ class ChannelSettingsController(val mView: SettingContract.Channel.View) : Setti
     /*FILES*/
     override fun getFiles(roomId: Int) {
         var fileCount = 0
-        ChannelsManager.instance.getChannelMessagesByType(roomId, Constants.MessageTypes.TYPE_FILE)?.let {
+        ChannelsManager.instance.queryChannelMessagesByType(roomId, Constants.MessageTypes.TYPE_FILE)?.let {
             //Iterate over messages for a file count
             for (message in it) {
                 message.files?.let {
