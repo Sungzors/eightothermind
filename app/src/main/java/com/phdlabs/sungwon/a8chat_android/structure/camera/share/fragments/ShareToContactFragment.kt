@@ -1,21 +1,19 @@
 package com.phdlabs.sungwon.a8chat_android.structure.camera.share.fragments
 
-import android.content.Intent
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import android.widget.TextView
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.db.EightQueries
 import com.phdlabs.sungwon.a8chat_android.model.contacts.Contact
-import com.phdlabs.sungwon.a8chat_android.structure.chat.ChatActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreFragment
-import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseRecyclerAdapter
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseViewHolder
-import com.phdlabs.sungwon.a8chat_android.utility.adapter.ViewMap
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform
 import com.squareup.picasso.Picasso
 import com.vicpin.krealmextensions.query
@@ -35,6 +33,7 @@ class ShareToContactFragment : CoreFragment() {
     private var mContactAdapter: BaseRecyclerAdapter<Contact, BaseViewHolder>? = null
     private var mFavContactAdapter: BaseRecyclerAdapter<Contact, BaseViewHolder>? = null
     private var mFavContactList = mutableListOf<Contact>()
+    private var mContactsList = mutableListOf<Contact>()
 
     /*LifeCycle*/
     override fun onStart() {
@@ -42,6 +41,9 @@ class ShareToContactFragment : CoreFragment() {
         //Setup Adapters
         setUpContactsAdapter()
         setUpFavoritesAdapter()
+        //Lists
+        mContactsList.clear()
+        mFavContactList.clear()
     }
 
     /*UI Changes*/
@@ -65,6 +67,8 @@ class ShareToContactFragment : CoreFragment() {
             override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: Contact?, position: Int, type: Int) {
                 val contactProfilePicture = viewHolder?.get<ImageView>(R.id.fc_friend_profile_picture)
                 val contactFullName = viewHolder?.get<TextView>(R.id.fc_friend_name)
+                val selectionView = viewHolder?.get<ImageView>(R.id.fc_selected_iv)
+                val selectionContainer = viewHolder?.get<RelativeLayout>(R.id.fc_all_container)
                 viewHolder?.let {
                     context?.let {
                         /*load profile picture*/
@@ -83,27 +87,30 @@ class ShareToContactFragment : CoreFragment() {
                                 }
                             }
                         }
+                        /*Selection*/
+                        selectionContainer?.setOnClickListener {
+                            if (selectionView?.visibility == View.GONE) {
+                                selectionView.visibility = View.VISIBLE
+                                if (!mContactsList.contains(data)) {
+                                    data?.let {
+                                        mContactsList.add(data)
+                                    }
+                                }
+                            } else {
+                                selectionView?.visibility = View.GONE
+                                if (mContactsList.contains(data)) {
+                                    mContactsList.remove(data)
+                                }
+                            }
+                        }
                     }
                 }
             }
 
             override fun viewHolder(inflater: LayoutInflater?, parent: ViewGroup?, type: Int): BaseViewHolder {
                 return object : BaseViewHolder(R.layout.view_eight_contact, inflater!!, parent) {
-                    override fun addClicks(views: ViewMap?) {
-                        views?.click {
-                            //Go to private chat
-                            val contact = getItem(adapterPosition)
-                            val intent = Intent(context, ChatActivity::class.java)
-                            intent.putExtra(Constants.IntentKeys.CHAT_NAME, contact.first_name + " " + contact.last_name)
-                            intent.putExtra(Constants.IntentKeys.PARTICIPANT_ID, contact.id)
-                            intent.putExtra(Constants.IntentKeys.CHAT_PIC, contact.avatar)
-                            startActivity(intent)
-                        }
-                        super.addClicks(views)
-                    }
                 }
             }
-
         }
         mContactAdapter?.setItems(Contact().queryAll().toMutableList())
         mContactAdapter?.setSortComparator(EightQueries.Comparators.alphabetComparator)
@@ -118,6 +125,8 @@ class ShareToContactFragment : CoreFragment() {
             override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: Contact?, position: Int, type: Int) {
                 val contactProfilePicture = viewHolder?.get<ImageView>(R.id.fc_friend_profile_picture)
                 val contactFullName = viewHolder?.get<TextView>(R.id.fc_friend_name)
+                val selectionView = viewHolder?.get<ImageView>(R.id.fc_selected_iv)
+                val selectionContainer = viewHolder?.get<RelativeLayout>(R.id.fc_all_container)
                 viewHolder?.let {
                     context?.let {
                         /*load profile picture*/
@@ -130,22 +139,35 @@ class ShareToContactFragment : CoreFragment() {
                         contactFullName?.text = data?.first_name + " " + data?.last_name
                     }
                 }
+                /*Selection*/
+                selectionContainer?.setOnClickListener {
+                    if (selectionView?.visibility == View.GONE) {
+                        selectionView.visibility = View.VISIBLE
+                        if (!mContactsList.contains(data)) {
+                            data?.let {
+                                mContactsList.add(data)
+                            }
+                        }
+                    } else {
+                        selectionView?.visibility = View.GONE
+                        if (mContactsList.contains(data)) {
+                            mContactsList.remove(data)
+                        }
+                    }
+                }
             }
 
             override fun viewHolder(inflater: LayoutInflater?, parent: ViewGroup?, type: Int): BaseViewHolder {
                 return object : BaseViewHolder(R.layout.view_eight_contact, inflater!!, parent) {
-                    override fun addClicks(views: ViewMap?) {
-                        views?.click {
-                            val contact = getItem(adapterPosition)
-                            val intent = Intent(context, ChatActivity::class.java)
-                            intent.putExtra(Constants.IntentKeys.CHAT_NAME, contact.first_name + " " + contact.last_name)
-                            intent.putExtra(Constants.IntentKeys.PARTICIPANT_ID, contact.id)
-                            intent.putExtra(Constants.IntentKeys.CHAT_PIC, contact.avatar)
-                            startActivity(intent)
-                        }
-                        super.addClicks(views)
-                    }
                 }
+            }
+        }
+        //UI
+        Contact().query { equalTo("isFavorite", true) }.toMutableList()?.let {
+            if (it.count() > 0) {
+                hideFavoritesCard(false)
+            } else {
+                hideFavoritesCard(true)
             }
         }
         mFavContactAdapter?.setItems(Contact().query { equalTo("isFavorite", true) }.toMutableList())

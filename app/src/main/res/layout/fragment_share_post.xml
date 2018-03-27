@@ -38,7 +38,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="10sp"
                 android:layout_toRightOf="@id/fsp_thumbnail_container"
-                android:gravity="center">
+                android:gravity="start">
 
                 <!--Instructions-->
                 <TextView
@@ -55,8 +55,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/fsp_post_hint"
-                    android:gravity="center|bottom"
-                    android:minLines="1" />
+                    android:minLines="1"
+                    android:textAlignment="textStart" />
 
             </RelativeLayout>
 

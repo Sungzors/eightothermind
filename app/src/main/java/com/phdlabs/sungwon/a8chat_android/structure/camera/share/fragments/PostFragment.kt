@@ -34,5 +34,10 @@ class PostFragment : CoreFragment() {
         }
     }
 
-    //TODO: Validate & Capture Post Message. -> Send result to ShareCameraMedia Activity.
+    fun getMessage(): String? {
+        return fsp_post_message.text.toString()
+    }
+
+
+    //TODO: Validate & Capture Post Message. -> Send result to ShareCameraMediaActivity Activity.
 }

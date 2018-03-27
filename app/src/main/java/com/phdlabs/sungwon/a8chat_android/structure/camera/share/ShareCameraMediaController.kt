@@ -8,7 +8,7 @@ import com.phdlabs.sungwon.a8chat_android.structure.camera.CameraContract
 
 /**
  * Created by JPAM on 3/26/18.
- * [ShareCameraMedia] Controller
+ * [ShareCameraMediaActivity] Controller
  */
 class ShareCameraMediaController(val mView: CameraContract.Share.View) : CameraContract.Share.Controller {
 
@@ -77,6 +77,25 @@ class ShareCameraMediaController(val mView: CameraContract.Share.View) : CameraC
 
     override fun loadMyContacts() {
         mView.showMyContacts()
+    }
+
+    /**
+     * Validate Information to share Only Media || Media + Message
+     * */
+    override fun infoValidation(filePath: String?, message: String?): ShareCameraMediaActivity.SHARE_TYPE? {
+        var shareType: ShareCameraMediaActivity.SHARE_TYPE? = null
+        //Media + Message
+        message?.let {
+            filePath?.let {
+                shareType = ShareCameraMediaActivity.SHARE_TYPE.Post
+            }
+        } ?: run {
+            //Only Media
+            filePath?.let {
+                shareType = ShareCameraMediaActivity.SHARE_TYPE.Media
+            }
+        }
+        return shareType
     }
 
 }

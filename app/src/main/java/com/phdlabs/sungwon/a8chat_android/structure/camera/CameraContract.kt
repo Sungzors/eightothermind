@@ -5,6 +5,7 @@ import android.support.design.widget.TabLayout
 import android.support.v4.view.ViewPager
 import com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControls.CameraCloseView
 import com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControls.CameraControlView
+import com.phdlabs.sungwon.a8chat_android.structure.camera.share.ShareCameraMediaActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseController
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseView
 
@@ -61,16 +62,23 @@ interface CameraContract {
 
             //Content
             fun showMyChannels()
+
             fun showMyEvents()
             fun showMyContacts()
 
         }
 
         interface Controller : BaseController {
+            //LifeCycle
             fun onCreate()
+
+            //Pull Data
             fun loadMyChannels()
             fun loadMyEvents()
             fun loadMyContacts()
+
+            //Validation
+            fun infoValidation(filePath: String?, message: String?): ShareCameraMediaActivity.SHARE_TYPE?
         }
     }
 

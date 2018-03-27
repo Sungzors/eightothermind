@@ -81,7 +81,7 @@
             android:theme="@style/Camera" />
 
         <activity
-            android:name=".structure.camera.share.ShareCameraMedia"
+            android:name=".structure.camera.share.ShareCameraMediaActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".structure.channel.channelshow.ChannelShowActivity"

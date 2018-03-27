@@ -1,21 +1,20 @@
 package com.phdlabs.sungwon.a8chat_android.structure.camera.share.fragments
 
-import android.content.Intent
+import android.support.v7.widget.CardView
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.RelativeLayout
 import android.widget.TextView
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.db.events.EventsManager
 import com.phdlabs.sungwon.a8chat_android.model.event.EventsEight
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreFragment
-import com.phdlabs.sungwon.a8chat_android.structure.event.view.EventViewActivity
-import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseRecyclerAdapter
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseViewHolder
-import com.phdlabs.sungwon.a8chat_android.utility.adapter.ViewMap
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_share_to_event.*
@@ -31,7 +30,7 @@ class ShareToEventFragment : CoreFragment() {
     override fun layoutId(): Int = R.layout.fragment_share_to_event
 
     private lateinit var mAdapterEvent: BaseRecyclerAdapter<EventsEight, BaseViewHolder>
-
+    var mEventList: MutableList<EventsEight> = mutableListOf()
 
     override fun onStart() {
         super.onStart()
@@ -39,6 +38,7 @@ class ShareToEventFragment : CoreFragment() {
         EventsManager.instance.queryMyEvents()?.let {
             setUpEventsRecycler(it.toMutableList())
         }
+        mEventList.clear()
     }
 
 
@@ -51,19 +51,6 @@ class ShareToEventFragment : CoreFragment() {
 
             override fun viewHolder(inflater: LayoutInflater?, parent: ViewGroup?, type: Int): BaseViewHolder {
                 return object : BaseViewHolder(R.layout.card_view_lobby_event, inflater!!, parent) {
-
-                    //TODO: Event card with selectable checkmark
-
-                    override fun addClicks(views: ViewMap?) {
-                        views!!.click {
-                            val event = getItem(adapterPosition)
-                            val intent = Intent(context, EventViewActivity::class.java)
-                            intent.putExtra(Constants.IntentKeys.EVENT_ID, event.id)
-                            intent.putExtra(Constants.IntentKeys.EVENT_NAME, event.event_name)
-                            intent.putExtra(Constants.IntentKeys.ROOM_ID, event.room_id)
-                            startActivity(intent)
-                        }
-                    }
                 }
             }
 
@@ -76,6 +63,8 @@ class ShareToEventFragment : CoreFragment() {
     }
 
     private fun bindEventViewHolder(viewHolder: BaseViewHolder, data: EventsEight) {
+        val selectionContainer = viewHolder.get<RelativeLayout>(R.id.cvle_selected_container)
+        val selectedView = viewHolder.get<ImageView>(R.id.cvle_selected_iv)
         val eventPic = viewHolder.get<ImageView>(R.id.cvle_picture_event)
         val eventIndicator = viewHolder.get<ImageView>(R.id.cvle_read_indicator)
         val title = viewHolder.get<TextView>(R.id.cvle_title)
@@ -105,6 +94,18 @@ class ShareToEventFragment : CoreFragment() {
         } else {
             eventIndicator.visibility = ImageView.INVISIBLE
         }
-
+        selectionContainer.setOnClickListener {
+            if (selectedView.visibility == View.VISIBLE) {
+                selectedView.visibility = View.GONE
+                if (mEventList.contains(data)) {
+                    mEventList.remove(data)
+                }
+            } else {
+                selectedView.visibility = View.VISIBLE
+                if (!mEventList.contains(data)) {
+                    mEventList.add(data)
+                }
+            }
+        }
     }
 }

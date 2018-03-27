@@ -21,6 +21,14 @@
             android:visibility="gone"/>
 
         <ImageView
+            android:id="@+id/cvlc_background_selected"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:layout_centerInParent="true"
+            android:background="@drawable/bg_circle_green_lobby"
+            android:visibility="gone"/>
+
+        <ImageView
             android:id="@+id/cvlc_picture_profile"
             android:layout_width="60dp"
             android:layout_height="60dp"
