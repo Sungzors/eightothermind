@@ -86,4 +86,26 @@ class UserManager {
         }
     }
 
+    fun getFavoritesCount(roomId: Int, callback: (Int?, String?) -> Unit){
+        getCurrentUser{ success, user, token ->
+            token?.token?.let {
+                val call = Rest.getInstance().getmCallerRx().getRoomFaveMsg(it, roomId, user?.id!!)
+                call.subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({ response ->
+                            if (response.isSuccess) {
+                                response?.messages.let {
+                                    callback(it?.size, null)
+                                }
+                            } else if (response.isError) {
+                                callback(null, "Did not find user")
+                            }
+
+                        }, {t: Throwable? ->
+                            callback(null, t?.localizedMessage)
+                        })
+            }
+        }
+    }
+
 }

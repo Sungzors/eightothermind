@@ -16,6 +16,8 @@ interface FavoriteContract {
         interface Controller: BaseController{
             fun getUserId(callback: (Int?) -> Unit)
             fun getFavorites(roomId: Int)
+            /*Like Post*/
+            fun likePost(messageId: Int, unlike: Boolean)
         }
     }
 }

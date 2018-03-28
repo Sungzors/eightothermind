@@ -3,7 +3,6 @@ package com.phdlabs.sungwon.a8chat_android.structure.setting
 import com.phdlabs.sungwon.a8chat_android.model.contacts.Contact
 import com.phdlabs.sungwon.a8chat_android.model.files.File
 import com.phdlabs.sungwon.a8chat_android.model.media.Media
-import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.phdlabs.sungwon.a8chat_android.model.user.User
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseController
@@ -37,6 +36,8 @@ interface SettingContract {
 
             /*Update room to favorite*/
             fun favoriteRoom(room: Room?, favorite: Boolean)
+
+            fun getFavorite(roomId: Int, callback: (Int) -> Unit)
 
             /*Retrieve cached contact information*/
             fun getContactInfo(id: Int): Contact?
@@ -84,6 +85,8 @@ interface SettingContract {
             fun getRoomInfo(id: Int, callback: (Room?) -> Unit)
 
             fun getRoomParticipants(id: Int, callback: (MutableList<Int>?) -> Unit)
+
+            fun getFavorite(roomId: Int, callback: (Int) -> Unit)
 
             /*Channel Owner Information*/
             fun getChannelOwnerInfo(ownerId: Int)

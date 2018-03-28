@@ -10,7 +10,6 @@ import com.phdlabs.sungwon.a8chat_android.structure.setting.SettingContract
 import com.phdlabs.sungwon.a8chat_android.structure.setting.fileFragments.FileSettingsFragment
 import com.phdlabs.sungwon.a8chat_android.structure.setting.mediaFragments.MediaSettingFragment
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
-import com.vicpin.krealmextensions.queryFirst
 
 /**
  * Created by JPAM on 3/12/18.
@@ -77,6 +76,16 @@ class ChannelSettingsController(val mView: SettingContract.Channel.View) : Setti
                     }
                 }
                 callback(participantsId)
+            }
+        })
+    }
+
+    override fun getFavorite(roomId: Int, callback: (Int) -> Unit) {
+        UserManager.instance.getFavoritesCount(roomId, { count, errorMessage ->
+            errorMessage?.let {
+                mView.showError(it)
+            } ?: run {
+                callback(count!!)
             }
         })
     }

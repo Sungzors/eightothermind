@@ -12,6 +12,7 @@ import com.phdlabs.sungwon.a8chat_android.model.contacts.Contact
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.phdlabs.sungwon.a8chat_android.structure.chat.ChatActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
+import com.phdlabs.sungwon.a8chat_android.structure.favorite.message.FavoriteMessageActivity
 import com.phdlabs.sungwon.a8chat_android.structure.setting.SettingContract
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform
@@ -65,6 +66,18 @@ class ChatSettingActivity : CoreActivity(), SettingContract.Chat.View, View.OnCl
         //Navigation
         mIntentFromContact = intent.getBooleanExtra(Constants.IntentKeys.FROM_CONTACTS, false)
 
+        asc_favemsg_tv.text = resources.getString(
+                R.string.fave_messages,
+                "0"
+        )
+
+        controller.getFavorite(mRoomId, {
+            asc_favemsg_tv.text = resources.getString(
+                    R.string.fave_messages,
+                    it.toString()
+            )
+        })
+
         /*UI*/
         setupToolbar()
         setupUserInfo()
@@ -95,6 +108,11 @@ class ChatSettingActivity : CoreActivity(), SettingContract.Chat.View, View.OnCl
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == Activity.RESULT_OK && requestCode == Constants.ContactItems.TO_CHAT_FROM_CONTACT_REQ_CODE) {
             //TODO: Back from chat launched from contacts screen, todo refreshChannels media , files & favorite messages only
+        }
+
+        if(resultCode == Constants.ResultCode.SUCCESS){
+            setResult(Constants.ResultCode.SUCCESS)
+            finish()
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
@@ -217,8 +235,10 @@ class ChatSettingActivity : CoreActivity(), SettingContract.Chat.View, View.OnCl
             }
         /*Favorite Messages with Contact*/
             asc_favemsg_container -> {
-                //TODO
-                Toast.makeText(context, "In progress", Toast.LENGTH_SHORT).show()
+                val intent = Intent(context, FavoriteMessageActivity::class.java)
+                intent.putExtra(Constants.IntentKeys.ROOM_ID, mRoomId)
+                intent.putExtra(Constants.IntentKeys.FAVE_TYPE, 1)
+                startActivityForResult(intent, Constants.RequestCodes.OPEN_FAVE)
             }
         /*Share with Contact*/
             asc_share_container -> {

@@ -195,6 +195,9 @@ interface CallerRx {
     @GET("/privateChats/{roomId}/user/{userId}/messages")
     fun getChatHistory(@Header(TOKEN) token: String, @Path("roomId") roomId: Int, @Path("userId") userId: Int): Observable<RoomHistoryResponse>
 
+    @GET("/privateChats/{roomId}/user/{userId}/messages")
+    fun getChatHistory(@Header(TOKEN) token: String, @Path("roomId") roomId: Int, @Path("userId") userId: Int, @Query("messageId") messageId: Int): Observable<RoomHistoryResponse>
+
     /*CONTACTS*/
     /**
      * [getEightContactsPhoneNumbers]

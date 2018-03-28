@@ -155,6 +155,32 @@ class RoomManager {
         }
     }
 
+    fun getRoomMessageHistory(roomId: Int, callback: (Pair<List<Message>?, String?>) -> Unit, msgId: Int) {
+        UserManager.instance.getCurrentUser { success, user, token ->
+            if (success) {
+                user?.let {
+                    token?.token?.let {
+                        val call = Rest.getInstance().getmCallerRx().getChatHistory(it, roomId, user.id!!, msgId)
+                        call.subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe({ response ->
+                                    if (response.isSuccess) {
+                                        response?.messages?.allMessages?.let {
+                                            it.saveAll()
+                                            callback(Pair(it.toList(), null))
+                                        }
+                                    } else if (response.isError) {
+                                        callback(Pair(null, "Could not retrieve Chat history"))
+                                    }
+                                }, { throwable ->
+                                    callback(Pair(null, throwable.localizedMessage))
+                                })
+                    }
+                }
+            }
+        }
+    }
+
 
     /*Queries*/
 

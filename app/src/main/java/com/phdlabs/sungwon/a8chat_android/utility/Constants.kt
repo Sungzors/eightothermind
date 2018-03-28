@@ -30,6 +30,7 @@ object Constants {
         const val MEDIA_POST_MESSAGE = "media_post_message"
         const val INCLUDES_MEDIA = "includes_media"
         const val CHANNEL_DELETED = "channel_deleted"
+        const val FAVE_TYPE = "fave_type"
     }
 
     /**
@@ -114,6 +115,8 @@ object Constants {
          * Edit Channel
          * */
         const val EDIT_CHANNEL = 23
+
+        const val OPEN_FAVE = 24
     }
 
     /**
