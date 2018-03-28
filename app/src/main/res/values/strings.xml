@@ -164,6 +164,7 @@
     <string name="msg_notif">Message notifications</string>
     <string name="comment_notifications">Comment notifications</string>
     <string name="invited_notifications">Invited Notifications</string>
+    <string name="write_a_comment">Write a comment</string>
 
 
 </resources>

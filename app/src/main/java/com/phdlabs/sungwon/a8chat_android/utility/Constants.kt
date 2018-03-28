@@ -146,7 +146,7 @@ object Constants {
         const val EDIT_CHANNEL = 23
 
         const val OPEN_FAVE = 24
-        
+
         /**
          * Google Play Services
          * Used for error handling
@@ -158,6 +158,12 @@ object Constants {
          * Notification Request Code
          * */
         const val NOTIF_REQUEST_CODE = 26
+
+        /**
+         * Share media from Camera App
+         * */
+        const val SHARE_MEDIA = 27
+
     }
 
     /**

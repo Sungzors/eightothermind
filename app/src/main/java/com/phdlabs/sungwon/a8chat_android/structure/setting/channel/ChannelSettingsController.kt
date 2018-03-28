@@ -108,7 +108,7 @@ class ChannelSettingsController(val mView: SettingContract.Channel.View) : Setti
     /*MEDIA*/
     override fun getMedia(roomId: Int) {
         var mediaCount = 0
-        ChannelsManager.instance.getChannelMessagesByType(roomId, Constants.MessageTypes.TYPE_MEDIA)?.let {
+        ChannelsManager.instance.queryChannelMessagesByType(roomId, Constants.MessageTypes.TYPE_MEDIA)?.let {
             //Iterate over messages for media count
             for (message in it) {
                 message.mediaArray?.let {
@@ -126,7 +126,7 @@ class ChannelSettingsController(val mView: SettingContract.Channel.View) : Setti
     /*FILES*/
     override fun getFiles(roomId: Int) {
         var fileCount = 0
-        ChannelsManager.instance.getChannelMessagesByType(roomId, Constants.MessageTypes.TYPE_FILE)?.let {
+        ChannelsManager.instance.queryChannelMessagesByType(roomId, Constants.MessageTypes.TYPE_FILE)?.let {
             //Iterate over messages for a file count
             for (message in it) {
                 message.files?.let {

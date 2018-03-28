@@ -8,9 +8,9 @@ import android.os.Build
 import android.support.v13.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import com.phdlabs.sungwon.a8chat_android.R
+import com.phdlabs.sungwon.a8chat_android.structure.camera.share.ShareCameraMediaActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.DeviceInfo
-import com.phdlabs.sungwon.a8chat_android.utility.SuffixDetector
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
 import com.squareup.picasso.Picasso
 import java.io.File
@@ -65,8 +65,8 @@ class EditingActivityController(val mView: EditingContract.View) : EditingContra
             //Load Image Preview
             imageFilePath = it
             if (DeviceInfo.INSTANCE.isWarningDevice(Build.MODEL)) {
-                var presentWithRotation:Float  = 90f
-                if (mView.isFromCameraRoll){
+                var presentWithRotation: Float = 90f
+                if (mView.isFromCameraRoll) {
                     presentWithRotation = 0f
                 }
                 Picasso.with(mView.getContext())
@@ -159,6 +159,29 @@ class EditingActivityController(val mView: EditingContract.View) : EditingContra
      * */
     override fun eraseDrawing() {
         mView.getPhotoEditor().brushEraser()
+    }
+
+    /**
+     * Send Image to [ShareCameraMediaActivity]
+     * to be shared
+     * */
+    override fun sendImage() {
+        //Save Image to Gallery
+        imageFilePath.let {
+            mView.activity?.let {
+//                CameraControl.instance.addToGallery(
+//                        it,
+//                        mView.getPhotoEditor().saveImageWithSuffix(
+//                                "8",
+//                                CameraControl.instance.mediaFileNaming())
+//                )
+                it.setResult(Activity.RESULT_OK)
+                /**Transition to [ShareCameraMediaActivity]*/
+                val intent = Intent(it, ShareCameraMediaActivity::class.java)
+                intent.putExtra(Constants.CameraIntents.IMAGE_FILE_PATH, imageFilePath)
+                it.startActivityForResult(intent, Constants.RequestCodes.SHARE_MEDIA)
+            }
+        }
     }
 
 

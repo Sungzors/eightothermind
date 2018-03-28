@@ -246,7 +246,7 @@ class ChannelsFragment : CoreFragment() {
     /*Data*/
     private fun loadChannels() {
         //Query Popular Channels
-        ChannelsManager.instance.getPopularChannels()?.let {
+        ChannelsManager.instance.queryPopularChannels()?.let {
             mChannelsPopular = it.toMutableList()
             if (mChannelsPopular.count() > 0) {
                 mChannelsPopularAdapter?.clear()
@@ -255,7 +255,7 @@ class ChannelsFragment : CoreFragment() {
             }
         }
         //Query Followed Channels
-        ChannelsManager.instance.getAllFollowedChannels()?.let {
+        ChannelsManager.instance.queryFollowedChannels()?.let {
             mChannelsIFollow = it.toMutableList()
             if (mChannelsIFollow.count() > 0) {
                 mChannelsFollowedAdapter?.clear()
@@ -264,7 +264,7 @@ class ChannelsFragment : CoreFragment() {
             }
         }
         //All Channels
-        ChannelsManager.instance.getAllChannels()?.let {
+        ChannelsManager.instance.queryAllChannels()?.let {
             mChannelsAll = it.toMutableList()
             if (mChannelsAll.count() > 0) {
                 mChannelsAllAdapter?.clear()

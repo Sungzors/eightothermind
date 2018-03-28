@@ -47,6 +47,7 @@ interface EditingContract {
         fun clearAllViews()
         fun undoViews()
         fun eraseDrawing()
+        fun sendImage()
     }
 
 }

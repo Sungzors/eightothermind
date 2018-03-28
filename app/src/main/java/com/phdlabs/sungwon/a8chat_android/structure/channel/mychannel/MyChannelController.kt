@@ -333,7 +333,7 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
 
     /*Channels*/
     override fun getFollowedChannels(): MutableList<Channel>? {
-        val channels = ChannelsManager.instance.getAllFollowedChannels()?.toMutableList()
+        val channels = ChannelsManager.instance.queryFollowedChannels()?.toMutableList()
         channels?.let {
             //Filter the current channel from the favorites shown at the top Recycler View
             channels

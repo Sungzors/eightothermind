@@ -9,7 +9,7 @@ import io.realm.annotations.PrimaryKey
 import io.realm.annotations.RealmClass
 
 /**
- * Created by paix on 3/24/18.
+ * Created by JPAM on 3/24/18.
  * User saved settings
  */
 @RealmClass

@@ -22,10 +22,10 @@ import kotlinx.android.synthetic.main.view_camera_control_tabs.*
  * CameraActivity for controlling CameraPagerAdapter with structure:
  * [Camera Roll - Normal - Hands Free]
  */
-class CameraActivity : CoreActivity(), CameraContract.View, TabLayout.OnTabSelectedListener, View.OnClickListener {
+class CameraActivity : CoreActivity(), CameraContract.Camera.View, TabLayout.OnTabSelectedListener, View.OnClickListener {
 
     /*Controller*/
-    override lateinit var controller: CameraContract.Controller
+    override lateinit var controller: CameraContract.Camera.Controller
 
     /*User Interface*/
     override fun layoutId() = R.layout.activity_camera
