@@ -2,7 +2,6 @@ package com.phdlabs.sungwon.a8chat_android.structure.setting.channel
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -13,6 +12,7 @@ import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.phdlabs.sungwon.a8chat_android.model.user.User
 import com.phdlabs.sungwon.a8chat_android.structure.channel.create.ChannelCreateActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
+import com.phdlabs.sungwon.a8chat_android.structure.favorite.message.FavoriteMessageActivity
 import com.phdlabs.sungwon.a8chat_android.structure.setting.SettingContract
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform
@@ -88,6 +88,11 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
                 //TODO: Update UI
             }
         }
+
+        if(resultCode == Constants.ResultCode.SUCCESS){
+            setResult(Constants.ResultCode.SUCCESS)
+            finish()
+        }
         super.onActivityResult(requestCode, resultCode, data)
     }
 
@@ -99,6 +104,11 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
         mChannelId = intent.getIntExtra(Constants.IntentKeys.CHANNEL_ID, 0)
         //Room
         mRoomId = intent.getIntExtra(Constants.IntentKeys.ROOM_ID, 0)
+
+        achs_favemsg_tv.text = resources.getString(
+                R.string.fave_messages,
+                "0"
+        )
         mRoomId?.let {
             controller.getRoomInfo(it, {
                 it?.let {
@@ -113,6 +123,12 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
                     controller.getChannelOwnerInfo(mOwnerId)
                     hideProgress()
                 }
+            })
+            controller.getFavorite(it, {
+                achs_favemsg_tv.text = resources.getString(
+                        R.string.fave_messages,
+                        it.toString()
+                )
             })
         }
     }
@@ -221,7 +237,10 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
             }
         /*Fav Messages*/
             achs_favemsg_container -> {
-                Toast.makeText(this, "In Progress", Toast.LENGTH_SHORT).show()
+                val intent = Intent(context, FavoriteMessageActivity::class.java)
+                intent.putExtra(Constants.IntentKeys.ROOM_ID, mRoomId)
+                intent.putExtra(Constants.IntentKeys.FAVE_TYPE, 2)
+                startActivityForResult(intent, Constants.RequestCodes.OPEN_FAVE)
             }
 
         /*Share Channel*/

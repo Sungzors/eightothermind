@@ -3,7 +3,6 @@ package com.phdlabs.sungwon.a8chat_android.structure.setting.chat
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.api.data.PrivateChatPatchData
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
-import com.phdlabs.sungwon.a8chat_android.db.channels.ChannelsManager
 import com.phdlabs.sungwon.a8chat_android.db.media.MediaManager
 import com.phdlabs.sungwon.a8chat_android.db.room.RoomManager
 import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
@@ -80,6 +79,16 @@ class ChatSettingController(val mView: SettingContract.Chat.View) : SettingContr
                 }
             }
         }
+    }
+
+    override fun getFavorite(roomId: Int, callback: (Int) -> Unit) {
+        UserManager.instance.getFavoritesCount(roomId, { count, errorMessage ->
+            errorMessage?.let {
+                mView.showError(it)
+            } ?: run {
+                callback(count!!)
+            }
+        })
     }
 
     /*Get contact information from Realm*/

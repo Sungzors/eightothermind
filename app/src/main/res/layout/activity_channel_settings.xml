@@ -233,8 +233,9 @@
                             android:id="@+id/achs_favemsg_tv"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_margin="20dp"
-                            android:layout_toEndOf="@id/achs_favemsg_icon"
+                            android:layout_alignTop="@+id/achs_favemsg_icon"
+                            android:layout_marginStart="20dp"
+                            android:layout_toEndOf="@+id/achs_favemsg_icon"
                             android:drawableEnd="@drawable/ic_keyboard_arrow_right_black_24dp"
                             android:text="@string/fave_messages" />
 

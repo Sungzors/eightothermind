@@ -93,7 +93,7 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
             mSocket.emit("connect-rooms", id, mRoomType)
             isConnected = true
         }
-
+        retrieveChatHistory()
         mView.getContext()?.let {
             /*Location permissions*/
             if (ActivityCompat.checkSelfPermission(
@@ -103,7 +103,6 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
             ) {
                 mView.hideProgress()
                 requestLocationPermissions()
-                return
             }
         }
 
@@ -112,7 +111,7 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
         } catch (ex: SecurityException) {
             println("No location available: " + ex.message)
         }
-        retrieveChatHistory()
+
     }
 
     override fun resume() {
@@ -161,7 +160,7 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
                         call.enqueue(object : Callback8<RoomResponse, PrivateChatCreateEvent>(mEventBus) {
                             override fun onSuccess(data: RoomResponse?) {
                                 mEventBus.post(PrivateChatCreateEvent())
-                                mRoomId = data!!.room!!.id!! //TODO: Changed
+                                mRoomId = data!!.room!!.id!!
                             }
                         })
                     }

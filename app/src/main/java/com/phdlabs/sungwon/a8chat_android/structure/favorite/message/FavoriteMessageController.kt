@@ -1,6 +1,7 @@
 package com.phdlabs.sungwon.a8chat_android.structure.favorite.message
 
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
+import com.phdlabs.sungwon.a8chat_android.db.channels.ChannelsManager
 import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.structure.favorite.FavoriteContract
@@ -40,7 +41,7 @@ class FavoriteMessageController(val mView: FavoriteContract.Message.View) : Favo
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({ response ->
                                     for (messages in response.messages!!){
-                                        mMessages.add(messages.message!!)
+                                        mMessages.add(messages)
                                     }
                                     mView.setUpRecycler(mMessages)
 
@@ -61,5 +62,10 @@ class FavoriteMessageController(val mView: FavoriteContract.Message.View) : Favo
                 }
             }
         }
+    }
+
+    //Like
+    override fun likePost(messageId: Int, unlike: Boolean) {
+        ChannelsManager.instance.likeUnlikePost(messageId, unlike)
     }
 }

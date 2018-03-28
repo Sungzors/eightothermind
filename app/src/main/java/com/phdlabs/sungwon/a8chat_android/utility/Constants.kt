@@ -30,6 +30,7 @@ object Constants {
         const val MEDIA_POST_MESSAGE = "media_post_message"
         const val INCLUDES_MEDIA = "includes_media"
         const val CHANNEL_DELETED = "channel_deleted"
+        const val FAVE_TYPE = "fave_type"
     }
 
     /**
@@ -144,17 +145,19 @@ object Constants {
          * */
         const val EDIT_CHANNEL = 23
 
+        const val OPEN_FAVE = 24
+        
         /**
          * Google Play Services
          * Used for error handling
          * [onActivityResult] [MainActivity]
          * */
-        const val VALIDATE_GOOGLE_PLAY_SERVICES = 24
+        const val VALIDATE_GOOGLE_PLAY_SERVICES = 25
 
         /**
          * Notification Request Code
          * */
-        const val NOTIF_REQUEST_CODE = 25
+        const val NOTIF_REQUEST_CODE = 26
     }
 
     /**
