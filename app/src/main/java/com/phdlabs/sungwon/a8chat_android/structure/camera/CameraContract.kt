@@ -6,6 +6,7 @@ import android.support.v4.view.ViewPager
 import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
 import com.phdlabs.sungwon.a8chat_android.model.contacts.Contact
 import com.phdlabs.sungwon.a8chat_android.model.event.EventsEight
+import com.phdlabs.sungwon.a8chat_android.structure.application.Application
 import com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControls.CameraCloseView
 import com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControls.CameraControlView
 import com.phdlabs.sungwon.a8chat_android.structure.camera.share.ShareCameraMediaActivity
@@ -60,6 +61,9 @@ interface CameraContract {
     interface Share {
 
         interface View : BaseView<Controller> {
+            //Context
+            val getActivity: ShareCameraMediaActivity
+            val get8Application: Application
             //Fragment Management
             fun swapContainer(@IdRes contentContainer: Int): Int
 
@@ -68,6 +72,8 @@ interface CameraContract {
 
             fun showMyEvents()
             fun showMyContacts()
+
+            fun shareCompletion()
 
         }
 

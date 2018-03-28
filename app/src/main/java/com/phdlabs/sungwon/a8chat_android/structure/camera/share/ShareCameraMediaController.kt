@@ -1,5 +1,11 @@
 package com.phdlabs.sungwon.a8chat_android.structure.camera.share
 
+import android.graphics.Bitmap
+import android.net.Uri
+import android.provider.MediaStore
+import com.github.nkzawa.emitter.Emitter
+import com.github.nkzawa.socketio.client.Socket
+import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
 import com.phdlabs.sungwon.a8chat_android.db.channels.ChannelsManager
 import com.phdlabs.sungwon.a8chat_android.db.events.EventsManager
 import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
@@ -8,6 +14,13 @@ import com.phdlabs.sungwon.a8chat_android.model.contacts.Contact
 import com.phdlabs.sungwon.a8chat_android.model.event.EventsEight
 import com.phdlabs.sungwon.a8chat_android.model.user.User
 import com.phdlabs.sungwon.a8chat_android.structure.camera.CameraContract
+import com.phdlabs.sungwon.a8chat_android.utility.Constants
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import java.io.ByteArrayOutputStream
 
 /**
  * Created by JPAM on 3/26/18.
@@ -15,14 +28,16 @@ import com.phdlabs.sungwon.a8chat_android.structure.camera.CameraContract
  */
 class ShareCameraMediaController(val mView: CameraContract.Share.View) : CameraContract.Share.Controller {
 
-    init {
-        mView.controller = this
-    }
-
     /*Properties*/
     private var mUser: User? = null
     private var mFilePath: String? = null
     private var mMessage: String? = null
+    private var mSocket: Socket
+
+    init {
+        mView.controller = this
+        mSocket = mView.get8Application.getSocket()
+    }
 
     /*LifeCycle*/
     override fun onCreate() {
@@ -31,12 +46,27 @@ class ShareCameraMediaController(val mView: CameraContract.Share.View) : CameraC
             if (success) {
                 user?.let {
                     mUser = it
+                    //Connect to Socket i/o for sharing content
+                    mSocket.emit("connect-rooms", user.id, "channel")
+                    //mSocket.emit("connect-rooms", it.id, Constants.SocketTypes.EVENT)
+                    //mSocket.emit("connect-rooms", it.id, Constants.SocketTypes.PRIVATE_CHAT)
                 }
             }
         }
     }
 
     override fun start() {
+        //Channel
+        mSocket.on(Constants.SocketKeys.UPDATE_ROOM, onUpdateRoom)
+        mSocket.on(Constants.SocketKeys.UPDATE_CHAT_STRING, onNewMessage)
+        mSocket.on(Constants.SocketKeys.UPDATE_CHAT_CHANNEL, onNewMessage)
+        mSocket.on(Constants.SocketKeys.UPDATE_CHAT_CONTACT, onNewMessage)
+        mSocket.on(Constants.SocketKeys.UPDATE_CHAT_LOCATION, onNewMessage)
+        mSocket.on(Constants.SocketKeys.UPDATE_CHAT_MEDIA, onNewMessage)
+        mSocket.on(Constants.SocketKeys.UPDATE_CHAT_POST, onNewMessage)
+        mSocket.on(Constants.SocketKeys.UPDATE_CHAT_FILE, onNewMessage)
+        mSocket.on(Constants.SocketKeys.COMMENT, onNewMessage)
+        mSocket.on(Constants.SocketKeys.ON_ERROR, onError)
     }
 
     override fun resume() {
@@ -46,6 +76,17 @@ class ShareCameraMediaController(val mView: CameraContract.Share.View) : CameraC
     }
 
     override fun stop() {
+        //Channel
+        mSocket.off(Constants.SocketKeys.UPDATE_ROOM)
+        mSocket.off(Constants.SocketKeys.UPDATE_CHAT_STRING)
+        mSocket.off(Constants.SocketKeys.UPDATE_CHAT_CHANNEL)
+        mSocket.off(Constants.SocketKeys.UPDATE_CHAT_CONTACT)
+        mSocket.off(Constants.SocketKeys.UPDATE_CHAT_LOCATION)
+        mSocket.off(Constants.SocketKeys.UPDATE_CHAT_MEDIA)
+        mSocket.off(Constants.SocketKeys.UPDATE_CHAT_POST)
+        mSocket.off(Constants.SocketKeys.UPDATE_CHAT_FILE)
+        mSocket.off(Constants.SocketKeys.COMMENT)
+        mSocket.off(Constants.SocketKeys.ON_ERROR)
     }
 
     override fun loadMyChannels() {
@@ -137,16 +178,101 @@ class ShareCameraMediaController(val mView: CameraContract.Share.View) : CameraC
     /**
      * Push media & message to Channel, Event & Chat
      * */
+    //TODO: Fix network call
     override fun pushToChannel(channels: List<Channel>?, shareType: ShareCameraMediaActivity.ShareType?) {
-        println("Push to Channels: " + channels)
+//        //Dev
+//        println("Push to Channels: $channels")
+//        //Push Post to channels
+//        if (shareType == ShareCameraMediaActivity.ShareType.Post) {
+//            //POST
+//            UserManager.instance.getCurrentUser { isSuccess, user, token ->
+//                if (isSuccess) {
+//                    user?.let {
+//                        token?.token?.let {
+//                            channels?.let {
+//                                for (channel in channels) {
+//                                    val formBodyBuilder = MultipartBody.Builder().setType(MultipartBody.FORM)
+//                                            .addFormDataPart("message", mMessage ?: "")
+//                                            .addFormDataPart("userId", user.id!!.toString())
+//                                            .addFormDataPart("roomId", channel.room_id.toString())
+//                                    //Create Media-Post BodyPart & Call
+//                                    mFilePath?.let {
+//                                        val imageBitmap = MediaStore.Images.Media.getBitmap(mView.getActivity.contentResolver, Uri.parse("file://$it"))
+//                                        if (imageBitmap == null) {
+//                                            val bos = ByteArrayOutputStream()
+//                                            imageBitmap?.compress(Bitmap.CompressFormat.PNG, 0, bos)
+//                                            val bitmapData = bos.toByteArray()
+//                                            formBodyBuilder.addFormDataPart("file[0]",//Single Image sharing
+//                                                    "8_" + System.currentTimeMillis(),
+//                                                    RequestBody.create(MediaType.parse("image/*"), bitmapData))
+//                                        }
+//                                        val formBody = formBodyBuilder.build()
+//                                        val call = Rest.getInstance().getmCallerRx().postChannelMediaPost(token.token!!, formBody, true)
+//                                        call.subscribeOn(Schedulers.io())
+//                                                .observeOn(AndroidSchedulers.mainThread())
+//                                                .subscribe({ response ->
+//                                                    if (response.isSuccess) {
+//                                                        println("Message: " + response.messageInfo?.message)
+//                                                    } else if (response.isError) {
+//                                                        mView.showError("Could not post")
+//                                                    }
+//                                                }, { throwable ->
+//                                                    mView.showError(throwable.localizedMessage)
+//                                                    println(throwable.stackTrace)
+//
+//                                                })
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+        mView.shareCompletion()
     }
 
     override fun pushToEvent(events: List<EventsEight>?, shareType: ShareCameraMediaActivity.ShareType?) {
-        println("Push to Events: " + events)
+//        println("Push to Events: " + events) //TODO: Push to API
+//        if (shareType == ShareCameraMediaActivity.ShareType.Post) {
+//            //Share Media
+//
+//            //Share Message
+//
+//        } else {
+//            //MESSAGE
+//
+//        }
+        mView.shareCompletion()
     }
 
     override fun pushToContact(contacts: List<Contact>?, shareType: ShareCameraMediaActivity.ShareType?) {
-        println("Push to Contact: " + contacts)
+//        println("Push to Contact: " + contacts) //TODO: Push to API
+//        if (shareType == ShareCameraMediaActivity.ShareType.Post) {
+//            //Share Media
+//
+//            //Share Message
+//
+//        } else {
+//            //MESSAGE
+//
+//        }
+        mView.shareCompletion()
     }
+
+
+    /*Socket i/o*/
+    private val onNewMessage = Emitter.Listener { args ->
+        println("New Message: $args")
+    }
+
+    private val onUpdateRoom = Emitter.Listener { args ->
+        println("Room Update: $args")
+    }
+
+    private val onError = Emitter.Listener { args ->
+        println("On Error: $args")
+    }
+
 
 }

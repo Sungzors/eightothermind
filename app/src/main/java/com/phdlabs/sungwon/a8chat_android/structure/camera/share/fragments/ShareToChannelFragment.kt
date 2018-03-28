@@ -90,4 +90,15 @@ class ShareToChannelFragment : CoreFragment() {
         }
     }
 
+    /*Filter*/
+    fun filterChannelsAdapter(p0: String?) {
+        //UI
+        p0?.let {
+            //Filter Adapter
+            mAdapterMyChannel?.setFilter { filter ->
+                filter?.name?.toLowerCase()?.startsWith(p0.toLowerCase(), false)
+            }
+        }
+    }
+
 }

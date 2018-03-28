@@ -169,12 +169,12 @@ class EditingActivityController(val mView: EditingContract.View) : EditingContra
         //Save Image to Gallery
         imageFilePath.let {
             mView.activity?.let {
-                CameraControl.instance.addToGallery(
-                        it,
-                        mView.getPhotoEditor().saveImageWithSuffix(
-                                "8",
-                                CameraControl.instance.mediaFileNaming())
-                )
+//                CameraControl.instance.addToGallery(
+//                        it,
+//                        mView.getPhotoEditor().saveImageWithSuffix(
+//                                "8",
+//                                CameraControl.instance.mediaFileNaming())
+//                )
                 it.setResult(Activity.RESULT_OK)
                 /**Transition to [ShareCameraMediaActivity]*/
                 val intent = Intent(it, ShareCameraMediaActivity::class.java)

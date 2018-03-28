@@ -108,4 +108,15 @@ class ShareToEventFragment : CoreFragment() {
             }
         }
     }
+
+    /*Filter*/
+    fun filterEventsAdapter(p0: String?) {
+        //UI
+        p0?.let {
+            //Filter Adapter
+            mAdapterEvent?.setFilter { filter ->
+                filter?.event_name?.toLowerCase()?.startsWith(p0.toLowerCase(), false)
+            }
+        }
+    }
 }
