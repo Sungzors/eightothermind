@@ -3,6 +3,9 @@ package com.phdlabs.sungwon.a8chat_android.structure.camera.share
 import com.phdlabs.sungwon.a8chat_android.db.channels.ChannelsManager
 import com.phdlabs.sungwon.a8chat_android.db.events.EventsManager
 import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
+import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
+import com.phdlabs.sungwon.a8chat_android.model.contacts.Contact
+import com.phdlabs.sungwon.a8chat_android.model.event.EventsEight
 import com.phdlabs.sungwon.a8chat_android.model.user.User
 import com.phdlabs.sungwon.a8chat_android.structure.camera.CameraContract
 
@@ -18,6 +21,8 @@ class ShareCameraMediaController(val mView: CameraContract.Share.View) : CameraC
 
     /*Properties*/
     private var mUser: User? = null
+    private var mFilePath: String? = null
+    private var mMessage: String? = null
 
     /*LifeCycle*/
     override fun onCreate() {
@@ -79,23 +84,69 @@ class ShareCameraMediaController(val mView: CameraContract.Share.View) : CameraC
         mView.showMyContacts()
     }
 
+    override fun validatedSelection(channels: List<Channel>?, events: List<EventsEight>?, contacts: List<Contact>?): Boolean {
+        var availableChannels = false
+        var availabelEvents = false
+        var availableContacts = false
+        //Validate channels
+        channels?.let {
+            if (it.count() > 0) {
+                availableChannels = true
+            }
+        }
+        //Validate Events
+        events?.let {
+            if (it.count() > 0) {
+                availabelEvents = true
+            }
+        }
+        //Validate Contacts
+        contacts?.let {
+            if (it.count() > 0) {
+                availableContacts = true
+            }
+        }
+        //Validation
+        return availableChannels || availabelEvents || availableContacts
+    }
+
     /**
      * Validate Information to share Only Media || Media + Message
      * */
-    override fun infoValidation(filePath: String?, message: String?): ShareCameraMediaActivity.SHARE_TYPE? {
-        var shareType: ShareCameraMediaActivity.SHARE_TYPE? = null
+    override fun infoValidation(filePath: String?, message: String?): ShareCameraMediaActivity.ShareType? {
+        var shareType: ShareCameraMediaActivity.ShareType? = null
         //Media + Message
-        message?.let {
-            filePath?.let {
-                shareType = ShareCameraMediaActivity.SHARE_TYPE.Post
-            }
-        } ?: run {
+        if (message.isNullOrBlank()) {
             //Only Media
             filePath?.let {
-                shareType = ShareCameraMediaActivity.SHARE_TYPE.Media
+                mFilePath = it
+                shareType = ShareCameraMediaActivity.ShareType.Media
+            }
+        } else {
+            //Only Media
+            mMessage = message
+            filePath?.let {
+                mFilePath = it
+                shareType = ShareCameraMediaActivity.ShareType.Post
             }
         }
         return shareType
+    }
+
+
+    /**
+     * Push media & message to Channel, Event & Chat
+     * */
+    override fun pushToChannel(channels: List<Channel>?, shareType: ShareCameraMediaActivity.ShareType?) {
+        println("Push to Channels: " + channels)
+    }
+
+    override fun pushToEvent(events: List<EventsEight>?, shareType: ShareCameraMediaActivity.ShareType?) {
+        println("Push to Events: " + events)
+    }
+
+    override fun pushToContact(contacts: List<Contact>?, shareType: ShareCameraMediaActivity.ShareType?) {
+        println("Push to Contact: " + contacts)
     }
 
 }

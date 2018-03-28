@@ -3,6 +3,9 @@ package com.phdlabs.sungwon.a8chat_android.structure.camera
 import android.support.annotation.IdRes
 import android.support.design.widget.TabLayout
 import android.support.v4.view.ViewPager
+import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
+import com.phdlabs.sungwon.a8chat_android.model.contacts.Contact
+import com.phdlabs.sungwon.a8chat_android.model.event.EventsEight
 import com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControls.CameraCloseView
 import com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControls.CameraControlView
 import com.phdlabs.sungwon.a8chat_android.structure.camera.share.ShareCameraMediaActivity
@@ -74,11 +77,20 @@ interface CameraContract {
 
             //Pull Data
             fun loadMyChannels()
+
             fun loadMyEvents()
             fun loadMyContacts()
 
             //Validation
-            fun infoValidation(filePath: String?, message: String?): ShareCameraMediaActivity.SHARE_TYPE?
+            fun validatedSelection(channels: List<Channel>?, events: List<EventsEight>?, contacts: List<Contact>?): Boolean
+            fun infoValidation(filePath: String?, message: String?): ShareCameraMediaActivity.ShareType?
+
+            //Push Data
+            fun pushToChannel(channels: List<Channel>?, shareType: ShareCameraMediaActivity.ShareType?)
+
+            fun pushToEvent(events: List<EventsEight>?, shareType: ShareCameraMediaActivity.ShareType?)
+            fun pushToContact(contacts: List<Contact>?, shareType: ShareCameraMediaActivity.ShareType?)
+
         }
     }
 

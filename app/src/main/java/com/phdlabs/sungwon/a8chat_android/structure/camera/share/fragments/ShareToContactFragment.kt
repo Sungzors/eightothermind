@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
 import com.phdlabs.sungwon.a8chat_android.R
@@ -190,5 +189,17 @@ class ShareToContactFragment : CoreFragment() {
                 hideFavoritesCard(true)
             }
         }
+    }
+
+    /*All sharing contacts*/
+    fun getSharingContactsList(): List<Contact> {
+        val mAllContactsList = mutableListOf<Contact>()
+        if (mContactsList.count() > 0) {
+            mAllContactsList.addAll(mContactsList)
+        }
+        if (mFavContactList.count() > 0) {
+            mAllContactsList.addAll(mFavContactList)
+        }
+        return mAllContactsList
     }
 }

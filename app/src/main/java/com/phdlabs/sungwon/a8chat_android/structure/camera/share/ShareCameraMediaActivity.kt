@@ -32,7 +32,7 @@ class ShareCameraMediaActivity : CoreActivity(), CameraContract.Share.View, View
     private var mPostFragment: PostFragment? = null
 
     //Share Type
-    enum class SHARE_TYPE {
+    enum class ShareType {
         Media, Post
     }
 
@@ -102,55 +102,37 @@ class ShareCameraMediaActivity : CoreActivity(), CameraContract.Share.View, View
         when (p0) {
         /*Share*/
             asc_share_button -> {
-
-                controller.infoValidation(mFilePath, mPostFragment?.getMessage())?.let {
-                    if (it == SHARE_TYPE.Media) {
-                        //Only media - No message
-
-                        //TODO: Get Channels to share with
-                        shareToChannelFragment?.let {
-                            //TODO: Share content to selected channels
-
-                            //TODO: If there is text create a post, if not share as media.
+                //Validate Selection
+                if (controller.validatedSelection(shareToChannelFragment?.mSelectedChannelList,
+                                shareToEventFragment?.mEventList, shareToContactFragment?.getSharingContactsList())) {
+                    //Validate Content
+                    controller.infoValidation(mFilePath, mPostFragment?.getMessage())?.let {
+                        if (it == ShareType.Media) {
+                            //Only media - No message
+                            shareToChannelFragment?.let {
+                                controller.pushToChannel(it.mSelectedChannelList, ShareType.Media)
+                            }
+                            shareToEventFragment?.let {
+                                controller.pushToEvent(it.mEventList, ShareType.Media)
+                            }
+                            shareToContactFragment?.let {
+                                controller.pushToContact(it.getSharingContactsList(), ShareType.Media)
+                            }
+                        } else {
+                            //Media + Message
+                            shareToChannelFragment?.let {
+                                controller.pushToChannel(it.mSelectedChannelList, ShareType.Post)
+                            }
+                            shareToEventFragment?.let {
+                                controller.pushToEvent(it.mEventList, ShareType.Post)
+                            }
+                            shareToContactFragment?.let {
+                                controller.pushToContact(it.getSharingContactsList(), ShareType.Post)
+                            }
                         }
-                        //TODO: Get Events to share with
-                        shareToEventFragment?.let {
-                            //TODO: Share content to selected events
-
-                            //TODO: If there is text share media & then message
-                        }
-                        //TODO: Get Contacts to share with
-                        shareToContactFragment?.let {
-                            //TODO: Share content to selected contacts -> Private Chats
-
-                            //TODO: If there is text share media & then message
-                        }
-
-
-                    } else {
-                        //Media + Message
-
-
-                        //TODO: Get Channels to share with
-                        shareToChannelFragment?.let {
-                            //TODO: Share content to selected channels
-
-                            //TODO: If there is text create a post, if not share as media.
-                        }
-                        //TODO: Get Events to share with
-                        shareToEventFragment?.let {
-                            //TODO: Share content to selected events
-
-                            //TODO: If there is text share media & then message
-                        }
-                        //TODO: Get Contacts to share with
-                        shareToContactFragment?.let {
-                            //TODO: Share content to selected contacts -> Private Chats
-
-                            //TODO: If there is text share media & then message
-                        }
-
                     }
+                } else {
+                    showError("Select Channel, Event or Contact to share with")
                 }
             }
         }
@@ -186,6 +168,6 @@ class ShareCameraMediaActivity : CoreActivity(), CameraContract.Share.View, View
         currentContainer = 0
     }
 
-    //TODO: Setup SearchView
+    //TODO: Setup SearchView & act upon available fragments to filter all simultaneously
 
 }
