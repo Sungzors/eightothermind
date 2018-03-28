@@ -87,8 +87,8 @@ class UserManager {
         }
     }
 
-    fun getFavoritesCount(roomId: Int, callback: (Int?, String?) -> Unit){
-        getCurrentUser{ success, user, token ->
+    fun getFavoritesCount(roomId: Int, callback: (Int?, String?) -> Unit) {
+        getCurrentUser { success, user, token ->
             token?.token?.let {
                 val call = Rest.getInstance().getmCallerRx().getRoomFaveMsg(it, roomId, user?.id!!)
                 call.subscribeOn(Schedulers.io())
@@ -102,10 +102,13 @@ class UserManager {
                                 callback(null, "Did not find user")
                             }
 
-                        }, {t: Throwable? ->
+                        }, { t: Throwable? ->
                             callback(null, t?.localizedMessage)
                         })
-                        
+            }
+        }
+    }
+
     /**
      * [updateFirebaseToken]
      * Update firebase token called by [EightFirebaseInstanceIdService]
@@ -139,5 +142,6 @@ class UserManager {
             }
         }
     }
+
 
 }
