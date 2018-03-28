@@ -163,7 +163,7 @@
     <string name="delete">Delete</string>
     <string name="msg_notif">Message notifications</string>
     <string name="comment_notifications">Comment notifications</string>
-    <string name="followed_notifications">Followed notifications</string>
+    <string name="invited_notifications">Invited Notifications</string>
 
 
 </resources>

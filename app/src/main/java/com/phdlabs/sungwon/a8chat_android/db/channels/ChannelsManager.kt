@@ -612,6 +612,13 @@ class ChannelsManager {
         }
     }
 
+    /**
+     * [findRoomWithMessageId]
+     *
+     * */
+    fun findRoomWithMessageId(messageId: Int){
+
+    }
 }
 
 

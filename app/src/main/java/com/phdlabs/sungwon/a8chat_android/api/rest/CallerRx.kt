@@ -3,6 +3,7 @@ package com.phdlabs.sungwon.a8chat_android.api.rest
 import com.phdlabs.sungwon.a8chat_android.api.data.*
 import com.phdlabs.sungwon.a8chat_android.api.data.channel.ChannelPostData
 import com.phdlabs.sungwon.a8chat_android.api.data.channel.CommentPostData
+import com.phdlabs.sungwon.a8chat_android.api.data.notifications.UserFBToken
 import com.phdlabs.sungwon.a8chat_android.api.response.*
 import com.phdlabs.sungwon.a8chat_android.api.response.channels.LikeResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.channels.MyChannelRoomsResponse
@@ -22,8 +23,13 @@ import com.phdlabs.sungwon.a8chat_android.api.response.favorite.PrivateChatFavor
 import com.phdlabs.sungwon.a8chat_android.api.response.media.FileResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.media.MediaResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.messages.FavoriteMessageResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.notifications.ClearBadgeCountResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.privateChat.PrivateChatResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.room.EnterLeaveRoomResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.user.GlobalSettingsResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.user.UserDataResponse
 import com.phdlabs.sungwon.a8chat_android.api.rest.Caller.TOKEN
+import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.phdlabs.sungwon.a8chat_android.model.user.User
 import com.phdlabs.sungwon.a8chat_android.model.user.registration.RegistrationData
 import io.reactivex.Observable
@@ -43,14 +49,26 @@ interface CallerRx {
     @POST("/users")
     fun login(@Body registrationData: RegistrationData): Observable<UserDataResponse>
 
-    @PATCH("/users/{userid}")
-    fun updateUser(@Header(TOKEN) token: String, @Path("userid") userId: Int, @Body userData: UserData): Observable<UserDataResponse>
+    /**
+     * Update User Profile
+     * */
+    @PATCH("/users/{userId}")
+    fun updateUser(@Header(TOKEN) token: String, @Path("userId") userId: Int, @Body userData: UserData): Observable<UserDataResponse>
 
-    @GET("/users/{userid}")
-    fun getUser(@Header(TOKEN) token: String, @Path("userid") userId: Int): Observable<UserDataResponse>
+    /**
+     * Update Firebase Token
+     * */
+    @PATCH("/users/{userId}")
+    fun updateFBToken(@Header(TOKEN) token: String, @Path("userId") userId: Int, @Body userFBToken: UserFBToken): Observable<UserDataResponse>
+
+    @GET("/users/{userId}")
+    fun getUser(@Header(TOKEN) token: String, @Path("userId") userId: Int): Observable<UserDataResponse>
 
     @GET("/users/{userId}/friends")
     fun getUserFriends(@Header(TOKEN) token: String, @Path("userId") userId: Int): Observable<UserFriendsResponse>
+
+    //TODO: Get user global settings
+
 
     /*MEDIA*/
     @Multipart
@@ -183,10 +201,18 @@ interface CallerRx {
     /**
      * [getPrivateChats]
      * @Get current user's private chat
-     * Should be cached at download.
+     * WARNING -> NOT CURRENTLY USED - IT DOESN'T CONFORM TO [Room] Model
      * */
     @GET("/users/{userId}/privateChats")
     fun getPrivateChats(@Header(TOKEN) token: String, @Path("userId") userId: Int): Observable<PrivateChatResponse>
+
+    /**
+     * [getPrivateAndGroupChats]
+     * @Get current user's private chats & group chats
+     * Used for current [Room] Model
+     * */
+    @GET("/users/{userId}/private&group_chats")
+    fun getPrivateAndGroupChats(@Header(TOKEN) token: String, @Path("userId") userId: Int): Observable<ChatsRetrievalResponse>
 
     /**
      * [getChatHistory]
@@ -233,6 +259,37 @@ interface CallerRx {
 
     /*NOTIFICATIONS*/
 
+    //TODO: Notification Settins on Each Settings Screen -> Channel, PrivateChat, GroupChat & Event
+
+    /**
+     * Clear Notification badge count when the user enteres the App
+     * */
+    @PATCH("/users/{userId}/clear_badge_count")
+    fun clearNotificationBadgeCount(@Header(TOKEN) token: String, @Path("userId") userId: Int): Observable<ClearBadgeCountResponse>
+
+    /**
+     * [changeGlobalNotificationSettings]
+     * Used to change global notifications settings from User Profile
+     * All query parameters are Strings based on Boolean values -> true || false
+     * @query messageNotifications
+     * @query likeNotifications
+     * @query commentNotifications
+     * @query userAddedNotification
+     * */
+    @PATCH("/users/{userId}/notifications/global")
+    fun changeGlobalNotificationSettings(@Header(TOKEN) token: String, @Path("userId") userId: Int,
+                                         @Query("message_notifications") messageNotifications: String?,
+                                         @Query("like_notifications") likeNotifications: String?,
+                                         @Query("comment_notifications") commentNotifications: String?,
+                                         @Query("user_added_notifications") userAddedNotification: String?): Observable<UserDataResponse>
+
+    /**
+     * []
+     * Read user's global settings for caching
+     * */
+    @GET("/users/{userId}/settings/global")
+    fun readGlobalNotificationSettings(@Header(TOKEN) token: String, @Path("userId") userId: Int): Observable<GlobalSettingsResponse>
+
     /**
      * [updateReceipt]
      * Turns on or off read receipts for every chat the user is in
@@ -241,7 +298,6 @@ interface CallerRx {
     @PATCH("/users/{userId}/receipts")
     fun updateReceipt(@Header(TOKEN) token: String, @Path("userId") userId: Int,
                       @Body receiptData: ReceiptPatchData): Observable<User>
-
 
     /*ROOM CONTROL*/
 

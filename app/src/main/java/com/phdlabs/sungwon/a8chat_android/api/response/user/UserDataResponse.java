@@ -1,5 +1,6 @@
-package com.phdlabs.sungwon.a8chat_android.api.response;
+package com.phdlabs.sungwon.a8chat_android.api.response.user;
 
+import com.phdlabs.sungwon.a8chat_android.api.response.ErrorResponse;
 import com.phdlabs.sungwon.a8chat_android.model.user.User;
 
 /**

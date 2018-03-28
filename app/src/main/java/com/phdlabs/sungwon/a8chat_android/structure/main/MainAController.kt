@@ -2,7 +2,12 @@ package com.phdlabs.sungwon.a8chat_android.structure.main
 
 import android.content.Intent
 import com.github.nkzawa.socketio.client.Socket
+import com.google.firebase.iid.FirebaseInstanceId
+import com.phdlabs.sungwon.a8chat_android.db.notifications.NotificationsManager
+import com.phdlabs.sungwon.a8chat_android.db.room.RoomManager
+import com.phdlabs.sungwon.a8chat_android.db.user.SettingsManager
 import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
+import com.phdlabs.sungwon.a8chat_android.services.googlePlay.CheckGPServices
 import com.phdlabs.sungwon.a8chat_android.structure.camera.CameraActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 
@@ -18,18 +23,17 @@ class MainAController(val mView: MainContract.View) : MainContract.Controller {
 
     init {
         mView.controller = this
-        //mSocket = mView.get8Application.getSocket()
-        //isConnected = false
+    }
+
+    override fun onCreate() {
     }
 
     override fun start() {
-        getUserId { userId ->
-            //mSocket.emit(Constants.SocketKeys.USER_ENTERED_8, userId)
-            //isConnected = true
-        }
     }
 
     override fun resume() {
+        //Google Play Services -> Firebase + Notifications
+        CheckGPServices.instance.isGooglePlayServicesAvailable(mView.activity)
     }
 
     override fun pause() {
@@ -59,4 +63,36 @@ class MainAController(val mView: MainContract.View) : MainContract.Controller {
         }
     }
 
+    /**
+     *  Update Firebase, Dwalla & other needed tokens to keep the cached user tokens updated
+     * */
+    override fun updateTokens() {
+        //Notifications
+        UserManager.instance.getCurrentUser { success, user, token ->
+            if (success) {
+                user?.let {
+                    //Firebase
+                    FirebaseInstanceId.getInstance().token?.let {
+                        //Refresh token
+                        UserManager.instance.updateFirebaseToken(it)
+                    }
+                    //TODO: Dwoalla
+                }
+            }
+        }
+    }
+
+    /**
+     *  Reset Global Notification badge count
+     * */
+    override fun updateNotificationBadges() {
+        NotificationsManager.instance.clearNotificationBadges()
+    }
+
+    /**
+     *  Global User Settings Refresh
+     * */
+    override fun readGlobalSettings() {
+        SettingsManager.instance.readUserSettings()
+    }
 }

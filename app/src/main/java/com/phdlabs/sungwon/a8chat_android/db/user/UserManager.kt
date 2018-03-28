@@ -1,5 +1,6 @@
 package com.phdlabs.sungwon.a8chat_android.db.user
 
+import com.phdlabs.sungwon.a8chat_android.api.data.notifications.UserFBToken
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
 import com.phdlabs.sungwon.a8chat_android.model.user.User
 import com.phdlabs.sungwon.a8chat_android.model.user.registration.Token
@@ -104,6 +105,37 @@ class UserManager {
                         }, {t: Throwable? ->
                             callback(null, t?.localizedMessage)
                         })
+                        
+    /**
+     * [updateFirebaseToken]
+     * Update firebase token called by [EightFirebaseInstanceIdService]
+     * - Called if InstanceID token is updated or compromised
+     * */
+    fun updateFirebaseToken(firebaseToken: String) {
+        getCurrentUser { success, user, token ->
+            if (success) {
+                user?.let {
+                    token?.token?.let {
+                        val call = Rest.getInstance().getmCallerRx().updateFBToken(it, user.id!!, UserFBToken(firebaseToken))
+                        call.subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe({ response ->
+                                    if (response.isSuccess) {
+                                        response.user?.let {
+                                            it.save()
+                                        }
+                                    } else if (response.isError) {
+                                        //Ignore
+                                        //println("Error updating Firebase Token")
+                                        //TODO: Setup Schedulers to ask for token again
+                                    }
+                                }, {
+                                    //Ignore
+                                    //println(it.localizedMessage)
+                                    //TODO: Setup Schedulers to ask for token again
+                                })
+                    }
+                }
             }
         }
     }

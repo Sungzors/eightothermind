@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity
 import com.phdlabs.sungwon.a8chat_android.structure.main.MainActivity
 
 /**
- * Created by paix on 3/15/18.
+ * Created by JPAM on 3/15/18.
  * - Splash Screen Used to Load Initial Data if user is Signed In
  */
 class SplashScreenActivity : AppCompatActivity() {
