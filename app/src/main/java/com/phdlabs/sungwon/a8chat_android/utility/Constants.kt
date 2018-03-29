@@ -38,6 +38,7 @@ object Constants {
      * */
     object SocketKeys {
         const val CONNECT = "connect"
+        const val CONNECT_ROOMS = "connect-rooms"
         const val UPDATE_ROOM = "update-room"
         const val UPDATE_CHAT_STRING = "update-chat-string"
         const val UPDATE_CHAT_MEDIA = "update-chat-media"

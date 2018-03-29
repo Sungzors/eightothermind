@@ -61,6 +61,8 @@ class EditingActivityController(val mView: EditingContract.View) : EditingContra
     /*Load image preview*/
     override fun loadImagePreview(filePath: String?) {
 
+        //TODO: Load 90Degrees for Portrait & 0 || 270 Degrees for Landscape. Also for the sharing screen thumbnail.
+
         filePath?.let {
             //Load Image Preview
             imageFilePath = it
@@ -71,7 +73,7 @@ class EditingActivityController(val mView: EditingContract.View) : EditingContra
                 }
                 Picasso.with(mView.getContext())
                         .load(File(it))
-                        .rotate(presentWithRotation) //Full screen //TODO: Probably 90 degrees
+                        .rotate(presentWithRotation) //Full screen
                         .into(mView.getPreviewLayout())
             } else {
                 Picasso.with(mView.getContext())
@@ -168,17 +170,18 @@ class EditingActivityController(val mView: EditingContract.View) : EditingContra
     override fun sendImage() {
         //Save Image to Gallery
         imageFilePath.let {
+            val savedImageFilePath = mView.getPhotoEditor().saveImageWithSuffix(
+                    "8",
+                    CameraControl.instance.mediaFileNaming()
+            )
             mView.activity?.let {
-//                CameraControl.instance.addToGallery(
-//                        it,
-//                        mView.getPhotoEditor().saveImageWithSuffix(
-//                                "8",
-//                                CameraControl.instance.mediaFileNaming())
-//                )
+                CameraControl.instance.addToGallery(
+                        it,
+                        savedImageFilePath)
                 it.setResult(Activity.RESULT_OK)
                 /**Transition to [ShareCameraMediaActivity]*/
                 val intent = Intent(it, ShareCameraMediaActivity::class.java)
-                intent.putExtra(Constants.CameraIntents.IMAGE_FILE_PATH, imageFilePath)
+                intent.putExtra(Constants.CameraIntents.IMAGE_FILE_PATH, savedImageFilePath)
                 it.startActivityForResult(intent, Constants.RequestCodes.SHARE_MEDIA)
             }
         }

@@ -59,7 +59,7 @@ class ChatActivity : CoreActivity(), ChatContract.View {
     private var mParticipantId: Int = 8
 
     /*Files*/
-    lateinit var fileListerDialog: FileListerDialog
+    private lateinit var fileListerDialog: FileListerDialog
 
     private var mMedia = mutableListOf<Media>()
 

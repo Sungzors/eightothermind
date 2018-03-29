@@ -30,7 +30,12 @@ class PostFragment : CoreFragment() {
         super.onStart()
         //Thumbnail
         arguments?.getString(Constants.CameraIntents.IMAGE_FILE_PATH)?.let {
-            Picasso.with(context).load("file://$it").placeholder(R.drawable.addphoto).into(fsp_thumbnail_iv)
+            Picasso.with(context)
+                    .load("file://$it")
+                    .resize(70,70)
+                    .centerCrop()
+                    .placeholder(R.drawable.addphoto)
+                    .into(fsp_thumbnail_iv)
         }
     }
 
@@ -38,6 +43,4 @@ class PostFragment : CoreFragment() {
         return fsp_post_message.text.toString()
     }
 
-
-    //TODO: Validate & Capture Post Message. -> Send result to ShareCameraMediaActivity Activity.
 }

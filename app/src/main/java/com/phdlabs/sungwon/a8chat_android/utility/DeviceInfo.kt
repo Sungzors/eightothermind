@@ -9,7 +9,7 @@ import android.os.Build
 class DeviceInfo {
 
     /*Properties*/
-    private var warningDevices = arrayOf(nexus5X, xiaomiMix2)
+    private var warningDevices = arrayOf(nexus5X, xiaomiMix2, emulatorNexus5x, galaxyJ3Emerge)
 
     /*Companion*/
     companion object {
@@ -17,6 +17,8 @@ class DeviceInfo {
         /*Warning DeviceInfo*/
         val nexus5X = "Nexus 5X"
         val xiaomiMix2 = "Mi MIX 2"
+        val emulatorNexus5x = "Android SDK built for x86"
+        val galaxyJ3Emerge = "Galaxy J3 Emerge"
     }
 
     /*Object holder for singleton pattern*/

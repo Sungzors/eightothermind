@@ -106,7 +106,7 @@ interface CallerRx {
     fun deleteMessagio(@Header(TOKEN) token: String, @Path("messageId") messageId: Int, @Path("userId") userId: Int): Observable<ErrorResponse>
 
     @GET("/rooms/{roomId}/favorite_messages/user/{userId}")
-    fun getRoomFaveMsg(@Header(TOKEN) token: String, @Path("roomId") roomId: Int, @Path("userId") userId: Int) : Observable<FavoriteMessageResponse>
+    fun getRoomFaveMsg(@Header(TOKEN) token: String, @Path("roomId") roomId: Int, @Path("userId") userId: Int): Observable<FavoriteMessageResponse>
 
     /*CHANNEL*/
     //Create new channel
@@ -242,6 +242,13 @@ interface CallerRx {
     fun inviteContactsToEight(@Header(TOKEN) token: String,
                               @Path("userId") userId: Int,
                               @Body contactsPostData: Array<out Any>): Observable<ContactsInvitedResponse>
+
+    /**
+     * [sendPrivateChatMessage]
+     * Send Message in a Private Chat between two users
+     * */
+    @POST("/messages/string")
+    fun sendMessageString(@Header(TOKEN) token: String, @Body message: SendMessageStringData): Observable<ErrorResponse>
 
 
     /*ROOM*/
