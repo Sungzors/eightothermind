@@ -9,9 +9,11 @@ import android.provider.MediaStore
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.util.Log
+import android.widget.Toast
 import com.github.nkzawa.emitter.Emitter
 import com.github.nkzawa.socketio.client.Socket
 import com.phdlabs.sungwon.a8chat_android.R
+import com.phdlabs.sungwon.a8chat_android.api.data.FavoriteData
 import com.phdlabs.sungwon.a8chat_android.api.data.SendMessageStringData
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
 import com.phdlabs.sungwon.a8chat_android.api.utility.GsonHolder
@@ -432,5 +434,32 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
     //Like
     override fun likePost(messageId: Int, unlike: Boolean) {
         ChannelsManager.instance.likeUnlikePost(messageId, unlike)
+    }
+
+    override fun favoriteMessage(message: Message, userId: Int, position: Int) {
+
+        UserManager.instance.getCurrentUser{ success, _, token ->
+            if (success) {
+                val call = Rest.getInstance().getmCallerRx().favoriteMessagio(token?.token!!, message.id!!, FavoriteData(userId), message.isFavorited)
+                call.subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                {response ->
+                                    if(response.isSuccess){
+                                        message.isFavorited = true
+                                        mMessages.set(position, message)
+                                        Toast.makeText(mView.getContext(), "Message Favorited!", Toast.LENGTH_SHORT).show()
+                                    } else if (response.isError){
+                                        mView.hideProgress()
+                                        mView.showError("Unable to favorite, try again later")
+                                    }
+
+                                }, { throwable ->
+                                    mView.hideProgress()
+                                    println("Error creating channel: " + throwable.message)
+                                    mView.showError("Unable to favorite, try again later")
+                                })
+            }
+        }
     }
 }

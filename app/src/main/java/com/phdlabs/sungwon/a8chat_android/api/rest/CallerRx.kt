@@ -99,8 +99,9 @@ interface CallerRx {
                   @Query("selfDestruct") selfDestruct: Boolean?, @Query("post") post: Boolean?,
                   @Query("schedule") schedule: Boolean?, @Query("minutes") minutes: Int?): Observable<FileResponse>
 
+    /*If the client wishes to unfavorite a message, set the query parameter of unfavorite to true*/
     @PATCH("/messages/{messageId}/favorite")
-    fun favoriteMessagio(@Header(TOKEN) token: String, @Path("messageId") messageId: Int, @Body data: FavoriteData): Observable<ErrorResponse>
+    fun favoriteMessagio(@Header(TOKEN) token: String, @Path("messageId") messageId: Int, @Body data: FavoriteData, @Query("unfavorite") unfavorite: Boolean): Observable<StatusResponse>
 
     @DELETE("/messages/{messageId}/user/{userId}")
     fun deleteMessagio(@Header(TOKEN) token: String, @Path("messageId") messageId: Int, @Path("userId") userId: Int): Observable<ErrorResponse>

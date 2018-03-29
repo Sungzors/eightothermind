@@ -188,6 +188,10 @@ open class Message : RealmObject() {
     /*Transient*/
     var timeDisplayed: Boolean = false
 
+    @SerializedName("isFavorited")
+    @Expose
+    var isFavorited: Boolean = false
+
     /*Message methods*/
     fun getUserName(): String? = (user?.first_name + " " + user?.last_name)
 

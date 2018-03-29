@@ -4,9 +4,9 @@ import android.content.Intent
 import android.net.Uri
 import android.widget.EditText
 import com.phdlabs.sungwon.a8chat_android.api.data.channel.ChannelPostData
-import com.phdlabs.sungwon.a8chat_android.model.channel.Comment
-import com.phdlabs.sungwon.a8chat_android.model.channel.ChannelShowNest
 import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
+import com.phdlabs.sungwon.a8chat_android.model.channel.ChannelShowNest
+import com.phdlabs.sungwon.a8chat_android.model.channel.Comment
 import com.phdlabs.sungwon.a8chat_android.model.media.Media
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
@@ -127,6 +127,9 @@ interface ChannelContract {
             fun requestReadingExternalStorage()
 
             fun permissionResults(requestCode: Int, permissions: Array<out String>, grantResults: IntArray): Boolean
+
+            /*Fave Posts*/
+            fun favoriteMessage(message: Message, userId: Int, position: Int)
         }
     }
 
