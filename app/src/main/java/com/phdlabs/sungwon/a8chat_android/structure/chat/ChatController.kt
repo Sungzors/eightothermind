@@ -236,19 +236,19 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
     override fun favoriteMessage(message: Message) {
         getUserId { id ->
             id?.let {
-                UserManager.instance.getCurrentUser{ success, _, token ->
+                UserManager.instance.getCurrentUser { success, _, token ->
                     if (success) {
                         val call = Rest.getInstance().getmCallerRx().favoriteMessagio(token?.token!!, message.id!!, FavoriteData(it))
                         call.subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(
-                                        {response ->
+                                        { response ->
                                             Toast.makeText(mView.getContext(), "Message Favorited!", Toast.LENGTH_SHORT).show()
                                         }, { throwable ->
-                                            mView.hideProgress()
-                                            println("Error creating channel: " + throwable.message)
-                                            mView.showError("Unable to favorite, try again later")
-                                        }
+                                    mView.hideProgress()
+                                    println("Error creating channel: " + throwable.message)
+                                    mView.showError("Unable to favorite, try again later")
+                                }
                                 )
                     }
                 }
@@ -260,20 +260,20 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
     override fun deleteMessage(message: Message) {
         getUserId { id ->
             id?.let {
-                UserManager.instance.getCurrentUser{ success, _, token ->
+                UserManager.instance.getCurrentUser { success, _, token ->
                     if (success) {
                         val call = Rest.getInstance().getmCallerRx().deleteMessagio(token?.token!!, message.id!!, it)
                         call.subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(
-                                        {response ->
+                                        { response ->
                                             mMessages.remove(message)
                                             mView.updateRecycler()
                                         }, { throwable ->
-                                            mView.hideProgress()
-                                            println("Error creating channel: " + throwable.message)
-                                            mView.showError("Unable to delete, try again later")
-                                        }
+                                    mView.hideProgress()
+                                    println("Error creating channel: " + throwable.message)
+                                    mView.showError("Unable to delete, try again later")
+                                }
                                 )
                     }
                 }
@@ -426,21 +426,14 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
             //Set image in UI
             val imageUrl = CameraControl.instance.getImagePathFromResult(mView.getActivity, requestCode, resultCode, data)
             imageUrl?.let {
-
                 //Prepare image for uploading
                 val file = File(it)
-//                val multipartBodyPart = MultipartBody.Part.createFormData(
-//                        "file",
-//                        file.name,
-//                        RequestBody.newInstanceChannelRoom(MediaType.parse("image/*"), file)
-//                )
                 var userId = -1
                 getUserId { id ->
                     id?.let {
                         userId = it
                     }
                 }
-
                 val multipartBodyPart = MultipartBody.Builder().setType(MultipartBody.FORM)
                         .addFormDataPart("userId", userId.toString())
                         .addFormDataPart("roomId", mRoomId.toString())

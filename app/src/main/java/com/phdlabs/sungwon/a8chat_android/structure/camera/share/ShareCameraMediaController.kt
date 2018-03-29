@@ -5,17 +5,23 @@ import android.net.Uri
 import android.provider.MediaStore
 import com.github.nkzawa.emitter.Emitter
 import com.github.nkzawa.socketio.client.Socket
+import com.phdlabs.sungwon.a8chat_android.api.data.SendMessageStringData
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
 import com.phdlabs.sungwon.a8chat_android.db.channels.ChannelsManager
 import com.phdlabs.sungwon.a8chat_android.db.events.EventsManager
+import com.phdlabs.sungwon.a8chat_android.db.room.RoomManager
 import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
 import com.phdlabs.sungwon.a8chat_android.model.contacts.Contact
 import com.phdlabs.sungwon.a8chat_android.model.event.EventsEight
+import com.phdlabs.sungwon.a8chat_android.model.message.Message
+import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.phdlabs.sungwon.a8chat_android.model.user.User
 import com.phdlabs.sungwon.a8chat_android.structure.camera.CameraContract
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
+import com.vicpin.krealmextensions.query
+import com.vicpin.krealmextensions.queryFirst
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import okhttp3.MediaType
@@ -48,9 +54,9 @@ class ShareCameraMediaController(val mView: CameraContract.Share.View) : CameraC
                 user?.let {
                     mUser = it
                     //Connect to Socket i/o for sharing content
-                    mSocket.emit("connect-rooms", user.id, Constants.SocketTypes.CHANNEL)
-                    mSocket.emit("connect-rooms", it.id, Constants.SocketTypes.EVENT)
-                    mSocket.emit("connect-rooms", it.id, Constants.SocketTypes.PRIVATE_CHAT)
+                    mSocket.emit(Constants.SocketKeys.CONNECT_ROOMS, user.id, Constants.SocketTypes.CHANNEL)
+                    mSocket.emit(Constants.SocketKeys.CONNECT_ROOMS, it.id, Constants.SocketTypes.EVENT)
+                    mSocket.emit(Constants.SocketKeys.CONNECT_ROOMS, it.id, Constants.SocketTypes.PRIVATE_CHAT)
                 }
             }
         }
@@ -165,6 +171,7 @@ class ShareCameraMediaController(val mView: CameraContract.Share.View) : CameraC
     /**
      * Push media & message to Channel, Event & Chat
      * */
+    //TODO: Translate to a general method for a Media Manager
     override fun pushToChannel(channels: List<Channel>?, shareType: ShareCameraMediaActivity.ShareType?) {
         //Dev
         println("Push to Channels: $channels")
@@ -216,8 +223,10 @@ class ShareCameraMediaController(val mView: CameraContract.Share.View) : CameraC
         mView.shareCompletion()
     }
 
+    /*Share to Events*/
+    //TODO: Translate to a general method for a Media Manager
     override fun pushToEvent(events: List<EventsEight>?, shareType: ShareCameraMediaActivity.ShareType?) {
-        println("Push to Events: " + events) //TODO: Push to API
+        println("Push to Events: $events") //TODO: Push to API
         if (shareType == ShareCameraMediaActivity.ShareType.Post) {
             //Share Media
 
@@ -228,20 +237,83 @@ class ShareCameraMediaController(val mView: CameraContract.Share.View) : CameraC
 
 
         }
+        //TODO: User feedback of sharing success!
         mView.shareCompletion()
     }
 
+    /*Share to Private Chat*/
+    //TODO: Translate to a general method for a Media Manager
     override fun pushToContact(contacts: List<Contact>?, shareType: ShareCameraMediaActivity.ShareType?) {
-        println("Push to Contact: " + contacts) //TODO: Push to API
+        println("Push to Contact: $contacts") //TODO: Push to API
         if (shareType == ShareCameraMediaActivity.ShareType.Post) {
             //Share Media
+            UserManager.instance.getCurrentUser { isSuccess, user, token ->
+                if (isSuccess) {
+                    user?.let {
+                        token?.token?.let {
+                            contacts?.let {
+                                //Will collect variables
+                                for (contact in it) {
+                                    //Find Private Chat Room
+                                    RoomManager.instance.getRoomWithPrticipantsIds(user.id!!, contact.id, { room ->
+                                        room?.let {
+                                            //Start Content packaging for media
+                                            mFilePath?.let {
+                                                MediaStore.Images.Media.getBitmap(mView.getActivity.contentResolver, Uri.parse("file:///$it"))?.let {
+                                                    val formBodyBuilder = MultipartBody.Builder().setType(MultipartBody.FORM)
+                                                            .addFormDataPart("userId", user.id!!.toString())
+                                                            .addFormDataPart("roomId", room.id!!.toString())
+                                                    //Create Media-Post BodyPart & Call
+                                                    val bos = ByteArrayOutputStream()
+                                                    it.compress(Bitmap.CompressFormat.PNG, 0, bos)
+                                                    val bitmapData = bos.toByteArray()
+                                                    formBodyBuilder.addFormDataPart("file[0]",
+                                                            "8_" + System.currentTimeMillis(),
+                                                            RequestBody.create(MediaType.parse("image/*"), bitmapData))
 
+                                                    val formBody = formBodyBuilder.build()
+                                                    val call = Rest.getInstance().getmCallerRx().postChannelMediaPost(token.token!!, formBody, false)
+                                                    call.subscribeOn(Schedulers.io())
+                                                            .observeOn(AndroidSchedulers.mainThread())
+                                                            .subscribe({ response ->
+                                                                if (response.isSuccess) {
+                                                                    println("Message: " + response.messageInfo?.message)
+                                                                } else if (response.isError) {
+                                                                    mView.showError("Could not post")
+                                                                }
+                                                            }, { throwable ->
+                                                                mView.showError(throwable.localizedMessage)
+                                                            })
+                                                }
+                                            }
+                                            //Start content packaging for message
+                                            mMessage?.let {
+                                                val call = Rest.getInstance().getmCallerRx().sendMessageString(
+                                                        token.token!!,
+                                                        SendMessageStringData(user.id!!, it, room.id!!))
+                                                call.subscribeOn(Schedulers.io())
+                                                        .observeOn(AndroidSchedulers.mainThread())
+                                                        .subscribe({ response ->
+                                                            if (response.isSuccess) {
+                                                                println("Message" + response.message)
+                                                            } else if (response.isError) {
+                                                                mView.showError("Could not send message")
+                                                            }
+                                                        }, { throwable ->
+                                                            mView.showError(throwable.localizedMessage)
+                                                        })
+                                            }
+                                        }
+                                    })
+                                }
+                            }
+                        }
+                    }
+                }
+            }
             //Share Message
-
-        } else {
-            //MESSAGE
-
         }
+        //TODO: User feedback of sharing success!
         mView.shareCompletion()
     }
 

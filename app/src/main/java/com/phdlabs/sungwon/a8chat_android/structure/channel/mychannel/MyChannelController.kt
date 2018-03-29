@@ -112,7 +112,7 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
         //Emmit socket room connectivity
         UserManager.instance.getCurrentUser { success, user, _ ->
             if (success) {
-                mSocket.emit("connect-rooms", user?.id, "channel")
+                mSocket.emit(Constants.SocketKeys.CONNECT_ROOMS, user?.id, Constants.SocketTypes.CHANNEL)
                 //Socket io ON
                 socketOn()
             }
