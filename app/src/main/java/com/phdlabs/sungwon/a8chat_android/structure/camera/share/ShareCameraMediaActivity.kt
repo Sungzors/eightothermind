@@ -114,6 +114,7 @@ class ShareCameraMediaActivity : CoreActivity(), CameraContract.Share.View, View
     /*OnClick*/
     private fun setupClickers() {
         asc_share_button.setOnClickListener(this)
+        tcn_cancel.setOnClickListener(this)
     }
 
     override fun onClick(p0: View?) {
@@ -152,6 +153,10 @@ class ShareCameraMediaActivity : CoreActivity(), CameraContract.Share.View, View
                 } else {
                     showError("Select Channel, Event or Contact to share with")
                 }
+            }
+        /*Cancel*/
+            tcn_cancel -> {
+                onBackPressed()
             }
         }
     }
