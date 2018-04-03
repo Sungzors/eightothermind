@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.support.v7.widget.StaggeredGridLayoutManager
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
@@ -25,7 +26,7 @@ import kotlinx.android.synthetic.main.activity_channel_list.*
 /**
  * Created by SungWon on 12/6/2017.
  */
-class MyChannelsListActivity: CoreActivity(), ChannelContract.MyChannelsList.View{
+class MyChannelsListActivity : CoreActivity(), ChannelContract.MyChannelsList.View, View.OnClickListener {
     override lateinit var controller: ChannelContract.MyChannelsList.Controller
 
     override fun layoutId(): Int = R.layout.activity_channel_list
@@ -35,12 +36,12 @@ class MyChannelsListActivity: CoreActivity(), ChannelContract.MyChannelsList.Vie
     private lateinit var mAdapter: BaseRecyclerAdapter<Channel, BaseViewHolder>
 
     private val mChannelList = mutableListOf<Channel>()
-    private val mFilteredList = mutableListOf<Channel>()
 
     override fun onStart() {
         super.onStart()
         MyChannelsListController(this)
         controller.start()
+        setupClickers()
         setUpRecycler()
         controller.retrieveChannels()
         setUpSearcher()
@@ -62,41 +63,57 @@ class MyChannelsListActivity: CoreActivity(), ChannelContract.MyChannelsList.Vie
         controller.stop()
     }
 
-    private fun setUpSearcher(){
+    fun setupClickers() {
+        acl_searchview.setOnClickListener(this)
+    }
+
+    override fun onClick(p0: View?) {
+        when (p0) {
+            acl_searchview -> {
+                acl_searchview.isIconified = false
+            }
+        }
+    }
+
+    private fun setUpSearcher() {
         val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
         acl_searchview.setSearchableInfo(searchManager.getSearchableInfo(componentName))
         acl_searchview.queryHint = resources.getString(R.string.search_channel)
         acl_searchview.isSubmitButtonEnabled = true
         acl_searchview.setOnQueryTextListener(
-            object : SearchView.OnQueryTextListener{
-                override fun onQueryTextSubmit(p0: String?): Boolean {
-                    mFilteredList.clear()
-                    for(channel in mChannelList){
-                        if(channel.name?.toLowerCase()!!.contains(p0!!.toLowerCase())){
-                            mFilteredList.add(channel)
+                object : SearchView.OnQueryTextListener {
+                    override fun onQueryTextSubmit(p0: String?): Boolean {
+                        mAdapter.setFilter { filter ->
+                            p0?.let {
+                                filter?.name?.toLowerCase()?.startsWith(it.toLowerCase(), false)
+                            }
                         }
-
+                        acl_searchview.clearFocus()
+                        val inputm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                        inputm.hideSoftInputFromWindow(acl_searchview.windowToken, 0)
+                        return false
                     }
-                    updateRecyclerSearch()
-                    acl_searchview.clearFocus()
-                    val inputm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                    inputm.hideSoftInputFromWindow(acl_searchview.windowToken, 0)
-                    return false
-                }
 
-                override fun onQueryTextChange(p0: String?): Boolean = false
-            }
+                    override fun onQueryTextChange(p0: String?): Boolean {
+                        mAdapter.setFilter { filter ->
+                            p0?.let {
+                                filter?.name?.toLowerCase()?.startsWith(it.toLowerCase(), false)
+                            }
+                        }
+                        return true
+                    }
+                }
         )
     }
 
-    private fun setUpRecycler(){
-        mAdapter = object : BaseRecyclerAdapter<Channel, BaseViewHolder>(){
+    private fun setUpRecycler() {
+        mAdapter = object : BaseRecyclerAdapter<Channel, BaseViewHolder>() {
             override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: Channel?, position: Int, type: Int) {
                 bindItemViewHolder(viewHolder!!, data!!)
             }
 
             override fun viewHolder(inflater: LayoutInflater?, parent: ViewGroup?, type: Int): BaseViewHolder {
-                return object : BaseViewHolder(R.layout.card_view_channel_list, inflater!!, parent){
+                return object : BaseViewHolder(R.layout.card_view_channel_list, inflater!!, parent) {
                     override fun addClicks(views: ViewMap?) {
                         views!!.click({ view ->
                             val intent = Intent().putExtra(Constants.IntentKeys.CHANNEL_ID, getItem(adapterPosition).id)
@@ -113,7 +130,7 @@ class MyChannelsListActivity: CoreActivity(), ChannelContract.MyChannelsList.Vie
         acl_my_channels.adapter = mAdapter
     }
 
-    private fun bindItemViewHolder(viewHolder: BaseViewHolder, data: Channel){
+    private fun bindItemViewHolder(viewHolder: BaseViewHolder, data: Channel) {
         val pic = viewHolder.get<ImageView>(R.id.cvcl_channel_pic)
         val text = viewHolder.get<TextView>(R.id.cvcl_channel_text)
         Picasso.with(this).load(data.avatar).transform(CircleTransform()).placeholder(R.drawable.addphoto).into(pic)
@@ -127,12 +144,6 @@ class MyChannelsListActivity: CoreActivity(), ChannelContract.MyChannelsList.Vie
     override fun updateRecycler() {
         mAdapter.clear()
         mAdapter.setItems(mChannelList)
-        mAdapter.notifyDataSetChanged()
-    }
-
-    private fun updateRecyclerSearch(){
-        mAdapter.clear()
-        mAdapter.setItems(mFilteredList)
         mAdapter.notifyDataSetChanged()
     }
 }
