@@ -2,12 +2,13 @@ package com.phdlabs.sungwon.a8chat_android.structure.main.lobby
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
+import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.widget.ImageView
 import android.widget.TextView
 import com.phdlabs.sungwon.a8chat_android.R
@@ -39,9 +40,8 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
     override lateinit var controller: LobbyContract.Controller
 
     /*Adapters*/
-    private lateinit var mAdapterMyChannel: BaseRecyclerAdapter<Channel, BaseViewHolder>
+    private lateinit var mAdapterChannels: BaseRecyclerAdapter<Channel, BaseViewHolder>
     private lateinit var mAdapterEvent: BaseRecyclerAdapter<EventsEight, BaseViewHolder>
-    private lateinit var mAdapterFollow: BaseRecyclerAdapter<Channel, BaseViewHolder>
     private lateinit var mAdapterChat: BaseRecyclerAdapter<Room, BaseViewHolder>
 
     /*Layout*/
@@ -91,8 +91,8 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
     }
 
     /*My Channels*/
-    override fun setUpMyChannelRecycler(myChannels: MutableList<Channel>) {
-        mAdapterMyChannel = object : BaseRecyclerAdapter<Channel, BaseViewHolder>() {
+    override fun setUpChannelRecycler(myChannels: MutableList<Channel>) {
+        mAdapterChannels = object : BaseRecyclerAdapter<Channel, BaseViewHolder>() {
             override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: Channel?, position: Int, type: Int) {
                 bindMyChannelViewHolder(viewHolder!!, data!!)
             }
@@ -103,11 +103,11 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
                 }
             }
         }
-        mAdapterMyChannel.setItems(myChannels)
-        fl_my_channels_title.visibility = TextView.VISIBLE
-        fl_my_channels_recycler.visibility = RecyclerView.VISIBLE
-        fl_my_channels_recycler.layoutManager = LinearLayoutManager(coreActivity.context, LinearLayoutManager.HORIZONTAL, false)
-        fl_my_channels_recycler.adapter = mAdapterMyChannel
+        mAdapterChannels.setItems(myChannels)
+        fl_channels_title.visibility = TextView.VISIBLE
+        fl_channels_recycler.visibility = RecyclerView.VISIBLE
+        fl_channels_recycler.layoutManager = LinearLayoutManager(coreActivity.context, LinearLayoutManager.HORIZONTAL, false)
+        fl_channels_recycler.adapter = mAdapterChannels
     }
 
     private fun bindMyChannelViewHolder(viewHolder: BaseViewHolder, data: Channel) {
@@ -134,6 +134,13 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
         }
     }
 
+    /*Followed Channels*/
+    override fun addFollowedChannels(followedChannels: MutableList<Channel>) {
+        mAdapterChannels.addAll(followedChannels)
+        mAdapterChannels.notifyDataSetChanged()
+    }
+
+
     /*Events*/
     override fun setUpEventsRecycler(events: MutableList<EventsEight>) {
         mAdapterEvent = object : BaseRecyclerAdapter<EventsEight, BaseViewHolder>() {
@@ -155,7 +162,6 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
                     }
                 }
             }
-
         }
         mAdapterEvent.setItems(events)
         fl_events_title.visibility = TextView.VISIBLE
@@ -197,51 +203,6 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
 
     }
 
-    /*Followed Channels*/
-    override fun setUpChannelsFollowedRecycler(channelsFollowed: MutableList<Channel>) {
-        mAdapterFollow = object : BaseRecyclerAdapter<Channel, BaseViewHolder>() {
-            override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: Channel?, position: Int, type: Int) {
-                bindReadChannelViewHolder(viewHolder!!, data!!)
-            }
-
-            override fun viewHolder(inflater: LayoutInflater?, parent: ViewGroup?, type: Int): BaseViewHolder {
-                return object : BaseViewHolder(R.layout.card_view_lobby_follow_channel, inflater!!, parent) {
-
-                }
-            }
-        }
-        mAdapterFollow.setItems(channelsFollowed)
-        fl_follow_title.visibility = TextView.VISIBLE
-        fl_follow_recycler.visibility = RecyclerView.VISIBLE
-        fl_follow_recycler.layoutManager = LinearLayoutManager(coreActivity.context, LinearLayoutManager.HORIZONTAL, false)
-        fl_follow_recycler.adapter = mAdapterFollow
-    }
-
-    //Read channels
-    private fun bindReadChannelViewHolder(viewHolder: BaseViewHolder, data: Channel) {
-        val profilePic = viewHolder.get<ImageView>(R.id.cvlc_picture_profile)
-        val channelName = viewHolder.get<TextView>(R.id.cvlc_name_channel)
-        val unreadChannelIndicator = viewHolder.get<ImageView>(R.id.cvlc_background_unread)
-        //Unread indicator
-        data.unread_messages?.let {
-            if (it) {
-                unreadChannelIndicator.visibility = View.VISIBLE
-            } else {
-                unreadChannelIndicator.visibility = View.GONE
-            }
-        }
-        Picasso.with(coreActivity.context).load(data.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(profilePic)
-        channelName.text = data.name
-        profilePic.setOnClickListener {
-            val intent = Intent(activity, MyChannelActivity::class.java)
-            intent.putExtra(Constants.IntentKeys.CHANNEL_ID, data.id)
-            intent.putExtra(Constants.IntentKeys.CHANNEL_NAME, data.name)
-            intent.putExtra(Constants.IntentKeys.ROOM_ID, data.room_id?.toInt())
-            intent.putExtra(Constants.IntentKeys.OWNER_ID, data.user_creator_id?.toInt())
-            startActivity(intent)
-        }
-    }
-
     /*CHAT - Conversations*/
     override fun setUpChatRecycler(chats: MutableList<Room>) {
         mAdapterChat = object : BaseRecyclerAdapter<Room, BaseViewHolder>() {
@@ -278,7 +239,10 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
         mAdapterChat.setItems(chats)
         fl_chat_title.visibility = TextView.VISIBLE
         fl_chat_recycler.visibility = RecyclerView.VISIBLE
-        fl_chat_recycler.layoutManager = LinearLayoutManager(coreActivity.context)
+        fl_chat_recycler.layoutManager = object :LinearLayoutManager(coreActivity.context) {
+            override fun canScrollHorizontally(): Boolean = false
+            override fun canScrollVertically(): Boolean = false
+        }
         fl_chat_recycler.adapter = mAdapterChat
     }
 

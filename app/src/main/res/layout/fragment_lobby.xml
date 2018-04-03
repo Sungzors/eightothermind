@@ -4,57 +4,38 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <!--My Channels-->
+    <!--My Channels & Followed Channels-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <include layout="@layout/progress_view" />
+
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:descendantFocusability="blocksDescendants">
 
             <TextView
-                android:id="@+id/fl_my_channels_title"
+                android:id="@+id/fl_channels_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
                 android:layout_marginTop="15dp"
-                android:text="@string/my_channels"
+                android:text="@string/lobby_channels"
                 android:textStyle="bold"
                 android:visibility="gone" />
         </RelativeLayout>
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/fl_my_channels_recycler"
+            android:id="@+id/fl_channels_recycler"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="10sp"
+            android:nestedScrollingEnabled="true"
             android:visibility="gone" />
 
-        <!--Channels I Follow-->
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:id="@+id/fl_follow_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="15dp"
-                android:text="@string/channels_i_follow"
-                android:textStyle="bold"
-                android:visibility="gone" />
-
-        </RelativeLayout>
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/fl_follow_recycler"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10sp"
-            android:visibility="gone" />
 
         <!--Events-->
         <RelativeLayout
@@ -85,7 +66,8 @@
         <!--Chats-->
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:descendantFocusability="blocksDescendants">
 
             <TextView
                 android:id="@+id/fl_chat_title"
@@ -97,14 +79,16 @@
                 android:text="@string/conversations"
                 android:textStyle="bold"
                 android:visibility="gone" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/fl_chat_recycler"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:visibility="gone"
+                android:layout_below="@+id/fl_chat_title"/>
         </RelativeLayout>
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/fl_chat_recycler"
-            android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:layout_margin="5dp"
-            android:visibility="gone" />
 
     </LinearLayout>
 

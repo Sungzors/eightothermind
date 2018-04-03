@@ -45,7 +45,6 @@ class LobbyController(val mView: LobbyContract.View,
         callMyChannels(refresh)
         callEvent(refresh)
         callFollow(refresh)
-        //callChannel()
         callChats()
     }
 
@@ -72,7 +71,7 @@ class LobbyController(val mView: LobbyContract.View,
                     mMyChannel = it.toMutableList()
                     if (mMyChannel.size > 0) {
                         //UI
-                        mView.setUpMyChannelRecycler(mMyChannel)
+                        mView.setUpChannelRecycler(mMyChannel)
                     }
                 }
             }
@@ -126,7 +125,7 @@ class LobbyController(val mView: LobbyContract.View,
                 }
                 //UI
                 if (mChannelsFollowed.size > 0) {
-                    mView.setUpChannelsFollowedRecycler(mChannelsFollowed)
+                    mView.addFollowedChannels(mChannelsFollowed)
                 }
             }
         })
@@ -161,11 +160,10 @@ class LobbyController(val mView: LobbyContract.View,
         callMyChannels(true)
         callEvent(true)
         callFollow(true)
-        //callChannel()
         callChats()
     }
 
-    override fun getMyChannel(): MutableList<Channel> = mMyChannel
+    override fun getMyChannels(): MutableList<Channel> = mMyChannel
 
     override fun getEvents(): MutableList<EventsEight> = mEvents
 
