@@ -50,6 +50,11 @@ class ContactsActivity : CoreActivity(), ContactsContract.EightFriends.View, Vie
     override fun onResume() {
         super.onResume()
         controller.resume()
+        if (ac_button_contacts.isChecked) {
+            replaceFragment(ContactsFragment(), false)
+        } else {
+            replaceFragment(ChannelsFragment(), false)
+        }
     }
 
     override fun onPause() {
@@ -83,6 +88,7 @@ class ContactsActivity : CoreActivity(), ContactsContract.EightFriends.View, Vie
         ac_button_channels.text = getString(R.string.channels_selector_default_text)
         ac_button_contacts.setOnClickListener(this)
         ac_button_channels.setOnClickListener(this)
+        //TODO: Save last selection
         ac_button_contacts.isChecked = true //Start loading contacts
         ac_button_channels.isChecked = false
         //Search
