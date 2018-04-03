@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:ignore="MissingPrefix">
 
     <include layout="@layout/progress_view" />
 
@@ -99,7 +100,7 @@
                                     android:padding="2dp"
                                     android:text="@string/first_name"
                                     android:textColor="@color/my_profile_name"
-                                    android:textStyle="bold" />
+                                    fontPath="fonts/NunitoSans-Regular.ttf" />
 
                                 <!--Phone number-->
                                 <TextView
@@ -109,7 +110,8 @@
                                     android:padding="2dp"
                                     android:text="@string/phone_number"
                                     android:textColor="@color/my_profile_name"
-                                    android:textStyle="normal" />
+                                    android:textStyle="normal"
+                                    fontPath="fonts/NunitoSans-Regular.ttf" />
 
                                 <!--Language-->
                                 <TextView
@@ -118,7 +120,8 @@
                                     android:layout_height="match_parent"
                                     android:padding="2dp"
                                     android:text="@string/my_language"
-                                    android:textColor="@color/my_language_color" />
+                                    android:textColor="@color/my_language_color"
+                                    fontPath="fonts/NunitoSans-Regular.ttf"/>
 
 
                             </LinearLayout>
@@ -181,7 +184,8 @@
                                 android:layout_marginStart="8dp"
                                 android:text="@string/chat"
                                 android:textAlignment="center"
-                                android:textColor="@color/white" />
+                                android:textColor="@color/white"
+                                fontPath="fonts/NunitoSans-Light.ttf"/>
                         </LinearLayout>
 
                         <LinearLayout
@@ -210,7 +214,8 @@
                                 android:layout_marginStart="6dp"
                                 android:text="@string/call"
                                 android:textAlignment="center"
-                                android:textColor="@color/white" />
+                                android:textColor="@color/white"
+                                fontPath="fonts/NunitoSans-Light.ttf"/>
                         </LinearLayout>
 
                         <LinearLayout
@@ -239,7 +244,8 @@
                                 android:layout_marginStart="8dp"
                                 android:text="@string/video"
                                 android:textAlignment="center"
-                                android:textColor="@color/white" />
+                                android:textColor="@color/white"
+                                fontPath="fonts/NunitoSans-Light.ttf"/>
                         </LinearLayout>
 
                     </LinearLayout>
@@ -278,7 +284,8 @@
                             android:layout_margin="20dp"
                             android:layout_toEndOf="@id/asc_notif_icon"
                             android:text="@string/notification"
-                            tools:ignore="RelativeOverlap" />
+                            tools:ignore="RelativeOverlap"
+                            fontPath="fonts/NunitoSans-Regular.ttf"/>
 
                         <Switch
                             android:id="@+id/asc_notif_switch"
@@ -317,7 +324,8 @@
                             android:layout_toEndOf="@id/asc_money_icon"
                             android:drawableEnd="@drawable/ic_keyboard_arrow_right_black_24dp"
                             android:text="@string/send_money"
-                            tools:ignore="RelativeOverlap" />
+                            tools:ignore="RelativeOverlap"
+                            fontPath="fonts/NunitoSans-Regular.ttf"/>
 
                     </RelativeLayout>
 
@@ -349,7 +357,8 @@
                             android:layout_margin="20dp"
                             android:layout_toEndOf="@id/asc_favemsg_icon"
                             android:drawableEnd="@drawable/ic_keyboard_arrow_right_black_24dp"
-                            android:text="@string/fave_messages" />
+                            android:text="@string/fave_messages"
+                            fontPath="fonts/NunitoSans-Regular.ttf"/>
 
                     </RelativeLayout>
                 </LinearLayout>
@@ -384,7 +393,8 @@
                             android:layout_height="wrap_content"
                             android:layout_margin="20dp"
                             android:layout_toEndOf="@id/asc_share_icon"
-                            android:text="@string/share" />
+                            android:text="@string/share"
+                            fontPath="fonts/NunitoSans-Regular.ttf"/>
                     </RelativeLayout>
 
                     <View
@@ -413,7 +423,8 @@
                             android:layout_height="wrap_content"
                             android:layout_margin="20dp"
                             android:layout_toEndOf="@id/asc_close_icon"
-                            android:text="@string/clear_conversation" />
+                            android:text="@string/clear_conversation"
+                            fontPath="fonts/NunitoSans-Regular.ttf"/>
 
                     </RelativeLayout>
 
@@ -443,7 +454,8 @@
                             android:layout_height="wrap_content"
                             android:layout_margin="20dp"
                             android:layout_toEndOf="@id/acs_block_icon"
-                            android:text="@string/block_contact" />
+                            android:text="@string/block_contact"
+                            fontPath="fonts/NunitoSans-Regular.ttf"/>
                     </RelativeLayout>
                 </LinearLayout>
             </android.support.v7.widget.CardView>
@@ -465,7 +477,8 @@
                     style="@style/RadioButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    fontPath="fonts/NunitoSans-Regular.ttf"/>
 
                 <!--Files-->
                 <RadioButton
@@ -473,7 +486,8 @@
                     style="@style/RadioButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    fontPath="fonts/NunitoSans-Regular.ttf"/>
             </info.hoang8f.android.segmented.SegmentedGroup>
 
             <!--Media & Files Frag Container-->

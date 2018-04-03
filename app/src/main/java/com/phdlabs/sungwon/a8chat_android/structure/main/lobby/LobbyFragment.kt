@@ -2,7 +2,6 @@ package com.phdlabs.sungwon.a8chat_android.structure.main.lobby
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -236,8 +235,8 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
             val intent = Intent(activity, MyChannelActivity::class.java)
             intent.putExtra(Constants.IntentKeys.CHANNEL_ID, data.id)
             intent.putExtra(Constants.IntentKeys.CHANNEL_NAME, data.name)
-            intent.putExtra(Constants.IntentKeys.ROOM_ID, data.room_id?.toInt())
-            intent.putExtra(Constants.IntentKeys.OWNER_ID, data.user_creator_id?.toInt())
+            intent.putExtra(Constants.IntentKeys.ROOM_ID, data.room_id)
+            intent.putExtra(Constants.IntentKeys.OWNER_ID, data.user_creator_id)
             startActivity(intent)
         }
     }

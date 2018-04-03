@@ -19,7 +19,10 @@
             android:layout_toStartOf="@+id/vlc_checkbox"
             android:gravity="start|center"
             android:textColor="@color/my_profile_name"
-            android:textSize="15sp" />
+            android:textSize="15sp"
+            xmlns:tools="http://schemas.android.com/tools"
+            tools:ignore="MissingPrefix"
+            fontPath="fonts/NunitoSans-Regular.ttf" />
 
         <CheckBox
             android:id="@+id/vlc_checkbox"

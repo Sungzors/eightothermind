@@ -2,11 +2,8 @@ package com.phdlabs.sungwon.a8chat_android.structure.login
 
 import android.app.Activity
 import android.content.Intent
-import android.os.Bundle
-import android.support.v4.content.ContextCompat
 import android.text.SpannableString
 import android.text.style.UnderlineSpan
-import android.view.WindowManager
 import android.widget.Toast
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.api.data.LoginData
@@ -113,6 +110,7 @@ class ConfirmActivity : CoreActivity() {
             val content = SpannableString(getString(R.string.resend_code))
             content.setSpan(UnderlineSpan(), 0, content.length, 0)
             ac_textview_resend_code.text = content
+            if(!isRegister) ac_button_create_profile.text = getString(R.string.login_profile)
         }
     }
 

@@ -2,7 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingPrefix">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -27,7 +29,8 @@
             android:layout_marginTop="15dp"
             android:padding="5dp"
             android:textColor="@color/grey"
-            android:textSize="15sp" />
+            android:textSize="15sp"
+            fontPath="fonts/NunitoSans-Regular.ttf"/>
 
     </LinearLayout>
 
@@ -40,7 +43,8 @@
         android:layout_marginStart="15dp"
         android:minLines="2"
         android:textAlignment="textStart"
-        android:textStyle="normal" />
+        android:textStyle="normal"
+        fontPath="fonts/NunitoSans-Regular.ttf"/>
 
     <!--Separator-->
     <View

@@ -23,6 +23,7 @@ import com.phdlabs.sungwon.a8chat_android.api.response.favorite.PrivateChatFavor
 import com.phdlabs.sungwon.a8chat_android.api.response.media.FileResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.media.MediaResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.messages.FavoriteMessageResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.messages.FavoriteSelfMessageResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.notifications.ClearBadgeCountResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.privateChat.PrivateChatResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.room.EnterLeaveRoomResponse
@@ -108,6 +109,9 @@ interface CallerRx {
 
     @GET("/rooms/{roomId}/favorite_messages/user/{userId}")
     fun getRoomFaveMsg(@Header(TOKEN) token: String, @Path("roomId") roomId: Int, @Path("userId") userId: Int) : Observable<FavoriteMessageResponse>
+
+    @GET("/users/{userId}/messages/favorite")
+    fun getUserFaveMsg(@Header(TOKEN) token: String, @Path("userId") userId: Int) : Observable<FavoriteSelfMessageResponse>
 
     /*CHANNEL*/
     //Create new channel

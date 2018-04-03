@@ -2,7 +2,9 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingPrefix">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -51,7 +53,8 @@
                     android:layout_toEndOf="@id/acc_channel_picture"
                     android:text="@string/name_your_channel"
                     android:textAllCaps="true"
-                    android:textSize="12sp" />
+                    android:textSize="12sp"
+                    fontPath="fonts/NunitoSans-Bold.ttf"/>
 
                 <EditText
                     android:id="@+id/acc_channel_name"
@@ -62,7 +65,9 @@
                     android:layout_marginStart="20dp"
                     android:layout_toEndOf="@id/acc_channel_picture"
                     android:imeOptions="actionNext"
-                    android:inputType="textCapSentences" />
+                    android:inputType="textCapSentences"
+                    fontPath="fonts/NunitoSans-Regular.ttf"
+                    />
 
                 <TextView
                     android:id="@+id/acc_unique_your_f_id"
@@ -73,7 +78,8 @@
                     android:layout_marginTop="20dp"
                     android:text="@string/unique_id"
                     android:textAllCaps="true"
-                    android:textSize="12sp" />
+                    android:textSize="12sp"
+                    fontPath="fonts/NunitoSans-Bold.ttf"/>
 
                 <EditText
                     android:id="@+id/acc_unique_id"
@@ -83,7 +89,8 @@
                     android:layout_marginEnd="20dp"
                     android:layout_marginStart="20dp"
                     android:imeOptions="actionNext"
-                    android:inputType="textCapSentences" />
+                    android:inputType="textCapSentences"
+                    fontPath="fonts/NunitoSans-Regular.ttf" />
 
                 <TextView
                     android:id="@+id/acc_short_f_description"
@@ -94,7 +101,8 @@
                     android:layout_marginTop="20dp"
                     android:text="@string/short_description"
                     android:textAllCaps="true"
-                    android:textSize="12sp" />
+                    android:textSize="12sp"
+                    fontPath="fonts/NunitoSans-Bold.ttf"/>
 
                 <EditText
                     android:id="@+id/acc_short_description"
@@ -105,7 +113,8 @@
                     android:layout_marginEnd="20dp"
                     android:layout_marginStart="20dp"
                     android:imeOptions="actionDone"
-                    android:inputType="textCapSentences" />
+                    android:inputType="textCapSentences"
+                    fontPath="fonts/NunitoSans-Regular.ttf" />
 
             </RelativeLayout>
         </android.support.v7.widget.CardView>
@@ -130,7 +139,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="20dp"
-                    android:text="@string/add_to_profile" />
+                    android:text="@string/add_to_profile"
+                    fontPath="fonts/NunitoSans-Regular.ttf"/>
 
                 <Switch
                     android:id="@+id/acc_add_to_profile_button"

@@ -181,6 +181,10 @@ open class Message : RealmObject() {
     @Expose
     var roomId: Int? = null
 
+    @SerializedName("roomType")
+    @Expose
+    var roomType: String? = null
+
     @SerializedName("user")
     @Expose
     var user: UserInfo? = null
@@ -191,6 +195,10 @@ open class Message : RealmObject() {
     @SerializedName("isFavorited")
     @Expose
     var isFavorited: Boolean = false
+
+    @SerializedName("channel")
+    @Expose
+    var channel: Channel? = null
 
     /*Message methods*/
     fun getUserName(): String? = (user?.first_name + " " + user?.last_name)

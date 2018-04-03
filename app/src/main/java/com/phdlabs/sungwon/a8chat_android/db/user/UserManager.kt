@@ -109,6 +109,25 @@ class UserManager {
         }
     }
 
+    fun getSelfFavoriteCount(callback: (Int?, String?) -> Unit){
+        getCurrentUser { success, user, token ->
+            val call = Rest.getInstance().getmCallerRx().getUserFaveMsg(token?.token!!, user?.id!!)
+            call.subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({response ->
+                        if (response.isSuccess){
+                            response?.favoriteMessages.let {
+                                callback(it?.size, null)
+                            }
+                        } else if (response.isError){
+                            callback(null, "Did not find user")
+                        }
+                    }, {t: Throwable? ->
+                        callback(null, t?.localizedMessage)
+                    })
+        }
+    }
+
     /**
      * [updateFirebaseToken]
      * Update firebase token called by [EightFirebaseInstanceIdService]

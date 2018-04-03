@@ -7,7 +7,9 @@
     android:layout_marginTop="5dp"
     android:layout_marginBottom="5dp"
     android:layout_marginStart="8dp"
-    android:layout_marginEnd="8dp">
+    android:layout_marginEnd="8dp"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingPrefix">
 
     <android.support.v7.widget.CardView
         android:id="@+id/cvle_card"
@@ -49,7 +51,7 @@
                 android:ellipsize="end"
                 android:text="barg"
                 android:textSize="14sp"
-                android:textStyle="bold"/>
+                fontPath="fonts/NunitoSans-Bold.ttf"/>
             <TextView
                 android:id="@+id/cvle_message"
                 android:layout_width="match_parent"
@@ -62,14 +64,16 @@
                 android:layout_marginBottom="10dp"
                 android:maxLines="1"
                 android:ellipsize="end"
-                android:text="No Message"/>
+                android:text="No Message"
+                fontPath="fonts/NunitoSans-Regular.ttf"/>
             <TextView
                 android:id="@+id/cvle_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:layout_marginEnd="20dp"/>
+                android:layout_marginEnd="20dp"
+                fontPath="fonts/NunitoSans-Regular.ttf"/>
         </RelativeLayout>
     </android.support.v7.widget.CardView>
 </LinearLayout>

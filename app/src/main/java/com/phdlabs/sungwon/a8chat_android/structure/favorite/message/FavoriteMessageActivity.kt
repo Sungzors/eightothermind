@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.support.v4.content.ContextCompat
+import android.support.v7.widget.CardView
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -13,9 +14,12 @@ import android.widget.*
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.model.media.Media
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
+import com.phdlabs.sungwon.a8chat_android.structure.channel.mychannel.MyChannelActivity
 import com.phdlabs.sungwon.a8chat_android.structure.channel.postshow.ChannelPostShowActivity
+import com.phdlabs.sungwon.a8chat_android.structure.chat.ChatActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.structure.favorite.FavoriteContract
+import com.phdlabs.sungwon.a8chat_android.structure.groupchat.GroupChatActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.RoundedCornersTransform
 import com.phdlabs.sungwon.a8chat_android.utility.SuffixDetector
@@ -57,8 +61,9 @@ class FavoriteMessageActivity : CoreActivity(), FavoriteContract.Message.View{
         mRoomId = intent?.getIntExtra(Constants.IntentKeys.ROOM_ID, 0)!!
         mType = intent?.getIntExtra(Constants.IntentKeys.FAVE_TYPE, 0)!!
         setToolbarTitle("Favorite Messages")
+        showBackArrow(R.drawable.ic_back)
 
-        controller.getFavorites(mRoomId)
+        if(mType == 3) controller.getFavorites(mRoomId, true) else controller.getFavorites(mRoomId, false)
         controller.start()
     }
 
@@ -115,13 +120,13 @@ class FavoriteMessageActivity : CoreActivity(), FavoriteContract.Message.View{
                             3 -> bindFileChannel(viewHolder!!, data!!)
                         }
 
-                        viewHolder?.get<LinearLayout>(R.id.card_view)?.setOnClickListener {
+                        viewHolder?.get<CardView>(R.id.card_view)?.setOnClickListener {
                             setResult(Constants.ResultCode.SUCCESS)
                             finish()
                         }
                     }
                     3 -> {
-                        if(data?.channelInfo == null){
+                        if(data?.channel == null){
                             val name = viewHolder?.get<TextView>(R.id.cvfl_sender_name)
                             val date = viewHolder?.get<TextView>(R.id.cvfl_send_time)
                             val pic = viewHolder?.get<ImageView>(R.id.cvfl_profile_pic)
@@ -139,12 +144,33 @@ class FavoriteMessageActivity : CoreActivity(), FavoriteContract.Message.View{
                                 Constants.MessageTypes.TYPE_MONEY -> bindMoneyViewHolder(viewHolder!!, data)
                                 Constants.MessageTypes.TYPE_CHANNEL -> bindChannelViewHolder(viewHolder!!, data)
                             }
+                            viewHolder?.get<LinearLayout>(R.id.card_view)?.setOnClickListener {
+                                if(data.roomType == "private"){
+                                    val intent = Intent(context, ChatActivity::class.java)
+                                    intent.putExtra(Constants.IntentKeys.CHAT_NAME, data.user?.first_name + " " + data.user?.last_name)
+                                    intent.putExtra(Constants.IntentKeys.ROOM_ID, data.roomId)
+                                    intent.putExtra(Constants.IntentKeys.CHAT_PIC, data.user?.avatar
+                                            ?: "")
+                                    startActivity(intent)
+                                } else if (data.roomType == "group"){
+                                    val intent = Intent(context, GroupChatActivity::class.java)
+                                    intent.putExtra(Constants.IntentKeys.ROOM_ID, data.roomId)
+                                }
+                            }
                         } else {
                             when(type){
                                 0 -> bindMessageChannel(viewHolder!!, data)
                                 1 -> bindMediaChannel(viewHolder!!, data)
                                 2 -> bindPostChannel(viewHolder!!, data)
                                 3 -> bindFileChannel(viewHolder!!, data)
+                            }
+                            viewHolder?.get<CardView>(R.id.card_view)?.setOnClickListener {
+                                val intent = Intent(context, MyChannelActivity::class.java)
+                                intent.putExtra(Constants.IntentKeys.CHANNEL_ID, data.channel?.id)
+                                intent.putExtra(Constants.IntentKeys.CHANNEL_NAME, data.channel?.name)
+                                intent.putExtra(Constants.IntentKeys.ROOM_ID, data.roomId)
+                                intent.putExtra(Constants.IntentKeys.OWNER_ID, data.channel?.user_creator_id)
+                                startActivity(intent)
                             }
                         }
                     }
@@ -156,7 +182,7 @@ class FavoriteMessageActivity : CoreActivity(), FavoriteContract.Message.View{
 
             override fun getItemType(t: Message?): Int {
 
-                if(t?.channelInfo == null){
+                if(t?.channel == null){
                     return -1
                 }
 
@@ -423,9 +449,9 @@ class FavoriteMessageActivity : CoreActivity(), FavoriteContract.Message.View{
         val posterName = viewHolder.get<TextView>(R.id.cvps_poster_name)
         val postDate = viewHolder.get<TextView>(R.id.cvps_post_date)
 
-        Picasso.with(this).load(data.user!!.avatar).transform(CircleTransform()).into(pic)
+        Picasso.with(this).load(data.channel!!.avatar).transform(CircleTransform()).into(pic)
         text.text = data.message
-        posterName.text = data.getUserName()
+        posterName.text = data.channel?.name
         val formatter = SimpleDateFormat("EEE - h:mm aaa")
         postDate.text = formatter.format(data.createdAt)
     }
@@ -436,11 +462,11 @@ class FavoriteMessageActivity : CoreActivity(), FavoriteContract.Message.View{
         val posterName = viewHolder.get<TextView>(R.id.cvpp_poster_name)
         val postDate = viewHolder.get<TextView>(R.id.cvpp_post_date)
 
-        Picasso.with(this).load(data.user!!.avatar).transform(CircleTransform()).into(pic)
+        Picasso.with(this).load(data.channel!!.avatar).transform(CircleTransform()).into(pic)
         data.mediaArray?.let {
             Picasso.with(this).load(it[0]?.media_file).into(postPic)
         }
-        posterName.text = data.getUserName()
+        posterName.text = data.channel?.name
         val formatter = SimpleDateFormat("EEE - h:mm aaa")
         postDate.text = formatter.format(data.createdAt)
     }
@@ -463,8 +489,8 @@ class FavoriteMessageActivity : CoreActivity(), FavoriteContract.Message.View{
         val likeCount = viewHolder.get<TextView>(R.id.cvpm_like_count)
         val commentCount = viewHolder.get<TextView>(R.id.cvpmnm_comment_count)
         //Load info
-        picasso.load(data.user!!.avatar).transform(CircleTransform()).into(posterPic)
-        posterName.text = data.getUserName()
+        picasso.load(data.channel!!.avatar).transform(CircleTransform()).into(posterPic)
+        posterName.text = data.channel?.name
         //Date
         val formatter = SimpleDateFormat("EEE - h:mm aaa")
         postDate.text = formatter.format(data.createdAt)

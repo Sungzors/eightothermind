@@ -2,7 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingPrefix">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -34,7 +36,8 @@
                     android:paddingEnd="10dp"
                     android:paddingStart="10dp"
                     android:text="@string/channels_i_follow"
-                    android:textStyle="bold" />
+                    fontPath="fonts/NunitoSans-Bold.ttf"
+                    />
                 <!--Channels I follow recycler view-->
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/cf_channels_i_follow_recycler"
@@ -62,7 +65,7 @@
                     android:paddingEnd="10dp"
                     android:paddingStart="10dp"
                     android:text="@string/popular_channels"
-                    android:textStyle="bold" />
+                    fontPath="fonts/NunitoSans-Bold.ttf" />
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/cf_channels_popular_recycler"
@@ -91,7 +94,7 @@
                     android:paddingEnd="10dp"
                     android:paddingStart="10dp"
                     android:text="@string/channels"
-                    android:textStyle="bold" />
+                    fontPath="fonts/NunitoSans-Bold.ttf"/>
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/cf_channels_all_recycler"

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    tools:ignore="MissingPrefix">
 
     <!--Toolbar - My Contacts-->
     <android.support.design.widget.AppBarLayout
@@ -31,7 +32,8 @@
                 style="@style/RadioButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                fontPath="fonts/NunitoSans-Regular.ttf"/>
 
             <!--Channels-->
             <RadioButton
@@ -39,7 +41,8 @@
                 style="@style/RadioButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                fontPath="fonts/NunitoSans-Regular.ttf"/>
         </info.hoang8f.android.segmented.SegmentedGroup>
 
         <!--Search Bar-->
@@ -62,7 +65,8 @@
                 android:imeOptions="actionSearch"
                 android:inputType="text"
                 android:maxLines="1"
-                android:onClick="searchClicked" />
+                android:onClick="searchClicked"
+                fontPath="fonts/NunitoSans-Regular.ttf"/>
 
         </LinearLayout>
 

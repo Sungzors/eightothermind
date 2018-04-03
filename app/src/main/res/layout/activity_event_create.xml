@@ -2,7 +2,9 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingPrefix">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -50,7 +52,8 @@
                     android:layout_toEndOf="@id/aec_event_picture"
                     android:text="@string/name_your_event"
                     android:textAllCaps="true"
-                    android:textSize="12sp" />
+                    android:textSize="12sp"
+                    fontPath="fonts/NunitoSans-Bold.ttf"/>
 
                 <EditText
                     android:id="@+id/aec_event_name"
@@ -61,7 +64,8 @@
                     android:layout_marginStart="20dp"
                     android:layout_toEndOf="@id/aec_event_picture"
                     android:imeOptions="actionNext"
-                    android:inputType="textCapSentences" />
+                    android:inputType="textCapSentences"
+                    fontPath="fonts/NunitoSans-Regular.ttf"/>
 
                 <TextView
                     android:id="@+id/aec_your_location"
@@ -72,7 +76,8 @@
                     android:layout_marginTop="20dp"
                     android:text="@string/location"
                     android:textAllCaps="true"
-                    android:textSize="12sp" />
+                    android:textSize="12sp"
+                    fontPath="fonts/NunitoSans-Bold.ttf"/>
 
                 <EditText
                     android:id="@+id/aec_location_et"
@@ -83,7 +88,8 @@
                     android:layout_marginEnd="20dp"
                     android:layout_marginStart="20dp"
                     android:imeOptions="actionNext"
-                    android:inputType="textCapSentences" />
+                    android:inputType="textCapSentences"
+                    fontPath="fonts/NunitoSans-Regular.ttf"/>
 
             </RelativeLayout>
         </android.support.v7.widget.CardView>
@@ -116,7 +122,8 @@
                         android:layout_marginBottom="20dp"
                         android:layout_marginStart="20dp"
                         android:layout_marginTop="20dp"
-                        android:text="@string/friends_of_friends" />
+                        android:text="@string/friends_of_friends"
+                        fontPath="fonts/NunitoSans-Regular.ttf"/>
 
                     <CheckBox
                         android:id="@+id/aec_friend_of_friends_checkbox"
@@ -147,7 +154,8 @@
                         android:layout_marginBottom="20dp"
                         android:layout_marginStart="20dp"
                         android:layout_marginTop="20dp"
-                        android:text="@string/only_friends" />
+                        android:text="@string/only_friends"
+                        fontPath="fonts/NunitoSans-Regular.ttf"/>
 
                     <CheckBox
                         android:id="@+id/aec_only_friends_checkbox"
@@ -183,7 +191,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="20dp"
-                    android:text="@string/lock_after_24_hours" />
+                    android:text="@string/lock_after_24_hours"
+                    fontPath="fonts/NunitoSans-Regular.ttf"/>
 
                 <Switch
                     android:id="@+id/aec_lock_switch"

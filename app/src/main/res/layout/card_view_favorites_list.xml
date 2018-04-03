@@ -2,7 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/card_view"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingPrefix">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -12,7 +14,8 @@
             android:id="@+id/cvfl_sender_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Name"/>
+            android:text="Name"
+            fontPath="fonts/NunitoSans-Regular.ttf"/>
 
         <View
             android:layout_width="0dp"
@@ -23,7 +26,8 @@
             android:id="@+id/cvfl_send_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="time"/>
+            android:text="time"
+            fontPath="fonts/NunitoSans-Regular.ttf"/>
     </LinearLayout>
 
     <RelativeLayout
@@ -54,7 +58,9 @@
                 android:layout_height="wrap_content"
                 android:textSize="14sp"
                 android:text="test"
-                android:layout_toEndOf="@id/cvfl_message_pic_small"/>
+                android:textColor="@color/black"
+                android:layout_toEndOf="@id/cvfl_message_pic_small"
+                fontPath="fonts/NunitoSans-Regular.ttf"/>
             <LinearLayout
                 android:id="@+id/cvfl_message_pic_container_1"
                 android:layout_width="wrap_content"
@@ -74,7 +80,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/cvfl_message"
-                android:text="@string/decline"/>
+                android:text="@string/decline"
+                fontPath="fonts/NunitoSans-Regular.ttf"/>
 
             <Button
                 android:id="@+id/cvfl_message_button_money_accept"
@@ -82,7 +89,8 @@
                 android:layout_height="wrap_content"
                 android:layout_toEndOf="@id/cvfl_message_button_money_decline"
                 android:layout_below="@id/cvfl_message"
-                android:text="@string/accept"/>
+                android:text="@string/accept"
+                fontPath="fonts/NunitoSans-Regular.ttf"/>
 
 
         </RelativeLayout>

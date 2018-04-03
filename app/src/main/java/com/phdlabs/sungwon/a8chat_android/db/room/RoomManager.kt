@@ -125,6 +125,10 @@ class RoomManager {
         }
     }
 
+    fun getRealmRoom(roomId: Int){
+
+    }
+
     /**
      * [getRoomMessageHistory]
      * - Used to pull messages from a Room -> Currently used for Private Chats

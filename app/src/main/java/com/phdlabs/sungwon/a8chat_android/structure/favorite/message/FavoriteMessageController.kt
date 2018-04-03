@@ -31,23 +31,37 @@ class FavoriteMessageController(val mView: FavoriteContract.Message.View) : Favo
     override fun stop() {
     }
 
-    override fun getFavorites(roomId: Int) {
+    override fun getFavorites(roomId: Int, isSelf: Boolean) {
         getUserId { id ->
             id?.let {
                 UserManager.instance.getCurrentUser { success, _, token ->
                     if (success){
-                        val call = Rest.getInstance().getmCallerRx().getRoomFaveMsg(token?.token!!, roomId, it)
-                        call.subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe({ response ->
-                                    for (messages in response.messages!!){
-                                        mMessages.add(messages)
-                                    }
-                                    mView.setUpRecycler(mMessages)
+                        if(isSelf){
+                            val call = Rest.getInstance().getmCallerRx().getUserFaveMsg(token?.token!!, it)
+                            call.subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe({response ->
+                                        for (messages in response.favoriteMessages!!){
+                                            mMessages.add(messages)
+                                        }
+                                        mView.setUpRecycler(mMessages)
+                                    }, {t: Throwable? ->
+                                        mView.showError("Unable to retrieve favorite message: " + t?.message + ". User ID = " + it + ", room ID = " + roomId)
+                                    })
+                        } else {
+                            val call = Rest.getInstance().getmCallerRx().getRoomFaveMsg(token?.token!!, roomId, it)
+                            call.subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe({ response ->
+                                        for (messages in response.messages!!){
+                                            mMessages.add(messages)
+                                        }
+                                        mView.setUpRecycler(mMessages)
 
-                                }, {t: Throwable? ->
-                                    mView.showError("Unable to retrieve favorite message: " + t?.message + ". User ID = " + it + ", room ID = " + roomId)
-                                })
+                                    }, {t: Throwable? ->
+                                        mView.showError("Unable to retrieve favorite message: " + t?.message + ". User ID = " + it + ", room ID = " + roomId)
+                                    })
+                        }
                     }
                 }
             }

@@ -2,7 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingPrefix">
 
     <!--Loading-->
     <include layout="@layout/progress_view" />
@@ -81,7 +83,7 @@
                                 android:padding="2dp"
                                 android:text="@string/first_name"
                                 android:textColor="@color/my_profile_name"
-                                android:textStyle="bold" />
+                                fontPath="fonts/NunitoSans-Bold.ttf" />
 
                             <!--Phone number-->
                             <TextView
@@ -91,7 +93,8 @@
                                 android:padding="2dp"
                                 android:text="@string/phone_number"
                                 android:textColor="@color/my_profile_name"
-                                android:textStyle="normal" />
+                                android:textStyle="normal"
+                                fontPath="fonts/NunitoSans-Regular.ttf" />
 
                             <!--Language-->
                             <TextView
@@ -100,7 +103,8 @@
                                 android:layout_height="wrap_content"
                                 android:padding="2dp"
                                 android:text="@string/my_language"
-                                android:textColor="@color/my_language_color" />
+                                android:textColor="@color/my_language_color"
+                                fontPath="fonts/NunitoSans-Regular.ttf"/>
 
                         </LinearLayout>
 
@@ -147,7 +151,8 @@
                                 android:gravity="start|center"
                                 android:padding="2dp"
                                 android:text="@string/my_calendars"
-                                android:textColor="@color/my_profile_settings_text" />
+                                android:textColor="@color/my_profile_settings_text"
+                                fontPath="fonts/NunitoSans-Regular.ttf" />
 
                         </LinearLayout>
 
@@ -185,7 +190,8 @@
                                 android:gravity="start|center"
                                 android:padding="2dp"
                                 android:text="@string/payments"
-                                android:textColor="@color/my_profile_settings_text" />
+                                android:textColor="@color/my_profile_settings_text"
+                                fontPath="fonts/NunitoSans-Regular.ttf" />
                         </LinearLayout>
 
                     </LinearLayout>
@@ -231,7 +237,8 @@
                                 android:gravity="start|center"
                                 android:padding="2dp"
                                 android:text="@string/notification_settings"
-                                android:textColor="@color/my_profile_settings_text" />
+                                android:textColor="@color/my_profile_settings_text"
+                                fontPath="fonts/NunitoSans-Regular.ttf" />
 
                         </LinearLayout>
 
@@ -269,7 +276,8 @@
                                 android:gravity="start|center"
                                 android:padding="2dp"
                                 android:text="@string/fave_messages"
-                                android:textColor="@color/my_profile_settings_text" />
+                                android:textColor="@color/my_profile_settings_text"
+                                fontPath="fonts/NunitoSans-Regular.ttf" />
                         </LinearLayout>
 
                     </LinearLayout>
@@ -307,7 +315,8 @@
                                 android:paddingEnd="0dp"
                                 android:paddingStart="10dp"
                                 android:text="@string/my_account"
-                                android:textColor="@color/my_profile_settings_text" />
+                                android:textColor="@color/my_profile_settings_text"
+                                fontPath="fonts/NunitoSans-Regular.ttf"  />
 
                         </LinearLayout>
 
@@ -338,7 +347,8 @@
                                 android:paddingEnd="0dp"
                                 android:paddingStart="10dp"
                                 android:text="@string/terms_support"
-                                android:textColor="@color/my_profile_settings_text" />
+                                android:textColor="@color/my_profile_settings_text"
+                                fontPath="fonts/NunitoSans-Regular.ttf"  />
                         </LinearLayout>
 
                         <!--Separator-->
@@ -368,7 +378,8 @@
                                 android:paddingEnd="0dp"
                                 android:paddingStart="10dp"
                                 android:text="@string/invite_friends"
-                                android:textColor="@color/my_profile_settings_text" />
+                                android:textColor="@color/my_profile_settings_text"
+                                fontPath="fonts/NunitoSans-Regular.ttf"  />
 
                         </LinearLayout>
 

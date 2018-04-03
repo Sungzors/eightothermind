@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:ignore="MissingPrefix">
 
     <include layout="@layout/progress_view" />
 
@@ -102,7 +103,7 @@
                                     android:padding="2dp"
                                     android:text="@string/first_name"
                                     android:textColor="@color/my_profile_name"
-                                    android:textStyle="bold" />
+                                    fontPath="fonts/NunitoSans-Bold.ttf"/>
 
                                 <!--Follower Number XX Followers-->
                                 <TextView
@@ -112,7 +113,8 @@
                                     android:padding="2dp"
                                     android:text="@string/channel_followers"
                                     android:textColor="@color/my_profile_name"
-                                    android:textStyle="normal" />
+                                    android:textStyle="normal"
+                                    fontPath="fonts/NunitoSans-Regular.ttf"/>
 
                             </LinearLayout>
 
@@ -157,7 +159,7 @@
                             android:gravity="start"
                             android:padding="5sp"
                             android:text="@string/channel_description"
-                            android:textStyle="bold" />
+                            fontPath="fonts/NunitoSans-Bold.ttf"/>
 
                     </LinearLayout>
 
@@ -196,7 +198,8 @@
                             android:layout_margin="20dp"
                             android:layout_toEndOf="@id/ang_comment_notif_icon"
                             android:text="@string/notification"
-                            tools:ignore="RelativeOverlap" />
+                            tools:ignore="RelativeOverlap"
+                            fontPath="fonts/NunitoSans-Regular.ttf"/>
 
                         <Switch
                             android:id="@+id/achs_notif_switch"
@@ -237,7 +240,8 @@
                             android:layout_marginStart="20dp"
                             android:layout_toEndOf="@+id/achs_favemsg_icon"
                             android:drawableEnd="@drawable/ic_keyboard_arrow_right_black_24dp"
-                            android:text="@string/fave_messages" />
+                            android:text="@string/fave_messages"
+                            fontPath="fonts/NunitoSans-Regular.ttf" />
 
                     </RelativeLayout>
                     <!--Share container-->
@@ -259,7 +263,8 @@
                             android:layout_height="wrap_content"
                             android:layout_margin="20dp"
                             android:layout_toEndOf="@id/achs_share_icon"
-                            android:text="@string/share_channel" />
+                            android:text="@string/share_channel"
+                            fontPath="fonts/NunitoSans-Regular.ttf"/>
                     </RelativeLayout>
                     <!--Delete Channel-->
                     <RelativeLayout
@@ -280,7 +285,8 @@
                             android:layout_height="wrap_content"
                             android:layout_margin="20dp"
                             android:layout_toEndOf="@id/achs_delete_icon"
-                            android:text="@string/delete_channel" />
+                            android:text="@string/delete_channel"
+                            fontPath="fonts/NunitoSans-Regular.ttf"/>
                     </RelativeLayout>
                 </LinearLayout>
             </android.support.v7.widget.CardView>
@@ -302,7 +308,8 @@
                     style="@style/RadioButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    fontPath="fonts/NunitoSans-Regular.ttf"/>
 
                 <!--Files-->
                 <RadioButton
@@ -310,7 +317,8 @@
                     style="@style/RadioButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    fontPath="fonts/NunitoSans-Regular.ttf"/>
             </info.hoang8f.android.segmented.SegmentedGroup>
 
             <!--Media & Files Frag Container-->

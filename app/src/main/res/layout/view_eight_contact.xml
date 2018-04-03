@@ -27,7 +27,10 @@
             android:layout_marginTop="15dp"
             android:padding="5dp"
             android:textColor="@color/grey"
-            android:textSize="15sp" />
+            android:textSize="15sp"
+            xmlns:tools="http://schemas.android.com/tools"
+            tools:ignore="MissingPrefix"
+            fontPath="fonts/NunitoSans-Regular.ttf"/>
 
     </LinearLayout>
 

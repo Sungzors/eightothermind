@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.sothree.slidinguppanel.SlidingUpPanelLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.sothree.slidinguppanel.SlidingUpPanelLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="bottom"
     android:id="@+id/acm_the_daddy_drawer"
-    app:umanoDragView="@id/acm_the_drawer">
+    app:umanoDragView="@id/acm_the_drawer"
+    tools:ignore="MissingPrefix">
 
     <!--Toolbar-->
     <LinearLayout
@@ -82,7 +83,8 @@
                 android:focusableInTouchMode="false"
                 android:layout_gravity="center"
                 android:hint="@string/type_something"
-                android:textSize="12sp"/>
+                android:textSize="12sp"
+                fontPath="fonts/NunitoSans-Regular.ttf"/>
             <ImageView
                 android:id="@+id/acm_emitting_button_of_green_arrow"
                 android:layout_width="35dp"
@@ -119,7 +121,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:text="@string/share_media"
-                    android:textAlignment="center"/>
+                    android:textAlignment="center"
+                    fontPath="fonts/NunitoSans-Light.ttf"/>
             </LinearLayout>
 
             <View
@@ -141,7 +144,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:text="@string/create_post"
-                    android:textAlignment="center"/>
+                    android:textAlignment="center"
+                    fontPath="fonts/NunitoSans-Light.ttf"/>
             </LinearLayout>
             <View
                 android:layout_width="0dp"
@@ -171,7 +175,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:text="@string/share_file"
-                    android:textAlignment="center"/>
+                    android:textAlignment="center"
+                    fontPath="fonts/NunitoSans-Light.ttf"/>
             </LinearLayout>
 
             <View
@@ -193,7 +198,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:text="@string/live_braodcast"
-                    android:textAlignment="center"/>
+                    android:textAlignment="center"
+                    fontPath="fonts/NunitoSans-Light.ttf"/>
             </LinearLayout>
             <View
                 android:layout_width="0dp"
