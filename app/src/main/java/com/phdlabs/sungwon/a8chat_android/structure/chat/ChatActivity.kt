@@ -78,6 +78,8 @@ class ChatActivity : CoreActivity(), ChatContract.View {
             } else {
                 showRightImageToolbar(R.drawable.addphoto)
             }
+        }?:run {
+            showRightImageToolbar(R.drawable.addphoto)
         }
         mChatName = intent.getStringExtra(Constants.IntentKeys.CHAT_NAME)
         mParticipantId = intent.getIntExtra(Constants.IntentKeys.PARTICIPANT_ID, 8)

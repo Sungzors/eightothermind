@@ -8,26 +8,25 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
 
             <!--Loading-->
             <include layout="@layout/progress_view" />
 
             <!--Channels I Follow-->
-            <LinearLayout
+            <RelativeLayout
                 android:id="@+id/fc_followed_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/activityBackgroundGrey"
-                android:orientation="vertical"
                 android:paddingEnd="10dp"
                 android:paddingStart="10dp"
                 android:paddingTop="20dp">
                 <!--Title-->
                 <TextView
+                    android:id="@+id/fc_channels_i_follow"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingBottom="15dp"
@@ -40,15 +39,17 @@
                     android:id="@+id/cf_channels_i_follow_recycler"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_below="@+id/fc_channels_i_follow"
                     android:paddingEnd="10dp"
                     android:paddingStart="10dp" />
-            </LinearLayout>
+            </RelativeLayout>
 
             <!--Popular Channels-->
-            <LinearLayout
+            <RelativeLayout
                 android:id="@+id/fc_popular_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/fc_followed_container"
                 android:background="@color/activityBackgroundGrey"
                 android:orientation="vertical"
                 android:paddingEnd="10dp"
@@ -56,6 +57,7 @@
                 android:paddingTop="20dp">
 
                 <TextView
+                    android:id="@+id/fc_channels_popular"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingBottom="15dp"
@@ -68,16 +70,19 @@
                     android:id="@+id/cf_channels_popular_recycler"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_below="@+id/fc_channels_popular"
                     android:paddingEnd="10dp"
                     android:paddingStart="10dp" />
-            </LinearLayout>
+            </RelativeLayout>
 
             <!--All Channels -> Used for queries with search bar-->
-            <LinearLayout
+            <RelativeLayout
                 android:id="@+id/fc_all_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/fc_popular_container"
                 android:background="@color/activityBackgroundGrey"
+                android:descendantFocusability="blocksDescendants"
                 android:orientation="vertical"
                 android:paddingEnd="10dp"
                 android:paddingStart="10dp"
@@ -85,6 +90,7 @@
                 android:visibility="gone">
 
                 <TextView
+                    android:id="@+id/fc_channels_all"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingBottom="15dp"
@@ -97,9 +103,10 @@
                     android:id="@+id/cf_channels_all_recycler"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_below="@+id/fc_channels_all"
                     android:paddingEnd="10dp"
                     android:paddingStart="10dp" />
-            </LinearLayout>
+            </RelativeLayout>
 
 
             <!--Empty Background-->
@@ -108,7 +115,7 @@
                 android:layout_height="match_parent"
                 android:background="@color/activityBackgroundGrey" />
 
-        </LinearLayout>
+        </RelativeLayout>
 
     </ScrollView>
 

@@ -119,7 +119,7 @@
     <string name="new_event">New Event</string>
     <string name="favorites">Favorites</string>
     <string name="all_contacts">All Contacts</string>
-    <string name="searchcontacthint">Search by Contact or Channel</string>
+    <string name="searchcontacthint">Search by Contact</string>
     <string name="my_contacts">My Contacts</string>
     <string name="contacts">Contacts</string>
     <string name="friend_profile_picture">Friend Profile Picture</string>

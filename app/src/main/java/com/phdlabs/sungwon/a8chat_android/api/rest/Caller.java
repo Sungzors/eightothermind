@@ -48,9 +48,6 @@ public interface Caller {
     @GET("/channels")
     Call<ChannelArrayResponse> getChannel(@Header(TOKEN) String token);
 
-    @PATCH("/channels/{channelId}/follow")
-    Call<RoomResponse> followChannel(@Header(TOKEN) String token, @Path("channelId") int channelId, @Body FollowUserData data);
-
     @POST("/auth/verify")
     Call<TokenResponse> verify(@Body VerifyData verifyData);
 
@@ -91,20 +88,12 @@ public interface Caller {
     @POST("/messages/share/groupChat")
     Call<ErrorResponse> sendMessageGroupChat(@Header(TOKEN) String token, @Body SendMessageContactData data);
 
-    @GET("/users/{userId}/privateChats")
-    Call<PrivateChatResponse> getPrivateChats(@Header(TOKEN) String token, @Path("userId") int userid);
-
     @GET("/users/{userId}/groupChats")
     Call<UserDataResponse> getGroupChats(@Header(TOKEN) String token, @Path("userId") int userid);
 
     @GET("/users/{userId}/private&group_chats")
     Call<ChatsRetrievalResponse> getAllChats(@Header(TOKEN) String token, @Path("userId") int userid);
 
-    @POST("/comments/{messageId}")
-    Call<CommentResponse> postComment(@Header(TOKEN) String token, @Path("messageId") int messageId, @Body CommentPostData data);
-
-    @PATCH("/comments/{commentId}/edit")
-    Call<CommentResponse> patchComment(@Header(TOKEN) String token, @Path("commentId") int commentId, @Body CommentPatchData data);
 
     @GET("/events/{roomId}/user/{userId}/messages")
     Call<RoomHistoryResponse> getEventHistory(@Header(TOKEN) String token, @Path("roomId") int roomId, @Path("userId") int userId);

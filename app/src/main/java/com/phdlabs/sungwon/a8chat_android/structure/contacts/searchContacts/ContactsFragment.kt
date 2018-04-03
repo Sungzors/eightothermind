@@ -1,4 +1,4 @@
-package com.phdlabs.sungwon.a8chat_android.structure.contacts.searchFragments
+package com.phdlabs.sungwon.a8chat_android.structure.contacts.searchContacts
 
 import android.app.SearchManager
 import android.content.Context
@@ -121,7 +121,7 @@ class ContactsFragment : CoreFragment() {
                                 .load(data?.avatar)
                                 .resize(45, 45)
                                 .centerCrop()
-                                .placeholder(R.drawable.addphoto)
+                                .placeholder(R.drawable.ic_launcher_round)
                                 .transform(CircleTransform())
                                 .into(contactProfilePicture)
                         /*load name*/
@@ -188,10 +188,10 @@ class ContactsFragment : CoreFragment() {
 
     private fun setupSearchBar() {
         val searchManager = activity?.getSystemService(Context.SEARCH_SERVICE) as SearchManager
-        activity?.ca_searchView?.setSearchableInfo(searchManager.getSearchableInfo(activity?.componentName))
-        activity?.ca_searchView?.queryHint = resources.getString(R.string.contacts)
-        activity?.ca_searchView?.isSubmitButtonEnabled = true
-        activity?.ca_searchView?.setOnQueryTextListener(
+        activity?.ac_searchView?.setSearchableInfo(searchManager.getSearchableInfo(activity?.componentName))
+        activity?.ac_searchView?.queryHint = resources.getString(R.string.contacts)
+        activity?.ac_searchView?.isSubmitButtonEnabled = true
+        activity?.ac_searchView?.setOnQueryTextListener(
                 object : SearchView.OnQueryTextListener {
 
                     //Text Submit
@@ -202,9 +202,9 @@ class ContactsFragment : CoreFragment() {
                                 filter?.first_name?.toLowerCase()?.startsWith(it.toLowerCase(), false)
                             }
                         }
-                        activity?.ca_searchView?.clearFocus()
+                        activity?.ac_searchView?.clearFocus()
                         val inputm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                        inputm.hideSoftInputFromWindow(activity?.ca_searchView?.windowToken, 0)
+                        inputm.hideSoftInputFromWindow(activity?.ac_searchView?.windowToken, 0)
                         return true
                     }
 

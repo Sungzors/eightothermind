@@ -100,7 +100,7 @@ class ChannelsManager {
     }
 
     /**
-     * [getMyFollowedChannels]
+     * [getMyFollowedChannelsWithFlags]
      * @param refresh -> If true will download fresh data, else will read from @see Realm
      * Updates the realm with the User's followed channels
      * @return (Popular Channels, Pair(Unpopular_Unread_Channels, UnPopular_Read_Channels), Error Message)
@@ -108,11 +108,13 @@ class ChannelsManager {
      *     @see MyFollowedChannels
      *
      *
-     * Only call [getMyFollowedChannels] Channels after calling [getUserChannels]
+     * Only call [getMyFollowedChannelsWithFlags] Channels after calling [getUserChannels]
      * This is important as it updates the @Realm local copy with
      * the @see iFollow , @see unread_messages , @see isPopular & @see last_activity
+     *
+     * WARNING: Currently not working with backend
      * */
-    fun getMyFollowedChannels(refresh: Boolean, callback: (List<Channel>?, Pair<List<Channel>?, List<Channel>?>?, String?) -> Unit) {
+    fun getMyFollowedChannelsWithFlags(refresh: Boolean, callback: (List<Channel>?, Pair<List<Channel>?, List<Channel>?>?, String?) -> Unit) {
         UserManager.instance.getCurrentUser { isSuccess, user, token ->
             if (isSuccess) {
                 user?.let {
@@ -169,6 +171,7 @@ class ChannelsManager {
             }
         }
     }
+
 
     /**
      * [getChannelPosts]

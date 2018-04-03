@@ -1,15 +1,15 @@
-package com.phdlabs.sungwon.a8chat_android.structure.createnew.searchChannels
+package com.phdlabs.sungwon.a8chat_android.structure.contacts.searchChannels
 
 import com.phdlabs.sungwon.a8chat_android.db.channels.ChannelsManager
 import com.phdlabs.sungwon.a8chat_android.db.room.RoomManager
-import com.phdlabs.sungwon.a8chat_android.structure.createnew.CreateNewContract
+import com.phdlabs.sungwon.a8chat_android.structure.contacts.ContactsContract
 import com.vicpin.krealmextensions.save
 
 /**
  * Created by JPAM on 3/13/18.
  */
-class ChannelSearchFragController(val mView: CreateNewContract.ChannelSearch.View) :
-        CreateNewContract.ChannelSearch.Controller {
+class ChannelsFragmentController(val mView: ContactsContract.ChannelSearch.View) :
+        ContactsContract.ChannelSearch.Controller {
 
     init {
         mView.controller = this

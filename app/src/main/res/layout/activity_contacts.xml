@@ -55,14 +55,13 @@
             android:padding="5sp">
 
             <android.support.v7.widget.SearchView
-                android:id="@+id/ca_searchView"
+                android:id="@+id/ac_searchView"
                 android:layout_width="match_parent"
                 android:layout_height="25sp"
                 android:layout_gravity="start"
                 android:imeOptions="actionSearch"
                 android:inputType="text"
-                android:maxLines="1"
-                android:onClick="searchClicked" />
+                android:maxLines="1" />
 
         </LinearLayout>
 

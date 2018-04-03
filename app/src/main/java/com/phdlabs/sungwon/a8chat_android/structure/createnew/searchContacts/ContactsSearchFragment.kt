@@ -106,7 +106,7 @@ class ContactsSearchFragment : CoreFragment(), CreateNewContract.ContactSearch.V
                         /*load profile picture*/
                         Picasso.with(it)
                                 .load(data?.avatar)
-                                .placeholder(R.drawable.addphoto)
+                                .placeholder(R.drawable.ic_launcher_round)
                                 .transform(CircleTransform())
                                 .into(contactProfilePicture)
                         /*load name*/
@@ -159,7 +159,7 @@ class ContactsSearchFragment : CoreFragment(), CreateNewContract.ContactSearch.V
                         /*load profile picture*/
                         Picasso.with(it)
                                 .load(data?.avatar)
-                                .placeholder(R.drawable.addphoto)
+                                .placeholder(R.drawable.ic_launcher_round)
                                 .transform(CircleTransform())
                                 .into(contactProfilePicture)
                         /*load name*/

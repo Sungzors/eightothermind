@@ -1,4 +1,4 @@
-package com.phdlabs.sungwon.a8chat_android.structure.contacts.searchFragments
+package com.phdlabs.sungwon.a8chat_android.structure.contacts.searchChannels
 
 import android.app.SearchManager
 import android.content.Context
@@ -16,7 +16,10 @@ import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.db.channels.ChannelsManager
 import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
 import com.phdlabs.sungwon.a8chat_android.structure.channel.mychannel.MyChannelActivity
+import com.phdlabs.sungwon.a8chat_android.structure.contacts.ContactsActivity
+import com.phdlabs.sungwon.a8chat_android.structure.contacts.ContactsContract
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreFragment
+import com.phdlabs.sungwon.a8chat_android.structure.createnew.CreateNewActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseRecyclerAdapter
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseViewHolder
@@ -33,7 +36,10 @@ import kotlinx.android.synthetic.main.fragment_channels.*
  * - Selecting a channel will take me to the channel detail view
  * - Control for this fragment is done through [ContactsActivity]
  */
-class ChannelsFragment : CoreFragment() {
+class ChannelsFragment : CoreFragment(), ContactsContract.ChannelSearch.View {
+
+    /*Controller*/
+    override lateinit var controller: ContactsContract.ChannelSearch.Controller
 
     /*Layout*/
     override fun layoutId(): Int = R.layout.fragment_channels
@@ -41,29 +47,44 @@ class ChannelsFragment : CoreFragment() {
     /*Properties*/
     private var mChannelsIFollow = mutableListOf<Channel>()
     private var mChannelsPopular = mutableListOf<Channel>()
-    private var mChannelsAll = mutableListOf<Channel>()
+    private var mChannelsAll = mutableListOf<Channel>() //TODO: Use to display all channels
     private var mChannelsFollowedAdapter: BaseRecyclerAdapter<Channel, BaseViewHolder>? = null
     private var mChannelsPopularAdapter: BaseRecyclerAdapter<Channel, BaseViewHolder>? = null
-    private var mChannelsAllAdapter: BaseRecyclerAdapter<Channel, BaseViewHolder>? = null
+    private var mChannelsAllAdapter: BaseRecyclerAdapter<Channel, BaseViewHolder>? = null //TODO: Use to display all channels
 
-    /*LifeCycle*/
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+    init {
+        ChannelsFragmentController(this)
     }
 
+    /*LifeCycle*/
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupChannelsIFollowRecycler()
         setupChannelsPopularRecycler()
-        setupAllChannelsRecycler()
+        setupAllChannelsRecycler() //TODO: Use to display all channels
         setupSearchBar()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        controller.start()
     }
 
     override fun onResume() {
         super.onResume()
+        controller.resume()
         //Load Info
         loadChannels()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        controller.pause()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        controller.stop()
     }
 
     /*Channels I Follow Recycler*/
@@ -159,7 +180,7 @@ class ChannelsFragment : CoreFragment() {
                         .load(data?.avatar)
                         .resize(70, 70)
                         .centerCrop()
-                        .placeholder(R.drawable.addphoto)
+                        .placeholder(R.drawable.ic_launcher_round)
                         .transform(CircleTransform())
                         .into(channelImage)
                 channelName?.text = data?.name
@@ -195,10 +216,10 @@ class ChannelsFragment : CoreFragment() {
     /*Search Channels*/
     private fun setupSearchBar() {
         val searchManager = activity?.getSystemService(Context.SEARCH_SERVICE) as SearchManager
-        activity?.ca_searchView?.setSearchableInfo(searchManager.getSearchableInfo(activity?.componentName))
-        activity?.ca_searchView?.queryHint = resources.getString(R.string.channels)
-        activity?.ca_searchView?.isSubmitButtonEnabled = true
-        activity?.ca_searchView?.setOnQueryTextListener(
+        activity?.ac_searchView?.setSearchableInfo(searchManager.getSearchableInfo(activity?.componentName))
+        activity?.ac_searchView?.queryHint = resources.getString(R.string.channels)
+        activity?.ac_searchView?.isSubmitButtonEnabled = true
+        activity?.ac_searchView?.setOnQueryTextListener(
                 object : SearchView.OnQueryTextListener {
 
                     //Text Submit
@@ -206,18 +227,14 @@ class ChannelsFragment : CoreFragment() {
                         //UI
                         if (!p0.isNullOrBlank()) {
                             hideFollowedAndPopularChannels(true)
+                            controller.pushChannelFilterChanges(p0)
                         } else {
                             hideFollowedAndPopularChannels(false)
                         }
-                        //Filter Popular channels
-                        mChannelsAllAdapter?.setFilter { filter ->
-                            p0?.let {
-                                filter?.name?.toLowerCase()?.startsWith(it.toLowerCase(), false)
-                            }
-                        }
-                        activity?.ca_searchView?.clearFocus()
-                        val inputm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                        inputm.hideSoftInputFromWindow(activity?.ca_searchView?.windowToken, 0)
+
+                        activity?.ac_searchView?.clearFocus()
+                        val input = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                        input.hideSoftInputFromWindow(activity?.ac_searchView?.windowToken, 0)
                         return true
                     }
 
@@ -226,15 +243,11 @@ class ChannelsFragment : CoreFragment() {
                         //UI
                         if (!p0.isNullOrBlank()) {
                             hideFollowedAndPopularChannels(true)
+                            controller.pushChannelFilterChanges(p0)
                         } else {
                             hideFollowedAndPopularChannels(false)
                         }
-                        //Filter popular channels
-                        mChannelsAllAdapter?.setFilter { filter ->
-                            p0?.let {
-                                filter?.name?.toLowerCase()?.startsWith(it.toLowerCase(), false)
-                            }
-                        }
+
                         return true
                     }
 
@@ -275,5 +288,11 @@ class ChannelsFragment : CoreFragment() {
 
     }
 
+    /*All Channels Search*/
+    override fun updateChannelRecycler(channels: MutableList<Channel>?) {
+        mChannelsAllAdapter?.clear()
+        mChannelsAllAdapter?.addAll(channels)
+        mChannelsAllAdapter?.notifyDataSetChanged()
+    }
 
 }

@@ -44,7 +44,6 @@ class LobbyController(val mView: LobbyContract.View,
     override fun resume() {
         callMyChannels(refresh)
         callEvent(refresh)
-        callFollow(refresh)
         callChats()
     }
 
@@ -63,6 +62,7 @@ class LobbyController(val mView: LobbyContract.View,
                 mView.hideProgress()
                 /*When no channels are available it triggers a localized error message not wanted*/
                 //mView.showError(it)
+                callFollow(true)
             } ?: run {
                 mView.hideProgress()
                 response.first?.let {
@@ -72,6 +72,9 @@ class LobbyController(val mView: LobbyContract.View,
                     if (mMyChannel.size > 0) {
                         //UI
                         mView.setUpChannelRecycler(mMyChannel)
+                        callFollow(true)
+                    }else {
+                        callFollow(true)
                     }
                 }
             }
@@ -103,7 +106,7 @@ class LobbyController(val mView: LobbyContract.View,
 
     private fun callFollow(refresh: Boolean) {
         mView.showProgress()
-        ChannelsManager.instance.getMyFollowedChannels(refresh, { _, followedChannels, errorMessage ->
+        ChannelsManager.instance.getMyFollowedChannelsWithFlags(refresh, { _, followedChannels, errorMessage ->
             errorMessage?.let {
                 //Error
                 mView.hideProgress()
@@ -125,7 +128,7 @@ class LobbyController(val mView: LobbyContract.View,
                 }
                 //UI
                 if (mChannelsFollowed.size > 0) {
-                    mView.addFollowedChannels(mChannelsFollowed)
+                    mView.addFollowedChannels(mChannelsFollowed) //TODO: Sould be called after getting my channels
                 }
             }
         })

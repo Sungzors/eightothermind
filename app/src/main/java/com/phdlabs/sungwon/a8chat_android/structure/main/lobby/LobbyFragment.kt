@@ -2,13 +2,11 @@ package com.phdlabs.sungwon.a8chat_android.structure.main.lobby
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewTreeObserver
 import android.widget.ImageView
 import android.widget.TextView
 import com.phdlabs.sungwon.a8chat_android.R
@@ -122,7 +120,7 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
                 unreadChannelIndicator.visibility = View.GONE
             }
         }
-        Picasso.with(coreActivity.context).load(data.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(profilePic)
+        Picasso.with(coreActivity.context).load(data.avatar).placeholder(R.drawable.ic_launcher_round).transform(CircleTransform()).into(profilePic)
         channelName.text = data.name
         profilePic.setOnClickListener {
             val intent = Intent(activity, MyChannelActivity::class.java)
@@ -135,6 +133,7 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
     }
 
     /*Followed Channels*/
+    //TODO: Add separators after my channels -> Find suitable solution
     override fun addFollowedChannels(followedChannels: MutableList<Channel>) {
         mAdapterChannels.addAll(followedChannels)
         mAdapterChannels.notifyDataSetChanged()
@@ -176,7 +175,7 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
         val title = viewHolder.get<TextView>(R.id.cvle_title)
         val message = viewHolder.get<TextView>(R.id.cvle_message)
         val time = viewHolder.get<TextView>(R.id.cvle_time)
-        Picasso.with(coreActivity.context).load(data.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(eventPic)
+        Picasso.with(coreActivity.context).load(data.avatar).placeholder(R.drawable.ic_launcher_round).transform(CircleTransform()).into(eventPic)
         title.text = data.event_name
         if (data.message != null) {
             when (data.message!!.type) {
@@ -239,7 +238,7 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
         mAdapterChat.setItems(chats)
         fl_chat_title.visibility = TextView.VISIBLE
         fl_chat_recycler.visibility = RecyclerView.VISIBLE
-        fl_chat_recycler.layoutManager = object :LinearLayoutManager(coreActivity.context) {
+        fl_chat_recycler.layoutManager = object : LinearLayoutManager(coreActivity.context) {
             override fun canScrollHorizontally(): Boolean = false
             override fun canScrollVertically(): Boolean = false
         }
@@ -253,7 +252,7 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
         val message = viewHolder.get<TextView>(R.id.cvle_message)
         val time = viewHolder.get<TextView>(R.id.cvle_time)
         if (data.chatType == "private") {
-            Picasso.with(context).load(data.user!!.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(eventPic)
+            Picasso.with(context).load(data.user!!.avatar).placeholder(R.drawable.ic_launcher_round).transform(CircleTransform()).into(eventPic)
             title.text = data.user!!.first_name + " " + data.user!!.last_name
             if (data.message != null) {
                 when (data.message!!.type) {
@@ -281,7 +280,7 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
                 eventIndicator.visibility = ImageView.INVISIBLE
             }
         } else if (data.chatType == "group") {
-            Picasso.with(context).load(data.groupChatInfo!!.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(eventPic)
+            Picasso.with(context).load(data.groupChatInfo!!.avatar).placeholder(R.drawable.ic_launcher_round).transform(CircleTransform()).into(eventPic)
             title.text = data.groupChatInfo!!.name
             if (data.message != null) {
                 when (data.message!!.type) {

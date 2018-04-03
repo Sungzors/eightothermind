@@ -119,7 +119,7 @@ class UserManager {
             if (success) {
                 user?.let {
                     token?.token?.let {
-                        val call = Rest.getInstance().getmCallerRx().updateFBToken(it, user.id!!, UserFBToken(firebaseToken))
+                        val call = Rest.getInstance().getmCallerRx().updateFirebaseToken(it, user.id!!, UserFBToken(firebaseToken))
                         call.subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({ response ->
