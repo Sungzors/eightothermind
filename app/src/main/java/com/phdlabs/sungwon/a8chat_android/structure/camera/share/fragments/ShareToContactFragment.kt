@@ -17,7 +17,7 @@ import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform
 import com.squareup.picasso.Picasso
 import com.vicpin.krealmextensions.query
 import com.vicpin.krealmextensions.queryAll
-import kotlinx.android.synthetic.main.fragment_contacts_search.*
+import kotlinx.android.synthetic.main.fragment_share.*
 
 /**
  * Created by JPAM on 3/26/18.
@@ -26,7 +26,7 @@ import kotlinx.android.synthetic.main.fragment_contacts_search.*
 class ShareToContactFragment : CoreFragment() {
 
     /*Layout*/
-    override fun layoutId(): Int = R.layout.fragment_contacts_search
+    override fun layoutId(): Int = R.layout.fragment_share
 
     /*Properties*/
     private var mContactAdapter: BaseRecyclerAdapter<Contact, BaseViewHolder>? = null
@@ -73,7 +73,7 @@ class ShareToContactFragment : CoreFragment() {
                         /*load profile picture*/
                         Picasso.with(it)
                                 .load(data?.avatar)
-                                .placeholder(R.drawable.addphoto)
+                                .placeholder(R.drawable.ic_launcher_round)
                                 .transform(CircleTransform())
                                 .into(contactProfilePicture)
                         /*load name*/
@@ -131,7 +131,7 @@ class ShareToContactFragment : CoreFragment() {
                         /*load profile picture*/
                         Picasso.with(it)
                                 .load(data?.avatar)
-                                .placeholder(R.drawable.addphoto)
+                                .placeholder(R.drawable.ic_launcher_round)
                                 .transform(CircleTransform())
                                 .into(contactProfilePicture)
                         /*load name*/

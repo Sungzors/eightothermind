@@ -21,7 +21,7 @@ import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseViewHolder
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.ViewMap
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.fragment_contacts_search.*
+import kotlinx.android.synthetic.main.fragment_share.*
 
 /**
  * Created by JPAM on 3/12/18.
@@ -35,7 +35,7 @@ class ContactsSearchFragment : CoreFragment(), CreateNewContract.ContactSearch.V
     override lateinit var controller: CreateNewContract.ContactSearch.Controller
 
     /*Layout*/
-    override fun layoutId(): Int = R.layout.fragment_contacts_search
+    override fun layoutId(): Int = R.layout.fragment_share
 
     /*Properties*/
     private var mContactAdapter: BaseRecyclerAdapter<Contact, BaseViewHolder>? = null

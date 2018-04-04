@@ -72,7 +72,7 @@ class ShareToChannelFragment : CoreFragment() {
                 unreadChannelIndicator.visibility = View.GONE
             }
         }
-        Picasso.with(coreActivity.context).load(data.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(profilePic)
+        Picasso.with(coreActivity.context).load(data.avatar).placeholder(R.drawable.ic_launcher_round).transform(CircleTransform()).into(profilePic)
         channelName.text = data.name
         //Select channels for sharing data
         profilePic.setOnClickListener {
