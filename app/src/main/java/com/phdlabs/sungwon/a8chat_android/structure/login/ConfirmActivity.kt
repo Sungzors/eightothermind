@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.text.SpannableString
 import android.text.style.UnderlineSpan
+import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
 import com.phdlabs.sungwon.a8chat_android.R
@@ -113,6 +114,9 @@ class ConfirmActivity : CoreActivity() {
             val content = SpannableString(getString(R.string.resend_code))
             content.setSpan(UnderlineSpan(), 0, content.length, 0)
             ac_textview_resend_code.text = content
+            //Button alpha state
+            ac_code_input.isSelected = true
+            ac_code_input.setOnClickListener { ac_button_create_profile.background = getDrawable(R.drawable.gradient_eightchatblue) }
         }
     }
 

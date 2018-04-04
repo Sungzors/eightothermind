@@ -14,7 +14,7 @@
     <string name="resend_code">Resend Code</string>
     <string name="create_profile">Create Profile</string>
     <string name="enter_confirmation_code">ENTER CONFIRMATION CODE</string>
-    <string name="send_1">We send a confirmation code to\n%1$s. You should get it in\na few seconds.</string>
+    <string name="send_1">We sent a confirmation code to\n%1$s. You should get it in\na few seconds.</string>
     <string name="your_name">YOUR NAME</string>
     <string name="first_name">First Name</string>
     <string name="last_name">Last Name</string>

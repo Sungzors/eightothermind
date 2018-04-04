@@ -7,7 +7,9 @@
     <color name="tabselect">#4dd0e1</color>
     <color name="confirmText">#4a90e2</color>
     <color name="gradientLeft">#495fff</color>
+    <color name="gradientLeftOpaque">#55495fff</color>
     <color name="gradientRight">#0ccafe</color>
+    <color name="gradientRightOpaque">#550ccafe</color>
     <color name="gradientUp">#357fff</color>
     <color name="gradientDown">#08a4ff</color>
     <color name="settingBlue">#08a4ff</color>
