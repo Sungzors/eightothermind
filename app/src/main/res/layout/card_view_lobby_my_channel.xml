@@ -13,16 +13,16 @@
             android:id="@+id/cvlc_my_channel_pic_profile_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:elevation="6dp"
-            android:layout_centerInParent="true">
+            android:layout_centerInParent="true"
+            android:elevation="6dp">
 
             <ImageView
                 android:id="@+id/cvlc_background_unread"
                 android:layout_width="65dp"
                 android:layout_height="65dp"
                 android:layout_centerInParent="true"
-                android:background="@drawable/bg_circle_blue_lobby"
-                android:visibility="gone"/>
+                android:background="@drawable/bg_circle_white_lobby"
+                android:visibility="visible" />
 
             <ImageView
                 android:id="@+id/cvlc_background_selected"
@@ -30,17 +30,17 @@
                 android:layout_height="65dp"
                 android:layout_centerInParent="true"
                 android:background="@drawable/bg_circle_green_lobby"
-                android:visibility="gone"/>
+                android:visibility="gone" />
 
             <ImageView
                 android:id="@+id/cvlc_picture_profile"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_centerInParent="true"
+                android:layout_marginBottom="10sp"
                 android:elevation="4dp"
                 android:padding="3sp"
-                android:src="@drawable/addphoto"
-                android:layout_marginBottom="10sp"/>
+                android:src="@drawable/addphoto" />
         </RelativeLayout>
 
         <TextView
@@ -63,7 +63,7 @@
             android:layout_alignBottom="@+id/cvlc_my_channel_pic_profile_container"
             android:layout_toEndOf="@+id/cvlc_my_channel_pic_profile_container"
             android:background="@color/grey"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
     </RelativeLayout>
 

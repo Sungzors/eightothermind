@@ -115,9 +115,9 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
         //Unread indicator
         data.unread_messages?.let {
             if (it) {
-                unreadChannelIndicator.visibility = View.VISIBLE
+                unreadChannelIndicator.background = activity?.getDrawable(R.drawable.bg_circle_blue_lobby)
             } else {
-                unreadChannelIndicator.visibility = View.GONE
+                unreadChannelIndicator.background = activity?.getDrawable(R.drawable.bg_circle_white_lobby)
             }
         }
         Picasso.with(coreActivity.context).load(data.avatar).placeholder(R.drawable.ic_launcher_round).transform(CircleTransform()).into(profilePic)
