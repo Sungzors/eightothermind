@@ -69,7 +69,12 @@ class GroupCreateActivity : CoreActivity(), GroupChatContract.Create.View{
 
     override fun onDestroy() {
         super.onDestroy()
+
+    }
+
+    override fun onBackPressed() {
         TemporaryManager.instance.mMemberList.clear()
+        super.onBackPressed()
     }
 
     private fun setUpViews() {

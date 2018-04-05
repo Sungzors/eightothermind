@@ -29,6 +29,9 @@
         android:layout_marginStart="10sp"
         android:text="@string/file_name"
         android:textColor="@color/blue_color_picker"
-        android:textSize="15sp" />
+        android:textSize="15sp"
+        xmlns:tools="http://schemas.android.com/tools"
+        tools:ignore="MissingPrefix"
+        fontPath="fonts/NunitoSans-Regular.ttf"/>
 
 </LinearLayout>

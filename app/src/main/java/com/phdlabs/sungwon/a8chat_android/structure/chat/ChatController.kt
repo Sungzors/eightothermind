@@ -232,17 +232,24 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
     }
 
 
-    override fun favoriteMessage(message: Message) {
+    override fun favoriteMessage(message: Message, position: Int) {
         getUserId { id ->
             id?.let {
                 UserManager.instance.getCurrentUser { success, _, token ->
                     if (success) {
-                        val call = Rest.getInstance().getmCallerRx().favoriteMessagio(token?.token!!, message.id!!, FavoriteData(it))
+                        val call = Rest.getInstance().getmCallerRx().favoriteMessagio(token?.token!!, message.id!!, FavoriteData(it), message.isFavorited)
                         call.subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(
-                                        { response ->
-                                            Toast.makeText(mView.getContext(), "Message Favorited!", Toast.LENGTH_SHORT).show()
+                                        {response ->
+                                            if(response.isSuccess){
+                                                message.isFavorited = true
+                                                mMessages.set(position, message)
+                                                Toast.makeText(mView.getContext(), "Message Favorited!", Toast.LENGTH_SHORT).show()
+                                            } else if (response.isError){
+                                                mView.hideProgress()
+                                                mView.showError("Unable to favorite, try again later")
+                                            }
                                         }, { throwable ->
                                     mView.hideProgress()
                                     println("Error creating channel: " + throwable.message)

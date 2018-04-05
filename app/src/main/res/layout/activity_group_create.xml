@@ -2,7 +2,9 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingPrefix">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -51,7 +53,8 @@
                     android:layout_toEndOf="@id/agc_group_picture"
                     android:text="@string/name_your_group"
                     android:textAllCaps="true"
-                    android:textSize="12sp" />
+                    android:textSize="12sp"
+                    fontPath="fonts/NunitoSans-Bold.ttf"/>
 
                 <EditText
                     android:id="@+id/agc_group_name"
@@ -63,7 +66,8 @@
                     android:layout_toEndOf="@id/agc_group_picture"
                     android:imeOptions="actionNext"
                     android:inputType="textCapSentences"
-                    android:labelFor="@id/agc_name_your_group"/>
+                    android:labelFor="@id/agc_name_your_group"
+                    fontPath="fonts/NunitoSans-Regular.ttf"/>
 
 
 
@@ -100,7 +104,8 @@
                         android:layout_marginTop="20dp"
                         android:text="@string/add_people"
                         android:drawableStart="@drawable/ic_add_blue_nobg"
-                        android:drawablePadding="10dp"/>
+                        android:drawablePadding="10dp"
+                        fontPath="fonts/NunitoSans-Regular.ttf"/>
 
 
                 </RelativeLayout>

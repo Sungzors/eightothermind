@@ -30,6 +30,8 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+
 /**
  * Created by SungWon on 9/11/2017.
  * Base class for all Activities
@@ -296,6 +298,11 @@ public abstract class CoreActivity extends AppCompatActivity {
     /*Navigation Interface - Back Button*/
     public interface OnBackPressListener {
         boolean onBackPressed();
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 
     public void close() {

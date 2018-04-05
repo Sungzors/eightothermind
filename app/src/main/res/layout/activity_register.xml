@@ -2,7 +2,9 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingPrefix">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -39,7 +41,8 @@
                     android:layout_height="wrap_content"
                     android:text="@string/please_enter_your_phone_number"
                     android:layout_marginTop="15dp"
-                    android:layout_marginStart="15dp"/>
+                    android:layout_marginStart="15dp"
+                    fontPath="fonts/NunitoSans-Bold.ttf"/>
 
                 <com.hbb20.CountryCodePicker
                     android:id="@+id/ar_ccp"
@@ -74,7 +77,8 @@
                     android:layout_marginEnd="15dp"
                     android:inputType="phone"
                     android:maxLength="14"
-                    android:maxLines="1"/>
+                    android:maxLines="1"
+                    fontPath="fonts/NunitoSans-Regular.ttf"/>
 
                 <View
                     android:id="@+id/ar_divider2"
@@ -98,7 +102,8 @@
             android:background="@drawable/gradient_eightchatblue_opaque"
             android:text="@string/send_confirm_code"
             android:textColor="@color/white"
-            android:textSize="16sp"/>
+            android:textSize="16sp"
+            fontPath="fonts/NunitoSans-Regular.ttf"/>
 
     </LinearLayout>
 

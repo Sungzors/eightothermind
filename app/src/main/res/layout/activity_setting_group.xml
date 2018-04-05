@@ -2,7 +2,9 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingPrefix">
 
     <include layout="@layout/progress_view" />
 
@@ -37,11 +39,11 @@
                         android:id="@+id/asg_group_picture"
                         android:layout_width="70dp"
                         android:layout_height="70dp"
+                        android:layout_marginBottom="20dp"
                         android:layout_marginStart="20dp"
                         android:layout_marginTop="20dp"
-                        android:layout_marginBottom="20dp"
-                        android:src="@drawable/addphoto"
-                        android:elevation="4sp"/>
+                        android:elevation="4sp"
+                        android:src="@drawable/addphoto" />
 
                     <ImageButton
                         android:id="@+id/asg_favorite_button"
@@ -50,8 +52,8 @@
                         android:layout_alignParentEnd="true"
                         android:layout_marginEnd="20dp"
                         android:layout_marginTop="30dp"
-                        android:src="@android:drawable/btn_star"
-                        android:background="@color/transparent"/>
+                        android:background="@color/transparent"
+                        android:src="@android:drawable/btn_star" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -72,6 +74,7 @@
 
                         <TextView
                             android:id="@+id/asg_group_name"
+                            fontPath="fonts/NunitoSans-Regular.ttf"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/group_name"
@@ -84,6 +87,7 @@
 
                         <TextView
                             android:id="@+id/asg_language"
+                            fontPath="fonts/NunitoSans-Regular.ttf"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text=""
@@ -133,6 +137,7 @@
                             android:src="@drawable/ic_setting_notif" />
 
                         <TextView
+                            fontPath="fonts/NunitoSans-Regular.ttf"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_margin="20dp"
@@ -169,6 +174,7 @@
                             android:src="@drawable/ic_setting_money" />
 
                         <TextView
+                            fontPath="fonts/NunitoSans-Regular.ttf"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_margin="20dp"
@@ -200,6 +206,7 @@
 
                         <TextView
                             android:id="@+id/asc_favemsg_tv"
+                            fontPath="fonts/NunitoSans-Regular.ttf"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_margin="20dp"
@@ -249,7 +256,8 @@
                             android:layout_height="wrap_content"
                             android:layout_margin="20dp"
                             android:layout_toEndOf="@id/asc_share_icon"
-                            android:text="@string/share" />
+                            android:text="@string/share"
+                            fontPath="fonts/NunitoSans-Regular.ttf"/>
                     </RelativeLayout>
 
                     <View
@@ -277,7 +285,8 @@
                             android:layout_height="wrap_content"
                             android:layout_margin="20dp"
                             android:layout_toEndOf="@id/asc_close_icon"
-                            android:text="@string/clear_conversation" />
+                            android:text="@string/clear_conversation"
+                            fontPath="fonts/NunitoSans-Regular.ttf"/>
 
                     </RelativeLayout>
 
@@ -306,7 +315,8 @@
                             android:layout_height="wrap_content"
                             android:layout_margin="20dp"
                             android:layout_toEndOf="@id/asc_block_icon"
-                            android:text="@string/block_contact" />
+                            android:text="@string/block_contact"
+                            fontPath="fonts/NunitoSans-Regular.ttf"/>
 
                         <TextView
                             android:layout_width="wrap_content"

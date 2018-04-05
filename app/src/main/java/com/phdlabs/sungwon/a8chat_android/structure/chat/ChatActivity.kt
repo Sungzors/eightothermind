@@ -237,7 +237,7 @@ class ChatActivity : CoreActivity(), ChatContract.View {
                 val message = mAdapter.getItem(position)
                 val choiceArray = mutableListOf<String>()
                 var colorArray = intArrayOf(Color.BLUE)
-                choiceArray.add("Favorite Message")
+                if(message.isFavorited) choiceArray.add("Unfavorite Message") else choiceArray.add("Favorite Message")
                 if (message.userId == mUserId) {
                     choiceArray.add("Delete Message")
                     colorArray = intArrayOf(Color.BLUE, Color.RED)
@@ -250,7 +250,7 @@ class ChatActivity : CoreActivity(), ChatContract.View {
                         .setActionSheetListener( object : ActionSheet.ActionSheetListener{
                             override fun onButtonClicked(actionSheet: ActionSheet?, index: Int) {
                                 when (index){
-                                    0 -> controller.favoriteMessage(message)
+                                    0 -> controller.favoriteMessage(message, position)
                                     1 -> controller.deleteMessage(message)
                                 }
                             }

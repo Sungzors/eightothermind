@@ -34,7 +34,8 @@
         android:text="Title"
         android:textAlignment="center"
         android:textColor="@color/black"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        fontPath="fonts/NunitoSans-Regular.ttf" />
 
 
     <LinearLayout
@@ -53,7 +54,8 @@
             android:text="asdfasdf"
             android:textAlignment="center"
             android:textColor="@color/black"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            fontPath="fonts/NunitoSans-Regular.ttf" />
 
         <TextView
             android:id="@+id/toolbar_title_double_bottom"
@@ -62,7 +64,8 @@
             android:text="asdfasdfasdfasdf"
             android:textAlignment="center"
             android:textColor="@color/black"
-            android:textSize="10sp" />
+            android:textSize="10sp"
+            fontPath="fonts/NunitoSans-Light.ttf" />
     </LinearLayout>
 
     <!--<LinearLayout-->
@@ -81,7 +84,8 @@
             android:layout_marginEnd="15dp"
             android:gravity="center|end"
             android:textColor="@color/black"
-            android:visibility="gone" />
+            android:visibility="gone"
+            fontPath="fonts/NunitoSans-Regular.ttf" />
 
         <ImageView
             android:id="@+id/toolbar_right_picture"

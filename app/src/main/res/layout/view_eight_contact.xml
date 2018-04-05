@@ -59,7 +59,10 @@
                         android:layout_toRightOf="@+id/fc_friend_profile_picture"
                         android:padding="5dp"
                         android:textColor="@color/grey"
-                        android:textSize="15sp" />
+                        android:textSize="15sp" 
+                        xmlns:tools="http://schemas.android.com/tools"
+                        tools:ignore="MissingPrefix"
+                        fontPath="fonts/NunitoSans-Regular.ttf"/>
                 </RelativeLayout>
 
             </RelativeLayout>

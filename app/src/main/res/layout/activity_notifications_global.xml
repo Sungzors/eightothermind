@@ -3,7 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingPrefix">
 
     <!--Toolbar-->
     <include layout="@layout/toolbar" />
@@ -40,7 +42,8 @@
                     android:layout_margin="20dp"
                     android:layout_toEndOf="@id/ang_message_notif_icon"
                     android:text="@string/msg_notif"
-                    tools:ignore="RelativeOverlap" />
+                    tools:ignore="RelativeOverlap"
+                    fontPath="fonts/NunitoSans-Regular.ttf"/>
 
                 <Switch
                     android:id="@+id/ang_msg_notif_switch"
@@ -78,7 +81,8 @@
                     android:layout_margin="20dp"
                     android:layout_toEndOf="@id/ang_like_notif_icon"
                     android:text="Like notifications"
-                    tools:ignore="RelativeOverlap" />
+                    tools:ignore="RelativeOverlap"
+                    fontPath="fonts/NunitoSans-Regular.ttf"/>
 
                 <Switch
                     android:id="@+id/ang_like_notif_switch"
@@ -116,7 +120,8 @@
                     android:layout_margin="20dp"
                     android:layout_toEndOf="@id/ang_comment_notif_icon"
                     android:text="@string/comment_notifications"
-                    tools:ignore="RelativeOverlap" />
+                    tools:ignore="RelativeOverlap"
+                    fontPath="fonts/NunitoSans-Regular.ttf"/>
 
                 <Switch
                     android:id="@+id/ang_comment_notif_switch"
@@ -154,7 +159,8 @@
                     android:layout_margin="20dp"
                     android:layout_toEndOf="@id/ang_invited_notif_icon"
                     android:text="@string/invited_notifications"
-                    tools:ignore="RelativeOverlap" />
+                    tools:ignore="RelativeOverlap"
+                    fontPath="fonts/NunitoSans-Regular.ttf"/>
 
                 <Switch
                     android:id="@+id/ang_invited_notif_switch"

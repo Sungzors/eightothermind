@@ -4,7 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="10dp"
-    android:background="@color/white">
+    android:background="@color/white"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingPrefix">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -28,7 +30,8 @@
             android:layout_marginEnd="20dp"
             android:layout_marginStart="20dp"
             android:layout_marginTop="10dp"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            fontPath="fonts/NunitoSans-Regular.ttf"/>
 
         <LinearLayout
             android:id="@+id/cvpmnm_top_container"
@@ -50,7 +53,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/name"
-                android:textColor="@color/black" />
+                android:textColor="@color/black"
+                fontPath="fonts/NunitoSans-Regular.ttf"/>
 
             <View
                 android:layout_width="match_parent"
@@ -61,7 +65,8 @@
                 android:id="@+id/cvpmnm_post_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/date" />
+                android:text="@string/date"
+                fontPath="fonts/NunitoSans-Regular.ttf"/>
 
             <View
                 android:layout_width="match_parent"

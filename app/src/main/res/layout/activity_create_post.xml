@@ -2,8 +2,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/transparent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:ignore="MissingPrefix">
 
     <!--Toolbar-->
     <android.support.design.widget.AppBarLayout
@@ -50,7 +52,8 @@
             android:layout_height="wrap_content"
             android:hint="@string/type_something"
             android:minLines="2"
-            android:padding="15dp" />
+            android:padding="15dp"
+            fontPath="fonts/NunitoSans-Regular.ttf"/>
     </RelativeLayout>
 
     <!--Add Media-->
@@ -86,7 +89,8 @@
             android:textSize="12sp"
             android:textStyle="normal"
             android:visibility="visible"
-            style="?android:attr/borderlessButtonStyle"/>
+            style="?android:attr/borderlessButtonStyle"
+            fontPath="fonts/NunitoSans-Regular.ttf"/>
     </RelativeLayout>
 
 </RelativeLayout>

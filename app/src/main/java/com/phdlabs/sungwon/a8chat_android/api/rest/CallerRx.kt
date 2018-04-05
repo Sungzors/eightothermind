@@ -18,11 +18,13 @@ import com.phdlabs.sungwon.a8chat_android.api.response.contacts.ContactsPostResp
 import com.phdlabs.sungwon.a8chat_android.api.response.contacts.UserFriendsResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.createChannel.ChannelResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.createEvent.EventPostResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.eightEvents.EventNearbyResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.eightEvents.EventRetrievalResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.favorite.PrivateChatFavoriteResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.media.FileResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.media.MediaResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.messages.FavoriteMessageResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.messages.FavoriteSelfMessageResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.notifications.ClearBadgeCountResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.privateChat.PrivateChatResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.room.EnterLeaveRoomResponse
@@ -99,14 +101,18 @@ interface CallerRx {
                   @Query("selfDestruct") selfDestruct: Boolean?, @Query("post") post: Boolean?,
                   @Query("schedule") schedule: Boolean?, @Query("minutes") minutes: Int?): Observable<FileResponse>
 
+    /*If the client wishes to unfavorite a message, set the query parameter of unfavorite to true*/
     @PATCH("/messages/{messageId}/favorite")
-    fun favoriteMessagio(@Header(TOKEN) token: String, @Path("messageId") messageId: Int, @Body data: FavoriteData): Observable<ErrorResponse>
+    fun favoriteMessagio(@Header(TOKEN) token: String, @Path("messageId") messageId: Int, @Body data: FavoriteData, @Query("unfavorite") unfavorite: Boolean): Observable<StatusResponse>
 
     @DELETE("/messages/{messageId}/user/{userId}")
     fun deleteMessagio(@Header(TOKEN) token: String, @Path("messageId") messageId: Int, @Path("userId") userId: Int): Observable<ErrorResponse>
 
     @GET("/rooms/{roomId}/favorite_messages/user/{userId}")
     fun getRoomFaveMsg(@Header(TOKEN) token: String, @Path("roomId") roomId: Int, @Path("userId") userId: Int): Observable<FavoriteMessageResponse>
+
+    @GET("/users/{userId}/messages/favorite")
+    fun getUserFaveMsg(@Header(TOKEN) token: String, @Path("userId") userId: Int) : Observable<FavoriteSelfMessageResponse>
 
     /*CHANNEL*/
     //Create new channel
@@ -198,6 +204,9 @@ interface CallerRx {
      * */
     @GET("/users/{userId}/events/with_flags")
     fun getUserEventsWithFlags(@Header(TOKEN) token: String, @Path("userId") userId: Int): Observable<EventRetrievalResponse>
+
+    @GET("/events/nearby/{userId}/user")
+    fun getNearbyEvents(@Header(TOKEN) token: String, @Path("userId") userId: Int, @Query("lat") lat: Long, @Query("lng") lng: Long): Observable<EventNearbyResponse>
 
     /*PRIVATE CHATS*/
 

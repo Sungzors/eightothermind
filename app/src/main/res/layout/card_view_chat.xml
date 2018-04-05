@@ -12,10 +12,11 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="18dp"
         android:layout_marginBottom="8dp"
         android:text="SAT 11:09 PM"
-        android:textSize="14sp"/>
+        android:textSize="14sp"
+        fontPath="fonts/NunitoSans-Regular.ttf"/>
 
     <RelativeLayout
         android:id="@+id/cvc_message_container"
@@ -29,7 +30,7 @@
         android:layout_marginEnd="55dp"
         android:paddingTop="15dp"
         android:paddingStart="30dp"
-        android:paddingBottom="15dp"
+        android:paddingBottom="5dp"
         android:paddingEnd="30dp">
         <ImageView
             android:id="@+id/cvc_message_pic_small"
@@ -42,7 +43,9 @@
             android:layout_height="wrap_content"
             android:textSize="14sp"
             android:text="test"
-            android:layout_toEndOf="@id/cvc_message_pic_small"/>
+            android:layout_toEndOf="@id/cvc_message_pic_small"
+            android:textColor="@color/black"
+            fontPath="fonts/NunitoSans-Regular.ttf"/>
         <LinearLayout
             android:id="@+id/cvc_message_pic_container_1"
             android:layout_width="wrap_content"
@@ -62,7 +65,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/cvc_message"
-            android:text="@string/decline"/>
+            android:text="@string/decline"
+            fontPath="fonts/NunitoSans-Regular.ttf"/>
 
         <Button
             android:id="@+id/cvc_message_button_money_accept"
@@ -70,7 +74,8 @@
             android:layout_height="wrap_content"
             android:layout_toEndOf="@id/cvc_message_button_money_decline"
             android:layout_below="@id/cvc_message"
-            android:text="@string/accept"/>
+            android:text="@string/accept"
+            fontPath="fonts/NunitoSans-Regular.ttf"/>
 
 
     </RelativeLayout>

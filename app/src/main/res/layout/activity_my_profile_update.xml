@@ -2,7 +2,9 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingPrefix">
     
     <LinearLayout
         android:layout_width="match_parent"
@@ -72,7 +74,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="25dp"
                     android:layout_marginTop="15dp"
-                    android:text="@string/your_name"/>
+                    android:text="@string/your_name"
+                    fontPath="fonts/NunitoSans-Bold.ttf"/>
 
                 <EditText
                     android:id="@+id/ap_first_name"
@@ -83,8 +86,10 @@
                     android:layout_marginEnd="23dp"
                     android:hint="@string/first_name"
                     android:maxLines="1"
+                    android:textColor="@color/black"
                     android:inputType="textCapSentences"
-                    android:imeOptions="actionNext"/>
+                    android:imeOptions="actionNext"
+                    fontPath="fonts/NunitoSans-Regular.ttf"/>
 
                 <EditText
                     android:id="@+id/ap_last_name"
@@ -95,8 +100,10 @@
                     android:layout_marginEnd="23dp"
                     android:hint="@string/last_name"
                     android:maxLines="1"
+                    android:textColor="@color/black"
                     android:inputType="textCapSentences"
-                    android:imeOptions="actionNext"/>
+                    android:imeOptions="actionNext"
+                    fontPath="fonts/NunitoSans-Regular.ttf"/>
 
                 <TextView
                     android:id="@+id/ap_language_question_fix"
@@ -106,7 +113,8 @@
                     android:layout_marginStart="25dp"
                     android:layout_marginEnd="25dp"
                     android:layout_marginTop="20dp"
-                    android:text="@string/what_languages_do_you_speak"/>
+                    android:text="@string/what_languages_do_you_speak"
+                    fontPath="fonts/NunitoSans-Bold.ttf"/>
 
                 <Spinner
                     android:id="@+id/ap_language_spinner"
@@ -131,7 +139,8 @@
             android:layout_height="60dp"
             android:layout_marginStart="30dp"
             android:layout_marginEnd="30dp"
-            android:text="@string/get_started"/>
+            android:text="@string/get_started"
+            fontPath="fonts/NunitoSans-Regular.ttf"/>
         <View
             android:layout_width="match_parent"
             android:layout_height="0dp"

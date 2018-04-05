@@ -301,6 +301,11 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
                 message.text = ""
                 time.text = ""
             }
+            if (!data.isRead) {
+                eventIndicator.visibility = ImageView.VISIBLE
+            } else {
+                eventIndicator.visibility = ImageView.INVISIBLE
+            }
         }
     }
 }

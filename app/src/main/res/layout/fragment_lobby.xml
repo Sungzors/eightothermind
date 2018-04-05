@@ -2,7 +2,9 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingPrefix">
 
     <!--My Channels & Followed Channels-->
     <LinearLayout
@@ -11,7 +13,7 @@
         android:orientation="vertical">
 
         <include layout="@layout/progress_view" />
-
+        
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -24,7 +26,7 @@
                 android:layout_marginStart="15dp"
                 android:layout_marginTop="15dp"
                 android:text="@string/lobby_channels"
-                android:textStyle="bold"
+                fontPath="fonts/NunitoSans-Bold.ttf"
                 android:visibility="gone" />
         </RelativeLayout>
 
@@ -50,7 +52,7 @@
                 android:layout_marginStart="15dp"
                 android:layout_marginTop="15dp"
                 android:text="@string/events"
-                android:textStyle="bold"
+                fontPath="fonts/NunitoSans-Bold.ttf"
                 android:visibility="gone" />
 
 
@@ -77,7 +79,7 @@
                 android:layout_marginStart="15dp"
                 android:layout_marginTop="10dp"
                 android:text="@string/conversations"
-                android:textStyle="bold"
+                fontPath="fonts/NunitoSans-Bold.ttf"
                 android:visibility="gone" />
 
             <android.support.v7.widget.RecyclerView

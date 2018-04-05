@@ -5,17 +5,20 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.webkit.MimeTypeMap
 import android.widget.*
+import cn.zjy.actionsheet.ActionSheet
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.db.channels.ChannelsManager
 import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
@@ -67,6 +70,7 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
     private lateinit var mChannelName: String
     private var mRoomId: Int = 0
     private var mOwnerId = 0
+    private var mUserId = 0
 
     /*Followed channels adapter*/
     private lateinit var mFollowedChanellsAdapter: BaseRecyclerAdapter<Channel, BaseViewHolder>
@@ -136,9 +140,11 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         UserManager.instance.getCurrentUser { success, user, _ ->
             if (success) {
                 user?.id.let {
+                    mUserId = it!!
                     if (it != mOwnerId) {
                         acm_the_drawer.visibility = LinearLayout.INVISIBLE
                     }
+
                 }
             }
         }
@@ -286,6 +292,29 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
                 return 0 //Message as default
             }
 
+            override fun onLongPressItem(e: MotionEvent?, position: Int) {
+                val message = mContentAdapter.getItem(position)
+                val choiceArray = mutableListOf<String>()
+                var colorArray = intArrayOf(Color.BLUE)
+                if(message.isFavorited) choiceArray.add("Unfavorite Message") else choiceArray.add("Favorite Message")
+                val actionSheet = ActionSheet.Builder()
+                        .setTitle("Select Action", Color.BLACK)
+                        .setOtherBtn(choiceArray.toTypedArray(), colorArray)
+                        .setCancelBtn("Cancel", Color.BLACK)
+                        .setCancelableOnTouchOutside(true)
+                        .setActionSheetListener( object : ActionSheet.ActionSheetListener{
+                            override fun onButtonClicked(actionSheet: ActionSheet?, index: Int) {
+                                when (index){
+                                    0 -> controller.favoriteMessage(message, mUserId, position)
+                                }
+                            }
+
+                            override fun onDismiss(actionSheet: ActionSheet?, isByBtn: Boolean) {
+                            }
+                        })
+                        .build()
+                actionSheet.show(fragmentManager)
+            }
 
             override fun viewHolder(inflater: LayoutInflater?, parent: ViewGroup?, type: Int): BaseViewHolder {
                 when (type) {

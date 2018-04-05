@@ -9,4 +9,7 @@
     android:background="#90CAF9"
     android:textSize="16sp"
     android:id="@+id/section_text"
-    android:textStyle="bold" />
+    android:textStyle="bold"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingPrefix"
+    fontPath="fonts/NunitoSans-Regular.ttf"/>

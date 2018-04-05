@@ -9,6 +9,7 @@ import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
 import com.phdlabs.sungwon.a8chat_android.structure.contacts.invite.InviteContactsActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreFragment
+import com.phdlabs.sungwon.a8chat_android.structure.favorite.message.FavoriteMessageActivity
 import com.phdlabs.sungwon.a8chat_android.structure.myProfile.notifications.NotificationsGlobalSettings
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform
@@ -66,6 +67,16 @@ class MyProfileFragment : CoreFragment(), View.OnClickListener {
                 }
             }
         }
+        UserManager.instance.getSelfFavoriteCount { count, error ->
+            error?.let {
+                showError(it)
+            } ?: kotlin.run {
+                fmp_fav_messages_text.text = resources.getString(
+                        R.string.fave_messages,
+                        count.toString()
+                )
+            }
+        }
     }
 
     /*Clickable UI*/
@@ -98,8 +109,9 @@ class MyProfileFragment : CoreFragment(), View.OnClickListener {
             }
         /*Favorite Messages*/
             fmp_container_fav_messages -> {
-                //Todo: Favorite messages
-                Toast.makeText(context, "In progress", Toast.LENGTH_SHORT).show()
+                val intent = Intent(context, FavoriteMessageActivity::class.java)
+                intent.putExtra(Constants.IntentKeys.FAVE_TYPE, 3)
+                startActivityForResult(intent, Constants.RequestCodes.OPEN_FAVE)
             }
         /*Account*/
             fmp_container_account -> {
