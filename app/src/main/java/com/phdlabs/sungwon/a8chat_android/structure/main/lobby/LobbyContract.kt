@@ -14,17 +14,16 @@ import com.phdlabs.sungwon.a8chat_android.structure.core.BaseView
 interface LobbyContract {
 
     interface View: BaseView<Controller>{
-        fun setUpMyChannelRecycler(myChannels: MutableList<Channel>)
+        fun setUpChannelRecycler(myChannels: MutableList<Channel>)
+        fun addFollowedChannels(followedChannels: MutableList<Channel>)
         fun setUpEventsRecycler(events: MutableList<EventsEight>)
-        fun setUpChannelsFollowedRecycler(channelsFollowed: MutableList<Channel>)
-        //fun setUpChannelRecycler(allChannels: MutableList<Channel>)
         fun setUpChatRecycler(chats: MutableList<Room>)
     }
 
     interface Controller: BaseController {
-        fun getMyChannel(): MutableList<Channel>
-        fun getEvents(): MutableList<EventsEight>
+        fun getMyChannels(): MutableList<Channel>
         fun getChannelsFollowed(): MutableList<Channel>
+        fun getEvents(): MutableList<EventsEight>
         fun getChannel(): MutableList<Channel>
         fun getChat(): MutableList<Room>
         fun refreshAll()

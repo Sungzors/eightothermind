@@ -3,7 +3,7 @@ package com.phdlabs.sungwon.a8chat_android.api.response.privateChat
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
 
 /**
- * Created by paix on 3/25/18.
+ * Created by JPAM on 3/25/18.
  * Classified Room information for easy access
  */
 class ClassifiedPrivateChats {

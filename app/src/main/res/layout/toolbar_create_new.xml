@@ -31,7 +31,6 @@
                 android:imeOptions="actionSearch"
                 android:inputType="text"
                 android:maxLines="1"
-                android:onClick="searchClicked"
                 android:padding="0dp"
                 android:queryHint="@string/searchcontacthint" />
         </LinearLayout>

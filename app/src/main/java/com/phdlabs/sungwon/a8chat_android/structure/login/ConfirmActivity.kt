@@ -4,6 +4,8 @@ import android.app.Activity
 import android.content.Intent
 import android.text.SpannableString
 import android.text.style.UnderlineSpan
+import android.view.View
+import android.view.WindowManager
 import android.widget.Toast
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.api.data.LoginData
@@ -111,6 +113,9 @@ class ConfirmActivity : CoreActivity() {
             content.setSpan(UnderlineSpan(), 0, content.length, 0)
             ac_textview_resend_code.text = content
             if(!isRegister) ac_button_create_profile.text = getString(R.string.login_profile)
+            //Button alpha state
+            ac_code_input.isSelected = true
+            ac_code_input.setOnClickListener { ac_button_create_profile.background = getDrawable(R.drawable.gradient_eightchatblue) }
         }
     }
 

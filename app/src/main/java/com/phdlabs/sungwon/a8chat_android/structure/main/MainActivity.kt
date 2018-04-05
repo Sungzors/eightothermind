@@ -43,7 +43,7 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
     private var lastSelectedTabId: Int? = null
 
     /*Instances*/
-    private var mLobbyFragment: LobbyFragment = LobbyFragment.newInstance()
+    private var mLobbyFragment: LobbyFragment = LobbyFragment.newInstance(true)
 
 
     /*LifeCycle*/

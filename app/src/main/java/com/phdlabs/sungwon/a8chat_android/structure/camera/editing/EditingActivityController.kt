@@ -8,9 +8,9 @@ import android.os.Build
 import android.support.v13.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import com.phdlabs.sungwon.a8chat_android.R
+import com.phdlabs.sungwon.a8chat_android.structure.camera.share.ShareCameraMediaActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.DeviceInfo
-import com.phdlabs.sungwon.a8chat_android.utility.SuffixDetector
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
 import com.squareup.picasso.Picasso
 import java.io.File
@@ -61,17 +61,19 @@ class EditingActivityController(val mView: EditingContract.View) : EditingContra
     /*Load image preview*/
     override fun loadImagePreview(filePath: String?) {
 
+        //TODO: Load 90Degrees for Portrait & 0 || 270 Degrees for Landscape. Also for the sharing screen thumbnail.
+
         filePath?.let {
             //Load Image Preview
             imageFilePath = it
             if (DeviceInfo.INSTANCE.isWarningDevice(Build.MODEL)) {
-                var presentWithRotation:Float  = 90f
-                if (mView.isFromCameraRoll){
+                var presentWithRotation: Float = 90f
+                if (mView.isFromCameraRoll) {
                     presentWithRotation = 0f
                 }
                 Picasso.with(mView.getContext())
                         .load(File(it))
-                        .rotate(presentWithRotation) //Full screen //TODO: Probably 90 degrees
+                        .rotate(presentWithRotation) //Full screen
                         .into(mView.getPreviewLayout())
             } else {
                 Picasso.with(mView.getContext())
@@ -159,6 +161,30 @@ class EditingActivityController(val mView: EditingContract.View) : EditingContra
      * */
     override fun eraseDrawing() {
         mView.getPhotoEditor().brushEraser()
+    }
+
+    /**
+     * Send Image to [ShareCameraMediaActivity]
+     * to be shared
+     * */
+    override fun sendImage() {
+        //Save Image to Gallery
+        imageFilePath.let {
+            val savedImageFilePath = mView.getPhotoEditor().saveImageWithSuffix(
+                    "8",
+                    CameraControl.instance.mediaFileNaming()
+            )
+            mView.activity?.let {
+                CameraControl.instance.addToGallery(
+                        it,
+                        savedImageFilePath)
+                it.setResult(Activity.RESULT_OK)
+                /**Transition to [ShareCameraMediaActivity]*/
+                val intent = Intent(it, ShareCameraMediaActivity::class.java)
+                intent.putExtra(Constants.CameraIntents.IMAGE_FILE_PATH, savedImageFilePath)
+                it.startActivityForResult(intent, Constants.RequestCodes.SHARE_MEDIA)
+            }
+        }
     }
 
 

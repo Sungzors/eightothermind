@@ -61,7 +61,7 @@ interface CallerRx {
      * Update Firebase Token
      * */
     @PATCH("/users/{userId}")
-    fun updateFBToken(@Header(TOKEN) token: String, @Path("userId") userId: Int, @Body userFBToken: UserFBToken): Observable<UserDataResponse>
+    fun updateFirebaseToken(@Header(TOKEN) token: String, @Path("userId") userId: Int, @Body userFBToken: UserFBToken): Observable<UserDataResponse>
 
     @GET("/users/{userId}")
     fun getUser(@Header(TOKEN) token: String, @Path("userId") userId: Int): Observable<UserDataResponse>
@@ -109,7 +109,7 @@ interface CallerRx {
     fun deleteMessagio(@Header(TOKEN) token: String, @Path("messageId") messageId: Int, @Path("userId") userId: Int): Observable<ErrorResponse>
 
     @GET("/rooms/{roomId}/favorite_messages/user/{userId}")
-    fun getRoomFaveMsg(@Header(TOKEN) token: String, @Path("roomId") roomId: Int, @Path("userId") userId: Int) : Observable<FavoriteMessageResponse>
+    fun getRoomFaveMsg(@Header(TOKEN) token: String, @Path("roomId") roomId: Int, @Path("userId") userId: Int): Observable<FavoriteMessageResponse>
 
     @GET("/users/{userId}/messages/favorite")
     fun getUserFaveMsg(@Header(TOKEN) token: String, @Path("userId") userId: Int) : Observable<FavoriteSelfMessageResponse>
@@ -132,13 +132,16 @@ interface CallerRx {
     fun getChannelPosts(@Header(TOKEN) token: String, @Path("roomId") roomId: Int,
                         @Path("userId") userId: Int, @Query("messageId") messageId: String): Observable<RoomHistoryResponse>
 
+    //Like post
     @PATCH("/channels/{messageId}/like/{userId}/user")
     fun likePost(@Header(TOKEN) token: String, @Path("messageId") messageId: Int,
                  @Path("userId") userId: Int, @Query("unlike") unlike: Boolean?): Observable<LikeResponse>
 
+    //Search Channels
     @GET("/channels/search")
     fun searchChannel(@Header(TOKEN) token: String, @Query("search") search: String?): Observable<SearchChannelsResponse>
 
+    //Follow Channel
     @PATCH("/channels/{channelId}/follow")
     fun followChannel(@Header(TOKEN) token: String, @Path("channelId") channelId: Int,
                       @Body userIds: MultipartBody): Observable<RoomResponse>
@@ -251,6 +254,13 @@ interface CallerRx {
     fun inviteContactsToEight(@Header(TOKEN) token: String,
                               @Path("userId") userId: Int,
                               @Body contactsPostData: Array<out Any>): Observable<ContactsInvitedResponse>
+
+    /**
+     * [sendPrivateChatMessage]
+     * Send Message in a Private Chat between two users
+     * */
+    @POST("/messages/string")
+    fun sendMessageString(@Header(TOKEN) token: String, @Body message: SendMessageStringData): Observable<ErrorResponse>
 
 
     /*ROOM*/

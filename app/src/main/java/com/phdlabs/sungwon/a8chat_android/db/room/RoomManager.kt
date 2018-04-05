@@ -6,6 +6,7 @@ import com.phdlabs.sungwon.a8chat_android.model.files.File
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.phdlabs.sungwon.a8chat_android.model.user.UserRooms
+import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.vicpin.krealmextensions.query
 import com.vicpin.krealmextensions.queryFirst
 import com.vicpin.krealmextensions.save
@@ -294,5 +295,39 @@ class RoomManager {
             }
         }
         return fileList
+    }
+
+    /**
+     * Find Private Chat [Room] based on participants
+     * @param roomType
+     * @param userId
+     * @param contactId
+     * @callback [Room]
+     * */
+    fun getRoomWithPrticipantsIds(userId: Int, contactId: Int, callback: (Room?) -> Unit) {
+        val roomParticipants = mutableListOf<Int>()
+        val room: Room? = null
+        Room().query {
+            equalTo("chatType", "private")
+        }.let {
+            //Get participants of each room
+            for (room in it) {
+                room.participantsId?.let {
+                    for (participantId in it) {
+                        participantId?.intValue?.let {
+                            roomParticipants.add(it)
+                        }
+                    }
+                }
+                //Condition
+                val privateChatUsers = listOf(userId, contactId)
+                if (roomParticipants == privateChatUsers) {
+                    //Return
+                    callback(room)
+                    continue
+                }
+            }
+            callback(null)
+        }
     }
 }

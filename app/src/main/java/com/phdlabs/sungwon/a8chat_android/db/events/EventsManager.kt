@@ -6,6 +6,7 @@ import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.event.EventsEight
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.vicpin.krealmextensions.query
+import com.vicpin.krealmextensions.queryAll
 import com.vicpin.krealmextensions.saveAll
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -132,5 +133,7 @@ class EventsManager {
             }
         }
     }
+    
+    fun queryMyEvents(): List<EventsEight>? = EventsEight().queryAll()
 
 }

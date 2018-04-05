@@ -38,6 +38,7 @@ object Constants {
      * */
     object SocketKeys {
         const val CONNECT = "connect"
+        const val CONNECT_ROOMS = "connect-rooms"
         const val UPDATE_ROOM = "update-room"
         const val UPDATE_CHAT_STRING = "update-chat-string"
         const val UPDATE_CHAT_MEDIA = "update-chat-media"
@@ -146,7 +147,7 @@ object Constants {
         const val EDIT_CHANNEL = 23
 
         const val OPEN_FAVE = 24
-        
+
         /**
          * Google Play Services
          * Used for error handling
@@ -158,6 +159,12 @@ object Constants {
          * Notification Request Code
          * */
         const val NOTIF_REQUEST_CODE = 26
+
+        /**
+         * Share media from Camera App
+         * */
+        const val SHARE_MEDIA = 27
+
     }
 
     /**

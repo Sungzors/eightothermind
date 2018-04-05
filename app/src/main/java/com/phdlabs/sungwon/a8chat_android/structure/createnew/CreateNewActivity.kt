@@ -11,7 +11,6 @@ import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.model.contacts.Contact
 import com.phdlabs.sungwon.a8chat_android.structure.channel.create.ChannelCreateActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
-import com.phdlabs.sungwon.a8chat_android.structure.createnew.searchChannels.ChannelSearchFragment
 import com.phdlabs.sungwon.a8chat_android.structure.createnew.searchContacts.ContactsSearchFragment
 import com.phdlabs.sungwon.a8chat_android.structure.event.create.EventCreateActivity
 import com.phdlabs.sungwon.a8chat_android.structure.groupchat.create.GroupCreateActivity
@@ -38,13 +37,11 @@ class CreateNewActivity : CoreActivity(), CreateNewContract.CreateNew.View, View
     private lateinit var mContactList: MutableList<Contact>
     private lateinit var mFavoriteList: MutableList<Contact>
     private var contactSearchFragment: ContactsSearchFragment
-    private var channelSearchFragment: ChannelSearchFragment
     private var mLastQuery: String = ""
 
     init {
         CreateNewAController(this)
         contactSearchFragment = ContactsSearchFragment()
-        channelSearchFragment = ChannelSearchFragment()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,6 +51,7 @@ class CreateNewActivity : CoreActivity(), CreateNewContract.CreateNew.View, View
 
     override fun onStart() {
         super.onStart()
+        controller.start()
         //Default UI
         setupDefaultUI()
         //Actions
@@ -64,14 +62,17 @@ class CreateNewActivity : CoreActivity(), CreateNewContract.CreateNew.View, View
 
     override fun onResume() {
         super.onResume()
+        controller.resume()
     }
 
     override fun onPause() {
         super.onPause()
+        controller.pause()
     }
 
     override fun onStop() {
         super.onStop()
+        controller.stop()
     }
 
     override fun onDestroy() {
@@ -102,33 +103,6 @@ class CreateNewActivity : CoreActivity(), CreateNewContract.CreateNew.View, View
         //Default Contacts Fragment
         acn_fragment_container.visibility = View.VISIBLE
         replaceFragment(contentContainerId(), contactSearchFragment, false)
-
-        //Segmented control default state
-        acn_contacts_selector.text = getString(R.string.contacts_selector_default_text)
-        acn_channels_selector.text = getString(R.string.channels_selector_default_text)
-        acn_contacts_selector.setOnClickListener {
-            acn_contacts_selector.isChecked = true
-            acn_channels_selector.isChecked = false
-            replaceFragment(contentContainerId(), contactSearchFragment, false)
-            //Create a Query if there is text in the SearchBar
-            if (mLastQuery.isNotBlank()) {
-                tcn_searchview?.setQuery("", false)
-                tcn_searchview?.clearFocus()
-
-            }
-        }
-        acn_channels_selector.setOnClickListener {
-            acn_contacts_selector.isChecked = false
-            acn_channels_selector.isChecked = true
-            replaceFragment(contentContainerId(), channelSearchFragment, false)
-            //Create a Query if there is text in the SearchBar
-            if (mLastQuery.isNotBlank()) {
-                tcn_searchview?.setQuery(mLastQuery, true)
-            }
-        }
-        //Default -> Contacts
-        acn_contacts_selector.isChecked = true
-        acn_channels_selector.isChecked = false
     }
 
     /*On Click*/
@@ -137,6 +111,7 @@ class CreateNewActivity : CoreActivity(), CreateNewContract.CreateNew.View, View
         acn_group_container.setOnClickListener(this)
         acn_channel_container.setOnClickListener(this)
         acn_event_container.setOnClickListener(this)
+        tcn_searchview.setOnClickListener(this)
     }
 
     override fun onClick(p0: View?) {
@@ -156,6 +131,10 @@ class CreateNewActivity : CoreActivity(), CreateNewContract.CreateNew.View, View
         /*Create Event*/
             acn_event_container -> {
                 startActivity(Intent(this, EventCreateActivity::class.java))
+            }
+        /*Full touchable search view*/
+            tcn_searchview -> {
+                tcn_searchview.isIconified = false
             }
         }
     }
@@ -189,16 +168,11 @@ class CreateNewActivity : CoreActivity(), CreateNewContract.CreateNew.View, View
                         //Hide search options
                         p0?.let {
                             mLastQuery = it
-                            acn_search_selector_container.visibility = View.VISIBLE
-                            if (acn_contacts_selector.isChecked) {//Contacts
-                                contactSearchFragment.controller.pushContactFilterChanges(p0)
-                            } else if (acn_channels_selector.isChecked) {//Channels
-                                channelSearchFragment.controller.pushChannelFilterChanges(p0)
-                            }
-                            if (it.isBlank() && acn_contacts_selector.isChecked) {
-                                ca_searchView?.clearFocus()
+                            contactSearchFragment.controller.pushContactFilterChanges(p0)
+
+                            if (it.isBlank()) {
+                                ac_searchView?.clearFocus()
                                 //Selector Menu
-                                acn_search_selector_container.visibility = View.GONE
                                 contactSearchFragment.controller.getContactData()
                             }
                         }
@@ -213,15 +187,9 @@ class CreateNewActivity : CoreActivity(), CreateNewContract.CreateNew.View, View
                         //Hide search options
                         p0?.let {
                             mLastQuery = it
-                            acn_search_selector_container.visibility = View.VISIBLE
-                            if (acn_contacts_selector.isChecked) {//Contacts
-                                contactSearchFragment.controller.pushContactFilterChanges(p0)
-                            } else if (acn_channels_selector.isChecked) {//Channels
-                                channelSearchFragment.controller.pushChannelFilterChanges(p0)
-                            }
-                            if (it.isBlank() && acn_contacts_selector.isChecked) {
+                            contactSearchFragment.controller.pushContactFilterChanges(p0)
+                            if (it.isBlank()) {
                                 //Selector Menu
-                                acn_search_selector_container.visibility = View.GONE
                                 contactSearchFragment.controller.getContactData()
                             }
                         }
@@ -229,13 +197,6 @@ class CreateNewActivity : CoreActivity(), CreateNewContract.CreateNew.View, View
                     }
                 }
         )
-    }
-
-    /**
-     * Listener to make whole search bar touchable
-     * */
-    fun searchClicked(v: View) {
-        tcn_searchview.isIconified = false
     }
 
 }

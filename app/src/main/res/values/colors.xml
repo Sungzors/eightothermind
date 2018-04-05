@@ -7,7 +7,9 @@
     <color name="tabselect">#4dd0e1</color>
     <color name="confirmText">#4a90e2</color>
     <color name="gradientLeft">#495fff</color>
+    <color name="gradientLeftOpaque">#55495fff</color>
     <color name="gradientRight">#0ccafe</color>
+    <color name="gradientRightOpaque">#550ccafe</color>
     <color name="gradientUp">#357fff</color>
     <color name="gradientDown">#08a4ff</color>
     <color name="settingBlue">#08a4ff</color>
@@ -45,5 +47,6 @@
     <color name="violet_color_picker">#8359A3</color>
     <color name="yellow_color_picker">#FBE870</color>
     <color name="yellow_green_color_picker">#C5E17A</color>
+    <color name="hint_text">#b9c1ca</color>
 
 </resources>

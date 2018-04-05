@@ -159,7 +159,7 @@ class ChannelSettingsActivity : CoreActivity(), SettingContract.Channel.View, Vi
                         )
                     }
                     //Channel Info
-                    ChannelsManager.instance.getSingleChannel(mChannelId)?.let {
+                    ChannelsManager.instance.querySingleChannel(mChannelId)?.let {
                         //Channel Pic
                         Picasso.with(context).load(it?.avatar)
                                 .transform(CircleTransform())

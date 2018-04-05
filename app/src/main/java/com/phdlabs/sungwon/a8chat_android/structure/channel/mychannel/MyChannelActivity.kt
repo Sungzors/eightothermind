@@ -116,7 +116,7 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         toolbar_right_picture.visibility = View.VISIBLE
         //Channel Picture -> Access to settings
         Picasso.with(this)
-                .load(ChannelsManager.instance.getSingleChannel(mChannelId)?.avatar)
+                .load(ChannelsManager.instance.querySingleChannel(mChannelId)?.avatar)
                 .placeholder(R.drawable.addphoto)
                 .transform(CircleTransform())
                 .into(toolbar_right_picture)

@@ -123,43 +123,6 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/acn_search_selector_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5sp"
-                android:layout_marginEnd="25sp"
-                android:layout_marginStart="25sp"
-                android:layout_marginTop="15sp"
-                android:padding="5sp"
-                android:visibility="gone"
-                android:weightSum="1">
-
-                <info.hoang8f.android.segmented.SegmentedGroup
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                    <!--Contacts-->
-                    <RadioButton
-                        android:id="@+id/acn_contacts_selector"
-                        style="@style/RadioButton"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/contacts" />
-
-                    <RadioButton
-                        android:id="@+id/acn_channels_selector"
-                        style="@style/RadioButton"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/channels" />
-
-                </info.hoang8f.android.segmented.SegmentedGroup>
-
-            </LinearLayout>
-
             <!--Search Result Container-->
             <FrameLayout
                 android:id="@+id/acn_fragment_container"

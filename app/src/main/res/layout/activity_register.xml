@@ -99,7 +99,7 @@
             android:layout_height="50dp"
             android:layout_marginStart="30dp"
             android:layout_marginEnd="30dp"
-            android:background="@drawable/gradient_eightchatblue"
+            android:background="@drawable/gradient_eightchatblue_opaque"
             android:text="@string/send_confirm_code"
             android:textColor="@color/white"
             android:textSize="16sp"

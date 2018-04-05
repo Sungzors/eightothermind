@@ -11,7 +11,7 @@ import com.phdlabs.sungwon.a8chat_android.utility.Constants
 /**
  * Created by JPAM on 12/28/17.
  */
-class CameraAController(val mView: CameraContract.View) : CameraContract.Controller {
+class CameraAController(val mView: CameraContract.Camera.View) : CameraContract.Camera.Controller {
 
     /*LOG*/
     private val TAG = "Camera Controller"

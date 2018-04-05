@@ -33,23 +33,6 @@ interface CreateNewContract {
 
     }
 
-    //Channels Fragment
-    interface ChannelSearch {
-        interface View : BaseView<Controller> {
-            var getAct: CreateNewActivity
-            //Update Channel Data
-            fun updateChannelRecycler(channels: MutableList<Channel>?)
-        }
-
-        interface Controller : BaseController {
-            //Filter Channel Data
-            fun pushChannelFilterChanges(p0: String?)
-
-            //Download Room Info
-            fun pullChannelRoom(roomId: Int, callback: (Boolean) -> Unit)
-        }
-    }
-
     //Contacts Fragment
     interface ContactSearch {
         interface View : BaseView<Controller> {

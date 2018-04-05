@@ -7,8 +7,8 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.ImageView
 import com.phdlabs.sungwon.a8chat_android.R
-import com.phdlabs.sungwon.a8chat_android.structure.contacts.searchFragments.ChannelsFragment
-import com.phdlabs.sungwon.a8chat_android.structure.contacts.searchFragments.ContactsFragment
+import com.phdlabs.sungwon.a8chat_android.structure.contacts.searchChannels.ChannelsFragment
+import com.phdlabs.sungwon.a8chat_android.structure.contacts.searchContacts.ContactsFragment
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import kotlinx.android.synthetic.main.activity_contacts.*
 import kotlinx.android.synthetic.main.toolbar.*
@@ -50,6 +50,11 @@ class ContactsActivity : CoreActivity(), ContactsContract.EightFriends.View, Vie
     override fun onResume() {
         super.onResume()
         controller.resume()
+        if (ac_button_contacts.isChecked) {
+            replaceFragment(ContactsFragment(), false)
+        } else {
+            replaceFragment(ChannelsFragment(), false)
+        }
     }
 
     override fun onPause() {
@@ -83,8 +88,11 @@ class ContactsActivity : CoreActivity(), ContactsContract.EightFriends.View, Vie
         ac_button_channels.text = getString(R.string.channels_selector_default_text)
         ac_button_contacts.setOnClickListener(this)
         ac_button_channels.setOnClickListener(this)
+        //TODO: Save last selection
         ac_button_contacts.isChecked = true //Start loading contacts
         ac_button_channels.isChecked = false
+        //Search
+        ac_searchView.setOnClickListener(this)
     }
 
     override fun updateContactSelector(string: String, contactCount: Int) {
@@ -136,6 +144,13 @@ class ContactsActivity : CoreActivity(), ContactsContract.EightFriends.View, Vie
                 updateChannelsSelector("Channels", 0)
                 controller.loadChannels()
             }
+
+        /**
+         * Full search view touch
+         * */
+            ac_searchView -> {
+                ac_searchView.isIconified = false
+            }
         }
     }
 
@@ -146,13 +161,6 @@ class ContactsActivity : CoreActivity(), ContactsContract.EightFriends.View, Vie
         } else if (ac_button_channels.isChecked && !ac_button_contacts.isChecked) {
             controller.loadChannels()
         }
-    }
-
-    /**
-     * Listener to make whole search bar touchable
-     * */
-    fun searchClicked(v: View) {
-        ca_searchView.isIconified = false
     }
 
 }

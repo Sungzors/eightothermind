@@ -127,25 +127,25 @@ class ChatSettingActivity : CoreActivity(), SettingContract.Chat.View, View.OnCl
     /*User Info*/
     private fun setupUserInfo() {
         //Display Contact Info
-        mContact?.let {
+        if (mContact != null){
             //Display Name
-            val fullName: Pair<Boolean, String?> = it.hasFullName()
+            val fullName: Pair<Boolean, String?> = mContact?.hasFullName()!!
             if (fullName.first) {
                 asc_profile_name.text = fullName.second
             } else {
-                asc_profile_name.text = it.first_name ?: "n/a"
+                asc_profile_name.text = mContact?.first_name ?: "n/a"
             }
             //Phone Number
-            asc_profile_phone.text = PhoneNumberUtils.formatNumber(it.phone, Locale.getDefault().country) ?: "n/a"
+            asc_profile_phone.text = PhoneNumberUtils.formatNumber(mContact?.phone, Locale.getDefault().country) ?: "n/a"
             //Language
-            asc_profile_language.text = "Language: " + it.languages_spoken?.get(0)?.stringValue ?: "n/a"
+            asc_profile_language.text = "Language: " + mContact?.languages_spoken?.get(0)?.stringValue
             //Profile Image
-            it.avatar?.let {
+            mContact?.avatar?.let {
                 mContactAvatar = it
                 Picasso.with(context).load(it).resize(70, 70).onlyScaleDown()
                         .centerCrop().transform(CircleTransform()).into(asc_chat_picture)
             }
-        } ?: run {
+        } else {
             //Not a contact
             val alertDialog = AlertDialog.Builder(this)
             alertDialog.setTitle("Please add $mChatName using a phone number in your Contacts App")

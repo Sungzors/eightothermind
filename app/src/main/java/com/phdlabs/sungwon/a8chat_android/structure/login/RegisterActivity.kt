@@ -40,7 +40,17 @@ class RegisterActivity : CoreActivity() {
             isRegister = false
         }
         setToolbarTitle("Phone Number")
-        ar_phone.addTextChangedListener(PhoneNumberFormattingTextWatcher())
+        //Button alpha state
+        ar_phone.addTextChangedListener(object: PhoneNumberFormattingTextWatcher() {
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                super.onTextChanged(s, start, before, count)
+                if (!s.isNullOrBlank()) {
+                    ar_confirm_button.background = getDrawable(R.drawable.gradient_eightchatblue)
+                } else {
+                    ar_confirm_button.background = getDrawable(R.drawable.gradient_eightchatblue_opaque)
+                }
+            }
+        })
         setOnClickers()
     }
 

@@ -1,6 +1,5 @@
 package com.phdlabs.sungwon.a8chat_android.structure.contacts
 
-import android.app.AlertDialog
 import android.app.LoaderManager
 import android.content.Loader
 import android.content.pm.PackageManager
@@ -104,7 +103,7 @@ class ContactsAController(val mView: ContactsContract.EightFriends.View) :
     }
 
     override fun loadChannels() {
-        ChannelsManager.instance.getMyFollowedChannels(true, { popular, followed, errorMessage ->
+        ChannelsManager.instance.getMyFollowedChannelsWithFlags(true, { popular, followed, errorMessage ->
             errorMessage?.let {
                 mView.showError(errorMessage)
             } ?: run {

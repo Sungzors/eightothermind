@@ -7,7 +7,7 @@ import com.phdlabs.sungwon.a8chat_android.model.contacts.Contact
 import io.realm.RealmList
 
 /**
- * Created by paix on 3/24/18.
+ * Created by JPAM on 3/24/18.
  * Global User Settings
  */
 class GlobalSettingsResponse : ErrorResponse() {

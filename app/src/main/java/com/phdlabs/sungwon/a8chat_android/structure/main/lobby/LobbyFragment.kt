@@ -38,9 +38,8 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
     override lateinit var controller: LobbyContract.Controller
 
     /*Adapters*/
-    private lateinit var mAdapterMyChannel: BaseRecyclerAdapter<Channel, BaseViewHolder>
+    private lateinit var mAdapterChannels: BaseRecyclerAdapter<Channel, BaseViewHolder>
     private lateinit var mAdapterEvent: BaseRecyclerAdapter<EventsEight, BaseViewHolder>
-    private lateinit var mAdapterFollow: BaseRecyclerAdapter<Channel, BaseViewHolder>
     private lateinit var mAdapterChat: BaseRecyclerAdapter<Room, BaseViewHolder>
 
     /*Layout*/
@@ -90,8 +89,8 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
     }
 
     /*My Channels*/
-    override fun setUpMyChannelRecycler(myChannels: MutableList<Channel>) {
-        mAdapterMyChannel = object : BaseRecyclerAdapter<Channel, BaseViewHolder>() {
+    override fun setUpChannelRecycler(myChannels: MutableList<Channel>) {
+        mAdapterChannels = object : BaseRecyclerAdapter<Channel, BaseViewHolder>() {
             override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: Channel?, position: Int, type: Int) {
                 bindMyChannelViewHolder(viewHolder!!, data!!)
             }
@@ -102,11 +101,11 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
                 }
             }
         }
-        mAdapterMyChannel.setItems(myChannels)
-        fl_my_channels_title.visibility = TextView.VISIBLE
-        fl_my_channels_recycler.visibility = RecyclerView.VISIBLE
-        fl_my_channels_recycler.layoutManager = LinearLayoutManager(coreActivity.context, LinearLayoutManager.HORIZONTAL, false)
-        fl_my_channels_recycler.adapter = mAdapterMyChannel
+        mAdapterChannels.setItems(myChannels)
+        fl_channels_title.visibility = TextView.VISIBLE
+        fl_channels_recycler.visibility = RecyclerView.VISIBLE
+        fl_channels_recycler.layoutManager = LinearLayoutManager(coreActivity.context, LinearLayoutManager.HORIZONTAL, false)
+        fl_channels_recycler.adapter = mAdapterChannels
     }
 
     private fun bindMyChannelViewHolder(viewHolder: BaseViewHolder, data: Channel) {
@@ -116,12 +115,12 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
         //Unread indicator
         data.unread_messages?.let {
             if (it) {
-                unreadChannelIndicator.visibility = View.VISIBLE
+                unreadChannelIndicator.background = activity?.getDrawable(R.drawable.bg_circle_blue_lobby)
             } else {
-                unreadChannelIndicator.visibility = View.GONE
+                unreadChannelIndicator.background = activity?.getDrawable(R.drawable.bg_circle_white_lobby)
             }
         }
-        Picasso.with(coreActivity.context).load(data.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(profilePic)
+        Picasso.with(coreActivity.context).load(data.avatar).placeholder(R.drawable.ic_launcher_round).transform(CircleTransform()).into(profilePic)
         channelName.text = data.name
         profilePic.setOnClickListener {
             val intent = Intent(activity, MyChannelActivity::class.java)
@@ -132,6 +131,14 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
             startActivity(intent)
         }
     }
+
+    /*Followed Channels*/
+    //TODO: Add separators after my channels -> Find suitable solution
+    override fun addFollowedChannels(followedChannels: MutableList<Channel>) {
+        mAdapterChannels.addAll(followedChannels)
+        mAdapterChannels.notifyDataSetChanged()
+    }
+
 
     /*Events*/
     override fun setUpEventsRecycler(events: MutableList<EventsEight>) {
@@ -154,7 +161,6 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
                     }
                 }
             }
-
         }
         mAdapterEvent.setItems(events)
         fl_events_title.visibility = TextView.VISIBLE
@@ -169,7 +175,7 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
         val title = viewHolder.get<TextView>(R.id.cvle_title)
         val message = viewHolder.get<TextView>(R.id.cvle_message)
         val time = viewHolder.get<TextView>(R.id.cvle_time)
-        Picasso.with(coreActivity.context).load(data.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(eventPic)
+        Picasso.with(coreActivity.context).load(data.avatar).placeholder(R.drawable.ic_launcher_round).transform(CircleTransform()).into(eventPic)
         title.text = data.event_name
         if (data.message != null) {
             when (data.message!!.type) {
@@ -194,51 +200,6 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
             eventIndicator.visibility = ImageView.INVISIBLE
         }
 
-    }
-
-    /*Followed Channels*/
-    override fun setUpChannelsFollowedRecycler(channelsFollowed: MutableList<Channel>) {
-        mAdapterFollow = object : BaseRecyclerAdapter<Channel, BaseViewHolder>() {
-            override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: Channel?, position: Int, type: Int) {
-                bindReadChannelViewHolder(viewHolder!!, data!!)
-            }
-
-            override fun viewHolder(inflater: LayoutInflater?, parent: ViewGroup?, type: Int): BaseViewHolder {
-                return object : BaseViewHolder(R.layout.card_view_lobby_follow_channel, inflater!!, parent) {
-
-                }
-            }
-        }
-        mAdapterFollow.setItems(channelsFollowed)
-        fl_follow_title.visibility = TextView.VISIBLE
-        fl_follow_recycler.visibility = RecyclerView.VISIBLE
-        fl_follow_recycler.layoutManager = LinearLayoutManager(coreActivity.context, LinearLayoutManager.HORIZONTAL, false)
-        fl_follow_recycler.adapter = mAdapterFollow
-    }
-
-    //Read channels
-    private fun bindReadChannelViewHolder(viewHolder: BaseViewHolder, data: Channel) {
-        val profilePic = viewHolder.get<ImageView>(R.id.cvlc_picture_profile)
-        val channelName = viewHolder.get<TextView>(R.id.cvlc_name_channel)
-        val unreadChannelIndicator = viewHolder.get<ImageView>(R.id.cvlc_background_unread)
-        //Unread indicator
-        data.unread_messages?.let {
-            if (it) {
-                unreadChannelIndicator.visibility = View.VISIBLE
-            } else {
-                unreadChannelIndicator.visibility = View.GONE
-            }
-        }
-        Picasso.with(coreActivity.context).load(data.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(profilePic)
-        channelName.text = data.name
-        profilePic.setOnClickListener {
-            val intent = Intent(activity, MyChannelActivity::class.java)
-            intent.putExtra(Constants.IntentKeys.CHANNEL_ID, data.id)
-            intent.putExtra(Constants.IntentKeys.CHANNEL_NAME, data.name)
-            intent.putExtra(Constants.IntentKeys.ROOM_ID, data.room_id)
-            intent.putExtra(Constants.IntentKeys.OWNER_ID, data.user_creator_id)
-            startActivity(intent)
-        }
     }
 
     /*CHAT - Conversations*/
@@ -277,7 +238,10 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
         mAdapterChat.setItems(chats)
         fl_chat_title.visibility = TextView.VISIBLE
         fl_chat_recycler.visibility = RecyclerView.VISIBLE
-        fl_chat_recycler.layoutManager = LinearLayoutManager(coreActivity.context)
+        fl_chat_recycler.layoutManager = object : LinearLayoutManager(coreActivity.context) {
+            override fun canScrollHorizontally(): Boolean = false
+            override fun canScrollVertically(): Boolean = false
+        }
         fl_chat_recycler.adapter = mAdapterChat
     }
 
@@ -288,7 +252,7 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
         val message = viewHolder.get<TextView>(R.id.cvle_message)
         val time = viewHolder.get<TextView>(R.id.cvle_time)
         if (data.chatType == "private") {
-            Picasso.with(context).load(data.user!!.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(eventPic)
+            Picasso.with(context).load(data.user!!.avatar).placeholder(R.drawable.ic_launcher_round).transform(CircleTransform()).into(eventPic)
             title.text = data.user!!.first_name + " " + data.user!!.last_name
             if (data.message != null) {
                 when (data.message!!.type) {
@@ -316,7 +280,7 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
                 eventIndicator.visibility = ImageView.INVISIBLE
             }
         } else if (data.chatType == "group") {
-            Picasso.with(context).load(data.groupChatInfo!!.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(eventPic)
+            Picasso.with(context).load(data.groupChatInfo!!.avatar).placeholder(R.drawable.ic_launcher_round).transform(CircleTransform()).into(eventPic)
             title.text = data.groupChatInfo!!.name
             if (data.message != null) {
                 when (data.message!!.type) {
