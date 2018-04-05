@@ -7,6 +7,7 @@ import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.phdlabs.sungwon.a8chat_android.model.user.UserRooms
 import com.vicpin.krealmextensions.query
+import com.vicpin.krealmextensions.queryFirst
 import com.vicpin.krealmextensions.save
 import com.vicpin.krealmextensions.saveAll
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -125,8 +126,14 @@ class RoomManager {
         }
     }
 
-    fun getRealmRoom(roomId: Int){
-
+    /**
+     * [getRealmRoom]
+     * - Pull Room from Realm
+     */
+    fun getRealmRoom(roomId: Int, callback: (Room?) -> Unit){
+        Room().queryFirst { equalTo("id", roomId) }?.let {
+            callback(it)
+        }
     }
 
     /**

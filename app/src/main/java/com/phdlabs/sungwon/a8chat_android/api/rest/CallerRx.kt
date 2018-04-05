@@ -18,6 +18,7 @@ import com.phdlabs.sungwon.a8chat_android.api.response.contacts.ContactsPostResp
 import com.phdlabs.sungwon.a8chat_android.api.response.contacts.UserFriendsResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.createChannel.ChannelResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.createEvent.EventPostResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.eightEvents.EventNearbyResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.eightEvents.EventRetrievalResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.favorite.PrivateChatFavoriteResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.media.FileResponse
@@ -200,6 +201,9 @@ interface CallerRx {
      * */
     @GET("/users/{userId}/events/with_flags")
     fun getUserEventsWithFlags(@Header(TOKEN) token: String, @Path("userId") userId: Int): Observable<EventRetrievalResponse>
+
+    @GET("/events/nearby/{userId}/user")
+    fun getNearbyEvents(@Header(TOKEN) token: String, @Path("userId") userId: Int, @Query("lat") lat: Long, @Query("lng") lng: Long): Observable<EventNearbyResponse>
 
     /*PRIVATE CHATS*/
 
