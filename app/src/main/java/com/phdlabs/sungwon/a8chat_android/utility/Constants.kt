@@ -1,6 +1,7 @@
 package com.phdlabs.sungwon.a8chat_android.utility
 
 import android.Manifest
+import io.agora.rtc.Constants
 
 /**
  * Created by SungWon on 9/24/2017.
@@ -293,6 +294,34 @@ object Constants {
         val TYPE_UNREAD = "unread"
         val TYPE_FAVORITE = "favorite"
         val TYPE_READ_NO_FAVORITE = "readandNonfavorite"
+    }
+
+    /**
+     * Agora.io Live Video Broadcasting through Eight Channels
+     * Resolution and Peer management constants
+     * */
+    object Broadcast {
+
+        val MAX_PEER_COUNT = 3 // TODO: Allow maximum peer count after testing
+
+        var VIDEO_PROFILES = intArrayOf(
+                Constants.VIDEO_PROFILE_120P,
+                Constants.VIDEO_PROFILE_180P,
+                Constants.VIDEO_PROFILE_240P,
+                Constants.VIDEO_PROFILE_360P,
+                Constants.VIDEO_PROFILE_480P,
+                Constants.VIDEO_PROFILE_720P
+        )
+
+        val DEFAULT_PROFILE_IDX = 2 // default use 240P //TODO: Test with different resolutions
+
+        object PrefManager {
+            val PREF_PROPERTY_PROFILE_IDX = "pref_profile_index"
+            val PREF_PROPERTY_UID = "pOCXx_uid"
+        }
+
+        val ACTION_KEY_CROLE = "C_Role"
+        val ACTION_KEY_ROOM_NAME = "ecHANEL"
     }
 
 }

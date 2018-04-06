@@ -22,7 +22,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 /**
- * Created by paix on 3/26/18.
+ * Created by JPAM on 3/26/18.
  */
 class ShareToEventFragment : CoreFragment() {
 
