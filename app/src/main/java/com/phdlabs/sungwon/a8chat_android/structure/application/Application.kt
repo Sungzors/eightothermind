@@ -6,6 +6,7 @@ import android.net.Uri
 import com.github.nkzawa.socketio.client.IO
 import com.github.nkzawa.socketio.client.Socket
 import com.phdlabs.sungwon.a8chat_android.R
+import com.phdlabs.sungwon.a8chat_android.structure.channel.broadcast.WorkerThread
 import io.realm.Realm
 import io.realm.RealmConfiguration
 import io.realm.rx.RealmObservableFactory
@@ -56,5 +57,32 @@ class Application : Application() {
 
     /*Get Socket*/
     fun getSocket(): Socket = mSocket
+
+    /*LIVE VIDEO BROADCAST*/
+    private var mWorkerThread: WorkerThread? = null
+
+    @Synchronized
+    fun initWorkerThread() {
+        if (mWorkerThread == null) {
+            mWorkerThread = WorkerThread(applicationContext)
+            mWorkerThread?.start()
+
+            mWorkerThread?.waitForReady()
+        }
+    }
+
+    @Synchronized
+    fun getWorkerThread(): WorkerThread? = mWorkerThread
+
+    @Synchronized
+    fun deInitWorkerThread() {
+        mWorkerThread?.exit()
+        try {
+            mWorkerThread?.join()
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+        }
+        mWorkerThread = null
+    }
 
 }
