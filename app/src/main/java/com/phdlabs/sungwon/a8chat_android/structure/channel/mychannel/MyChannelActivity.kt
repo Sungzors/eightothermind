@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
+import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -69,13 +70,13 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
     private var mOwnerId = 0
 
     /*Followed channels adapter*/
-    private lateinit var mFollowedChanellsAdapter: BaseRecyclerAdapter<Channel, BaseViewHolder>
+    private lateinit var mFollowedChannelsAdapter: BaseRecyclerAdapter<Channel, BaseViewHolder>
     /*Content Adapter*/
     private lateinit var mContentAdapter: BaseRecyclerAdapter<Message, BaseViewHolder>
     /*Post Media Adapter*/
     private lateinit var mPostMediaAdapter: BaseRecyclerAdapter<Media, BaseViewHolder>
     /*Files*/
-    lateinit var fileListerDialog: FileListerDialog
+    private lateinit var fileListerDialog: FileListerDialog
 
     /*LifeCycle*/
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -170,7 +171,7 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
 
     /*FOLLOWED CHANNELS*/
     private fun setupFollowedChannelsRecycler() {
-        mFollowedChanellsAdapter = object : BaseRecyclerAdapter<Channel, BaseViewHolder>() {
+        mFollowedChannelsAdapter = object : BaseRecyclerAdapter<Channel, BaseViewHolder>() {
             override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: Channel?, position: Int, type: Int) {
 
                 val profilePic = viewHolder?.get<ImageView>(R.id.cvlc_picture_profile)
@@ -208,9 +209,9 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
                 }
             }
         }
-        mFollowedChanellsAdapter.setItems(controller.getFollowedChannels())
+        mFollowedChannelsAdapter.setItems(controller.getFollowedChannels())
         acm_fav_channel_recycler.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        acm_fav_channel_recycler.adapter = mFollowedChanellsAdapter
+        acm_fav_channel_recycler.adapter = mFollowedChannelsAdapter
     }
 
     /*POSTS RECYCLER*/
@@ -446,7 +447,7 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         //Content
         val postText = viewHolder.get<TextView>(R.id.cvpmnm_post_text)
         //Actions
-        val likeButton = viewHolder.get<ImageView>(R.id.cvpmnm_like_button)//TODO: LIKE
+        val likeButton = viewHolder.get<ImageView>(R.id.cvpmnm_like_button)
         val commentButton = viewHolder.get<ImageView>(R.id.cvpmnm_comment_button)
         val likeCount = viewHolder.get<TextView>(R.id.cvpmnm_like_count)
         val commentCount = viewHolder.get<TextView>(R.id.cvpmnm_comment_count)
@@ -618,9 +619,9 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
     }
 
     override fun updateFollowedChannelsRecycler() {
-        mFollowedChanellsAdapter.clear()
-        mFollowedChanellsAdapter.setItems(controller.getFollowedChannels())
-        mFollowedChanellsAdapter.notifyDataSetChanged()
+        mFollowedChannelsAdapter.clear()
+        mFollowedChannelsAdapter.setItems(controller.getFollowedChannels())
+        mFollowedChannelsAdapter.notifyDataSetChanged()
         acm_fav_channel_recycler.smoothScrollToPosition(0)
     }
 
@@ -665,7 +666,17 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
             }
         }
         acm_drawer_broadcast.setOnClickListener {
-            //TODO: Video Broadcasting
+            if (controller.checkSelfPermissions()) {
+                //Not a contact
+                val alertDialog = AlertDialog.Builder(this)
+                alertDialog.setTitle("Would you like to start a live broadcast on $mChannelName?")
+                alertDialog.setPositiveButton("OK") { _, _ ->
+                    //TODO: create broadcast post
+                    //TODO: Transition to video broadcasting
+                }
+                alertDialog.setNegativeButton("Cancel") { _, _ -> /*Dismiss*/ }
+                alertDialog.show()
+            }
         }
         /*File*/
         acm_drawer_file.setOnClickListener {

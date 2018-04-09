@@ -1,17 +1,14 @@
 package com.phdlabs.sungwon.a8chat_android.structure.application
 
 import android.app.Application
-import android.content.Intent
-import android.net.Uri
 import com.github.nkzawa.socketio.client.IO
 import com.github.nkzawa.socketio.client.Socket
 import com.phdlabs.sungwon.a8chat_android.R
-import com.phdlabs.sungwon.a8chat_android.structure.channel.broadcast.WorkerThread
+import com.phdlabs.sungwon.a8chat_android.structure.channel.broadcast.model.WorkerThread
 import io.realm.Realm
 import io.realm.RealmConfiguration
 import io.realm.rx.RealmObservableFactory
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig
-import java.io.File
 import java.net.URISyntaxException
 
 /**

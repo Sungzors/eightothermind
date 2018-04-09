@@ -126,6 +126,9 @@ interface ChannelContract {
             /*Read Files Permissions*/
             fun requestReadingExternalStorage()
 
+            /*Live Broadcast Permissions*/
+            fun checkSelfPermissions(): Boolean
+
             fun permissionResults(requestCode: Int, permissions: Array<out String>, grantResults: IntArray): Boolean
         }
     }

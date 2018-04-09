@@ -21,6 +21,7 @@ import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.model.user.UserRooms
+import com.phdlabs.sungwon.a8chat_android.structure.application.Application
 import com.phdlabs.sungwon.a8chat_android.structure.channel.ChannelContract
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.SuffixDetector
@@ -39,6 +40,9 @@ import java.io.File
  * Created by SungWon on 12/20/2017.
  * Updated by JPAM on 03/05/2018
  */
+
+//TODO: Create a post function for posting the broadcast access once the channel owner goes live
+//TODO: Create a delete post function when the user terminates the broadcast.
 class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelContract.MyChannel.Controller {
 
     private var TAG = "MyChannelController"
@@ -73,14 +77,33 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
 
     /*LifeCycle*/
     override fun start() {
-        if (ContextCompat.checkSelfPermission(mView.getActivity, Constants.AppPermissions.READ_EXTERNAL) !=
-                PackageManager.PERMISSION_GRANTED) {
-            requestReadingExternalStorage()
+        checkSelfPermissions()
+    }
+
+    override fun checkSelfPermissions(): Boolean {
+        return checkSelfPermission(Constants.AppPermissions.RECORD_AUDIO, Constants.PermissionsReqCode.RECORD_AUDIO_REQ_CODE) &&
+                checkSelfPermission(Constants.AppPermissions.CAMERA, Constants.PermissionsReqCode.CAMERA_REQ_CODE) &&
+                checkSelfPermission(Constants.AppPermissions.WRITE_EXTERNAL, Constants.PermissionsReqCode.WRITE_EXTERNAL_REQ_CODE)
+    }
+
+    fun checkSelfPermission(permission: String, requestCode: Int): Boolean {
+        if (ContextCompat.checkSelfPermission(mView.getActivity,
+                        permission) != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(mView.getActivity,
+                    arrayOf(permission),
+                    requestCode)
+            return false
         }
+
+        if (Constants.AppPermissions.CAMERA == permission) {
+            mView.get8Application.initWorkerThread()
+        }
+        return true
     }
 
     override fun requestReadingExternalStorage() {
-        //Required permissions
+        //Required permissions for file sharing
         val whatPermissions = arrayOf(Constants.AppPermissions.READ_EXTERNAL)
         mView.getActivity.context?.let {
             //Request Permissions
@@ -91,14 +114,44 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
     }
 
     override fun permissionResults(requestCode: Int, permissions: Array<out String>, grantResults: IntArray): Boolean {
-        if (requestCode == Constants.PermissionsReqCode.READ_EXTERNAL_STORAGE) {
-            if (grantResults.size != 1 || grantResults.get(0) != PackageManager.PERMISSION_GRANTED) {
-                mView.showError(mView.getActivity.getString(R.string.request_read_external_permission))
+
+        when (requestCode) {
+        /*Audio*/
+            Constants.PermissionsReqCode.RECORD_AUDIO_REQ_CODE -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    checkSelfPermission(Constants.AppPermissions.CAMERA, Constants.PermissionsReqCode.CAMERA_REQ_CODE)
+                } else {
+                    mView.getActivity.finish()
+                }
+                return true
             }
-            return true
-        } else {
-            return false
+        /*Camera*/
+            Constants.PermissionsReqCode.CAMERA_REQ_CODE -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    checkSelfPermission(Constants.AppPermissions.WRITE_EXTERNAL, Constants.PermissionsReqCode.WRITE_EXTERNAL_REQ_CODE)
+                    mView.get8Application.initWorkerThread()
+                } else {
+                    mView.getActivity.finish()
+                }
+                return true
+            }
+        /*Write External Storage*/
+            Constants.PermissionsReqCode.WRITE_EXTERNAL_REQ_CODE -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                } else {
+                    mView.getActivity.finish()
+                }
+                return true
+            }
+        /*Read External Storage*/
+            Constants.PermissionsReqCode.READ_EXTERNAL_STORAGE -> {
+                if (grantResults.size != 1 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                    mView.showError(mView.getActivity.getString(R.string.request_read_external_permission))
+                }
+                return true
+            }
         }
+        return false
     }
 
     override fun resume() {

@@ -1,4 +1,4 @@
-package com.phdlabs.sungwon.a8chat_android.structure.channel.broadcast
+package com.phdlabs.sungwon.a8chat_android.structure.channel.broadcast.model
 
 import android.content.Context
 import android.os.Environment

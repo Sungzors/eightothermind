@@ -1,4 +1,4 @@
-package com.phdlabs.sungwon.a8chat_android.structure.channel.broadcast
+package com.phdlabs.sungwon.a8chat_android.structure.channel.broadcast.model
 
 /**
  * Created by JPAM on 4/6/18.
