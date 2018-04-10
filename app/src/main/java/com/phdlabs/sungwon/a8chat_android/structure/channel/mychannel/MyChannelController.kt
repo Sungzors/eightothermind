@@ -21,7 +21,6 @@ import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.model.user.UserRooms
-import com.phdlabs.sungwon.a8chat_android.structure.application.Application
 import com.phdlabs.sungwon.a8chat_android.structure.channel.ChannelContract
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.SuffixDetector
@@ -77,6 +76,7 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
 
     /*LifeCycle*/
     override fun start() {
+        //All channel permissions
         checkSelfPermissions()
     }
 
@@ -95,9 +95,9 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
                     requestCode)
             return false
         }
-
+        //Video broadcasting ready with camera permission
         if (Constants.AppPermissions.CAMERA == permission) {
-            mView.get8Application.initWorkerThread()
+            // mView.get8Application.initWorkerThread() //TODO: Uncomment to test Video Broadcasting (Only works on device)
         }
         return true
     }
@@ -486,4 +486,41 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
     override fun likePost(messageId: Int, unlike: Boolean) {
         ChannelsManager.instance.likeUnlikePost(messageId, unlike)
     }
+
+    //Broadcast Owner
+    override fun startBroadcast(roomId: Int) {
+        ChannelsManager.instance.startBroadcast(roomId, {
+            it.second?.let {
+                //Error
+                mView.showError(it)
+            } ?: run {
+                it.first?.let {
+                    println("Start Broadcast MessageId: ${it.id}")
+                    //TODO: Add message to Channel feed from Socket IO
+                    //TODO: Test Disposables
+                }
+            }
+        })
+    }
+
+    override fun endBroadcast(roomId: Int, messageId: Int) {
+        ChannelsManager.instance.finishBroadcast(roomId, messageId, {
+            it.second?.let {
+                //Error
+                mView.showError(it)
+            } ?: run {
+                it.first?.let {
+                    println("Finish Broadcast MessageId: ${it.id}")
+                    //TODO: Delete Message -> Make API call
+                    //TODO: Test Disposables
+                }
+            }
+        })
+    }
+
+    //Broadcast Viewer
+    override fun accessBroadcast() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+    
 }

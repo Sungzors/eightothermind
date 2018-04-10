@@ -52,6 +52,7 @@ object Constants {
         const val ON_ERROR = "on-error"
         const val COMMENT = "comment"
         const val EDIT_COMMENT = "edit-comment"
+        const val EDIT_MESSAGE = "edit-message"
     }
 
     /**
@@ -270,6 +271,7 @@ object Constants {
         val TYPE_CHANNEL = "channel"
         val TYPE_MONEY = "money"
         val TYPE_POST = "post"
+        val BROADCAST = "broadcast"
     }
 
     /**

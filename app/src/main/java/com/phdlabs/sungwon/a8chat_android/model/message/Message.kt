@@ -6,6 +6,7 @@ import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
 import com.phdlabs.sungwon.a8chat_android.model.contacts.Contact
 import com.phdlabs.sungwon.a8chat_android.model.files.File
 import com.phdlabs.sungwon.a8chat_android.model.media.Media
+import com.phdlabs.sungwon.a8chat_android.model.message.broadcast.BroadcastInfo
 import com.phdlabs.sungwon.a8chat_android.model.message.location.LocationInfo
 import com.phdlabs.sungwon.a8chat_android.model.message.money.Invoice
 import com.phdlabs.sungwon.a8chat_android.model.message.user.UserInfo
@@ -25,6 +26,8 @@ import java.util.*
  * memory performance. This class can hold too much data.
  *
  */
+//TODO: Refactor for new languages model
+
 @RealmClass
 open class Message : RealmObject() {
 
@@ -72,6 +75,14 @@ open class Message : RealmObject() {
     @SerializedName("contactInfo")
     @Expose
     var contactInfo: Contact? = null
+
+    /**
+     * [broadcastInfo] maps [BroadcastInfo]
+     * @see RealmClass
+     * */
+    @SerializedName("broadcastInfo")
+    @Expose
+    var broadcastInfo: BroadcastInfo? = null
 
     /**
      * [invoice] maps [Invoice]

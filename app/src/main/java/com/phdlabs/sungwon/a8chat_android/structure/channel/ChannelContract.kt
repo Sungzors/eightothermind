@@ -120,6 +120,14 @@ interface ChannelContract {
             /*Like Post*/
             fun likePost(messageId: Int, unlike: Boolean)
 
+            /*Start Broadcast -> Broadcast Owner*/
+            fun startBroadcast(roomId: Int)
+
+            fun endBroadcast(roomId: Int, messageId: Int)
+
+            /*Access Broadcast -> Broadcast Viewer*/
+            fun accessBroadcast()
+
             /*Keep Channel-Room socket connection if opening a post*/
             fun keepSocketConnection(keepConnection: Boolean)
 
