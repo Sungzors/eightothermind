@@ -168,5 +168,7 @@
     <string name="lobby_channels">Channels</string>
     <string name="view_now">View Now</string>
 
+    <!--Broadcast-->
+    <string name="live_broadcast">%1$s is Live!</string>
 
 </resources>

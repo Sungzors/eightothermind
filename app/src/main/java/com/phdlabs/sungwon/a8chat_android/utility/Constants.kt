@@ -38,21 +38,35 @@ object Constants {
      * [SocketKeys]
      * */
     object SocketKeys {
-        const val CONNECT = "connect"
+        //Entering 8
+        const val USER_ENTERED_8 = "user-entered-8" //FIXME not used for now until further notice
+        //Connect
         const val CONNECT_ROOMS = "connect-rooms"
+        //Update
         const val UPDATE_ROOM = "update-room"
+        //Update Types
         const val UPDATE_CHAT_STRING = "update-chat-string"
         const val UPDATE_CHAT_MEDIA = "update-chat-media"
         const val UPDATE_CHAT_LOCATION = "update-chat-location"
         const val UPDATE_CHAT_CHANNEL = "update-chat-channel"
         const val UPDATE_CHAT_CONTACT = "update-chat-contact"
-        const val UPDATE_CHAT_POST = "update-chat-post"
+        const val UPDATE_CHAT_MONEY = "update-chat-money"
         const val UPDATE_CHAT_FILE = "update-chat-file"
-        const val USER_ENTERED_8 = "user-entered-8"
-        const val ON_ERROR = "on-error"
+        const val UPDATE_CHAT_BROADCAST = "update-chat-broadcast"
+        //Liking a Channel Post
+        const val LIKE = "like"
+        //Sharing Channel inside conversation
+        const val SHARE_CHANNEL = "update-chat-channel-message"
+        //Comment & Editing Comments -> Channel Post & Broadcast
         const val COMMENT = "comment"
         const val EDIT_COMMENT = "edit-comment"
+        //Editing Message
         const val EDIT_MESSAGE = "edit-message"
+        //Delete
+        const val DELETE_MESSAGE = "delete"
+        //Error
+        const val ON_ERROR = "on-error"
+        //TODO: Read Receipts
     }
 
     /**

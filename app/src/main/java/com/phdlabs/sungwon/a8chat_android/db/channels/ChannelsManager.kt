@@ -446,6 +446,7 @@ class ChannelsManager {
     /**
      * [startBroadcast]
      * Start Live Video Broadcast
+     * Note: Broadcasts are treated as posts to enable live commenting functionality while on the call
      * @param roomId
      * @callback Pair<[Message] [ErrorMessage]> with information about the current live broadcast access
      * */
@@ -455,7 +456,7 @@ class ChannelsManager {
                 user?.let {
                     token?.token?.let {
                         val call = Rest.getInstance().getmCallerRx()
-                                .startBroadcast(it, BroadcastData(user.id.toString(), roomId.toString()))
+                                .startBroadcast(it, BroadcastData(user.id.toString(), roomId.toString()), true)
                         val disposable = call.subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({

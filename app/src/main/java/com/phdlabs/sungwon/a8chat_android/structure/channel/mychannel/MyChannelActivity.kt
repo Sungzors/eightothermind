@@ -597,12 +597,10 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         data.user?.avatar?.let {
             picasso.load(it).transform(CircleTransform()).into(channelPic)
         }
-        channelName.text = data.channelInfo?.name
-        viewBroadcast.setOnClickListener(object : View.OnClickListener {
-            override fun onClick(p0: View?) {
-                //TODO: Transition to Broadcast activity as a viewer -> Will have to test with another account
-            }
-        })
+        channelName.text = getString(R.string.live_broadcast, "$mChannelName")
+        viewBroadcast.setOnClickListener {
+            //TODO: Transition to Broadcast activity as a viewer -> Will have to test with another account
+        }
     }
 
 
@@ -713,7 +711,7 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
                 val alertDialog = AlertDialog.Builder(this)
                 alertDialog.setTitle("Would you like to start a live broadcast on $mChannelName?")
                 alertDialog.setPositiveButton("OK") { _, _ ->
-                    //TODO: create broadcast post
+                    controller.startBroadcast(mRoomId)
                     //TODO: Transition to video broadcasting
                 }
                 alertDialog.setNegativeButton("Cancel") { _, _ -> /*Dismiss*/ }
@@ -763,14 +761,14 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
                 val filepathArrayList = data?.extras?.getStringArrayList(Constants.IntentKeys.MEDIA_POST)
                 val postMessage = data?.extras?.getString(Constants.IntentKeys.MEDIA_POST_MESSAGE)
                 controller.createPost(postMessage, filepathArrayList)
-                controller.keepSocketConnection(false)
+                controller.keepSocketConnection(false)//FIXME Should this keep the socket on?
             }
         }
 
         //Back from viewing a post
         else if (requestCode == Constants.RequestCodes.VIEW_POST_REQ_CODE) {
             if (resultCode == Activity.RESULT_OK || resultCode == Activity.RESULT_CANCELED) {
-                controller.keepSocketConnection(false)
+                controller.keepSocketConnection(false)//FIXME Should this keep the socket on?
                 controller.retrieveChatHistory(true)
             }
         }

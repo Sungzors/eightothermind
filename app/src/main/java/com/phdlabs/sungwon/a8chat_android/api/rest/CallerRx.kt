@@ -192,7 +192,7 @@ interface CallerRx {
      * - Connects the Sockets update-chat-broadcast for commenting on the live feed
      * */
     @POST("/messages/broadcast/start")
-    fun startBroadcast(@Header(TOKEN) token: String, @Body broadcastData: BroadcastData): Observable<StartBroadcastResponse>
+    fun startBroadcast(@Header(TOKEN) token: String, @Body broadcastData: BroadcastData , @Query("post") post: Boolean): Observable<StartBroadcastResponse>
 
     /**
      * [finishBroadcast]
