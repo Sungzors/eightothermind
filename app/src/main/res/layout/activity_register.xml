@@ -54,7 +54,8 @@
                     app:countryPreference="US"
                     app:defaultNameCode="US"
                     app:showFullName="true"
-                    app:contentColor="@color/colorAccent"/>
+                    app:contentColor="@color/colorAccent"
+                    fontPath="fonts/NunitoSans-Regular.ttf"/>
 
                 <View
                     android:id="@+id/ar_divider1"

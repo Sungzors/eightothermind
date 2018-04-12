@@ -92,7 +92,7 @@ open class EventsEight() : RealmObject() {
     @Ignore
     var message: Message? = null
 
-    @SerializedName("association")
+    @SerializedName("user_event_association")
     @Expose
     var association: String? = null
 

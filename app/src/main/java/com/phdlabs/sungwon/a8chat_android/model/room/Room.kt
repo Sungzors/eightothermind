@@ -2,13 +2,13 @@ package com.phdlabs.sungwon.a8chat_android.model.room
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import com.phdlabs.sungwon.a8chat_android.model.event.EventsEight
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.model.realmNative.RealmInt
 import com.phdlabs.sungwon.a8chat_android.model.user.User
 import com.phdlabs.sungwon.a8chat_android.model.user.UserRooms
 import io.realm.RealmList
 import io.realm.RealmObject
-import io.realm.annotations.Ignore
 import io.realm.annotations.PrimaryKey
 import io.realm.annotations.RealmClass
 import java.util.*
@@ -120,5 +120,17 @@ open class Room() : RealmObject() {
     @SerializedName("userRoom")
     @Expose
     var userRoom: UserRooms? = null
+
+    @SerializedName("user_event_association")
+    @Expose
+    var user_event_association: String? = null
+
+    @SerializedName("isEventActive")
+    @Expose
+    var isEventActive: Boolean = false
+
+    @SerializedName("events")
+    @Expose
+    var events: EventsEight? = null
 
 }

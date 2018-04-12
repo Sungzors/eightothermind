@@ -4,7 +4,7 @@ import com.phdlabs.sungwon.a8chat_android.api.event.Event
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
 import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.event.EventsEight
-import com.phdlabs.sungwon.a8chat_android.utility.Constants
+import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.vicpin.krealmextensions.query
 import com.vicpin.krealmextensions.queryAll
 import com.vicpin.krealmextensions.saveAll
@@ -28,13 +28,13 @@ class EventsManager {
         val instance: EventsManager by lazy { Holder.instance }
     }
 
-    fun getEvents(refresh: Boolean, callback: (Pair<List<EventsEight>?, String?>) -> Unit) {
+    fun getEvents(refresh: Boolean, lat: Double, lng: Double, callback: (Pair<List<Room>?, String?>) -> Unit) {
         UserManager.instance.getCurrentUser { success, user, token ->
             if (success) {
                 user?.let {
                     if (refresh) { //API Query & Caching
                         token?.token?.let {
-                            val call = Rest.getInstance().getmCallerRx().getUserEventsWithFlags(it, user.id!!)
+                            val call = Rest.getInstance().getmCallerRx().getUserEvents(it, user.id!!, true, true, true, lat, lng)
                             call.subscribeOn(Schedulers.io())
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .subscribe({ response ->
@@ -52,76 +52,28 @@ class EventsManager {
                         }
                     } else { //Local Query
                         //Realm Query
-                        val allEventsEight: ArrayList<EventsEight> = arrayListOf()
+                        val allEventsEight: ArrayList<Room> = arrayListOf()
                         //Query For all events
-                        val createdEvents = EventsEight().query {
-                            equalTo("association",
-                                    Constants.EventAssociation.EVENT_CREATED)
+                        val activeEvents = Room().query {
+                            equalTo("isEventActive", true)
                         }
-                        allEventsEight += createdEvents
-                        val fullAccessEvents = EventsEight().query {
-                            equalTo("association",
-                                    Constants.EventAssociation.EVENT_FULL_PARTICIPANT)
-                        }
-                        allEventsEight += fullAccessEvents
-                        val readOnly = EventsEight().query {
-                            equalTo("association",
-                                    Constants.EventAssociation.EVENT_READ_ONLY)
-                        }
-                        allEventsEight += readOnly
-                        //Callback
-                        if (allEventsEight.count() > 0) {
-                            callback(Pair(allEventsEight, null))
-                        } else {
-                            callback(Pair(null, "did not find events"))
-                        }
-                    }
-                }
-            }
-        }
-    }
+                        allEventsEight += activeEvents
 
-    fun getNearbyEvents(refresh: Boolean, lat: Long, lng: Long, callback: (Pair<List<EventsEight>?, String?>) -> Unit){
-        UserManager.instance.getCurrentUser { success, user, token ->
-            if (success) {
-                user?.let {
-                    if (refresh) { //API Query & Caching
-                        token?.token?.let {
-                            val call = Rest.getInstance().getmCallerRx().getNearbyEvents(it, user.id!!, lat, lng)
-                            call.subscribeOn(Schedulers.io())
-                                    .observeOn(AndroidSchedulers.mainThread())
-                                    .subscribe({ response ->
-                                        if (response.isSuccess) {
-                                            //Save to realm
-                                            response.rooms?.saveAll()
-                                            //Return events with Flag
-                                            callback(Pair(response.rooms?.toList(), null))
-                                        } else if (response.isError) {
-                                            callback(Pair(null, "could not download events"))
-                                        }
-                                    }, { throwable ->
-                                        callback(Pair(null, throwable.localizedMessage))
-                                    })
-                        }
-                    } else { //Local Query
-                        //Realm Query
-                        val allEventsEight: ArrayList<EventsEight> = arrayListOf()
-                        //Query For all events
-                        val createdEvents = EventsEight().query {
-                            equalTo("association",
-                                    Constants.EventAssociation.EVENT_CREATED)
-                        }
-                        allEventsEight += createdEvents
-                        val fullAccessEvents = EventsEight().query {
-                            equalTo("association",
-                                    Constants.EventAssociation.EVENT_FULL_PARTICIPANT)
-                        }
-                        allEventsEight += fullAccessEvents
-                        val readOnly = EventsEight().query {
-                            equalTo("association",
-                                    Constants.EventAssociation.EVENT_READ_ONLY)
-                        }
-                        allEventsEight += readOnly
+//                        val createdEvents = EventsEight().query {
+//                            equalTo("association",
+//                                    Constants.EventAssociation.EVENT_CREATED)
+//                        }
+//                        allEventsEight += createdEvents
+//                        val fullAccessEvents = EventsEight().query {
+//                            equalTo("association",
+//                                    Constants.EventAssociation.EVENT_FULL_PARTICIPANT)
+//                        }
+//                        allEventsEight += fullAccessEvents
+//                        val readOnly = EventsEight().query {
+//                            equalTo("association",
+//                                    Constants.EventAssociation.EVENT_READ_ONLY)
+//                        }
+//                        allEventsEight += readOnly
                         //Callback
                         if (allEventsEight.count() > 0) {
                             callback(Pair(allEventsEight, null))
