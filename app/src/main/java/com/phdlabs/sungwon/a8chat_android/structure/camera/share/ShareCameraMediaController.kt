@@ -97,13 +97,11 @@ class ShareCameraMediaController(val mView: CameraContract.Share.View) : CameraC
 
     override fun loadMyEvents() {
         mUser?.id?.let {
-            EventsManager.instance.getEvents(true, {
-                it.second?.let {
-                    //Error
-                    //TODO(comment) -> Create user error
-                    mView.showError(it)
+            EventsManager.instance.getEvents(true, 0.0, 0.0, { response ->
+                response.second?.let {
+                    mView.showError("Failed to get events")
                 } ?: run {
-                    it.first?.let {
+                    response.first?.let {
                         mView.showMyEvents()
                     }
                 }

@@ -5,19 +5,18 @@ import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
-import com.phdlabs.sungwon.a8chat_android.model.event.EventsEight
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.phdlabs.sungwon.a8chat_android.structure.channel.mychannel.MyChannelActivity
 import com.phdlabs.sungwon.a8chat_android.structure.chat.ChatActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreFragment
 import com.phdlabs.sungwon.a8chat_android.structure.event.view.EventViewActivity
 import com.phdlabs.sungwon.a8chat_android.structure.groupchat.GroupChatActivity
+import com.phdlabs.sungwon.a8chat_android.structure.main.MainActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseRecyclerAdapter
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseViewHolder
@@ -39,8 +38,10 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
 
     /*Adapters*/
     private lateinit var mAdapterChannels: BaseRecyclerAdapter<Channel, BaseViewHolder>
-    private lateinit var mAdapterEvent: BaseRecyclerAdapter<EventsEight, BaseViewHolder>
+    private lateinit var mAdapterEvent: BaseRecyclerAdapter<Room, BaseViewHolder>
     private lateinit var mAdapterChat: BaseRecyclerAdapter<Room, BaseViewHolder>
+
+    private var separatorPosition: Int = -1
 
     /*Layout*/
     override fun layoutId() = R.layout.fragment_lobby
@@ -112,6 +113,7 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
         val profilePic = viewHolder.get<ImageView>(R.id.cvlc_picture_profile)
         val channelName = viewHolder.get<TextView>(R.id.cvlc_name_channel)
         val unreadChannelIndicator = viewHolder.get<ImageView>(R.id.cvlc_background_unread)
+        val separator = viewHolder.get<ImageView>(R.id.cvlc_separator)
         //Unread indicator
         data.unread_messages?.let {
             if (it) {
@@ -130,6 +132,9 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
             intent.putExtra(Constants.IntentKeys.OWNER_ID, data.user_creator_id!!.toInt())
             startActivity(intent)
         }
+        if(separatorPosition>-1){
+            if (viewHolder.adapterPosition == separatorPosition) separator.visibility = ImageView.VISIBLE else separator.visibility = ImageView.GONE
+        }
     }
 
     /*Followed Channels*/
@@ -141,9 +146,9 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
 
 
     /*Events*/
-    override fun setUpEventsRecycler(events: MutableList<EventsEight>) {
-        mAdapterEvent = object : BaseRecyclerAdapter<EventsEight, BaseViewHolder>() {
-            override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: EventsEight?, position: Int, type: Int) {
+    override fun setUpEventsRecycler(events: MutableList<Room>) {
+        mAdapterEvent = object : BaseRecyclerAdapter<Room, BaseViewHolder>() {
+            override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: Room?, position: Int, type: Int) {
                 bindEventViewHolder(viewHolder!!, data!!)
             }
 
@@ -151,11 +156,12 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
                 return object : BaseViewHolder(R.layout.card_view_lobby_event, inflater!!, parent) {
                     override fun addClicks(views: ViewMap?) {
                         views!!.click {
-                            val event = getItem(adapterPosition)
+                            val data = getItem(adapterPosition)
                             val intent = Intent(context, EventViewActivity::class.java)
-                            intent.putExtra(Constants.IntentKeys.EVENT_ID, event.id)
-                            intent.putExtra(Constants.IntentKeys.EVENT_NAME, event.event_name)
-                            intent.putExtra(Constants.IntentKeys.ROOM_ID, event.room_id)
+                            intent.putExtra(Constants.IntentKeys.EVENT_ID, data.events?.id)
+                            intent.putExtra(Constants.IntentKeys.EVENT_NAME, data.events?.name)
+                            intent.putExtra(Constants.IntentKeys.EVENT_LOCATION, data.events?.location_name)
+                            intent.putExtra(Constants.IntentKeys.ROOM_ID, data.id)
                             startActivity(intent)
                         }
                     }
@@ -169,14 +175,15 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
         fl_events_recycler.adapter = mAdapterEvent
     }
 
-    private fun bindEventViewHolder(viewHolder: BaseViewHolder, data: EventsEight) {
+    private fun bindEventViewHolder(viewHolder: BaseViewHolder, data: Room) {
         val eventPic = viewHolder.get<ImageView>(R.id.cvle_picture_event)
         val eventIndicator = viewHolder.get<ImageView>(R.id.cvle_read_indicator)
         val title = viewHolder.get<TextView>(R.id.cvle_title)
         val message = viewHolder.get<TextView>(R.id.cvle_message)
         val time = viewHolder.get<TextView>(R.id.cvle_time)
-        Picasso.with(coreActivity.context).load(data.avatar).placeholder(R.drawable.ic_launcher_round).transform(CircleTransform()).into(eventPic)
-        title.text = data.event_name
+        val event = data.events
+        Picasso.with(coreActivity.context).load(event?.avatar).placeholder(R.drawable.ic_launcher_round).transform(CircleTransform()).into(eventPic)
+        title.text = event?.name
         if (data.message != null) {
             when (data.message!!.type) {
                 "string" -> message.text = data.message!!.message
@@ -306,6 +313,39 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
             } else {
                 eventIndicator.visibility = ImageView.INVISIBLE
             }
+        } else if (data.event!!){
+            var event = data.events
+            Picasso.with(coreActivity.context).load(event?.avatar).placeholder(R.drawable.ic_launcher_round).transform(CircleTransform()).into(eventPic)
+            title.text = event?.name
+            if (data.message != null) {
+                when (data.message!!.type) {
+                    "string" -> message.text = data.message!!.message
+                    "media" -> message.text = "Picture posted"
+                    "contact" -> message.text = data.message!!.contactInfo!!.first_name + " " + data.message!!.contactInfo!!.last_name
+                    "channel" -> message.text = data.message!!.channelInfo!!.name
+                    "location" -> message.text = data.message!!.locationInfo!!.streetAddress
+                }
+                if (Date().time.minus(data.last_activity!!.time) >= 24 * 60 * 60 * 1000) {
+                    time.text = SimpleDateFormat("EEE").format(data.last_activity)
+                } else {
+                    time.text = SimpleDateFormat("h:mm aaa").format(data.last_activity)
+                }
+            } else {
+                message.text = ""
+                time.text = ""
+            }
+            if (!data.isRead) {
+                eventIndicator.visibility = ImageView.VISIBLE
+            } else {
+                eventIndicator.visibility = ImageView.INVISIBLE
+            }
+
         }
     }
+
+    override fun setSeparatorCounter(pos: Int) {
+        separatorPosition = pos
+    }
+
+    override fun getActivityDirect(): MainActivity = activity as MainActivity
 }

@@ -2,12 +2,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginEnd="10dp"
-    android:layout_marginStart="10dp"
+    android:layout_marginEnd="5dp"
+    android:layout_marginStart="5dp"
     xmlns:tools="http://schemas.android.com/tools"
     tools:ignore="MissingPrefix">
 
     <RelativeLayout
+        android:id="@+id/cvlc_main_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
@@ -60,15 +61,18 @@
             android:textStyle="normal" 
             fontPath="fonts/NunitoSans-Regular.ttf"/>
 
-        <View
-            android:layout_width="2sp"
-            android:layout_height="40sp"
-            android:layout_alignBottom="@+id/cvlc_my_channel_pic_profile_container"
-            android:layout_toEndOf="@+id/cvlc_my_channel_pic_profile_container"
-            android:background="@color/grey"
-            android:visibility="gone" />
+
 
     </RelativeLayout>
-
+    <ImageView
+        android:id="@+id/cvlc_separator"
+        android:layout_width="1dp"
+        android:layout_height="72dp"
+        android:layout_toEndOf="@+id/cvlc_main_content"
+        android:layout_marginTop="23dp"
+        android:layout_marginBottom="3dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="7dp"
+        android:background="@color/searchGrey" />
 
 </RelativeLayout>

@@ -428,7 +428,6 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
     override fun onPictureResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode != Activity.RESULT_CANCELED) {
             mView.showProgress()
-
             //Set image in UI
             val imageUrl = CameraControl.instance.getImagePathFromResult(mView.getActivity, requestCode, resultCode, data)
             imageUrl?.let {
