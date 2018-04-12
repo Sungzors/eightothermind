@@ -24,6 +24,8 @@ import com.phdlabs.sungwon.a8chat_android.structure.channel.ChannelContract
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.SuffixDetector
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
+import com.vicpin.krealmextensions.delete
+import com.vicpin.krealmextensions.save
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import okhttp3.MediaType
@@ -39,9 +41,6 @@ import java.io.File
  * Created by SungWon on 12/20/2017.
  * Updated by JPAM on 03/05/2018
  */
-
-//TODO: Create a post function for posting the broadcast access once the channel owner goes live
-//TODO: Create a delete post function when the user terminates the broadcast.
 class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelContract.MyChannel.Controller {
 
     /*Properties*/
@@ -55,6 +54,7 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
 
     /*Messages*/
     private var mMessages = mutableListOf<Message>()
+    private var mBroadcastMessage: Message? = null
 
     /*Flags*/
     private var mKeepSocketConnection: Boolean = false
@@ -143,7 +143,7 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
         }
         //Video broadcasting ready with camera permission
         if (Constants.AppPermissions.CAMERA == permission) {
-            // mView.get8Application.initWorkerThread() //TODO: Uncomment to test Video Broadcasting (Only works on device)
+             mView.get8Application.initWorkerThread() //TODO: Uncomment to test Video Broadcasting (Only works on device)
         }
         return true
     }
@@ -175,7 +175,7 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
             Constants.PermissionsReqCode.CAMERA_REQ_CODE -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     checkSelfPermission(Constants.AppPermissions.WRITE_EXTERNAL, Constants.PermissionsReqCode.WRITE_EXTERNAL_REQ_CODE)
-                    //mView.get8Application.initWorkerThread()//TODO: Uncomment when testing broadcast on device
+                    mView.get8Application.initWorkerThread()//TODO: Uncomment when testing broadcast on device
                 } else {
                     mView.getActivity.finish()
                 }
@@ -351,7 +351,12 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
                 if (mMessages.count() > 0) {
                     //Check for duplicates
                     if (mMessages[0].id != message.id) {
+                        //Add message to Channel Feed
                         mMessages.add(0, message)
+                        //Current Broadcast message instance
+                        if (message.type == Constants.MessageTypes.BROADCAST) {
+                            mBroadcastMessage = message
+                        }
                     }
                 }
             }
@@ -367,12 +372,40 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
             if (message.roomId == mRoomId) {
                 //Check for duplicates
                 if (mMessages[0].id == message.id) {
+                    //Add message to channel feed
                     mMessages.removeAt(0)
+                    //Current Broadcast message instance deletion & Realm deletion
+                    Message().delete { equalTo("id", mBroadcastMessage?.id) }
+                    mBroadcastMessage = null
+                    mView.updateContentRecycler()
                 }
                 //TODO: Else remove the message with selected ID
             }
-            mView.updateContentRecycler()
         })
+    }
+
+    override fun deleteMessage(messageId: Int) {
+        UserManager.instance.getCurrentUser { success, user, token ->
+            if (success) {
+                user?.let {
+                    token?.token?.let {
+                        val call = Rest.getInstance().getmCallerRx().deleteMessagio(it, messageId, user.id!!)
+                        call.subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe({ response ->
+                                    if (response.isSuccess) {
+                                        log.debug("Message successfully deleted in channel API, messageId: $messageId")
+                                    } else if (response.isError) {
+                                        log.debug("Error deleting message in channel API, messageId: $messageId")
+                                    }
+                                }, { throwable ->
+                                    log.debug("Error deleting message from API, messageId: $messageId")
+                                    mView.showError(throwable.localizedMessage)
+                                })
+                    }
+                }
+            }
+        }
     }
 
     private val onError = Emitter.Listener { args ->
@@ -537,8 +570,9 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
                 mView.showError(it)
             } ?: run {
                 it.first?.let {
-                    println("Start Broadcast MessageId: ${it.id}")
-                    //TODO: Add message to Channel feed from Socket IO
+                    log.debug("Start Broadcast with messageId: ${it.id}")
+                    it.save() //Save to realm
+                    mView.goToBroadcastActivity(it.id, io.agora.rtc.Constants.CLIENT_ROLE_BROADCASTER)
                     //TODO: Test Disposables
                 }
             }
@@ -553,16 +587,18 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
             } ?: run {
                 it.first?.let {
                     println("Finish Broadcast MessageId: ${it.id}")
-                    //TODO: Delete Message -> Make API call
+                    /**
+                     * Delete message [deleteMessage] from api so [onDeleteMessage]
+                     * gets called & deletes the broadcast access from the feed
+                     * */
+                    deleteMessage(messageId)
                     //TODO: Test Disposables
                 }
             }
         })
     }
 
-    //Broadcast Viewer
-    override fun accessBroadcast() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override var getBroadcastMessage: Message? = mBroadcastMessage
+    override var getUserId: Int? = mUserId
 
 }

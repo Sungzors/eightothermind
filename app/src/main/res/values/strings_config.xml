@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!--WARNING: JPAM AGORA.IO KEY SHOULD BE CHANGED TO AGORA.IO EIGHT APP ACCOUNT-->
-    <string name="private_app_id">96cd59ae51ba4d57bcf7d3d2f9d53f41</string>
+    <!--Release-->
+    <string name="private_app_id">796e957bbe0a4f95bb526cdc5db04ab9</string>
+    <!--Test-->
+    <!--<string name="private_app_id">96cd59ae51ba4d57bcf7d3d2f9d53f41</string>-->
+
 </resources>

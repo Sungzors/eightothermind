@@ -25,6 +25,7 @@ import com.phdlabs.sungwon.a8chat_android.model.media.Media
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.structure.application.Application
 import com.phdlabs.sungwon.a8chat_android.structure.channel.ChannelContract
+import com.phdlabs.sungwon.a8chat_android.structure.channel.broadcast.ui.BroadcastActivity
 import com.phdlabs.sungwon.a8chat_android.structure.channel.createPost.CreatePostActivity
 import com.phdlabs.sungwon.a8chat_android.structure.channel.postshow.ChannelPostShowActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
@@ -44,6 +45,7 @@ import cz.intik.overflowindicator.OverflowPagerIndicator
 import cz.intik.overflowindicator.SimpleSnapHelper
 import io.realm.RealmList
 import kotlinx.android.synthetic.main.activity_channel_my.*
+import kotlinx.android.synthetic.main.card_view_broadcasting.*
 import kotlinx.android.synthetic.main.toolbar.*
 import yogesh.firzen.filelister.FileListerDialog
 import java.text.SimpleDateFormat
@@ -364,7 +366,8 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         val posterName = viewHolder.get<TextView>(R.id.cvps_poster_name)
         val postDate = viewHolder.get<TextView>(R.id.cvps_post_date)
 
-        Picasso.with(this).load(data.user!!.avatar).transform(CircleTransform()).into(pic)
+        Picasso.with(this).load(data.channel?.avatar)
+                .placeholder(R.drawable.ic_launcher_round).transform(CircleTransform()).into(pic)
         text.text = data.message
         posterName.text = data.getUserName()
         val formatter = SimpleDateFormat("EEE - h:mm aaa")
@@ -378,7 +381,8 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         val posterName = viewHolder.get<TextView>(R.id.cvpp_poster_name)
         val postDate = viewHolder.get<TextView>(R.id.cvpp_post_date)
 
-        Picasso.with(this).load(data.user!!.avatar).transform(CircleTransform()).into(pic)
+        Picasso.with(this).load(data.channel?.avatar)
+                .placeholder(R.drawable.ic_launcher_round).transform(CircleTransform()).into(pic)
         data.mediaArray?.let {
             Picasso.with(this).load(it[0]?.media_file).into(postPic)
         }
@@ -406,7 +410,8 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         val likeCount = viewHolder.get<TextView>(R.id.cvpm_like_count)
         val commentCount = viewHolder.get<TextView>(R.id.cvpmnm_comment_count)
         //Load info
-        picasso.load(data.user!!.avatar).transform(CircleTransform()).into(posterPic)
+        picasso.load(data.channel?.avatar)
+                .placeholder(R.drawable.ic_launcher_round).transform(CircleTransform()).into(posterPic)
         posterName.text = data.getUserName()
         //Date
         val formatter = SimpleDateFormat("EEE - h:mm aaa")
@@ -478,9 +483,8 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         val commentCount = viewHolder.get<TextView>(R.id.cvpmnm_comment_count)
 
         //Load Info
-        data.user?.avatar?.let {
-            picasso.load(it).transform(CircleTransform()).into(posterPic)
-        }
+        picasso.load(data.channel?.avatar)
+                .placeholder(R.drawable.ic_launcher_round).transform(CircleTransform()).into(posterPic)
         posterName.text = data.getUserName()
 
         //Date
@@ -558,9 +562,8 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         val fileName = viewHolder.get<TextView>(R.id.cvf_file_name)
         val container = viewHolder.get<LinearLayout>(R.id.cvf_file_container)
         //Load Info
-        data.user?.avatar?.let {
-            picasso.load(it).transform(CircleTransform()).into(posterPic)
-        }
+        picasso.load(data.channel?.avatar)
+                .placeholder(R.drawable.ic_launcher_round).transform(CircleTransform()).into(posterPic)
         posterName.text = data.getUserName()
 
         //Date
@@ -594,12 +597,29 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         val channelPic = viewHolder.get<ImageView>(R.id.cvb_picture_profile)
         val channelName = viewHolder.get<TextView>(R.id.cvb_channel_name)
         val viewBroadcast = viewHolder.get<Button>(R.id.cvb_view_now_button)
-        data.user?.avatar?.let {
-            picasso.load(it).transform(CircleTransform()).into(channelPic)
-        }
+        picasso.load(data.channel?.avatar)
+                .placeholder(R.drawable.ic_launcher_round).transform(CircleTransform()).into(channelPic)
         channelName.text = getString(R.string.live_broadcast, "$mChannelName")
         viewBroadcast.setOnClickListener {
-            //TODO: Transition to Broadcast activity as a viewer -> Will have to test with another account
+            goToBroadcastActivity(data.id!!, io.agora.rtc.Constants.CLIENT_ROLE_AUDIENCE)
+        }
+    }
+
+    /**
+     * [goToBroadcastActivity]
+     * Called after a successfull broadcast start call on the API
+     * */
+    override fun goToBroadcastActivity(messageId: Int?, cRole: Int) {
+        messageId?.let {
+            val intent = Intent(this, BroadcastActivity::class.java)
+            /**
+             * Broadcast Room Name for Agora.io is [messageId]
+             * */
+            intent.putExtra(Constants.IntentKeys.BROADCAST_MESSAGE_ID, it)
+            intent.putExtra(Constants.Broadcast.ACTION_KEY_CROLE, cRole)//Broadcaster Role
+            intent.putExtra(Constants.IntentKeys.ROOM_ID, mRoomId)
+            intent.putExtra(Constants.IntentKeys.USER_ID, controller.getUserId)
+            startActivityForResult(intent, Constants.RequestCodes.BROADCAST_REQ_CODE)
         }
     }
 
@@ -711,8 +731,8 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
                 val alertDialog = AlertDialog.Builder(this)
                 alertDialog.setTitle("Would you like to start a live broadcast on $mChannelName?")
                 alertDialog.setPositiveButton("OK") { _, _ ->
+                    controller.keepSocketConnection(true)
                     controller.startBroadcast(mRoomId)
-                    //TODO: Transition to video broadcasting
                 }
                 alertDialog.setNegativeButton("Cancel") { _, _ -> /*Dismiss*/ }
                 alertDialog.show()
@@ -743,42 +763,54 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        //Close Drawer
+        //Close Drawer every time the user navigates back to the channel feed
         if (acm_the_daddy_drawer.panelState == SlidingUpPanelLayout.PanelState.EXPANDED) {
             acm_the_daddy_drawer.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED
         }
 
-        //Picture
-        if (requestCode == CameraControl.instance.requestCode()) {
-            controller.onPictureOnlyResult(requestCode, resultCode, data)
-            controller.keepSocketConnection(false)
-        }
-
-        //Back from creating a post
-        else if (requestCode == Constants.RequestCodes.CREATE_NEW_POST_REQ_CODE) {
-            if (resultCode == Activity.RESULT_OK) {
-                //Push new post after socket is connected
-                val filepathArrayList = data?.extras?.getStringArrayList(Constants.IntentKeys.MEDIA_POST)
-                val postMessage = data?.extras?.getString(Constants.IntentKeys.MEDIA_POST_MESSAGE)
-                controller.createPost(postMessage, filepathArrayList)
-                controller.keepSocketConnection(false)//FIXME Should this keep the socket on?
+        /*Request Codes*/
+        when (requestCode) {
+        /*Picture*/
+            CameraControl.instance.requestCode() -> {
+                controller.onPictureOnlyResult(requestCode, resultCode, data)
+                controller.keepSocketConnection(false)
             }
-        }
-
-        //Back from viewing a post
-        else if (requestCode == Constants.RequestCodes.VIEW_POST_REQ_CODE) {
-            if (resultCode == Activity.RESULT_OK || resultCode == Activity.RESULT_CANCELED) {
-                controller.keepSocketConnection(false)//FIXME Should this keep the socket on?
-                controller.retrieveChatHistory(true)
+        /*Back from creating a post*/
+            Constants.RequestCodes.CREATE_NEW_POST_REQ_CODE -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    //Push new post after socket is connected
+                    val filepathArrayList = data?.extras?.getStringArrayList(Constants.IntentKeys.MEDIA_POST)
+                    val postMessage = data?.extras?.getString(Constants.IntentKeys.MEDIA_POST_MESSAGE)
+                    controller.createPost(postMessage, filepathArrayList)
+                    controller.keepSocketConnection(false)//FIXME Should this keep the socket on?
+                }
             }
-        }
 
-        //Back from Channel Settings
-        else if (requestCode == Constants.RequestCodes.CHANNEL_SETTINGS) {
-            if (resultCode == Activity.RESULT_OK) {
-                data?.getBooleanExtra(Constants.IntentKeys.CHANNEL_DELETED, false)?.let {
-                    if (it) {
-                        onBackPressed()
+        /*Back from viewing a post*/
+            Constants.RequestCodes.VIEW_POST_REQ_CODE -> {
+                if (resultCode == Activity.RESULT_OK || resultCode == Activity.RESULT_CANCELED) {
+                    controller.keepSocketConnection(false)//FIXME Should this keep the socket on?
+                    controller.retrieveChatHistory(true)
+                }
+            }
+
+        /*Back from Channel Settings*/
+            Constants.RequestCodes.CHANNEL_SETTINGS -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    data?.getBooleanExtra(Constants.IntentKeys.CHANNEL_DELETED, false)?.let {
+                        if (it) {
+                            onBackPressed()
+                        }
+                    }
+                }
+            }
+        /*End Live Video Broadcast*/
+            Constants.RequestCodes.BROADCAST_REQ_CODE -> {
+                //End broadcast -> This will delete the Broadcast message in real time on the channel feed
+                controller.keepSocketConnection(true)
+                data?.getIntExtra(Constants.IntentKeys.BROADCAST_MESSAGE_ID, 0)?.let { messageId ->
+                    data.getIntExtra(Constants.IntentKeys.ROOM_ID, 0).let { roomId ->
+                        controller.endBroadcast(roomId, messageId)
                     }
                 }
             }

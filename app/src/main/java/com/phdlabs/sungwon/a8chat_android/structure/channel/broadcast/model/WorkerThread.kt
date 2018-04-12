@@ -77,7 +77,7 @@ class WorkerThread(val mContext: Context) : Thread() {
                     }
                     ACTION_WORKER_PREVIEW -> {
                         val previewData = msg.obj as Array<Any>
-                        mWorkerThread?.preview(previewData[0] as Boolean, previewData[1] as SurfaceView, previewData[2] as Int)
+                        mWorkerThread?.preview(previewData[0] as Boolean, previewData[1] as SurfaceView?, previewData[2] as Int)
                     }
                 }
             }
@@ -160,7 +160,7 @@ class WorkerThread(val mContext: Context) : Thread() {
         log.debug("configEngine clientRole: $cRole , videoProfile: $vProfile")
     }
 
-    fun preview(start: Boolean, view: SurfaceView, uid: Int) {
+    fun preview(start: Boolean, view: SurfaceView?, uid: Int) {
         if (Thread.currentThread() != this) {
             log.warn("preview() - worker thread asynchronously " + start + " " + view + " " + (uid and 0XFFFFFFFFL.toInt()))
             val envelope = Message()
@@ -192,6 +192,7 @@ class WorkerThread(val mContext: Context) : Thread() {
             }
             mRtcEngine?.setChannelProfile(io.agora.rtc.Constants.CHANNEL_PROFILE_LIVE_BROADCASTING)
             mRtcEngine?.enableVideo()
+            mRtcEngine?.enableWebSdkInteroperability(true) //TODO: Test with iOS cross-platform interoperability
             mRtcEngine?.setLogFile(Environment.getExternalStorageDirectory().toString()
                     + File.separator + mContext.packageName + "/log/agora-rtc.log")//TODO: Remove after testing
             mRtcEngine?.enableDualStreamMode(true)

@@ -26,12 +26,14 @@ object Constants {
         const val ROOM_ID = "room_id"
         const val MESSAGE_ID = "message_id"
         const val OWNER_ID = "owner_id"
+        const val USER_ID = "userId"
         const val FROM_CONTACTS = "from_contacts"
         const val MEDIA_POST = "media_post"
         const val MEDIA_POST_MESSAGE = "media_post_message"
         const val INCLUDES_MEDIA = "includes_media"
         const val CHANNEL_DELETED = "channel_deleted"
         const val FAVE_TYPE = "fave_type"
+        const val BROADCAST_MESSAGE_ID = "messageId"
     }
 
     /**
@@ -181,6 +183,11 @@ object Constants {
          * */
         const val SHARE_MEDIA = 27
 
+        /**
+         * Start & Finish Broadcast inside channel
+         * */
+        const val BROADCAST_REQ_CODE = 29
+
     }
 
     /**
@@ -318,7 +325,7 @@ object Constants {
      * */
     object Broadcast {
 
-        val MAX_PEER_COUNT = 3 // TODO: Allow maximum peer count after testing
+        const val MAX_PEER_COUNT = 3 // TODO: Allow maximum peer count after testing
 
         var VIDEO_PROFILES = intArrayOf(
                 Constants.VIDEO_PROFILE_120P,
@@ -326,18 +333,18 @@ object Constants {
                 Constants.VIDEO_PROFILE_240P,
                 Constants.VIDEO_PROFILE_360P,
                 Constants.VIDEO_PROFILE_480P,
-                Constants.VIDEO_PROFILE_720P
+                Constants.VIDEO_PROFILE_720P,
+                Constants.VIDEO_PROFILE_1080P_3
         )
 
         val DEFAULT_PROFILE_IDX = 2 // default use 240P //TODO: Test with different resolutions
 
         object PrefManager {
-            val PREF_PROPERTY_PROFILE_IDX = "pref_profile_index"
-            val PREF_PROPERTY_UID = "pOCXx_uid"
+            const val PREF_PROPERTY_PROFILE_IDX = "pref_profile_index"
+            const val PREF_PROPERTY_UID = "pOCXx_uid"
         }
 
         val ACTION_KEY_CROLE = "C_Role"
-        val ACTION_KEY_ROOM_NAME = "ecHANEL"
     }
 
 }

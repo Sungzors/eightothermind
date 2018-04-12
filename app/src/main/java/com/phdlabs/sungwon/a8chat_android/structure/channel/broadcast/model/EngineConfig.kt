@@ -29,4 +29,8 @@ class EngineConfig {
         mChannel = null
     }
 
+    fun setUid(uid: Int) {
+        mUid = uid
+    }
+
 }

@@ -63,10 +63,21 @@ open class Message : RealmObject() {
     /**
      * [channelInfo] maps [Channel]
      * @see RealmClass
+     * Used for channel model on API calls
      * */
     @SerializedName("channelInfo")
     @Expose
     var channelInfo: Channel? = null
+
+    /**
+     * [channel] maps [Channel]
+     * @see RealmClass
+     * Used for channel model on Socket.IO updates
+     * */
+    @SerializedName("channel")
+    @Expose
+    @Ignore
+    var channel: Channel? = null
 
     /**
      * [contactInfo] maps [ContactInfo]

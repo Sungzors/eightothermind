@@ -79,6 +79,7 @@ interface ChannelContract {
 
     interface MyChannel {
         interface View : BaseView<Controller> {
+            /*Shared properties*/
             val get8Application: Application
             val getActivity: MyChannelActivity
             val getMessageET: String
@@ -86,8 +87,13 @@ interface ChannelContract {
             val getRoomId: Int
             val getChannelId: Int
 
+            /*Recycler Control*/
             fun updateContentRecycler()
+
             fun updateFollowedChannelsRecycler()
+
+            /*Live Video Broadcast*/
+            fun goToBroadcastActivity(messageId: Int?, cRole: Int)
         }
 
         interface Controller : BaseController {
@@ -111,6 +117,9 @@ interface ChannelContract {
             /*Chat History*/
             fun getMessages(): MutableList<Message>
 
+            /*Delete Message*/
+            fun deleteMessage(messageId: Int)
+
             /*Picture Intent -> Post only media*/
             fun onPictureOnlyResult(requestCode: Int, resultCode: Int, data: Intent?)
 
@@ -125,8 +134,9 @@ interface ChannelContract {
 
             fun endBroadcast(roomId: Int, messageId: Int)
 
-            /*Access Broadcast -> Broadcast Viewer*/
-            fun accessBroadcast()
+            /*Broadcast message instance*/
+            var getBroadcastMessage: Message?
+            var getUserId: Int?
 
             /*Keep Channel-Room socket connection if opening a post*/
             fun keepSocketConnection(keepConnection: Boolean)
