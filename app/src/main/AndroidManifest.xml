@@ -139,7 +139,7 @@
 
         <!--Agora.io Live Video Broadcasting-->
         <activity
-            android:name=".structure.channel.broadcast.ui.BroadcastActivity"
+            android:name=".structure.channel.broadcast.BroadcastActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Camera" />
 

@@ -25,7 +25,7 @@ import com.phdlabs.sungwon.a8chat_android.model.media.Media
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.structure.application.Application
 import com.phdlabs.sungwon.a8chat_android.structure.channel.ChannelContract
-import com.phdlabs.sungwon.a8chat_android.structure.channel.broadcast.ui.BroadcastActivity
+import com.phdlabs.sungwon.a8chat_android.structure.channel.broadcast.BroadcastActivity
 import com.phdlabs.sungwon.a8chat_android.structure.channel.createPost.CreatePostActivity
 import com.phdlabs.sungwon.a8chat_android.structure.channel.postshow.ChannelPostShowActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
@@ -45,7 +45,6 @@ import cz.intik.overflowindicator.OverflowPagerIndicator
 import cz.intik.overflowindicator.SimpleSnapHelper
 import io.realm.RealmList
 import kotlinx.android.synthetic.main.activity_channel_my.*
-import kotlinx.android.synthetic.main.card_view_broadcasting.*
 import kotlinx.android.synthetic.main.toolbar.*
 import yogesh.firzen.filelister.FileListerDialog
 import java.text.SimpleDateFormat

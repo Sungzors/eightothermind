@@ -11,6 +11,7 @@ import com.phdlabs.sungwon.a8chat_android.model.media.Media
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.phdlabs.sungwon.a8chat_android.structure.application.Application
+import com.phdlabs.sungwon.a8chat_android.structure.channel.broadcast.BroadcastActivity
 import com.phdlabs.sungwon.a8chat_android.structure.channel.create.ChannelCreateActivity
 import com.phdlabs.sungwon.a8chat_android.structure.channel.createPost.CreatePostActivity
 import com.phdlabs.sungwon.a8chat_android.structure.channel.mychannel.MyChannelActivity
@@ -197,6 +198,22 @@ interface ChannelContract {
             fun requestStoragePermissions()
             fun openMediaPicker()
             fun createPost()
+        }
+    }
+
+    /*BROADCAST*/
+    interface Broadcast {
+        interface View : BaseView<Controller> {
+            val get8Application: Application
+            val getRoomId: Int
+            val getActivity: BroadcastActivity
+
+        }
+
+        interface Controller : BaseController {
+            fun onCreate()
+            fun likePost(messageId: Int, unlike: Boolean)
+            fun commentPost(messageId: String, comment: String)
         }
     }
 

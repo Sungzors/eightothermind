@@ -1,4 +1,4 @@
-package com.phdlabs.sungwon.a8chat_android.structure.channel.broadcast.ui
+package com.phdlabs.sungwon.a8chat_android.structure.channel.broadcast
 
 import android.app.Activity
 import android.content.Intent
@@ -14,12 +14,16 @@ import android.view.ViewStub
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import com.phdlabs.sungwon.a8chat_android.R
-import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.structure.application.Application
 import com.phdlabs.sungwon.a8chat_android.structure.channel.broadcast.model.*
+import com.phdlabs.sungwon.a8chat_android.structure.channel.broadcast.ui.GridVideoViewContainer
+import com.phdlabs.sungwon.a8chat_android.structure.channel.broadcast.ui.SmallVideoViewAdapter
+import com.phdlabs.sungwon.a8chat_android.structure.channel.broadcast.ui.VideoViewEventListener
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
+import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform
+import com.squareup.picasso.Picasso
 import com.vicpin.krealmextensions.queryFirst
 import io.agora.rtc.RtcEngine
 import io.agora.rtc.video.VideoCanvas
@@ -33,6 +37,8 @@ import java.util.HashMap
  * This activity should be instantiated with Client Role (Audience || Broadcaster)
  * Only if the Eight-Channel owner starts this activity it can be based in a Broadcaster
  */
+
+//TODO: Setup broadcast controller after testing
 open class BroadcastActivity : CoreActivity(), AGEventHandler {
 
     //Dev
@@ -100,7 +106,7 @@ open class BroadcastActivity : CoreActivity(), AGEventHandler {
         mBroadcastRoomName = intent.getIntExtra(Constants.IntentKeys.BROADCAST_MESSAGE_ID, 0)
         //Broadcast Message info used for Live comments
         if (mBroadcastRoomName != 0) {
-            Message().queryFirst() { equalTo("id", mBroadcastRoomName) }?.let {
+            Message().queryFirst { equalTo("id", mBroadcastRoomName) }?.let {
                 mBroadcastMessage = it
             }
         } else {
@@ -141,9 +147,9 @@ open class BroadcastActivity : CoreActivity(), AGEventHandler {
             mUidsList[0] = surfaceV//Get first surface View
             mGridVideoViewContainer?.initViewContainer(applicationContext, 0, mUidsList)//First is now full view
             worker().preview(true, surfaceV, 0)
-            broadcasterUI(btn_1, btn_2, btn_3)
+            broadcasterUI(ab_flip_camera, ab_mic_control)
         } else {
-            audienceUI(btn_1, btn_2, btn_3)
+            audienceUI(ab_flip_camera, ab_mic_control)
         }
         //Join Agora.io Room with roomId as Room Name
         mRoomId?.let {
@@ -159,92 +165,60 @@ open class BroadcastActivity : CoreActivity(), AGEventHandler {
             //TODO: Send intent back
             finish()
         }
-        //Show Broadcast
-        show_clicked.setOnClickListener {
-            var toHide = true
-            if (it.tag != null && it.tag as Boolean) {
-                toHide = false
-            }
-            it.tag = toHide
-            doShowButtons(toHide)
-        }
+
     }
 
-    /*User Interface for Broadcaster or Audience*/
-    private fun doShowButtons(hide: Boolean) {
-        val topArea = findById<View>(R.id.top_area)
-        topArea.visibility = if (hide) View.INVISIBLE else View.VISIBLE
-
-        val button1 = findById<View>(R.id.btn_1)
-        button1.visibility = if (hide) View.INVISIBLE else View.VISIBLE
-
-        val button2 = findById<View>(R.id.btn_2)
-        val button3 = findById<View>(R.id.btn_3)
-        if (isBroadcaster()) {
-            button2.visibility = if (hide) View.INVISIBLE else View.VISIBLE
-            button3.visibility = if (hide) View.INVISIBLE else View.VISIBLE
-        } else {
-            button2.visibility = View.INVISIBLE
-            button3.visibility = View.INVISIBLE
-        }
-    }
-
-    private fun broadcasterUI(button1: ImageView, button2: ImageView, button3: ImageView) {
-        //Button 1
-        button1.tag = true
-        button1.setOnClickListener {
-            val tag = it.tag
-            if (tag != null && tag as Boolean) {
-                doSwitchToBroadcaster(false)
-            } else {
-                doSwitchToBroadcaster(true)
-            }
-        }
-        button1.setColorFilter(resources.getColor(R.color.blue_color_picker), PorterDuff.Mode.MULTIPLY)
-
-        //Button 2
-        button2.setOnClickListener {
+    private fun broadcasterUI(cameraControl: ImageView, audioControl: ImageView) {
+        //Camera Flip control
+        Picasso.with(this).load(R.drawable.btn_switch_camera).transform(CircleTransform()).into(cameraControl)
+        var cameraFlipped = false
+        cameraControl.setOnClickListener {
+            //Action
             worker().getRtcEngine()?.switchCamera()
+            //Selection State
+            cameraFlipped = if (!cameraFlipped) {
+                cameraControl.setColorFilter(resources.getColor(R.color.blue_color_picker), PorterDuff.Mode.MULTIPLY)
+                true
+            } else {
+                cameraControl.setColorFilter(resources.getColor(R.color.transparent))
+                false
+            }
         }
 
-        //Button 3
-        button3.setOnClickListener {
+        //Mute Audio control
+        Picasso.with(this).load(R.drawable.btn_mute).transform(CircleTransform()).into(audioControl)
+        var audioMuted = false
+        audioControl.setOnClickListener {
+            //Action
             val tag = it.tag
             var flag = true
             if (tag != null && tag as Boolean) {
                 flag = false
             }
             worker().getRtcEngine()?.muteLocalAudioStream(flag)
-            val button = ImageView(this)
-            button.tag = true
-            if (flag) {
-                button.setColorFilter(resources.getColor(R.color.blue_color_picker), PorterDuff.Mode.MULTIPLY)
+            //Selection State
+            audioMuted = if (!audioMuted) {
+                audioControl.setColorFilter(resources.getColor(R.color.blue_color_picker), PorterDuff.Mode.MULTIPLY)
+                true
             } else {
-                button.clearColorFilter()
+                audioControl.setColorFilter(resources.getColor(R.color.transparent))
+                false
             }
         }
     }
 
-    private fun audienceUI(button1: ImageView, button2: ImageView, button3: ImageView) {
-        //Button 1
-        button1.tag = null
-        button1.setOnClickListener {
-            val tag = it.tag
-            if (tag != null && tag as Boolean) {
-                doSwitchToBroadcaster(false)
-            } else {
-                doSwitchToBroadcaster(true)
-            }
+    //TODO: Test audience UI with Justin
+    private fun audienceUI(likeControl: ImageView, comment: ImageView) {
+        //Like Control
+        Picasso.with(this).load(R.drawable.ic_like).transform(CircleTransform()).into(likeControl)
+        likeControl.setOnClickListener {
+            //TODO: LIKE POST
         }
-        button1.clearColorFilter()
-
-        //Button 2
-        button2.visibility = View.GONE
-
-        //Button 3
-        button3.tag = null
-        button3.visibility = View.GONE
-        button3.clearColorFilter()
+        //Comment
+        Picasso.with(this).load(R.drawable.ic_comment).transform(CircleTransform()).into(comment)
+        comment.setOnClickListener {
+            //TODO: Open comment dialog to publish on screen
+        }
     }
 
     /*Engine Config*/
@@ -267,32 +241,6 @@ open class BroadcastActivity : CoreActivity(), AGEventHandler {
                 worker().preview(false, null, 0)
             }
         }
-    }
-
-    private fun doSwitchToBroadcaster(broadcaster: Boolean) {
-        val currentHostCount = mUidsList.size
-        val uid = config().mUid
-        //Dev
-        log.debug("doSwitchToBroadcaster  currentHost: $currentHostCount " +
-                "uid: " + (uid and 0XFFFFFFFFL.toInt()) + " broadcaster: $broadcaster")
-        if (broadcaster) {
-            doConfigEngine(io.agora.rtc.Constants.CLIENT_ROLE_BROADCASTER)
-            Handler().postDelayed({
-                doRenderRemoteUI(uid)
-                broadcasterUI(btn_1, btn_2, btn_3)
-                doShowButtons(false)
-            }, 1000)
-        } else {
-            stopInteraction(currentHostCount, uid)
-        }
-    }
-
-    private fun stopInteraction(currentHostCount: Int, uid: Int) {
-        doConfigEngine(io.agora.rtc.Constants.CLIENT_ROLE_AUDIENCE)
-        Handler().postDelayed({
-            doRemoveRemoteUI(uid)
-            doShowButtons(false)
-        }, 1000)
     }
 
     private fun doRenderRemoteUI(uid: Int) {
