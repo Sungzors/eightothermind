@@ -71,6 +71,13 @@ object Constants {
     }
 
     /**
+     * Website URL's
+     * */
+    object Websites {
+        const val NAKED_APPS = "https://www.nakedapps.com"
+    }
+
+    /**
      * Notifications
      * */
     object Notifications {
@@ -140,6 +147,12 @@ object Constants {
          * Used for LogIn & SignUp Transition to Update Profile
          * */
         const val MY_PROFILE_UPDATE_REGISTER = 22
+
+        /**
+         * Used for SignUp Transition to Update Profile
+         * after accepting Terms & Conditions and Privacy Policy
+         * */
+        const val TC_PP_REQUEST_CODE = 28
 
         /**
          * Edit Channel
