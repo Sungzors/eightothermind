@@ -207,6 +207,7 @@ interface ChannelContract {
             val get8Application: Application
             val getRoomId: Int
             val getActivity: BroadcastActivity
+            fun receivedLikeAnimation()
 
         }
 

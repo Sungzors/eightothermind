@@ -60,7 +60,7 @@ class BroadcastController(val mView: ChannelContract.Broadcast.View) : ChannelCo
     }
 
     override fun resume() {
-        //TODO
+        //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun pause() {
@@ -81,7 +81,7 @@ class BroadcastController(val mView: ChannelContract.Broadcast.View) : ChannelCo
     /**
      * Socket.io
      * */
-    fun socketOn() {
+    private fun socketOn() {
         //Room
         mSocket.on(Constants.SocketKeys.UPDATE_ROOM, onUpdateRoom)
         //Live Comments
@@ -93,8 +93,11 @@ class BroadcastController(val mView: ChannelContract.Broadcast.View) : ChannelCo
         mSocket.on(Constants.SocketKeys.ON_ERROR, onError)
     }
 
-    fun socketOff() {
-        //TODO: Socket off for comments
+    private fun socketOff() {
+        mSocket.off(Constants.SocketKeys.UPDATE_ROOM)
+        mSocket.off(Constants.SocketKeys.COMMENT)
+        mSocket.off(Constants.SocketKeys.LIKE)
+        mSocket.off(Constants.SocketKeys.ON_ERROR)
     }
 
     /**
@@ -136,7 +139,8 @@ class BroadcastController(val mView: ChannelContract.Broadcast.View) : ChannelCo
         mView.getActivity.runOnUiThread({
             val data: JSONObject = args[0] as JSONObject
             log.debug("Like Object received in Broadcast: $data")
-            //TODO: Start like animations FOR BROADCASTER
+            println("Like Object received in Broadcast: $data")
+            mView.receivedLikeAnimation()
         })
     }
 

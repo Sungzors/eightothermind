@@ -2,20 +2,25 @@ package com.phdlabs.sungwon.a8chat_android.structure.channel.broadcast
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.os.Handler
 import android.preference.PreferenceManager
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.SurfaceView
 import android.view.View
 import android.view.ViewStub
 import android.widget.ImageView
 import android.widget.RelativeLayout
+import com.demo.heartanimation.HeartLayout
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.structure.application.Application
+import com.phdlabs.sungwon.a8chat_android.structure.channel.ChannelContract
 import com.phdlabs.sungwon.a8chat_android.structure.channel.broadcast.model.*
 import com.phdlabs.sungwon.a8chat_android.structure.channel.broadcast.ui.GridVideoViewContainer
 import com.phdlabs.sungwon.a8chat_android.structure.channel.broadcast.ui.SmallVideoViewAdapter
@@ -29,7 +34,7 @@ import io.agora.rtc.RtcEngine
 import io.agora.rtc.video.VideoCanvas
 import kotlinx.android.synthetic.main.activity_broadcast.*
 import org.slf4j.LoggerFactory
-import java.util.HashMap
+import java.util.*
 
 /**
  * Created by JPAM on 4/9/18.
@@ -39,7 +44,7 @@ import java.util.HashMap
  */
 
 //TODO: Setup broadcast controller after testing
-open class BroadcastActivity : CoreActivity(), AGEventHandler {
+open class BroadcastActivity : CoreActivity(), ChannelContract.Broadcast.View, AGEventHandler {
 
     //Dev
     private val log = LoggerFactory.getLogger(BroadcastActivity::class.java)
@@ -49,6 +54,10 @@ open class BroadcastActivity : CoreActivity(), AGEventHandler {
 
     /*Container*/
     override fun contentContainerId(): Int = 0
+
+    /*Controller*/
+    override lateinit var controller: ChannelContract.Broadcast.Controller
+
 
     /*Message Properties*/
     private var mBroadcastMessage: Message? = null
@@ -65,6 +74,12 @@ open class BroadcastActivity : CoreActivity(), AGEventHandler {
             cRole == io.agora.rtc.Constants.CLIENT_ROLE_BROADCASTER
 
     private fun isBroadcaster(): Boolean = isBroadcaster(config().mClientRole)
+
+    /*Animation Properties*/
+    private var mTimer = Timer()
+    private var mRandom = Random()
+    private var mHeartLayout: HeartLayout? = null
+
     /*Video View Type*/
     private val VIEW_TYPE_DEFAULT = 0
     private val VIEW_TYPE_SMALL = 1
@@ -75,7 +90,28 @@ open class BroadcastActivity : CoreActivity(), AGEventHandler {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        BroadcastController(this)
         getBroadcastMessageIntent()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        controller.start()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        controller.resume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        controller.pause()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        controller.stop()
     }
 
     override fun onDestroy() {
@@ -138,7 +174,7 @@ open class BroadcastActivity : CoreActivity(), AGEventHandler {
                 switchToDefaultVideoView()
             }
         }
-        //UI -> Broadcaster of Audience
+        //UI -> Broadcaster of Audience || Broadcaster
         if (isBroadcaster(cRole)) {
             var surfaceV = RtcEngine.CreateRendererView(applicationContext)
             rtcEngine().setupLocalVideo(VideoCanvas(surfaceV, VideoCanvas.RENDER_MODE_HIDDEN, 0))
@@ -151,6 +187,8 @@ open class BroadcastActivity : CoreActivity(), AGEventHandler {
         } else {
             audienceUI(ab_flip_camera, ab_mic_control)
         }
+        //Heart Animation layout
+        mHeartLayout = findById(R.id.heart_layout)
         //Join Agora.io Room with roomId as Room Name
         mRoomId?.let {
             worker().joinChannel(it.toString(), config().mUid)
@@ -447,5 +485,32 @@ open class BroadcastActivity : CoreActivity(), AGEventHandler {
     override fun onUserJoined(uid: Int, elapsed: Int) {
         doRenderRemoteUI(uid)
     }
+
+    /*Animations*/
+    override fun receivedLikeAnimation() {
+        object : CountDownTimer(5000, 150) {
+            override fun onTick(millisUntilFinished: Long) {
+                mHeartLayout?.addHeart(randomColor())
+
+            }
+
+            override fun onFinish() {
+                Log.d(TAG, "onFinish() called with: " + "")
+            }
+        }.start()
+    }
+
+    private fun randomColor(): Int =
+            Color.rgb(mRandom.nextInt(255), mRandom.nextInt(255), mRandom.nextInt(255))
+
+    /*Activity Getters*/
+    override val get8Application: Application
+        get() = application as Application
+
+    override val getRoomId: Int
+        get() = mRoomId
+
+    override val getActivity: BroadcastActivity
+        get() = this
 
 }
