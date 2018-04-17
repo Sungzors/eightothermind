@@ -1,6 +1,7 @@
 package com.phdlabs.sungwon.a8chat_android.db
 
 import com.phdlabs.sungwon.a8chat_android.model.contacts.Contact
+import com.phdlabs.sungwon.a8chat_android.model.room.Room
 
 /**
  * Created by jpam on 2/24/18.
@@ -28,6 +29,10 @@ object EightQueries {
 
         val alphabetComparatorGroupCreate = Comparator<Triple<Int, String, String>> { a, b ->
             return@Comparator a.second.compareTo(b.second)
+        }
+
+        val dateComparatorRooms = Comparator<Room> { a, b ->
+            return@Comparator b.last_activity!!.compareTo(a.last_activity)
         }
     }
 

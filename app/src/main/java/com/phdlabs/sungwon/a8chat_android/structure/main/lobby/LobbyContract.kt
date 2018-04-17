@@ -19,6 +19,8 @@ interface LobbyContract {
         fun setSeparatorCounter(pos: Int)
 
         fun getActivityDirect(): MainActivity
+
+        fun refreshChat()
     }
 
     interface Controller: BaseController {

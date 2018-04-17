@@ -5,7 +5,6 @@ import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
 import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.event.EventsEight
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
-import com.vicpin.krealmextensions.query
 import com.vicpin.krealmextensions.queryAll
 import com.vicpin.krealmextensions.saveAll
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -54,9 +53,7 @@ class EventsManager {
                         //Realm Query
                         val allEventsEight: ArrayList<Room> = arrayListOf()
                         //Query For all events
-                        val activeEvents = Room().query {
-                            equalTo("isEventActive", true)
-                        }
+                        val activeEvents = Room().queryAll()
                         allEventsEight += activeEvents
 
 //                        val createdEvents = EventsEight().query {

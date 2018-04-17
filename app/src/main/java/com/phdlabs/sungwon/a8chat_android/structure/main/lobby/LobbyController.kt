@@ -73,6 +73,7 @@ class LobbyController(val mView: LobbyContract.View,
 
     override fun resume() {
         callMyChannels(refresh)
+        callEvent(refresh)
         callChats()
     }
 
@@ -170,16 +171,21 @@ class LobbyController(val mView: LobbyContract.View,
                 mView.hideProgress()
                 response.first?.let {
                     //Events
+                    var chatCount = 0
                     for (rooms in it){
                         if(rooms.isEventActive){
                             mEvents.add(rooms)
                         } else {
                             mChat.add(rooms)
+                            chatCount++
                         }
                     }
                     if (mEvents.size > 0) {
                         //UI
                         mView.setUpEventsRecycler(mEvents)
+                    }
+                    if (chatCount>0){
+                        mView.refreshChat()
                     }
                 }
             }
