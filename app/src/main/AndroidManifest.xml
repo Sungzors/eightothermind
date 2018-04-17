@@ -138,6 +138,12 @@
             android:name=".structure.favorite.message.FavoriteMessageActivity"
             android:screenOrientation="portrait" />
 
+        <!--Agora.io Live Video Broadcasting-->
+        <activity
+            android:name=".structure.channel.broadcast.BroadcastActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Camera" />
+
         <!--Gallery Previews used for Channel Post-->
         <activity
             android:name="com.andremion.louvre.home.GalleryActivity"

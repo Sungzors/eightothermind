@@ -173,5 +173,10 @@
     <string name="privacy_policy">Privacy Policy</string>
     <string name="i_agree_to_the_terms_and_conditions">I agree to the terms and conditions</string>
     <string name="i_agree_to_the_privacy_policy">I agree to the Privacy Policy</string>
+    <string name="view_now">View Now</string>
+
+    <!--Broadcast-->
+    <string name="live_broadcast">%1$s is Live!</string>
+    <string name="end">End</string>
 
 </resources>

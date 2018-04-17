@@ -1,6 +1,7 @@
 package com.phdlabs.sungwon.a8chat_android.utility
 
 import android.Manifest
+import io.agora.rtc.Constants
 
 /**
  * Created by SungWon on 9/24/2017.
@@ -25,32 +26,49 @@ object Constants {
         const val ROOM_ID = "room_id"
         const val MESSAGE_ID = "message_id"
         const val OWNER_ID = "owner_id"
+        const val USER_ID = "userId"
         const val FROM_CONTACTS = "from_contacts"
         const val MEDIA_POST = "media_post"
         const val MEDIA_POST_MESSAGE = "media_post_message"
         const val INCLUDES_MEDIA = "includes_media"
         const val CHANNEL_DELETED = "channel_deleted"
         const val FAVE_TYPE = "fave_type"
+        const val BROADCAST_MESSAGE_ID = "messageId"
     }
 
     /**
      * [SocketKeys]
      * */
     object SocketKeys {
-        const val CONNECT = "connect"
+        //Entering 8
+        const val USER_ENTERED_8 = "user-entered-8" //FIXME not used for now until further notice
+        //Connect
         const val CONNECT_ROOMS = "connect-rooms"
+        //Update
         const val UPDATE_ROOM = "update-room"
+        //Update Types
         const val UPDATE_CHAT_STRING = "update-chat-string"
         const val UPDATE_CHAT_MEDIA = "update-chat-media"
         const val UPDATE_CHAT_LOCATION = "update-chat-location"
         const val UPDATE_CHAT_CHANNEL = "update-chat-channel"
         const val UPDATE_CHAT_CONTACT = "update-chat-contact"
-        const val UPDATE_CHAT_POST = "update-chat-post"
+        const val UPDATE_CHAT_MONEY = "update-chat-money"
         const val UPDATE_CHAT_FILE = "update-chat-file"
-        const val USER_ENTERED_8 = "user-entered-8"
-        const val ON_ERROR = "on-error"
+        const val UPDATE_CHAT_BROADCAST = "update-chat-broadcast"
+        //Liking a Channel Post
+        const val LIKE = "like"
+        //Sharing Channel inside conversation
+        const val SHARE_CHANNEL = "update-chat-channel-message"
+        //Comment & Editing Comments -> Channel Post & Broadcast
         const val COMMENT = "comment"
         const val EDIT_COMMENT = "edit-comment"
+        //Editing Message
+        const val EDIT_MESSAGE = "edit-message"
+        //Delete
+        const val DELETE_MESSAGE = "delete"
+        //Error
+        const val ON_ERROR = "on-error"
+        //TODO: Read Receipts
     }
 
     /**
@@ -178,6 +196,11 @@ object Constants {
          * */
         const val SHARE_MEDIA = 27
 
+        /**
+         * Start & Finish Broadcast inside channel
+         * */
+        const val BROADCAST_REQ_CODE = 29
+
     }
 
     /**
@@ -282,6 +305,7 @@ object Constants {
         val TYPE_CHANNEL = "channel"
         val TYPE_MONEY = "money"
         val TYPE_POST = "post"
+        val BROADCAST = "broadcast"
     }
 
     /**
@@ -306,6 +330,34 @@ object Constants {
         val TYPE_UNREAD = "unread"
         val TYPE_FAVORITE = "favorite"
         val TYPE_READ_NO_FAVORITE = "readandNonfavorite"
+    }
+
+    /**
+     * Agora.io Live Video Broadcasting through Eight Channels
+     * Resolution and Peer management constants
+     * */
+    object Broadcast {
+
+        const val MAX_PEER_COUNT = 3 // TODO: Allow maximum peer count after testing
+
+        var VIDEO_PROFILES = intArrayOf(
+                Constants.VIDEO_PROFILE_120P,
+                Constants.VIDEO_PROFILE_180P,
+                Constants.VIDEO_PROFILE_240P,
+                Constants.VIDEO_PROFILE_360P,
+                Constants.VIDEO_PROFILE_480P,
+                Constants.VIDEO_PROFILE_720P,
+                Constants.VIDEO_PROFILE_1080P_3
+        )
+
+        val DEFAULT_PROFILE_IDX = 2 // default use 240P //TODO: Test with different resolutions
+
+        object PrefManager {
+            const val PREF_PROPERTY_PROFILE_IDX = "pref_profile_index"
+            const val PREF_PROPERTY_UID = "pOCXx_uid"
+        }
+
+        val ACTION_KEY_CROLE = "C_Role"
     }
 
 }

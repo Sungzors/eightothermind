@@ -1,5 +1,6 @@
 package com.phdlabs.sungwon.a8chat_android.db.channels
 
+import com.phdlabs.sungwon.a8chat_android.api.data.channel.BroadcastData
 import com.phdlabs.sungwon.a8chat_android.api.data.channel.ChannelPostData
 import com.phdlabs.sungwon.a8chat_android.api.data.channel.CommentPostData
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
@@ -10,7 +11,9 @@ import com.phdlabs.sungwon.a8chat_android.model.channel.Comment
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.vicpin.krealmextensions.*
+import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import okhttp3.MultipartBody
 
@@ -441,11 +444,75 @@ class ChannelsManager {
     }
 
     /**
+     * [startBroadcast]
+     * Start Live Video Broadcast
+     * Note: Broadcasts are treated as posts to enable live commenting functionality while on the call
+     * @param roomId
+     * @callback Pair<[Message] [ErrorMessage]> with information about the current live broadcast access
+     * */
+    fun startBroadcast(roomId: Int, callback: (Pair<Message?, String?>) -> Unit) {
+        UserManager.instance.getCurrentUser { success, user, token ->
+            if (success) {
+                user?.let {
+                    token?.token?.let {
+                        val call = Rest.getInstance().getmCallerRx()
+                                .startBroadcast(it, BroadcastData(user.id.toString(), roomId.toString()), true)
+                        val disposable = call.subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe({
+                                    if (it.isSuccess) {
+                                        callback(Pair(it.newlyCreatedMsg, null))
+                                    } else if (it.isError) {
+                                        callback(Pair(null, "Couldn't start Broadcast"))
+                                    }
+                                }, { throwable ->
+                                    callback(Pair(null, throwable.localizedMessage))
+                                })
+                        //disposable.dispose() //TODO: Test disposable to see how it works
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * [finishBroadcast]
+     * Finish Live Video Broadcast
+     * @param roomId
+     * @callback Pair<[Message] [ErrorMessage]> with information about the finished live broadcast
+     * */
+    fun finishBroadcast(roomId: Int, messageId: Int, callback: (Pair<Message?, String?>) -> Unit) {
+        UserManager.instance.getCurrentUser { success, user, token ->
+            if (success) {
+                user?.let {
+                    token?.token?.let {
+                        val call = Rest.getInstance().getmCallerRx()
+                                .finishBroadcast(it, messageId.toString(), BroadcastData(user.id.toString(), roomId.toString()))
+                        val disposable = call.subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe({
+                                    if (it.isSuccess) {
+                                        callback(Pair(it.message, null))
+                                    } else if (it.isError) {
+                                        callback(Pair(null, "Could not finish broadcast"))
+                                    }
+                                }, { throwable ->
+                                    callback(Pair(null, throwable.localizedMessage))
+                                })
+                        //disposable.dispose() // TODO: Test disposable to see how it works
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * [updateChannel]
      * Update a current owner channel with new media update
      * @param channelId [Int]
      * @param channelPostData [ChannelPostData]
      * @callback Pair<Channel?, String?> -> Pair<UpdatedChannel, ErrorMessage>
+     *     TODO: REFACTOR -> It's not working properly
      * */
     fun updateChannel(channelId: Int, channelPostData: ChannelPostData, callback: (Pair<Channel?, String?>) -> Unit) {
         UserManager.instance.getCurrentUser { success, user, token ->

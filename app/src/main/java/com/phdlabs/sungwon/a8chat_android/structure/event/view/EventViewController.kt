@@ -68,7 +68,7 @@ class EventViewController(val mView: EventContract.ViewDetail.View) : EventContr
         mRoomId = mView.getRoomId
         getUserId { id ->
             Log.d(TAG, "Socket Connected")
-            mSocket.emit("connect-rooms", id, mRoomType)
+            mSocket.emit(Constants.SocketKeys.CONNECT_ROOMS, id, mRoomType)
             isConnected = true
         }
         retrieveChatHistory()
@@ -101,7 +101,6 @@ class EventViewController(val mView: EventContract.ViewDetail.View) : EventContr
         mSocket.on(Constants.SocketKeys.UPDATE_CHAT_CONTACT, onNewMessage)
         mSocket.on(Constants.SocketKeys.UPDATE_CHAT_LOCATION, onNewMessage)
         mSocket.on(Constants.SocketKeys.UPDATE_CHAT_MEDIA, onNewMessage)
-        mSocket.on(Constants.SocketKeys.UPDATE_CHAT_POST, onNewMessage)
         mSocket.on(Constants.SocketKeys.ON_ERROR, onError)
     }
 
@@ -422,14 +421,13 @@ class EventViewController(val mView: EventContract.ViewDetail.View) : EventContr
     }
 
     override fun onDestroy() {
-        mSocket.off(Constants.SocketKeys.CONNECT)
+        mSocket.off(Constants.SocketKeys.CONNECT_ROOMS)
         mSocket.off(Constants.SocketKeys.UPDATE_ROOM)
         mSocket.off(Constants.SocketKeys.UPDATE_CHAT_STRING)
         mSocket.off(Constants.SocketKeys.UPDATE_CHAT_CHANNEL)
         mSocket.off(Constants.SocketKeys.UPDATE_CHAT_CONTACT)
         mSocket.off(Constants.SocketKeys.UPDATE_CHAT_LOCATION)
         mSocket.off(Constants.SocketKeys.UPDATE_CHAT_MEDIA)
-        mSocket.off(Constants.SocketKeys.UPDATE_CHAT_POST)
         mSocket.off(Constants.SocketKeys.ON_ERROR)
     }
 
