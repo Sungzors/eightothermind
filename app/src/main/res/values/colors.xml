@@ -49,5 +49,6 @@
     <color name="yellow_green_color_picker">#C5E17A</color>
     <color name="hint_text">#b9c1ca</color>
     <color name="dark_black">#CC262626</color>
+    <color name="dark_black_transparent">#22262626</color>
 
 </resources>

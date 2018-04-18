@@ -26,6 +26,7 @@ class BroadcastController(val mView: ChannelContract.Broadcast.View) : ChannelCo
     private var mUserId: Int? = null
     private var mUserRoom: UserRooms? = null
     private val log = LoggerFactory.getLogger(BroadcastController::class.java)
+    private val mComments: ArrayList<Comment> = arrayListOf()
 
 
     init {
@@ -130,7 +131,8 @@ class BroadcastController(val mView: ChannelContract.Broadcast.View) : ChannelCo
         mView.getActivity.runOnUiThread({
             val data: JSONObject = args[0] as JSONObject
             val comment = GsonHolder.Companion.instance.get()!!.fromJson(data.toString(), Comment::class.java)
-            //TODO: Show comment on feed FOR BROADCASTER
+            mComments.add(comment)
+            mView.updateCommentsRecycler(mComments)
         })
     }
 

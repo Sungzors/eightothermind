@@ -9,15 +9,16 @@ import android.os.CountDownTimer
 import android.os.Handler
 import android.preference.PreferenceManager
 import android.support.v7.widget.GridLayoutManager
+import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
-import android.view.SurfaceView
-import android.view.View
-import android.view.ViewStub
+import android.view.*
 import android.widget.ImageView
 import android.widget.RelativeLayout
+import android.widget.TextView
 import com.demo.heartanimation.HeartLayout
 import com.phdlabs.sungwon.a8chat_android.R
+import com.phdlabs.sungwon.a8chat_android.model.channel.Comment
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.structure.application.Application
 import com.phdlabs.sungwon.a8chat_android.structure.channel.ChannelContract
@@ -27,6 +28,8 @@ import com.phdlabs.sungwon.a8chat_android.structure.channel.broadcast.ui.SmallVi
 import com.phdlabs.sungwon.a8chat_android.structure.channel.broadcast.ui.VideoViewEventListener
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
+import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseRecyclerAdapter
+import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseViewHolder
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform
 import com.squareup.picasso.Picasso
 import com.vicpin.krealmextensions.queryFirst
@@ -43,7 +46,6 @@ import java.util.*
  * Only if the Eight-Channel owner starts this activity it can be based in a Broadcaster
  */
 
-//TODO: Setup broadcast controller after testing
 open class BroadcastActivity : CoreActivity(), ChannelContract.Broadcast.View, AGEventHandler {
 
     //Dev
@@ -63,12 +65,16 @@ open class BroadcastActivity : CoreActivity(), ChannelContract.Broadcast.View, A
     private var mBroadcastMessage: Message? = null
     private var mBroadcastRoomName: Int? = null
     private var mRoomId: Int = 0
-    private var mUserId: Int = 0
+
+    /*Live Commenting*/
+    private lateinit var mCommentAdapter: BaseRecyclerAdapter<Comment, BaseViewHolder>
+
     /*Video Properties*/
     private var mGridVideoViewContainer: GridVideoViewContainer? = null
     private var mSmallVideoViewAdapter: SmallVideoViewAdapter? = null
     private var mSmallVideoViewDock: RelativeLayout? = null
     private val mUidsList = HashMap<Int, SurfaceView>() // uid = 0 || uid == EngineConfig.mUid
+
     /*Client Role properties*/
     private fun isBroadcaster(cRole: Int): Boolean =
             cRole == io.agora.rtc.Constants.CLIENT_ROLE_BROADCASTER
@@ -76,7 +82,6 @@ open class BroadcastActivity : CoreActivity(), ChannelContract.Broadcast.View, A
     private fun isBroadcaster(): Boolean = isBroadcaster(config().mClientRole)
 
     /*Animation Properties*/
-    private var mTimer = Timer()
     private var mRandom = Random()
     private var mHeartLayout: HeartLayout? = null
 
@@ -92,6 +97,7 @@ open class BroadcastActivity : CoreActivity(), ChannelContract.Broadcast.View, A
         super.onCreate(savedInstanceState)
         BroadcastController(this)
         getBroadcastMessageIntent()
+        setupCommentRecycler()
     }
 
     override fun onStart() {
@@ -131,11 +137,8 @@ open class BroadcastActivity : CoreActivity(), ChannelContract.Broadcast.View, A
         event().addEventHandler(this)
         mRoomId = intent.getIntExtra(Constants.IntentKeys.ROOM_ID, 0)
         intent.getIntExtra(Constants.IntentKeys.USER_ID, 0).let { userId ->
-            mUserId = if (userId == 0) {
-                config().mUid
-            } else {
+            if (userId != 0) {
                 config().setUid(userId)
-                userId
             }
         }
         //Broadcast Room Name
@@ -176,7 +179,7 @@ open class BroadcastActivity : CoreActivity(), ChannelContract.Broadcast.View, A
         }
         //UI -> Broadcaster of Audience || Broadcaster
         if (isBroadcaster(cRole)) {
-            var surfaceV = RtcEngine.CreateRendererView(applicationContext)
+            val surfaceV = RtcEngine.CreateRendererView(applicationContext)
             rtcEngine().setupLocalVideo(VideoCanvas(surfaceV, VideoCanvas.RENDER_MODE_HIDDEN, 0))
             surfaceV.setZOrderOnTop(true)
             surfaceV.setZOrderMediaOverlay(true)
@@ -190,9 +193,12 @@ open class BroadcastActivity : CoreActivity(), ChannelContract.Broadcast.View, A
         //Heart Animation layout
         mHeartLayout = findById(R.id.heart_layout)
         //Join Agora.io Room with roomId as Room Name
-        mRoomId?.let {
-            worker().joinChannel(it.toString(), config().mUid)
-            //worker().joinChannel(it.toString(), mUserId)//Todo: set user ID
+        if (mRoomId != 0) {
+            worker().joinChannel(mRoomId.toString(), config().mUid)
+        } else {
+            //Not a valid room
+            setResult(Activity.RESULT_CANCELED)
+            finish()
         }
         //Close Broadcast
         click_close.setOnClickListener {
@@ -204,6 +210,61 @@ open class BroadcastActivity : CoreActivity(), ChannelContract.Broadcast.View, A
             finish()
         }
 
+    }
+
+    /*Live Comments*/
+    private fun setupCommentRecycler() {
+        //Bind comment content
+        mCommentAdapter = object : BaseRecyclerAdapter<Comment, BaseViewHolder>() {
+            override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: Comment?, position: Int, type: Int) {
+                val profileImage = viewHolder?.get<ImageView>(R.id.vlc_friend_profile_picture)
+                val profileName = viewHolder?.get<TextView>(R.id.vlc_friend_name)
+                val comment = viewHolder?.get<TextView>(R.id.vlc_comment)
+                //Load Commenter Information
+                data?.user?.let {
+                    Picasso.with(context)
+                            .load(it.avatar)
+                            .placeholder(R.drawable.ic_launcher_round)
+                            .resize(45, 45)
+                            .centerCrop()
+                            .placeholder(R.drawable.addphoto)
+                            .transform(CircleTransform())
+                            .into(profileImage)
+                    it.hasFullName().let {
+                        if (it.first) {
+                            it.second?.let {
+                                profileName?.text = it
+                            }
+                        } else {
+                            profileName?.text = data.user!!.first_name ?: ""
+                        }
+                    }
+                }
+                //Load Comment
+                data?.comment?.let {
+                    comment?.text = it
+                }
+            }
+            //Comment view holder
+            override fun viewHolder(inflater: LayoutInflater?, parent: ViewGroup?, type: Int): BaseViewHolder =
+                    object : BaseViewHolder(R.layout.view_live_comment, inflater!!, parent) {}
+
+        }
+        val mAdapterManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        ab_recycler_view_live_comments.layoutManager = mAdapterManager
+        ab_recycler_view_live_comments.adapter = mCommentAdapter
+        //Recycler automatic scrolling
+        mCommentAdapter.registerAdapterDataObserver(object :RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                mAdapterManager.smoothScrollToPosition(ab_recycler_view_live_comments,null,itemCount)
+            }
+        })
+    }
+
+    override fun updateCommentsRecycler(comments: ArrayList<Comment>) {
+        mCommentAdapter.clear()
+        mCommentAdapter.setItems(comments)
+        mCommentAdapter.notifyDataSetChanged()
     }
 
     private fun broadcasterUI(cameraControl: ImageView, audioControl: ImageView) {
@@ -248,12 +309,12 @@ open class BroadcastActivity : CoreActivity(), ChannelContract.Broadcast.View, A
     //TODO: Test audience UI with Justin
     private fun audienceUI(likeControl: ImageView, comment: ImageView) {
         //Like Control
-        Picasso.with(this).load(R.drawable.ic_like).transform(CircleTransform()).into(likeControl)
+        Picasso.with(this).load(R.drawable.ic_like).into(likeControl)
         likeControl.setOnClickListener {
             //TODO: LIKE POST
         }
         //Comment
-        Picasso.with(this).load(R.drawable.ic_comment).transform(CircleTransform()).into(comment)
+        Picasso.with(this).load(R.drawable.ic_comment).into(comment)
         comment.setOnClickListener {
             //TODO: Open comment dialog to publish on screen
         }
@@ -267,8 +328,7 @@ open class BroadcastActivity : CoreActivity(), ChannelContract.Broadcast.View, A
         if (prefIndex > Constants.Broadcast.VIDEO_PROFILES.count() - 1) {
             prefIndex = Constants.Broadcast.DEFAULT_PROFILE_IDX
         }
-        val vProfile = Constants.Broadcast.VIDEO_PROFILES[prefIndex] //TODO: Test with video resolutions
-        //val vProfile = io.agora.rtc.Constants.VIDEO_PROFILE_DEFAULT
+        val vProfile = Constants.Broadcast.VIDEO_PROFILES[prefIndex]
         worker().configEngine(cRole, vProfile)
     }
 
@@ -301,7 +361,7 @@ open class BroadcastActivity : CoreActivity(), ChannelContract.Broadcast.View, A
                 log.debug("doRenderRemoteUi VIEW_TYPE_DEFAULT" + " " + (uid and 0xFFFFFFFFL.toInt()))
                 switchToDefaultVideoView()
             } else {
-                val bigBgUid = mSmallVideoViewAdapter?.getExceptedUid()
+                val bigBgUid = mSmallVideoViewAdapter?.exceptedUid
                 bigBgUid?.let {
                     log.debug("doRenderRemoteUi VIEW_TYPE_SMALL" + " " +
                             (uid and 0xFFFFFFFFL.toInt()) + " " + (it and 0xFFFFFFFFL.toInt()))
@@ -318,7 +378,7 @@ open class BroadcastActivity : CoreActivity(), ChannelContract.Broadcast.View, A
             }
             mUidsList.remove(uid)
             var bigBgUid = -1
-            mSmallVideoViewAdapter?.getExceptedUid()?.let {
+            mSmallVideoViewAdapter?.exceptedUid?.let {
                 bigBgUid = it
             }
             log.debug("doRemoveRemoteUi " + (uid and 0xFFFFFFFFL.toInt()) + " " + (bigBgUid and 0xFFFFFFFFL.toInt()))

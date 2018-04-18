@@ -211,7 +211,7 @@ interface ChannelContract {
             val getRoomId: Int
             val getActivity: BroadcastActivity
             fun receivedLikeAnimation()
-
+            fun updateCommentsRecycler(comments: ArrayList<Comment>)
         }
 
         interface Controller : BaseController {
