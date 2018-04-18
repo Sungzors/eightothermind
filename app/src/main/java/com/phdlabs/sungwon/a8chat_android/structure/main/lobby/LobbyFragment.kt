@@ -1,6 +1,7 @@
 package com.phdlabs.sungwon.a8chat_android.structure.main.lobby
 
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -8,7 +9,9 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import com.phdlabs.sungwon.a8chat_android.R
+import com.phdlabs.sungwon.a8chat_android.db.EightQueries
 import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.phdlabs.sungwon.a8chat_android.structure.channel.mychannel.MyChannelActivity
@@ -235,6 +238,14 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
                                 intent.putExtra(Constants.IntentKeys.ROOM_ID, room.id)
                                 intent.putExtra(Constants.IntentKeys.CHAT_PIC, room.groupChatInfo?.avatar as String)
                                 startActivity(intent)
+                            } else if (room.event!!){
+                                val data = getItem(adapterPosition)
+                                val intent = Intent(context, EventViewActivity::class.java)
+                                intent.putExtra(Constants.IntentKeys.EVENT_ID, data.events?.id)
+                                intent.putExtra(Constants.IntentKeys.EVENT_NAME, data.events?.name)
+                                intent.putExtra(Constants.IntentKeys.EVENT_LOCATION, data.events?.location_name)
+                                intent.putExtra(Constants.IntentKeys.ROOM_ID, data.id)
+                                startActivity(intent)
                             }
 
                         }
@@ -314,7 +325,7 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
                 eventIndicator.visibility = ImageView.INVISIBLE
             }
         } else if (data.event!!){
-            var event = data.events
+            val event = data.events
             Picasso.with(coreActivity.context).load(event?.avatar).placeholder(R.drawable.ic_launcher_round).transform(CircleTransform()).into(eventPic)
             title.text = event?.name
             if (data.message != null) {
@@ -341,6 +352,23 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
             }
 
         }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        if (requestCode == Constants.PermissionsReqCode.LOCATION_REQ_CODE) {
+            if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                controller.callForEvent()
+            }
+        } else {
+            Toast.makeText(context, "Cannot retrieve location at this time", Toast.LENGTH_SHORT).show()
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
+    override fun refreshChat() {
+        mAdapterChat.setItems(controller.getChat())
+        mAdapterChat.setSortComparator(EightQueries.Comparators.dateComparatorRooms)
+        mAdapterChat.notifyDataSetChanged()
     }
 
     override fun setSeparatorCounter(pos: Int) {

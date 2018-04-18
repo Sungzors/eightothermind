@@ -62,13 +62,15 @@ class LobbyController(val mView: LobbyContract.View,
                 mView.hideProgress()
                 requestLocationPermissions()
                 return
+            } else {
+                try {
+                    mLocationManager?.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0L, 0f, locationListener)
+                } catch (ex: SecurityException) {
+                    println("No location available: " + ex.message)
+                }
             }
         }
-        try {
-            mLocationManager?.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0L, 0f, locationListener)
-        } catch (ex: SecurityException) {
-            println("No location available: " + ex.message)
-        }
+
     }
 
     override fun resume() {
@@ -170,16 +172,21 @@ class LobbyController(val mView: LobbyContract.View,
                 mView.hideProgress()
                 response.first?.let {
                     //Events
+                    var chatCount = 0
                     for (rooms in it){
                         if(rooms.isEventActive){
                             mEvents.add(rooms)
                         } else {
                             mChat.add(rooms)
+                            chatCount++
                         }
                     }
                     if (mEvents.size > 0) {
                         //UI
                         mView.setUpEventsRecycler(mEvents)
+                    }
+                    if (chatCount>0){
+                        mView.refreshChat()
                     }
                 }
             }
@@ -234,6 +241,14 @@ class LobbyController(val mView: LobbyContract.View,
             }
         }
 
+    }
+
+    override fun callForEvent() {
+        try {
+            mLocationManager?.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0L, 0f, locationListener)
+        } catch (ex: SecurityException) {
+            println("No location available: " + ex.message)
+        }
     }
 
     override fun setRefreshFlag(shouldRefresh: Boolean) {
