@@ -34,6 +34,14 @@
             android:layout_marginEnd="10sp"
             android:layout_marginTop="25sp" />
 
+        <View
+            android:id="@+id/ab_bottom_dark_view"
+            android:layout_width="match_parent"
+            android:layout_height="69sp"
+            android:layout_alignParentBottom="true"
+            android:background="@color/dark_black_transparent"
+            android:visibility="gone" />
+
         <!--Bottom Controls-->
         <LinearLayout
             android:id="@+id/bottom_container"

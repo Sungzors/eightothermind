@@ -328,15 +328,15 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
                 val message = mContentAdapter.getItem(position)
                 val choiceArray = mutableListOf<String>()
                 var colorArray = intArrayOf(Color.BLUE)
-                if(message.isFavorited) choiceArray.add("Unfavorite Message") else choiceArray.add("Favorite Message")
+                if (message.isFavorited) choiceArray.add("Unfavorite Message") else choiceArray.add("Favorite Message")
                 val actionSheet = ActionSheet.Builder()
                         .setTitle("Select Action", Color.BLACK)
                         .setOtherBtn(choiceArray.toTypedArray(), colorArray)
                         .setCancelBtn("Cancel", Color.BLACK)
                         .setCancelableOnTouchOutside(true)
-                        .setActionSheetListener( object : ActionSheet.ActionSheetListener{
+                        .setActionSheetListener(object : ActionSheet.ActionSheetListener {
                             override fun onButtonClicked(actionSheet: ActionSheet?, index: Int) {
-                                when (index){
+                                when (index) {
                                     0 -> controller.favoriteMessage(message, mUserId, position)
                                 }
                             }
@@ -647,6 +647,7 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
             intent.putExtra(Constants.Broadcast.ACTION_KEY_CROLE, cRole)//Broadcaster Role
             intent.putExtra(Constants.IntentKeys.ROOM_ID, mRoomId)
             intent.putExtra(Constants.IntentKeys.USER_ID, controller.getUserId)
+            intent.putExtra(Constants.IntentKeys.OWNER_ID, mOwnerId)
             startActivityForResult(intent, Constants.RequestCodes.BROADCAST_REQ_CODE)
         }
     }

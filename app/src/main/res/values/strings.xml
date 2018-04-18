@@ -178,5 +178,6 @@
     <!--Broadcast-->
     <string name="live_broadcast">%1$s is Live!</string>
     <string name="end">End</string>
+    <string name="leave_broadcast">Leave</string>
 
 </resources>

@@ -1,6 +1,7 @@
 package com.phdlabs.sungwon.a8chat_android.structure.channel.broadcast
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.PorterDuff
@@ -13,9 +14,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.*
-import android.widget.ImageView
-import android.widget.RelativeLayout
-import android.widget.TextView
+import android.widget.*
 import com.demo.heartanimation.HeartLayout
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.model.channel.Comment
@@ -36,6 +35,7 @@ import com.vicpin.krealmextensions.queryFirst
 import io.agora.rtc.RtcEngine
 import io.agora.rtc.video.VideoCanvas
 import kotlinx.android.synthetic.main.activity_broadcast.*
+import kotlinx.android.synthetic.main.activity_channel_post_show.*
 import org.slf4j.LoggerFactory
 import java.util.*
 
@@ -63,11 +63,13 @@ open class BroadcastActivity : CoreActivity(), ChannelContract.Broadcast.View, A
 
     /*Message Properties*/
     private var mBroadcastMessage: Message? = null
-    private var mBroadcastRoomName: Int? = null
+    private var mMessageId: Int? = null
     private var mRoomId: Int = 0
+    private var mOwnerId: Int = 0
 
     /*Live Commenting*/
     private lateinit var mCommentAdapter: BaseRecyclerAdapter<Comment, BaseViewHolder>
+    private lateinit var mAdapterManager: LinearLayoutManager
 
     /*Video Properties*/
     private var mGridVideoViewContainer: GridVideoViewContainer? = null
@@ -141,15 +143,17 @@ open class BroadcastActivity : CoreActivity(), ChannelContract.Broadcast.View, A
                 config().setUid(userId)
             }
         }
-        //Broadcast Room Name
-        mBroadcastRoomName = intent.getIntExtra(Constants.IntentKeys.BROADCAST_MESSAGE_ID, 0)
+        //Eight Channel owner ID
+        mOwnerId = intent.getIntExtra(Constants.IntentKeys.OWNER_ID, 0)
+        //Broadcast message
+        mMessageId = intent.getIntExtra(Constants.IntentKeys.BROADCAST_MESSAGE_ID, 0)
         //Broadcast Message info used for Live comments
-        if (mBroadcastRoomName != 0) {
-            Message().queryFirst { equalTo("id", mBroadcastRoomName) }?.let {
+        if (mMessageId != 0) {
+            Message().queryFirst { equalTo("id", mMessageId) }?.let {
                 mBroadcastMessage = it
             }
         } else {
-            //No Broadcast Room available
+            //No Broadcast message available
             setResult(Activity.RESULT_CANCELED)
             finish()
         }
@@ -202,12 +206,11 @@ open class BroadcastActivity : CoreActivity(), ChannelContract.Broadcast.View, A
         }
         //Close Broadcast
         click_close.setOnClickListener {
-            val intent = Intent()
-            intent.putExtra(Constants.IntentKeys.BROADCAST_MESSAGE_ID, mBroadcastRoomName!!)
-            intent.putExtra(Constants.IntentKeys.ROOM_ID, mRoomId)
-            setResult(Activity.RESULT_OK, intent)
-            //TODO: Send intent back
-            finish()
+            if (isBroadcaster(cRole)) {
+                backToChannel()
+            } else {
+                onBackPressed()
+            }
         }
 
     }
@@ -245,23 +248,31 @@ open class BroadcastActivity : CoreActivity(), ChannelContract.Broadcast.View, A
                     comment?.text = it
                 }
             }
+
             //Comment view holder
             override fun viewHolder(inflater: LayoutInflater?, parent: ViewGroup?, type: Int): BaseViewHolder =
                     object : BaseViewHolder(R.layout.view_live_comment, inflater!!, parent) {}
 
         }
-        val mAdapterManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        mAdapterManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, true)
         ab_recycler_view_live_comments.layoutManager = mAdapterManager
         ab_recycler_view_live_comments.adapter = mCommentAdapter
         //Recycler automatic scrolling
-        mCommentAdapter.registerAdapterDataObserver(object :RecyclerView.AdapterDataObserver() {
+        mCommentAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
-                mAdapterManager.smoothScrollToPosition(ab_recycler_view_live_comments,null,itemCount)
+                mAdapterManager.smoothScrollToPosition(ab_recycler_view_live_comments, null, itemCount)
             }
         })
     }
 
     override fun updateCommentsRecycler(comments: ArrayList<Comment>) {
+        //Show continuous dark background for comments
+        ab_bottom_dark_view.visibility = View.VISIBLE
+        //Only first comment shows on bottom to avoid layout expansion
+        if (comments.count() >= 2) {
+            mAdapterManager.reverseLayout = false
+        }
+        //Show comments
         mCommentAdapter.clear()
         mCommentAdapter.setItems(comments)
         mCommentAdapter.notifyDataSetChanged()
@@ -308,15 +319,29 @@ open class BroadcastActivity : CoreActivity(), ChannelContract.Broadcast.View, A
 
     //TODO: Test audience UI with Justin
     private fun audienceUI(likeControl: ImageView, comment: ImageView) {
+        //Leave Broadcast UI
+        click_close.text = getString(R.string.leave_broadcast)
         //Like Control
+        ab_flip_camera.background = getDrawable(R.color.transparent)
         Picasso.with(this).load(R.drawable.ic_like).into(likeControl)
         likeControl.setOnClickListener {
-            //TODO: LIKE POST
+            mMessageId?.let {
+                controller.likePost(it)
+            }
         }
         //Comment
+        ab_mic_control.background = getDrawable(R.color.transparent)
         Picasso.with(this).load(R.drawable.ic_comment).into(comment)
         comment.setOnClickListener {
-            //TODO: Open comment dialog to publish on screen
+            isValidPost { comment ->
+                if (comment.isBlank()) {
+                    Toast.makeText(context, "Empty comment", Toast.LENGTH_SHORT).show()
+                } else {
+                    //Create comment
+                    controller.commentPost(mMessageId.toString(), comment)
+
+                }
+            }
         }
     }
 
@@ -339,6 +364,14 @@ open class BroadcastActivity : CoreActivity(), ChannelContract.Broadcast.View, A
                 worker().preview(false, null, 0)
             }
         }
+    }
+
+    private fun backToChannel() {
+        val intent = Intent()
+        intent.putExtra(Constants.IntentKeys.BROADCAST_MESSAGE_ID, mMessageId!!)
+        intent.putExtra(Constants.IntentKeys.ROOM_ID, mRoomId)
+        setResult(Activity.RESULT_OK, intent)
+        finish()
     }
 
     private fun doRenderRemoteUI(uid: Int) {
@@ -540,6 +573,10 @@ open class BroadcastActivity : CoreActivity(), ChannelContract.Broadcast.View, A
     override fun onUserOffline(uid: Int, reason: Int) {
         log.debug("onUserOffline " + (uid and 0xFFFFFFFFL.toInt()) + " " + reason)
         doRemoveRemoteUI(uid)
+        //If broadcaster ends broadcast terminate activity and go back to Channel
+        if (uid == mOwnerId) { //TODO: Test broadcast ending
+            backToChannel()
+        }
     }
 
     override fun onUserJoined(uid: Int, elapsed: Int) {
@@ -558,6 +595,31 @@ open class BroadcastActivity : CoreActivity(), ChannelContract.Broadcast.View, A
                 Log.d(TAG, "onFinish() called with: " + "")
             }
         }.start()
+    }
+
+    /**
+     * [isValidPost]
+     * Validates & Returns the comment message to be posted
+     * @callback Comment on Post
+     * */
+    private fun isValidPost(callback: (String) -> Unit) {
+        val alertDialog = AlertDialog.Builder(context)
+        val inflater = layoutInflater
+        val dialogLayout = inflater.inflate(R.layout.view_dialog_comment, null)
+        alertDialog.setView(dialogLayout)
+        val commentEditText = dialogLayout.findViewById<EditText>(R.id.vdc_comment)
+
+        commentEditText.minLines = 2
+        commentEditText.setPadding(10, 0, 10, 0)
+        alertDialog.setTitle("Comment")
+        alertDialog.setPositiveButton("publish") { p0, p1 ->
+            val comment = commentEditText.text.toString()
+            callback(comment)
+        }
+        alertDialog.setNegativeButton("cancel") { p0, p1 ->
+            callback("")
+        }
+        alertDialog.show()
     }
 
     private fun randomColor(): Int =

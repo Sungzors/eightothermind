@@ -157,8 +157,9 @@ class BroadcastController(val mView: ChannelContract.Broadcast.View) : ChannelCo
     }
 
     /*Like Post for Audience in Broadcast*/
-    override fun likePost(messageId: Int, unlike: Boolean) {
-        ChannelsManager.instance.likeUnlikePost(messageId, true)
+    override fun likePost(messageId: Int) {
+        ChannelsManager.instance.likeBroadcastPost(messageId)
+        mView.receivedLikeAnimation()
 
     }
 

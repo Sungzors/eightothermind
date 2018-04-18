@@ -216,7 +216,7 @@ interface ChannelContract {
 
         interface Controller : BaseController {
             fun onCreate()
-            fun likePost(messageId: Int, unlike: Boolean)
+            fun likePost(messageId: Int)
             fun commentPost(messageId: String, comment: String)
         }
     }

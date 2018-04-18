@@ -10,6 +10,7 @@ import com.phdlabs.sungwon.a8chat_android.api.response.channels.LikeResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.channels.MyChannelRoomsResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.channels.broadcast.EndBroadcastResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.channels.broadcast.StartBroadcastResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.channels.comments.PostCommentResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.channels.delete.DeleteChannelResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.channels.edit.ChannelEditResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.channels.follow.ChannelFollowResponse
@@ -170,7 +171,7 @@ interface CallerRx {
      * */
     @POST("/comments/{messageId}")
     fun commentOnChannelPost(@Header(TOKEN) token: String, @Path("messageId") messageId: String,
-                             @Body commentPostData: CommentPostData): Observable<CommentArrayResponse>
+                             @Body commentPostData: CommentPostData): Observable<PostCommentResponse>
 
     /**
      * [updateChannel]
