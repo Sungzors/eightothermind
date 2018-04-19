@@ -230,7 +230,6 @@ open class BroadcastActivity : CoreActivity(), ChannelContract.Broadcast.View, A
                             .placeholder(R.drawable.ic_launcher_round)
                             .resize(45, 45)
                             .centerCrop()
-                            .placeholder(R.drawable.addphoto)
                             .transform(CircleTransform())
                             .into(profileImage)
                     it.hasFullName().let {
