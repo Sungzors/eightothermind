@@ -1,6 +1,7 @@
 package com.phdlabs.sungwon.a8chat_android.structure.channel.broadcast
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.PorterDuff
@@ -9,15 +10,14 @@ import android.os.CountDownTimer
 import android.os.Handler
 import android.preference.PreferenceManager
 import android.support.v7.widget.GridLayoutManager
+import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
-import android.view.SurfaceView
-import android.view.View
-import android.view.ViewStub
-import android.widget.ImageView
-import android.widget.RelativeLayout
+import android.view.*
+import android.widget.*
 import com.demo.heartanimation.HeartLayout
 import com.phdlabs.sungwon.a8chat_android.R
+import com.phdlabs.sungwon.a8chat_android.model.channel.Comment
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.structure.application.Application
 import com.phdlabs.sungwon.a8chat_android.structure.channel.ChannelContract
@@ -27,12 +27,15 @@ import com.phdlabs.sungwon.a8chat_android.structure.channel.broadcast.ui.SmallVi
 import com.phdlabs.sungwon.a8chat_android.structure.channel.broadcast.ui.VideoViewEventListener
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
+import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseRecyclerAdapter
+import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseViewHolder
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform
 import com.squareup.picasso.Picasso
 import com.vicpin.krealmextensions.queryFirst
 import io.agora.rtc.RtcEngine
 import io.agora.rtc.video.VideoCanvas
 import kotlinx.android.synthetic.main.activity_broadcast.*
+import kotlinx.android.synthetic.main.activity_channel_post_show.*
 import org.slf4j.LoggerFactory
 import java.util.*
 
@@ -43,7 +46,6 @@ import java.util.*
  * Only if the Eight-Channel owner starts this activity it can be based in a Broadcaster
  */
 
-//TODO: Setup broadcast controller after testing
 open class BroadcastActivity : CoreActivity(), ChannelContract.Broadcast.View, AGEventHandler {
 
     //Dev
@@ -61,14 +63,20 @@ open class BroadcastActivity : CoreActivity(), ChannelContract.Broadcast.View, A
 
     /*Message Properties*/
     private var mBroadcastMessage: Message? = null
-    private var mBroadcastRoomName: Int? = null
+    private var mMessageId: Int? = null
     private var mRoomId: Int = 0
-    private var mUserId: Int = 0
+    private var mOwnerId: Int = 0
+
+    /*Live Commenting*/
+    private lateinit var mCommentAdapter: BaseRecyclerAdapter<Comment, BaseViewHolder>
+    private lateinit var mAdapterManager: LinearLayoutManager
+
     /*Video Properties*/
     private var mGridVideoViewContainer: GridVideoViewContainer? = null
     private var mSmallVideoViewAdapter: SmallVideoViewAdapter? = null
     private var mSmallVideoViewDock: RelativeLayout? = null
     private val mUidsList = HashMap<Int, SurfaceView>() // uid = 0 || uid == EngineConfig.mUid
+
     /*Client Role properties*/
     private fun isBroadcaster(cRole: Int): Boolean =
             cRole == io.agora.rtc.Constants.CLIENT_ROLE_BROADCASTER
@@ -76,7 +84,6 @@ open class BroadcastActivity : CoreActivity(), ChannelContract.Broadcast.View, A
     private fun isBroadcaster(): Boolean = isBroadcaster(config().mClientRole)
 
     /*Animation Properties*/
-    private var mTimer = Timer()
     private var mRandom = Random()
     private var mHeartLayout: HeartLayout? = null
 
@@ -92,6 +99,7 @@ open class BroadcastActivity : CoreActivity(), ChannelContract.Broadcast.View, A
         super.onCreate(savedInstanceState)
         BroadcastController(this)
         getBroadcastMessageIntent()
+        setupCommentRecycler()
     }
 
     override fun onStart() {
@@ -131,22 +139,21 @@ open class BroadcastActivity : CoreActivity(), ChannelContract.Broadcast.View, A
         event().addEventHandler(this)
         mRoomId = intent.getIntExtra(Constants.IntentKeys.ROOM_ID, 0)
         intent.getIntExtra(Constants.IntentKeys.USER_ID, 0).let { userId ->
-            mUserId = if (userId == 0) {
-                config().mUid
-            } else {
+            if (userId != 0) {
                 config().setUid(userId)
-                userId
             }
         }
-        //Broadcast Room Name
-        mBroadcastRoomName = intent.getIntExtra(Constants.IntentKeys.BROADCAST_MESSAGE_ID, 0)
+        //Eight Channel owner ID
+        mOwnerId = intent.getIntExtra(Constants.IntentKeys.OWNER_ID, 0)
+        //Broadcast message
+        mMessageId = intent.getIntExtra(Constants.IntentKeys.BROADCAST_MESSAGE_ID, 0)
         //Broadcast Message info used for Live comments
-        if (mBroadcastRoomName != 0) {
-            Message().queryFirst { equalTo("id", mBroadcastRoomName) }?.let {
+        if (mMessageId != 0) {
+            Message().queryFirst { equalTo("id", mMessageId) }?.let {
                 mBroadcastMessage = it
             }
         } else {
-            //No Broadcast Room available
+            //No Broadcast message available
             setResult(Activity.RESULT_CANCELED)
             finish()
         }
@@ -176,7 +183,7 @@ open class BroadcastActivity : CoreActivity(), ChannelContract.Broadcast.View, A
         }
         //UI -> Broadcaster of Audience || Broadcaster
         if (isBroadcaster(cRole)) {
-            var surfaceV = RtcEngine.CreateRendererView(applicationContext)
+            val surfaceV = RtcEngine.CreateRendererView(applicationContext)
             rtcEngine().setupLocalVideo(VideoCanvas(surfaceV, VideoCanvas.RENDER_MODE_HIDDEN, 0))
             surfaceV.setZOrderOnTop(true)
             surfaceV.setZOrderMediaOverlay(true)
@@ -190,20 +197,85 @@ open class BroadcastActivity : CoreActivity(), ChannelContract.Broadcast.View, A
         //Heart Animation layout
         mHeartLayout = findById(R.id.heart_layout)
         //Join Agora.io Room with roomId as Room Name
-        mRoomId?.let {
-            worker().joinChannel(it.toString(), config().mUid)
-            //worker().joinChannel(it.toString(), mUserId)//Todo: set user ID
+        if (mRoomId != 0) {
+            worker().joinChannel(mRoomId.toString(), config().mUid)
+        } else {
+            //Not a valid room
+            setResult(Activity.RESULT_CANCELED)
+            finish()
         }
         //Close Broadcast
         click_close.setOnClickListener {
-            val intent = Intent()
-            intent.putExtra(Constants.IntentKeys.BROADCAST_MESSAGE_ID, mBroadcastRoomName!!)
-            intent.putExtra(Constants.IntentKeys.ROOM_ID, mRoomId)
-            setResult(Activity.RESULT_OK, intent)
-            //TODO: Send intent back
-            finish()
+            if (isBroadcaster(cRole)) {
+                backToChannel()
+            } else {
+                onBackPressed()
+            }
         }
 
+    }
+
+    /*Live Comments*/
+    private fun setupCommentRecycler() {
+        //Bind comment content
+        mCommentAdapter = object : BaseRecyclerAdapter<Comment, BaseViewHolder>() {
+            override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: Comment?, position: Int, type: Int) {
+                val profileImage = viewHolder?.get<ImageView>(R.id.vlc_friend_profile_picture)
+                val profileName = viewHolder?.get<TextView>(R.id.vlc_friend_name)
+                val comment = viewHolder?.get<TextView>(R.id.vlc_comment)
+                //Load Commenter Information
+                data?.user?.let {
+                    Picasso.with(context)
+                            .load(it.avatar)
+                            .placeholder(R.drawable.ic_launcher_round)
+                            .resize(45, 45)
+                            .centerCrop()
+                            .placeholder(R.drawable.addphoto)
+                            .transform(CircleTransform())
+                            .into(profileImage)
+                    it.hasFullName().let {
+                        if (it.first) {
+                            it.second?.let {
+                                profileName?.text = it
+                            }
+                        } else {
+                            profileName?.text = data.user!!.first_name ?: ""
+                        }
+                    }
+                }
+                //Load Comment
+                data?.comment?.let {
+                    comment?.text = it
+                }
+            }
+
+            //Comment view holder
+            override fun viewHolder(inflater: LayoutInflater?, parent: ViewGroup?, type: Int): BaseViewHolder =
+                    object : BaseViewHolder(R.layout.view_live_comment, inflater!!, parent) {}
+
+        }
+        mAdapterManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, true)
+        ab_recycler_view_live_comments.layoutManager = mAdapterManager
+        ab_recycler_view_live_comments.adapter = mCommentAdapter
+        //Recycler automatic scrolling
+        mCommentAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                mAdapterManager.smoothScrollToPosition(ab_recycler_view_live_comments, null, itemCount)
+            }
+        })
+    }
+
+    override fun updateCommentsRecycler(comments: ArrayList<Comment>) {
+        //Show continuous dark background for comments
+        ab_bottom_dark_view.visibility = View.VISIBLE
+        //Only first comment shows on bottom to avoid layout expansion
+        if (comments.count() >= 2) {
+            mAdapterManager.reverseLayout = false
+        }
+        //Show comments
+        mCommentAdapter.clear()
+        mCommentAdapter.setItems(comments)
+        mCommentAdapter.notifyDataSetChanged()
     }
 
     private fun broadcasterUI(cameraControl: ImageView, audioControl: ImageView) {
@@ -247,15 +319,29 @@ open class BroadcastActivity : CoreActivity(), ChannelContract.Broadcast.View, A
 
     //TODO: Test audience UI with Justin
     private fun audienceUI(likeControl: ImageView, comment: ImageView) {
+        //Leave Broadcast UI
+        click_close.text = getString(R.string.leave_broadcast)
         //Like Control
-        Picasso.with(this).load(R.drawable.ic_like).transform(CircleTransform()).into(likeControl)
+        ab_flip_camera.background = getDrawable(R.color.transparent)
+        Picasso.with(this).load(R.drawable.ic_like).into(likeControl)
         likeControl.setOnClickListener {
-            //TODO: LIKE POST
+            mMessageId?.let {
+                controller.likePost(it)
+            }
         }
         //Comment
-        Picasso.with(this).load(R.drawable.ic_comment).transform(CircleTransform()).into(comment)
+        ab_mic_control.background = getDrawable(R.color.transparent)
+        Picasso.with(this).load(R.drawable.ic_comment).into(comment)
         comment.setOnClickListener {
-            //TODO: Open comment dialog to publish on screen
+            isValidPost { comment ->
+                if (comment.isBlank()) {
+                    Toast.makeText(context, "Empty comment", Toast.LENGTH_SHORT).show()
+                } else {
+                    //Create comment
+                    controller.commentPost(mMessageId.toString(), comment)
+
+                }
+            }
         }
     }
 
@@ -267,8 +353,7 @@ open class BroadcastActivity : CoreActivity(), ChannelContract.Broadcast.View, A
         if (prefIndex > Constants.Broadcast.VIDEO_PROFILES.count() - 1) {
             prefIndex = Constants.Broadcast.DEFAULT_PROFILE_IDX
         }
-        val vProfile = Constants.Broadcast.VIDEO_PROFILES[prefIndex] //TODO: Test with video resolutions
-        //val vProfile = io.agora.rtc.Constants.VIDEO_PROFILE_DEFAULT
+        val vProfile = Constants.Broadcast.VIDEO_PROFILES[prefIndex]
         worker().configEngine(cRole, vProfile)
     }
 
@@ -279,6 +364,14 @@ open class BroadcastActivity : CoreActivity(), ChannelContract.Broadcast.View, A
                 worker().preview(false, null, 0)
             }
         }
+    }
+
+    private fun backToChannel() {
+        val intent = Intent()
+        intent.putExtra(Constants.IntentKeys.BROADCAST_MESSAGE_ID, mMessageId!!)
+        intent.putExtra(Constants.IntentKeys.ROOM_ID, mRoomId)
+        setResult(Activity.RESULT_OK, intent)
+        finish()
     }
 
     private fun doRenderRemoteUI(uid: Int) {
@@ -301,7 +394,7 @@ open class BroadcastActivity : CoreActivity(), ChannelContract.Broadcast.View, A
                 log.debug("doRenderRemoteUi VIEW_TYPE_DEFAULT" + " " + (uid and 0xFFFFFFFFL.toInt()))
                 switchToDefaultVideoView()
             } else {
-                val bigBgUid = mSmallVideoViewAdapter?.getExceptedUid()
+                val bigBgUid = mSmallVideoViewAdapter?.exceptedUid
                 bigBgUid?.let {
                     log.debug("doRenderRemoteUi VIEW_TYPE_SMALL" + " " +
                             (uid and 0xFFFFFFFFL.toInt()) + " " + (it and 0xFFFFFFFFL.toInt()))
@@ -318,7 +411,7 @@ open class BroadcastActivity : CoreActivity(), ChannelContract.Broadcast.View, A
             }
             mUidsList.remove(uid)
             var bigBgUid = -1
-            mSmallVideoViewAdapter?.getExceptedUid()?.let {
+            mSmallVideoViewAdapter?.exceptedUid?.let {
                 bigBgUid = it
             }
             log.debug("doRemoveRemoteUi " + (uid and 0xFFFFFFFFL.toInt()) + " " + (bigBgUid and 0xFFFFFFFFL.toInt()))
@@ -480,6 +573,10 @@ open class BroadcastActivity : CoreActivity(), ChannelContract.Broadcast.View, A
     override fun onUserOffline(uid: Int, reason: Int) {
         log.debug("onUserOffline " + (uid and 0xFFFFFFFFL.toInt()) + " " + reason)
         doRemoveRemoteUI(uid)
+        //If broadcaster ends broadcast terminate activity and go back to Channel
+        if (uid == mOwnerId) { //TODO: Test broadcast ending
+            backToChannel()
+        }
     }
 
     override fun onUserJoined(uid: Int, elapsed: Int) {
@@ -498,6 +595,31 @@ open class BroadcastActivity : CoreActivity(), ChannelContract.Broadcast.View, A
                 Log.d(TAG, "onFinish() called with: " + "")
             }
         }.start()
+    }
+
+    /**
+     * [isValidPost]
+     * Validates & Returns the comment message to be posted
+     * @callback Comment on Post
+     * */
+    private fun isValidPost(callback: (String) -> Unit) {
+        val alertDialog = AlertDialog.Builder(context)
+        val inflater = layoutInflater
+        val dialogLayout = inflater.inflate(R.layout.view_dialog_comment, null)
+        alertDialog.setView(dialogLayout)
+        val commentEditText = dialogLayout.findViewById<EditText>(R.id.vdc_comment)
+
+        commentEditText.minLines = 2
+        commentEditText.setPadding(10, 0, 10, 0)
+        alertDialog.setTitle("Comment")
+        alertDialog.setPositiveButton("publish") { p0, p1 ->
+            val comment = commentEditText.text.toString()
+            callback(comment)
+        }
+        alertDialog.setNegativeButton("cancel") { p0, p1 ->
+            callback("")
+        }
+        alertDialog.show()
     }
 
     private fun randomColor(): Int =

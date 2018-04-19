@@ -211,12 +211,12 @@ interface ChannelContract {
             val getRoomId: Int
             val getActivity: BroadcastActivity
             fun receivedLikeAnimation()
-
+            fun updateCommentsRecycler(comments: ArrayList<Comment>)
         }
 
         interface Controller : BaseController {
             fun onCreate()
-            fun likePost(messageId: Int, unlike: Boolean)
+            fun likePost(messageId: Int)
             fun commentPost(messageId: String, comment: String)
         }
     }

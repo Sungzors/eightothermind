@@ -8,6 +8,7 @@ import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
 import com.phdlabs.sungwon.a8chat_android.model.channel.ChannelShowNest
 import com.phdlabs.sungwon.a8chat_android.model.channel.Comment
+import com.phdlabs.sungwon.a8chat_android.model.channel.NewlyCreatedComment
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.vicpin.krealmextensions.*
@@ -285,7 +286,7 @@ class ChannelsManager {
      * @return Pair<Array of comments, ErrorMessage>
      * This API call is used inside the [ChannelPostShowController] with the Socket channel function
      * */
-    fun commentOnChannelsPost(messageId: String, comment: String, callback: (Pair<List<Comment>?, String?>) -> Unit) {
+    fun commentOnChannelsPost(messageId: String, comment: String, callback: (Pair<NewlyCreatedComment?, String?>) -> Unit) {
         UserManager.instance.getCurrentUser { success, user, token ->
             if (success) {
                 user?.let {
@@ -298,12 +299,13 @@ class ChannelsManager {
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({ response ->
                                     if (response.isSuccess) {
-                                        callback(Pair(response.comments?.toList(), null))
+                                        callback(Pair(response.newlyCreatedComment, null))
                                     } else if (response.isError) {
                                         callback(Pair(null, "Could not download comments"))
                                     }
                                 }, { throwable ->
-                                    callback(Pair(null, throwable.localizedMessage))
+                                    throwable.printStackTrace()
+                                    callback(Pair(null, "You have to follow the channel to be able to comment"))
                                 })
                     }
                 }
@@ -329,7 +331,7 @@ class ChannelsManager {
                             call.subscribeOn(Schedulers.io())
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .subscribe({ response ->
-                                        if (response.isSuccess) {
+                                        if (response.success == true) {
                                             println("Message: " + response.responseMsg)
                                         }
 
@@ -341,7 +343,7 @@ class ChannelsManager {
                             call.subscribeOn(Schedulers.io())
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .subscribe({ response ->
-                                        if (response.isSuccess) {
+                                        if (response.success == true) {
                                             println("Message: " + response.responseMsg)
                                         }
 
@@ -349,6 +351,35 @@ class ChannelsManager {
                                         println("Error liking messsage: " + it.localizedMessage)
                                     })
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * [likeBroadcastPost]
+     * Like a broadcast as Post[Message] inside a Channel Live Broadcast
+     * @param messageId -> Message to be liked & simultaneously un-liked
+     * This behaviour handles multiple liking on a Live Broadcast & will produce continuous animation
+     * */
+    fun likeBroadcastPost(messageId: Int) {
+        UserManager.instance.getCurrentUser { success, user, token ->
+            if (success) {
+                user?.let {
+                    token?.token?.let {
+                        val call = Rest.getInstance().getmCallerRx().likePost(it, messageId, user.id!!, null)
+                        call.subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe({ response ->
+                                    if (response.success == true) {
+                                        println("Message: " + response.responseMsg)
+                                        //Unlike post after liking so the user can like it again on the broadcast (continuous)
+                                        likeUnlikePost(messageId, true)
+                                    }
+                                }, {
+                                    println("Error liking messsage: " + it.localizedMessage)
+                                })
                     }
                 }
             }

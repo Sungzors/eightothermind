@@ -5,12 +5,13 @@
     android:keepScreenOn="true"
     tools:context=".structure.channel.broadcast.BroadcastActivity">
 
+    <!--Surface View Container-->
     <com.phdlabs.sungwon.a8chat_android.structure.channel.broadcast.ui.GridVideoViewContainer
         android:id="@+id/grid_video_view_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-
+    <!--Small video dock not implemented-->
     <ViewStub
         android:id="@id/small_video_view_dock"
         android:layout_width="match_parent"
@@ -23,13 +24,23 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <!--Heart animations-->
         <com.demo.heartanimation.HeartLayout
             android:id="@+id/heart_layout"
             android:layout_width="80sp"
             android:layout_height="match_parent"
-            android:layout_above="@+id/bottom_container"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="5sp" />
+            android:layout_alignParentEnd="true"
+            android:layout_marginBottom="65sp"
+            android:layout_marginEnd="10sp"
+            android:layout_marginTop="25sp" />
+
+        <View
+            android:id="@+id/ab_bottom_dark_view"
+            android:layout_width="match_parent"
+            android:layout_height="69sp"
+            android:layout_alignParentBottom="true"
+            android:background="@color/dark_black_transparent"
+            android:visibility="gone" />
 
         <!--Bottom Controls-->
         <LinearLayout
@@ -41,6 +52,15 @@
             android:layout_alignParentStart="true"
             android:orientation="vertical">
 
+            <!--Live Comments-->
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/ab_recycler_view_live_comments"
+                android:layout_width="match_parent"
+                android:layout_height="150sp"
+                android:layout_marginBottom="5sp"
+                android:background="@null" />
+
+            <!--Live Broadcast Controls-->
             <com.phdlabs.sungwon.a8chat_android.structure.channel.broadcast.ui.AGLinearLayout
                 android:id="@+id/bottom_action_container"
                 android:layout_width="wrap_content"
