@@ -41,7 +41,7 @@ class CreatePostActivity : CoreActivity(), ChannelContract.CreatePost.View, View
     /*Properties*/
     var mSelectedMedia: MutableList<Uri> = mutableListOf()
     var mMediaAdapter: BaseRecyclerAdapter<Uri, BaseViewHolder>? = null
-    var mRoomId: Int? = null
+    var mRoomId: Int = 0
 
     /*LifeCycle*/
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,6 +52,10 @@ class CreatePostActivity : CoreActivity(), ChannelContract.CreatePost.View, View
         CreatePostController(this)
         //Get Intent
         mRoomId = intent.getIntExtra(Constants.IntentKeys.ROOM_ID, 0)
+        if (mRoomId == 0) {
+            setResult(Activity.RESULT_CANCELED)
+            finish()
+        }
         //Toolbar
         setupToolbar()
         //Clicks
@@ -173,6 +177,9 @@ class CreatePostActivity : CoreActivity(), ChannelContract.CreatePost.View, View
 
     override fun getPostData(): Pair<String, MutableList<Uri>> =
             Pair(cpa_message_post.text.toString(), mSelectedMedia)
+
+    override val getRoomId: Int
+        get() = mRoomId
 
     override fun close() {
         this.finish()

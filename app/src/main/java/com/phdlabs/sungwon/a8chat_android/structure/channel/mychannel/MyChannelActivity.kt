@@ -159,7 +159,7 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         toolbar_right_picture.visibility = View.VISIBLE
         //Channel Picture -> Access to settings
         Picasso.with(this)
-                .load(ChannelsManager.instance.querySingleChannel(mChannelId)?.avatar)
+                .load(ChannelsManager.instance.querySingleChannelWithChannelId(mChannelId)?.avatar)
                 .placeholder(R.drawable.ic_launcher_round)
                 .transform(CircleTransform())
                 .into(toolbar_right_picture)
@@ -786,6 +786,7 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
             intent.putExtra(Constants.IntentKeys.ROOM_ID, mRoomId)
             startActivityForResult(intent,
                     Constants.RequestCodes.CREATE_NEW_POST_REQ_CODE)
+            controller.keepSocketConnection(false)
         }
     }
 
@@ -808,10 +809,11 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
             Constants.RequestCodes.CREATE_NEW_POST_REQ_CODE -> {
                 if (resultCode == Activity.RESULT_OK) {
                     //Push new post after socket is connected
-                    val filepathArrayList = data?.extras?.getStringArrayList(Constants.IntentKeys.MEDIA_POST)
-                    val postMessage = data?.extras?.getString(Constants.IntentKeys.MEDIA_POST_MESSAGE)
-                    controller.createPost(postMessage, filepathArrayList)
-                    controller.keepSocketConnection(false)//FIXME Should this keep the socket on?
+                    //controller.retrieveChatHistory(true)
+//                    val filepathArrayList = data?.extras?.getStringArrayList(Constants.IntentKeys.MEDIA_POST)
+//                    val postMessage = data?.extras?.getString(Constants.IntentKeys.MEDIA_POST_MESSAGE)
+//                    controller.createPost(postMessage, filepathArrayList)
+//                    controller.keepSocketConnection(false)
                 }
             }
 

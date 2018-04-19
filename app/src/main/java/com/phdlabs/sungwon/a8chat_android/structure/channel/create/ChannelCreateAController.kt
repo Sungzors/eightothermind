@@ -298,7 +298,7 @@ class ChannelCreateAController(val mView: ChannelContract.Create.View) : Channel
     }
 
     override fun getChannelInfo(id: Int, callback: (Channel?) -> Unit) {
-        callback(ChannelsManager.instance.querySingleChannel(id))
+        callback(ChannelsManager.instance.querySingleChannelWithChannelId(id))
     }
 
     override fun updateChannel(channelId: Int, channelPostData: ChannelPostData) {

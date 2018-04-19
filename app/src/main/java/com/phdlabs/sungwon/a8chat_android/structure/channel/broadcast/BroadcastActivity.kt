@@ -93,6 +93,16 @@ open class BroadcastActivity : CoreActivity(), ChannelContract.Broadcast.View, A
     private var mViewType = VIEW_TYPE_DEFAULT
 
 
+    companion object {
+        /**
+         * Used to verify if the user in currently in the broadcast
+         * This global variable will help avoid issuing notifications
+         * when the user is already in the broadcast
+         * */
+        var isInBroadcast: Boolean? = null
+    }
+
+
     /*LifeCycle*/
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -212,7 +222,8 @@ open class BroadcastActivity : CoreActivity(), ChannelContract.Broadcast.View, A
                 onBackPressed()
             }
         }
-
+        /*User is currently in a Live Broadcast -> Companion access*/
+        isInBroadcast = true
     }
 
     /*Live Comments*/
