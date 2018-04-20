@@ -5,6 +5,7 @@ import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.media.Media
 import com.vicpin.krealmextensions.saveAll
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
 /**
@@ -23,6 +24,8 @@ class MediaManager {
     companion object {
         val instance: MediaManager by lazy { Holder.instance }
     }
+
+    private val disposable = CompositeDisposable()
 
     /**
      * [getPrivateMedia]
@@ -43,7 +46,7 @@ class MediaManager {
                                 token.token!!,
                                 it!!,
                                 userId2)
-                        call.subscribeOn(Schedulers.io())
+                        disposable.add(call.subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({ response ->
                                     if (response.isSuccess) {
@@ -63,12 +66,13 @@ class MediaManager {
                                         println("MEDIA MANAGER: No media found between users")
                                         callback(Pair(null, errorResponse))
                                     }
+                                    disposable.clear()
                                 }, { throwable ->
                                     errorResponse = "Could not download media"
                                     println("MEDIA MANAGER: Error downloading Private Media")
                                     println("MEDIA MANAGER: " + throwable.localizedMessage)
                                     callback(Pair(null, errorResponse))
-                                })
+                                }))
                     }
                 }
             }

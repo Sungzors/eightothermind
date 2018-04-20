@@ -6,12 +6,12 @@ import com.phdlabs.sungwon.a8chat_android.model.files.File
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.phdlabs.sungwon.a8chat_android.model.user.UserRooms
-import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.vicpin.krealmextensions.query
 import com.vicpin.krealmextensions.queryFirst
 import com.vicpin.krealmextensions.save
 import com.vicpin.krealmextensions.saveAll
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
 /**
@@ -32,6 +32,8 @@ class RoomManager {
         val instance by lazy { Holder.instance }
     }
 
+    private val disposable = CompositeDisposable()
+
 
     /**
      * [enterRoom]
@@ -43,7 +45,7 @@ class RoomManager {
                 user?.let {
                     token?.token?.let {
                         val call = Rest.getInstance().getmCallerRx().enterRoom(it, user.id!!, roomId)
-                        call.subscribeOn(Schedulers.io())
+                        disposable.add(call.subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({ response ->
                                     if (response.isSuccess) {
@@ -54,11 +56,12 @@ class RoomManager {
                                     } else if (response.isError) {
                                         println("Could not update user entering Room")
                                     }
+                                    disposable.clear()
                                 }, { throwable ->
                                     println(throwable.localizedMessage)
                                     println(throwable.stackTrace)
                                     callback(null)
-                                })
+                                }))
                     }
                 }
             }
@@ -75,7 +78,7 @@ class RoomManager {
                 user?.let {
                     token?.token?.let {
                         val call = Rest.getInstance().getmCallerRx().leaveRoom(it, user.id!!, roomId)
-                        call.subscribeOn(Schedulers.io())
+                        disposable.add(call.subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({ response ->
                                     if (response.isSuccess) {
@@ -91,7 +94,7 @@ class RoomManager {
                                     println(throwable.localizedMessage)
                                     println(throwable.stackTrace)
                                     callback(null)
-                                })
+                                }))
                     }
                 }
             }
@@ -108,7 +111,7 @@ class RoomManager {
                 user?.let {
                     token?.token?.let {
                         val call = Rest.getInstance().getmCallerRx().getRoomById(it, roomId)
-                        call.subscribeOn(Schedulers.io())
+                        disposable.add(call.subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({ response ->
                                     if (response.isSuccess) {
@@ -118,9 +121,10 @@ class RoomManager {
                                     } else if (response.isError) {
                                         callback(Pair(null, "Room not found"))
                                     }
+                                    disposable.clear()
                                 }, { throwable ->
                                     callback(Pair(null, throwable.localizedMessage))
-                                })
+                                }))
                     }
                 }
             }
@@ -147,7 +151,7 @@ class RoomManager {
                 user?.let {
                     token?.token?.let {
                         val call = Rest.getInstance().getmCallerRx().getChatHistory(it, roomId, user.id!!)
-                        call.subscribeOn(Schedulers.io())
+                        disposable.add(call.subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({ response ->
                                     if (response.isSuccess) {
@@ -158,9 +162,10 @@ class RoomManager {
                                     } else if (response.isError) {
                                         callback(Pair(null, "Could not retrieve Chat history"))
                                     }
+                                    disposable.clear()
                                 }, { throwable ->
                                     callback(Pair(null, throwable.localizedMessage))
-                                })
+                                }))
                     }
                 }
             }
@@ -178,7 +183,7 @@ class RoomManager {
                 user?.let {
                     token?.token?.let {
                         val call = Rest.getInstance().getmCallerRx().getPrivateAndGroupChats(it, user.id!!)
-                        call.subscribeOn(Schedulers.io())
+                        disposable.add(call.subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({ response ->
                                     if (response.isSuccess) {
@@ -190,9 +195,10 @@ class RoomManager {
                                     } else if (response.isError) {
                                         callback(Pair(null, "Could not download private & group chats"))
                                     }
+                                    disposable.clear()
                                 }, { throwable ->
                                     callback(Pair(null, throwable.localizedMessage))
-                                })
+                                }))
                     }
                 }
             }
@@ -211,7 +217,7 @@ class RoomManager {
                 user?.let {
                     token?.token?.let {
                         val call = Rest.getInstance().getmCallerRx().getPrivateChats(it, user.id!!)
-                        call.subscribeOn(Schedulers.io())
+                        disposable.add(call.subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({ response ->
                                     if (response.isSuccess) {
@@ -236,9 +242,11 @@ class RoomManager {
                                     } else if (response.isError) {
                                         callback(Pair(null, "Could not download private chats"))
                                     }
+
+                                    disposable.clear()
                                 }, { throwable ->
                                     callback(Pair(null, throwable.localizedMessage))
-                                })
+                                }))
                     }
                 }
             }

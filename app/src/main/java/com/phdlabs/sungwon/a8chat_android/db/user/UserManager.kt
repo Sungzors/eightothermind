@@ -7,6 +7,7 @@ import com.phdlabs.sungwon.a8chat_android.model.user.registration.Token
 import com.vicpin.krealmextensions.queryFirst
 import com.vicpin.krealmextensions.save
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
 /**
@@ -23,6 +24,8 @@ class UserManager {
     /*Properties*/
     var user: User? = null
 
+    private val disposable = CompositeDisposable()
+
     /**[getCurrentUser]
      * Method for retrieving current user from cached data or pull if non-existent
      * @callback (success, User?, Token?)
@@ -36,7 +39,7 @@ class UserManager {
             } ?: run {
                 /*No available user -> try to fetch from server*/
                 val call = Rest.getInstance().getmCallerRx().getUser(it.token!!, user?.id!!)
-                call.subscribeOn(Schedulers.io())
+                disposable.add(call.subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe({ response ->
                             if (response.isSuccess) {
@@ -49,9 +52,10 @@ class UserManager {
                                 callback(false, null, null)
                                 print("UserManager: server call failed")
                             }
+                            disposable.clear()
                         }, { throwable ->
                             println("Error downloading user info in UserManager: " + throwable.message)
-                        })
+                        }))
             }
         } ?: run {
             /*No available token*/
@@ -70,7 +74,7 @@ class UserManager {
         getCurrentUser { success, user, token ->
             token?.token?.let {
                 val call = Rest.getInstance().getmCallerRx().getUser(it, userId)
-                call.subscribeOn(Schedulers.io())
+                disposable.add(call.subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe({ response ->
                             if (response.isSuccess) {
@@ -80,9 +84,10 @@ class UserManager {
                             } else if (response.isError) {
                                 callback(null, "Did not find user")
                             }
+                            disposable.clear()
                         }, { throwable ->
                             callback(null, throwable.localizedMessage)
-                        })
+                        }))
             }
         }
     }
@@ -91,7 +96,7 @@ class UserManager {
         getCurrentUser { success, user, token ->
             token?.token?.let {
                 val call = Rest.getInstance().getmCallerRx().getRoomFaveMsg(it, roomId, user?.id!!)
-                call.subscribeOn(Schedulers.io())
+                disposable.add(call.subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe({ response ->
                             if (response.isSuccess) {
@@ -101,10 +106,11 @@ class UserManager {
                             } else if (response.isError) {
                                 callback(null, "Did not find user")
                             }
+                            disposable.clear()
 
                         }, { t: Throwable? ->
                             callback(null, t?.localizedMessage)
-                        })
+                        }))
             }
         }
     }
@@ -112,7 +118,7 @@ class UserManager {
     fun getSelfFavoriteCount(callback: (Int?, String?) -> Unit){
         getCurrentUser { success, user, token ->
             val call = Rest.getInstance().getmCallerRx().getUserFaveMsg(token?.token!!, user?.id!!)
-            call.subscribeOn(Schedulers.io())
+            disposable.add(call.subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({response ->
                         if (response.isSuccess){
@@ -122,9 +128,10 @@ class UserManager {
                         } else if (response.isError){
                             callback(null, "Did not find user")
                         }
+                        disposable.clear()
                     }, {t: Throwable? ->
                         callback(null, t?.localizedMessage)
-                    })
+                    }))
         }
     }
 
@@ -139,7 +146,7 @@ class UserManager {
                 user?.let {
                     token?.token?.let {
                         val call = Rest.getInstance().getmCallerRx().updateFirebaseToken(it, user.id!!, UserFBToken(firebaseToken))
-                        call.subscribeOn(Schedulers.io())
+                        disposable.add(call.subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({ response ->
                                     if (response.isSuccess) {
@@ -151,11 +158,12 @@ class UserManager {
                                         //println("Error updating Firebase Token")
                                         //TODO: Setup Schedulers to ask for token again
                                     }
+                                    disposable.clear()
                                 }, {
                                     //Ignore
                                     //println(it.localizedMessage)
                                     //TODO: Setup Schedulers to ask for token again
-                                })
+                                }))
                     }
                 }
             }
