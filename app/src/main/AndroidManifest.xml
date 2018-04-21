@@ -32,8 +32,8 @@
         <!--Splash Screen-->
         <activity
             android:name=".structure.splashScreen.SplashScreenActivity"
-            android:theme="@style/SplashTheme"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -138,6 +138,12 @@
             android:name=".structure.favorite.message.FavoriteMessageActivity"
             android:screenOrientation="portrait" />
 
+        <!--Agora.io Live Video Broadcasting-->
+        <activity
+            android:name=".structure.channel.broadcast.BroadcastActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Camera" />
+
         <!--Gallery Previews used for Channel Post-->
         <activity
             android:name="com.andremion.louvre.home.GalleryActivity"
@@ -154,6 +160,11 @@
         <!--Global Notifications-->
         <activity
             android:name=".structure.myProfile.notifications.NotificationsGlobalSettings"
+            android:screenOrientation="portrait" />
+
+        <!--Terms & Conditions - Privacy Policy-->
+        <activity
+            android:name=".structure.login.DisclosureActivity"
             android:screenOrientation="portrait" />
 
         <!--Photos & Images File Provider-->

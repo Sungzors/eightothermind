@@ -1,12 +1,16 @@
 package com.phdlabs.sungwon.a8chat_android.api.rest
 
 import com.phdlabs.sungwon.a8chat_android.api.data.*
+import com.phdlabs.sungwon.a8chat_android.api.data.channel.BroadcastData
 import com.phdlabs.sungwon.a8chat_android.api.data.channel.ChannelPostData
 import com.phdlabs.sungwon.a8chat_android.api.data.channel.CommentPostData
 import com.phdlabs.sungwon.a8chat_android.api.data.notifications.UserFBToken
 import com.phdlabs.sungwon.a8chat_android.api.response.*
 import com.phdlabs.sungwon.a8chat_android.api.response.channels.LikeResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.channels.MyChannelRoomsResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.channels.broadcast.EndBroadcastResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.channels.broadcast.StartBroadcastResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.channels.comments.PostCommentResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.channels.delete.DeleteChannelResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.channels.edit.ChannelEditResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.channels.follow.ChannelFollowResponse
@@ -167,7 +171,7 @@ interface CallerRx {
      * */
     @POST("/comments/{messageId}")
     fun commentOnChannelPost(@Header(TOKEN) token: String, @Path("messageId") messageId: String,
-                             @Body commentPostData: CommentPostData): Observable<CommentArrayResponse>
+                             @Body commentPostData: CommentPostData): Observable<PostCommentResponse>
 
     /**
      * [updateChannel]
@@ -186,6 +190,24 @@ interface CallerRx {
     @DELETE("/channels/{channelId}")
     fun deleteChannel(@Header(TOKEN) token: String, @Path("channelId") channelId: Int): Observable<DeleteChannelResponse>
 
+    /**
+     * [startBroadcast]
+     * Start Live Broadcast
+     * - This API call sends notifications to the channel followers & returns the message information
+     * created on the Channel feed
+     * - Connects the Sockets update-chat-broadcast for commenting on the live feed
+     * */
+    @POST("/messages/broadcast/start")
+    fun startBroadcast(@Header(TOKEN) token: String, @Body broadcastData: BroadcastData , @Query("post") post: Boolean): Observable<StartBroadcastResponse>
+
+    /**
+     * [finishBroadcast]
+     * - This API call finishes the live broadcast access
+     * - Disconnects the Sockets update-chat-broadcast for commenting on the live feed
+     * */
+    @PATCH("/messages/{messageId}/broadcast/finish")
+    fun finishBroadcast(@Header(TOKEN) token: String, @Path("messageId") messageId: String,
+                        @Body broadcastData: BroadcastData): Observable<EndBroadcastResponse>
 
     /*EVENTS*/
     /**[postEvents]

@@ -4,8 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.text.SpannableString
 import android.text.style.UnderlineSpan
-import android.view.View
-import android.view.WindowManager
 import android.widget.Toast
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.api.data.LoginData
@@ -65,7 +63,7 @@ class ConfirmActivity : CoreActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
         if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == Constants.RequestCodes.MY_PROFILE_UPDATE_REGISTER) {
+            if (requestCode == Constants.RequestCodes.TC_PP_REQUEST_CODE) {
                 finish()
             }
         }
@@ -79,9 +77,9 @@ class ConfirmActivity : CoreActivity() {
         if (event.isSuccess) {
             hideProgress()
             if (isRegister) {
-                val intent = Intent(this, MyProfileUpdateActivity::class.java)
+                val intent = Intent(this, DisclosureActivity::class.java)
                 setResult(Activity.RESULT_OK)
-                startActivityForResult(intent, Constants.RequestCodes.MY_PROFILE_UPDATE_REGISTER)
+                startActivityForResult(intent, Constants.RequestCodes.TC_PP_REQUEST_CODE)
             } else {
                 val intent = Intent(this, MainActivity::class.java)
                 setResult(Activity.RESULT_OK)
@@ -112,16 +110,16 @@ class ConfirmActivity : CoreActivity() {
             val content = SpannableString(getString(R.string.resend_code))
             content.setSpan(UnderlineSpan(), 0, content.length, 0)
             ac_textview_resend_code.text = content
-            if(!isRegister) ac_button_create_profile.text = getString(R.string.login_profile)
+            if(!isRegister) ac_button_sign_in.text = getString(R.string.login_profile)
             //Button alpha state
             ac_code_input.isSelected = true
-            ac_code_input.setOnClickListener { ac_button_create_profile.background = getDrawable(R.drawable.gradient_eightchatblue) }
+            ac_code_input.setOnClickListener { ac_button_sign_in.background = getDrawable(R.drawable.gradient_eightchatblue) }
         }
     }
 
     private fun setupClickers() {
         //TODO: This network call doesn't have error handling, if the wrong verification code is entered the progress doesn't stop.
-        ac_button_create_profile.setOnClickListener({
+        ac_button_sign_in.setOnClickListener({
             showProgress()
             user?.let {
                 it.phone?.let {

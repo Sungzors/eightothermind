@@ -1,5 +1,6 @@
 package com.phdlabs.sungwon.a8chat_android.db.channels
 
+import com.phdlabs.sungwon.a8chat_android.api.data.channel.BroadcastData
 import com.phdlabs.sungwon.a8chat_android.api.data.channel.ChannelPostData
 import com.phdlabs.sungwon.a8chat_android.api.data.channel.CommentPostData
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
@@ -7,9 +8,11 @@ import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
 import com.phdlabs.sungwon.a8chat_android.model.channel.ChannelShowNest
 import com.phdlabs.sungwon.a8chat_android.model.channel.Comment
+import com.phdlabs.sungwon.a8chat_android.model.channel.NewlyCreatedComment
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.vicpin.krealmextensions.*
+import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -295,7 +298,7 @@ class ChannelsManager {
      * @return Pair<Array of comments, ErrorMessage>
      * This API call is used inside the [ChannelPostShowController] with the Socket channel function
      * */
-    fun commentOnChannelsPost(messageId: String, comment: String, callback: (Pair<List<Comment>?, String?>) -> Unit) {
+    fun commentOnChannelsPost(messageId: String, comment: String, callback: (Pair<NewlyCreatedComment?, String?>) -> Unit) {
         UserManager.instance.getCurrentUser { success, user, token ->
             if (success) {
                 user?.let {
@@ -308,15 +311,16 @@ class ChannelsManager {
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({ response ->
                                     if (response.isSuccess) {
-                                        callback(Pair(response.comments?.toList(), null))
+                                        callback(Pair(response.newlyCreatedComment, null))
                                     } else if (response.isError) {
                                         callback(Pair(null, "Could not download comments"))
                                     }
 
                                     disposable.clear()
                                 }, { throwable ->
-                                    callback(Pair(null, throwable.localizedMessage))
-                                }))
+                                    throwable.printStackTrace()
+                                    callback(Pair(null, "You have to follow the channel to be able to comment"))
+                                })
                     }
                 }
             }
@@ -341,7 +345,7 @@ class ChannelsManager {
                             disposable.add(call.subscribeOn(Schedulers.io())
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .subscribe({ response ->
-                                        if (response.isSuccess) {
+                                        if (response.success == true) {
                                             println("Message: " + response.responseMsg)
                                         }
 
@@ -353,7 +357,7 @@ class ChannelsManager {
                             disposable.add(call.subscribeOn(Schedulers.io())
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .subscribe({ response ->
-                                        if (response.isSuccess) {
+                                        if (response.success == true) {
                                             println("Message: " + response.responseMsg)
                                         }
 
@@ -362,6 +366,35 @@ class ChannelsManager {
                                     }))
                         }
                         disposable.clear()
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * [likeBroadcastPost]
+     * Like a broadcast as Post[Message] inside a Channel Live Broadcast
+     * @param messageId -> Message to be liked & simultaneously un-liked
+     * This behaviour handles multiple liking on a Live Broadcast & will produce continuous animation
+     * */
+    fun likeBroadcastPost(messageId: Int) {
+        UserManager.instance.getCurrentUser { success, user, token ->
+            if (success) {
+                user?.let {
+                    token?.token?.let {
+                        val call = Rest.getInstance().getmCallerRx().likePost(it, messageId, user.id!!, null)
+                        call.subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe({ response ->
+                                    if (response.success == true) {
+                                        println("Message: " + response.responseMsg)
+                                        //Unlike post after liking so the user can like it again on the broadcast (continuous)
+                                        likeUnlikePost(messageId, true)
+                                    }
+                                }, {
+                                    println("Error liking messsage: " + it.localizedMessage)
+                                })
                     }
                 }
             }
@@ -459,11 +492,75 @@ class ChannelsManager {
     }
 
     /**
+     * [startBroadcast]
+     * Start Live Video Broadcast
+     * Note: Broadcasts are treated as posts to enable live commenting functionality while on the call
+     * @param roomId
+     * @callback Pair<[Message] [ErrorMessage]> with information about the current live broadcast access
+     * */
+    fun startBroadcast(roomId: Int, callback: (Pair<Message?, String?>) -> Unit) {
+        UserManager.instance.getCurrentUser { success, user, token ->
+            if (success) {
+                user?.let {
+                    token?.token?.let {
+                        val call = Rest.getInstance().getmCallerRx()
+                                .startBroadcast(it, BroadcastData(user.id.toString(), roomId.toString()), true)
+                        val disposable = call.subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe({
+                                    if (it.isSuccess) {
+                                        callback(Pair(it.newlyCreatedMsg, null))
+                                    } else if (it.isError) {
+                                        callback(Pair(null, "Couldn't start Broadcast"))
+                                    }
+                                }, { throwable ->
+                                    callback(Pair(null, throwable.localizedMessage))
+                                })
+                        //disposable.dispose() //TODO: Test disposable to see how it works
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * [finishBroadcast]
+     * Finish Live Video Broadcast
+     * @param roomId
+     * @callback Pair<[Message] [ErrorMessage]> with information about the finished live broadcast
+     * */
+    fun finishBroadcast(roomId: Int, messageId: Int, callback: (Pair<Message?, String?>) -> Unit) {
+        UserManager.instance.getCurrentUser { success, user, token ->
+            if (success) {
+                user?.let {
+                    token?.token?.let {
+                        val call = Rest.getInstance().getmCallerRx()
+                                .finishBroadcast(it, messageId.toString(), BroadcastData(user.id.toString(), roomId.toString()))
+                        val disposable = call.subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe({
+                                    if (it.isSuccess) {
+                                        callback(Pair(it.message, null))
+                                    } else if (it.isError) {
+                                        callback(Pair(null, "Could not finish broadcast"))
+                                    }
+                                }, { throwable ->
+                                    callback(Pair(null, throwable.localizedMessage))
+                                })
+                        //disposable.dispose() // TODO: Test disposable to see how it works
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * [updateChannel]
      * Update a current owner channel with new media update
      * @param channelId [Int]
      * @param channelPostData [ChannelPostData]
      * @callback Pair<Channel?, String?> -> Pair<UpdatedChannel, ErrorMessage>
+     *     TODO: REFACTOR -> It's not working properly
      * */
     fun updateChannel(channelId: Int, channelPostData: ChannelPostData, callback: (Pair<Channel?, String?>) -> Unit) {
         UserManager.instance.getCurrentUser { success, user, token ->
