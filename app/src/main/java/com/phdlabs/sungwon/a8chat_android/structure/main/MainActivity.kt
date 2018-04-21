@@ -8,9 +8,10 @@ import android.support.v4.content.ContextCompat
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
-import com.google.firebase.iid.FirebaseInstanceId
+import com.github.nkzawa.socketio.client.Socket
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
+import com.phdlabs.sungwon.a8chat_android.structure.application.Application
 import com.phdlabs.sungwon.a8chat_android.structure.contacts.ContactsActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.structure.createnew.CreateNewActivity
@@ -23,6 +24,7 @@ import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.toolbar.view.*
 import kotlinx.android.synthetic.main.toolbar_main.*
+import java.util.*
 
 /**
  * Created by SungWon on 10/13/2017.
@@ -41,6 +43,7 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
     /*Properties*/
     override val activity: MainActivity = this
     private var lastSelectedTabId: Int? = null
+    private lateinit var mSocket: Socket
 
     /*Instances*/
     private var mLobbyFragment: LobbyFragment = LobbyFragment.newInstance(true)
@@ -51,10 +54,13 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
         super.onCreate(savedInstanceState)
         //Controller
         MainAController(this)
+
+        val app = application as Application
+        mSocket = app.getSocket()
         /**
          * Check Credentials -> This should always be the first method inside the [onCreate]
          * */
-        UserManager.instance.getCurrentUser { success, _, _ ->
+        UserManager.instance.getCurrentUser { success, user, _ ->
             if (!success) { //User doesn't have an account
                 val intent = Intent(this, LoginActivity::class.java)
                 startActivity(intent)
@@ -63,6 +69,7 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
                controller.updateTokens()
                 controller.updateNotificationBadges()
                 controller.readGlobalSettings()
+                mSocket.emit("user-entered-8", user?.id, Date())
             }
         }
         controller.onCreate()

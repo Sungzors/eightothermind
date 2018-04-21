@@ -3,8 +3,8 @@ package com.phdlabs.sungwon.a8chat_android.db.notifications
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
 import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
 import com.vicpin.krealmextensions.save
-import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
 
@@ -31,6 +31,7 @@ class NotificationsManager {
      * */
     //TODO: RX call is ready
 
+    private val disposable = CompositeDisposable()
 
     /**
      * [clearNotificationBadges]
@@ -54,6 +55,7 @@ class NotificationsManager {
                                             print(it)
                                         }
                                     }
+                                    disposable.clear()
                                 }, { throwable ->
                                     println("Could not clear notification badges:  + " + throwable.localizedMessage)
                                 })
@@ -91,6 +93,7 @@ class NotificationsManager {
                                     } else if (response.isError) {
                                         println("Error changing Global Notifications")
                                     }
+                                    disposable.clear()
                                 }, { throwable ->
                                     println("Error changing Global Notifications: " + throwable.localizedMessage)
                                 })

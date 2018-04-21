@@ -18,7 +18,6 @@ import com.phdlabs.sungwon.a8chat_android.utility.Constants
 class MainAController(val mView: MainContract.View) : MainContract.Controller {
 
     //connects to MainActivity
-    //private val mSocket: Socket
     //private var isConnected: Boolean
 
     init {

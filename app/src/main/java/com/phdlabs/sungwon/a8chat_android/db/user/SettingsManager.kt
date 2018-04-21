@@ -4,8 +4,8 @@ import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
 import com.phdlabs.sungwon.a8chat_android.model.user.settings.GlobalSettings
 import com.vicpin.krealmextensions.queryFirst
 import com.vicpin.krealmextensions.save
-import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
 
@@ -22,6 +22,7 @@ class SettingsManager {
         val instance: SettingsManager by lazy { Holder.INSTANCE }
     }
 
+    private val disposable = CompositeDisposable()
 
     /**
      *  [readUserSettings]
@@ -35,7 +36,7 @@ class SettingsManager {
                 user?.let {
                     token?.token?.let {
                         val call = Rest.getInstance().getmCallerRx().readGlobalNotificationSettings(it, user.id!!)
-                        call.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe ({ response ->
+                        disposable.add(call.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe ({ response ->
                                     if (response.isSuccess) {
                                         //Build Global Settings
                                         val globalSettings = GlobalSettings()
@@ -55,9 +56,10 @@ class SettingsManager {
                                     } else if (response.isError) {
                                         println("Could not sync global user settings")
                                     }
+                            disposable.clear()
                                 }, { throwable ->
                                     println(throwable.localizedMessage)
-                                })
+                                }))
                     }
                 }
             }

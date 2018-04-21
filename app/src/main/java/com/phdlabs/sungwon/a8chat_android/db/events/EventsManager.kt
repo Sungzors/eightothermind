@@ -8,6 +8,7 @@ import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.vicpin.krealmextensions.queryAll
 import com.vicpin.krealmextensions.saveAll
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
 /**
@@ -27,6 +28,8 @@ class EventsManager {
         val instance: EventsManager by lazy { Holder.instance }
     }
 
+    private val disposable = CompositeDisposable()
+
     fun getEvents(refresh: Boolean, lat: Double, lng: Double, callback: (Pair<List<Room>?, String?>) -> Unit) {
         UserManager.instance.getCurrentUser { success, user, token ->
             if (success) {
@@ -34,7 +37,7 @@ class EventsManager {
                     if (refresh) { //API Query & Caching
                         token?.token?.let {
                             val call = Rest.getInstance().getmCallerRx().getUserEvents(it, user.id!!, true, true, true, lat, lng)
-                            call.subscribeOn(Schedulers.io())
+                            disposable.add(call.subscribeOn(Schedulers.io())
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .subscribe({ response ->
                                         if (response.isSuccess) {
@@ -45,9 +48,10 @@ class EventsManager {
                                         } else if (response.isError) {
                                             callback(Pair(null, "could not download events"))
                                         }
+                                        disposable.clear()
                                     }, { throwable ->
                                         callback(Pair(null, throwable.localizedMessage))
-                                    })
+                                    }))
                         }
                     } else { //Local Query
                         //Realm Query
