@@ -167,6 +167,8 @@
     <string name="invited_notifications">Invited Notifications</string>
     <string name="write_a_comment">Write a comment</string>
     <string name="lobby_channels">Channels</string>
+    <string name="email_address">Email Address</string>
+    <string name="your_email">YOUR EMAIL ADDRESS</string>
 
 
 </resources>
