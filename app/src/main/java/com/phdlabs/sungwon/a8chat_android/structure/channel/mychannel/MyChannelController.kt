@@ -146,7 +146,7 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
         }
         //Video broadcasting ready with camera permission
         if (Constants.AppPermissions.CAMERA == permission) {
-             //mView.get8Application.initWorkerThread() //TODO: Uncomment to test Video Broadcasting (Only works on device)
+             mView.get8Application.initWorkerThread() //TODO: Uncomment to test Video Broadcasting (Only works on device)
         }
         return true
     }
@@ -178,7 +178,7 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
             Constants.PermissionsReqCode.CAMERA_REQ_CODE -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     checkSelfPermission(Constants.AppPermissions.WRITE_EXTERNAL, Constants.PermissionsReqCode.WRITE_EXTERNAL_REQ_CODE)
-                    //mView.get8Application.initWorkerThread()//TODO: Uncomment when testing broadcast on device
+                    mView.get8Application.initWorkerThread()//TODO: Uncomment when testing broadcast on device
                 } else {
                     mView.getActivity.finish()
                 }
