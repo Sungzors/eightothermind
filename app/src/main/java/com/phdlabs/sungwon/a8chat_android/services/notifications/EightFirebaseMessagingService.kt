@@ -160,7 +160,7 @@ class EightFirebaseMessagingService : FirebaseMessagingService() {
 
                 /*User has been invited to a Private Chat*/
                     Constants.Notifications.PRIVATE_CHAT -> {//Private Chat Created -> Room
-                        //TODO: Not Yet Tested
+                        //TODO: Not working on Firebase Backend
                         //Parse Notification Data Payload
                         val data = GsonHolder.instance.get()?.fromJson(jsonObject.toString(), PrivateChatPayload::class.java)
                         //Intent
@@ -257,8 +257,6 @@ class EightFirebaseMessagingService : FirebaseMessagingService() {
                                 return
                             }
                         }
-                        //Verify if the user is in the broadcast to avoid notifications
-                        //TODO
                         //Intent
                         displayIntent = Intent(this, ChannelPostShowActivity::class.java)
                         //Refresh Message History on My Channels
@@ -303,16 +301,16 @@ class EightFirebaseMessagingService : FirebaseMessagingService() {
                     }
 
                 /*New Post on a Followed Channel*/
-                    //FIXME: Not hitting POST case
+                    //FIXME: Not working on Firebase Backend
                     Constants.Notifications.POST -> {//Channel
                         //Parse Notification Data Payload
                         val data = GsonHolder.instance.get()?.fromJson(jsonObject.toString(), PostPayload::class.java)
                         //Verify if I'm the author of the post
-//                        mUserId?.let {
-//                            if (data?.userId == it.toString()) {
-//                                return
-//                            }
-//                        }
+                        mUserId?.let {
+                            if (data?.userId == it.toString()) {
+                                return
+                            }
+                        }
                         //Get Channel Info from Room ID
                         data?.roomId?.let { roomId ->
                             val channel = ChannelsManager.instance.querySingleChannelWithRoomId(roomId.toInt())
