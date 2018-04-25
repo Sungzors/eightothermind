@@ -19,8 +19,11 @@ import com.phdlabs.sungwon.a8chat_android.utility.Constants
 class CameraPagerAdapter(val fm: FragmentManager, val context: Context) : FragmentPagerAdapter(fm) {
 
     /*Properties*/
-    var normalFragment: NormalFragment = NormalFragment.create()
-    var cameraRollFragment: CameraRollFragment = CameraRollFragment.create()
+    private var cameraRollFragment: CameraRollFragment = CameraRollFragment.create()
+    private var normalFragment: NormalFragment = NormalFragment.create()
+    private var handsFreeFragment: HandsFreeFragment = HandsFreeFragment.create()
+    private var shouldStartNormalFragment: Boolean = true
+    private var shouldStartHandsFreeFragment: Boolean = false
 
     /*Return desired camera fragment*/
     override fun getItem(position: Int): Fragment =
@@ -32,7 +35,7 @@ class CameraPagerAdapter(val fm: FragmentManager, val context: Context) : Fragme
                     normalFragment
 
                 Constants.CameraPager.HANDS_FREE ->
-                    HandsFreeFragment.create()
+                    handsFreeFragment
 
                 else -> {
                     EmptyFragment.create()
@@ -43,7 +46,10 @@ class CameraPagerAdapter(val fm: FragmentManager, val context: Context) : Fragme
     override fun getItemPosition(`object`: Any): Int {
         when (`object`) {
             is NormalFragment -> {
-                normalFragment.flipCamera()
+                normalFragment?.flipCamera()
+
+                //TODO: Swap cameras on Hands Free mode
+
                 return PagerAdapter.POSITION_NONE
             }
             else -> {
@@ -73,4 +79,49 @@ class CameraPagerAdapter(val fm: FragmentManager, val context: Context) : Fragme
     fun refreshCameraRoll() {
         cameraRollFragment.refreshRecycler()
     }
+
+    /**
+     * [swapCameraPreview]
+     * Fragment Control for switching Normal Mode & Hands Free mode
+     * */
+    fun swapCameraPreview(isHandsFreeMode: Boolean, position: Int) {
+        if (isHandsFreeMode) {
+            shouldStartHandsFreeFragment = true
+            shouldStartNormalFragment = false
+            getItem(position)
+        } else {
+            shouldStartHandsFreeFragment = false
+            shouldStartHandsFreeFragment = true
+            getItem(position)
+        }
+    }
+
+
+    private fun shouldStartNormalMode(shouldStart: Boolean): Fragment {
+        var frag: Fragment = EmptyFragment.create()
+        if (shouldStart) {
+            //Remove Hands Free Fragment
+            handsFreeFragment?.let {
+                //fm.beginTransaction().remove(it).commit()
+                it.close()
+            }
+            frag = NormalFragment.create()
+            normalFragment = frag
+        }
+        return frag
+    }
+
+    private fun shouldStartHandsFreeMode(shouldStart: Boolean): Fragment {
+        var frag: Fragment = EmptyFragment.create()
+        if (shouldStart) {
+            normalFragment?.let {
+                //fm.beginTransaction().remove(it).commit()
+                it.close()
+            }
+            frag = HandsFreeFragment.create()
+            handsFreeFragment = frag
+        }
+        return frag
+    }
+
 }

@@ -38,6 +38,10 @@ class CameraActivity : CoreActivity(), CameraContract.Camera.View, TabLayout.OnT
 
     override var activity: CameraActivity = this
 
+    enum class CAMERA_FEATURE {
+        CAMERA_ROLL, NORMAL, HANDS_FREE
+    }
+
     /*LifeCycle*/
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,7 +97,19 @@ class CameraActivity : CoreActivity(), CameraContract.Camera.View, TabLayout.OnT
         tab?.select()
         /*Tab indicator & listeners*/
         cam_tabLayout_indicator.tabGravity = TabLayout.GRAVITY_FILL
-        cam_view_pager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(cam_tabLayout_indicator))
+        cam_view_pager.addOnPageChangeListener(object : TabLayout.TabLayoutOnPageChangeListener(cam_tabLayout_indicator){
+            override fun onPageSelected(position: Int) {
+                //Dev
+                println("Selected position is: $position")
+                val adapter = cam_view_pager.adapter as CameraPagerAdapter
+                if (CAMERA_FEATURE.NORMAL.ordinal == position) {
+                    adapter.swapCameraPreview(false, position)
+                }else if (CAMERA_FEATURE.HANDS_FREE.ordinal == position) {
+                    adapter.swapCameraPreview(true, position)
+                }
+            }
+        })
+
         cam_tabLayout_indicator.addOnTabSelectedListener(this)
         /*Actions*/
         iv_camera_action.setOnClickListener(this)

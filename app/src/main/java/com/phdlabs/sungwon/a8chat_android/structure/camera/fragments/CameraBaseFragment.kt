@@ -14,7 +14,7 @@ import javax.annotation.Nullable
 /**
  * Created by JPAM on 12/28/17.
  */
-abstract class CameraBaseFragment() : CoreFragment() {
+abstract class CameraBaseFragment : CoreFragment() {
 
     /*Root View*/
     private var mRoot: View? = null

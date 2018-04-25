@@ -1,4 +1,4 @@
-package com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.normal
+package com.phdlabs.sungwon.a8chat_android.structure.camera.cameraView
 
 import android.content.Context
 import android.util.AttributeSet

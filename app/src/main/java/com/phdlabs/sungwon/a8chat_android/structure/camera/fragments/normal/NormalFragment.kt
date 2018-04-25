@@ -12,11 +12,12 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
 import android.support.v4.content.ContextCompat
-import android.util.DisplayMetrics
 import android.util.Size
 import android.util.SparseIntArray
 import android.view.*
 import com.phdlabs.sungwon.a8chat_android.R
+import com.phdlabs.sungwon.a8chat_android.structure.camera.cameraView.AutoFitTextureView
+import com.phdlabs.sungwon.a8chat_android.structure.camera.cameraView.CompareSizesByArea
 import com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.CameraBaseFragment
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
@@ -181,7 +182,7 @@ class NormalFragment() : CameraBaseFragment() {
         /*instances*/
         /**
          * Default constructor
-         * Should only be used inside Normal Fragment companion object
+         * Should only be used inside Normal Fragment companion object & pager adapter
          * [create]
          * @return [NormalFragment]
          * */
@@ -276,24 +277,6 @@ class NormalFragment() : CameraBaseFragment() {
 
     }//end companion
 
-    /**
-     * Compares two sizes based on their areas
-     * [CompareSizesByArea]
-     * */
-    class CompareSizesByArea : Comparator<Size> {
-        override fun compare(p0: Size?, p1: Size?): Int {
-            //Cast to avoid overflow with multipliers
-            var compare: Int = 0
-            p0?.let {
-                p1?.let {
-                    compare = java.lang.Long.signum(p0.width.toLong() * p0.height -
-                            p1.width.toLong() * p1.height)
-                }
-            }
-            return compare
-        }
-
-    }
 
     /**
      * [mSurfaceTextureListener]

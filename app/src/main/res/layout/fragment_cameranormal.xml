@@ -4,7 +4,7 @@
     android:layout_height="match_parent">
 
     <!--Camera Preview-->
-    <com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.normal.AutoFitTextureView
+    <com.phdlabs.sungwon.a8chat_android.structure.camera.cameraView.AutoFitTextureView
         android:id="@+id/texture"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
