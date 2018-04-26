@@ -7,6 +7,12 @@ apply plugin: 'kotlin-kapt'
 
 repositories {
     jcenter()
+    maven { url 'https://dl.bintray.com/camerakit/camerakit-android-snapshots' }
+}
+
+// Make sure snapshots won't get cached.
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
 }
 
 android {
@@ -138,6 +144,7 @@ dependencies {
     }
 
     //Camera
+    implementation group: 'com.camerakit', name:'camerakit', version:'1.0.0-Snapshot', changing: true
     compile 'fr.avianey.com.viewpagerindicator:library:2.4.1@aar'
     compile 'com.theartofdev.edmodo:android-image-cropper:2.6.0'
     compile project(':photoeditorsdk')

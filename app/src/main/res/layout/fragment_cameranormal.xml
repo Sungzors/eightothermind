@@ -1,15 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <!--Camera Preview-->
-    <com.phdlabs.sungwon.a8chat_android.structure.camera.cameraView.AutoFitTextureView
-        android:id="@+id/texture"
+    <!--<com.wonderkiln.camerakit.CameraView-->
+        <!--android:id="@+id/fcn_cameraView"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:adjustViewBounds="true"-->
+        <!--app:ckCropOutput="false"-->
+        <!--app:ckFlash="off"-->
+        <!--app:ckFocus="continuous"-->
+        <!--app:ckJpegQuality="100"-->
+        <!--app:ckMethod="still"-->
+        <!--app:ckPermissions="strict"-->
+        <!--app:ckPinchToZoom="true" />-->
+
+    <com.camerakit.CameraKitView xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/fcn_cameraView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_centerInParent="true" />
+        app:camera_facing="back" />
+
 
 </RelativeLayout>

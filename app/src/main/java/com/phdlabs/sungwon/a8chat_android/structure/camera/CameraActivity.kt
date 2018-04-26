@@ -97,16 +97,21 @@ class CameraActivity : CoreActivity(), CameraContract.Camera.View, TabLayout.OnT
         tab?.select()
         /*Tab indicator & listeners*/
         cam_tabLayout_indicator.tabGravity = TabLayout.GRAVITY_FILL
-        cam_view_pager.addOnPageChangeListener(object : TabLayout.TabLayoutOnPageChangeListener(cam_tabLayout_indicator){
+        cam_view_pager.addOnPageChangeListener(object : TabLayout.TabLayoutOnPageChangeListener(cam_tabLayout_indicator) {
             override fun onPageSelected(position: Int) {
                 //Dev
                 println("Selected position is: $position")
-                val adapter = cam_view_pager.adapter as CameraPagerAdapter
-                if (CAMERA_FEATURE.NORMAL.ordinal == position) {
-                    adapter.swapCameraPreview(false, position)
-                }else if (CAMERA_FEATURE.HANDS_FREE.ordinal == position) {
-                    adapter.swapCameraPreview(true, position)
-                }
+
+                //TODO: See if the camera preview fragment control is needed with Camera Kit
+
+//                val adapter = cam_view_pager.adapter as CameraPagerAdapter
+//                if (CAMERA_FEATURE.NORMAL.ordinal == position) {
+//                    adapter.swapCameraPreview(false, position)
+//                }else if (CAMERA_FEATURE.HANDS_FREE.ordinal == position) {
+//                    adapter.swapCameraPreview(true, position)
+//                }
+
+
             }
         })
 

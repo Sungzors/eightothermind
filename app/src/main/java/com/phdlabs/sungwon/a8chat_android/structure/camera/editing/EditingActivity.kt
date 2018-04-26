@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.Rect
 import android.graphics.Typeface
@@ -27,11 +28,13 @@ import com.ahmedadeltito.photoeditorsdk.OnPhotoEditorSDKListener
 import com.ahmedadeltito.photoeditorsdk.PhotoEditorSDK
 import com.ahmedadeltito.photoeditorsdk.ViewType
 import com.phdlabs.sungwon.a8chat_android.R
+import com.phdlabs.sungwon.a8chat_android.structure.camera.result.ResultHolder
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseRecyclerAdapter
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseViewHolder
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
+import com.phdlabs.sungwon.a8chat_android.utility.camera.ImageUtils
 import com.theartofdev.edmodo.cropper.CropImage
 import kotlinx.android.synthetic.main.activity_camera_preview.*
 import kotlinx.android.synthetic.main.view_camera_control_close.*
@@ -79,10 +82,18 @@ class EditingActivity : CoreActivity(),
 
     fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         /*Controller init*/
         EditingActivityController(this)
+
         /*Load image*/
         imgFilePath = intent.extras.getString(Constants.CameraIntents.IMAGE_FILE_PATH)
+        if (imgFilePath.isNullOrBlank()) {
+            ResultHolder.getResultImage()?.let {
+                val bitmap = BitmapFactory.decodeByteArray(it, 0, it.size)
+                imgFilePath = ImageUtils.instance.savePicture(this, bitmap, System.currentTimeMillis().toString())
+            }
+        }
         isFromCameraRoll = intent.extras.getBoolean(Constants.CameraIntents.IS_FROM_CAMERA_ROLL)
         imgFilePath?.let {
             controller.loadImagePreview(it)

@@ -73,20 +73,21 @@ class CameraAController(val mView: CameraContract.Camera.View) : CameraContract.
     }
 
     /*Take picture*/
+    //TODO: Switch to camera kit functionality
     override fun takePhoto(viewPager: ViewPager) {
 
         when (viewPager.currentItem) {
-            /*Normal Mode*/
+        /*Normal Mode*/
             Constants.CameraPager.NORMAL -> {
                 val normalFrag: NormalFragment = viewPager.adapter?.instantiateItem(viewPager, Constants.CameraPager.NORMAL) as NormalFragment
                 normalFrag.takePicture()
             }
-            /*Hands Free Mode*/
+        /*Hands Free Mode*/
             Constants.CameraPager.HANDS_FREE -> {
                 //UI
                 mView.hideProgress()
                 val handsFreeFragment = viewPager.adapter?.instantiateItem(viewPager, Constants.CameraPager.HANDS_FREE) as HandsFreeFragment
-                handsFreeFragment.startVideoRecording()
+                //handsFreeFragment.startVideoRecording()
             }
 
         }
@@ -95,8 +96,12 @@ class CameraAController(val mView: CameraContract.Camera.View) : CameraContract.
     /*Camera Flip -> Front Lens || Back Lens*/
     override fun cameraFlip(viewPager: ViewPager) {
         /*NormalCamera Fragment*/
-        if (viewPager.currentItem == Constants.CameraPager.NORMAL) {
-            viewPager.adapter?.notifyDataSetChanged()
+        when (viewPager.currentItem) {
+        /*Normal Mode*/
+            Constants.CameraPager.NORMAL -> {
+                val normalFrag: NormalFragment = viewPager.adapter?.instantiateItem(viewPager, Constants.CameraPager.NORMAL) as NormalFragment
+                normalFrag.flipCamera()
+            }
         }
     }
 

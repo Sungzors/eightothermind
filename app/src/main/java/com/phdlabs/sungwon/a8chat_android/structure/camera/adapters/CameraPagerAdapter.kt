@@ -42,22 +42,6 @@ class CameraPagerAdapter(val fm: FragmentManager, val context: Context) : Fragme
                 }
             }
 
-    /*Only reaload fragment if it's a NormalFragment instance*/
-    override fun getItemPosition(`object`: Any): Int {
-        when (`object`) {
-            is NormalFragment -> {
-                normalFragment?.flipCamera()
-
-                //TODO: Swap cameras on Hands Free mode
-
-                return PagerAdapter.POSITION_NONE
-            }
-            else -> {
-                return PagerAdapter.POSITION_UNCHANGED
-            }
-        }
-    }
-
     /**Camera fragment count
      * [CameraRollFragment]
      * [NormalFragment]
@@ -79,6 +63,9 @@ class CameraPagerAdapter(val fm: FragmentManager, val context: Context) : Fragme
     fun refreshCameraRoll() {
         cameraRollFragment.refreshRecycler()
     }
+
+
+    //TODO: Review these methods, they might not be needed with Camera kit swapping views -> NOT USED CURRENTLY
 
     /**
      * [swapCameraPreview]
