@@ -87,7 +87,7 @@ class CameraAController(val mView: CameraContract.Camera.View) : CameraContract.
                 //UI
                 mView.hideProgress()
                 val handsFreeFragment = viewPager.adapter?.instantiateItem(viewPager, Constants.CameraPager.HANDS_FREE) as HandsFreeFragment
-                //handsFreeFragment.startVideoRecording()
+                handsFreeFragment.startVideoRecording()
             }
 
         }
@@ -95,26 +95,38 @@ class CameraAController(val mView: CameraContract.Camera.View) : CameraContract.
 
     /*Camera Flip -> Front Lens || Back Lens*/
     override fun cameraFlip(viewPager: ViewPager) {
-        /*NormalCamera Fragment*/
         when (viewPager.currentItem) {
         /*Normal Mode*/
             Constants.CameraPager.NORMAL -> {
                 val normalFrag: NormalFragment = viewPager.adapter?.instantiateItem(viewPager, Constants.CameraPager.NORMAL) as NormalFragment
                 normalFrag.flipCamera()
             }
+        /*HandsFree Mode*/
+            Constants.CameraPager.HANDS_FREE -> {
+                val handsFreeFragment = viewPager.adapter?.instantiateItem(viewPager, Constants.CameraPager.HANDS_FREE) as HandsFreeFragment
+                handsFreeFragment.flipCamera()
+            }
         }
     }
 
     /*Turn on or off manual flash_off*/
     override fun manualFlash(viewPager: ViewPager) {
-        /*NormalCamera Fragment*/
-        if (viewPager.currentItem == Constants.CameraPager.NORMAL) {
-            val normalFrag: NormalFragment = viewPager.adapter?.instantiateItem(viewPager, Constants.CameraPager.NORMAL) as NormalFragment
-            normalFrag.manualFlashSelection()
-            //Flash UI
-            isFlashOn = !isFlashOn
-            mView.flashFeedback(isFlashOn)
+        when (viewPager.currentItem) {
+        /*Normal Mode*/
+            Constants.CameraPager.NORMAL -> {
+                val normalFrag: NormalFragment = viewPager.adapter?.instantiateItem(viewPager, Constants.CameraPager.NORMAL) as NormalFragment
+                normalFrag.manualFlashSelection()
+
+            }
+        /*HandsFree Mode*/
+            Constants.CameraPager.HANDS_FREE -> {
+                val handsFreeFragment = viewPager.adapter?.instantiateItem(viewPager, Constants.CameraPager.HANDS_FREE) as HandsFreeFragment
+                handsFreeFragment.manualFlashSelection()
+            }
         }
+        //Flash UI
+        isFlashOn = !isFlashOn
+        mView.flashFeedback(isFlashOn)
     }
 
     /*Start EditingActivity*/

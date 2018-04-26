@@ -20,14 +20,13 @@ class NormalFragment : CameraBaseFragment() {
     override fun cameraLayoutId(): Int = R.layout.fragment_cameranormal
 
     /*Properties*/
-    private lateinit var normalCamera: CameraView
+    private var normalCamera: CameraView? = null
     private var wasPictureTaken: Boolean = false
 
     /**
      * Companion
      * */
     companion object {
-
         /*instances*/
         /**
          * Default constructor
@@ -36,39 +35,54 @@ class NormalFragment : CameraBaseFragment() {
          * @return [NormalFragment]
          * */
         fun create(): NormalFragment = NormalFragment()
-
-
     }
 
     /*LifeCycle*/
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        userVisibleHint = false
+    }
+
     override fun inOnCreateView(root: View?, container: ViewGroup?, savedInstanceState: Bundle?) {
         //If something needs to be added to the custom layout
         normalCamera = root!!.findViewById(R.id.fcn_cameraView)
-        normalCamera.mapGesture(Gesture.PINCH, GestureAction.ZOOM)
-        normalCamera.mapGesture(Gesture.TAP, GestureAction.FOCUS_WITH_MARKER)
+        normalCamera?.mapGesture(Gesture.PINCH, GestureAction.ZOOM)
+        normalCamera?.mapGesture(Gesture.TAP, GestureAction.FOCUS_WITH_MARKER)
     }
 
+    override fun setMenuVisibility(menuVisible: Boolean) {
+        super.setMenuVisibility(menuVisible)
+        if (menuVisible && isResumed) {
+            userVisibleHint = true
+            normalCamera?.start()
+        } else {
+            userVisibleHint = false
+            normalCamera?.stop()
+            normalCamera?.destroy()
+        }
+    }
 
     override fun onResume() {
         super.onResume()
-        normalCamera.start()
-
+        normalCamera?.start()
     }
 
     override fun onPause() {
         super.onPause()
-        normalCamera.stop()
         wasPictureTaken = false
+        normalCamera?.stop()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        normalCamera.destroy()
+        normalCamera?.destroy()
     }
 
     /*Camera Event Handling*/
     fun takePicture() {
-        normalCamera.addCameraListener(object : CameraListener() {
+        normalCamera?.addCameraListener(object : CameraListener() {
             override fun onPictureTaken(jpeg: ByteArray?) {
                 jpeg?.let {
                     if (!wasPictureTaken) {
@@ -78,7 +92,7 @@ class NormalFragment : CameraBaseFragment() {
                 }
             }
         })
-        normalCamera.capturePicture()
+        normalCamera?.capturePicture()
     }
 
     /*Image caching*/
@@ -95,19 +109,19 @@ class NormalFragment : CameraBaseFragment() {
 
     /*Camera Facing control*/
     fun flipCamera() {
-        if (normalCamera.facing == Facing.BACK) {
-            normalCamera.facing = Facing.FRONT
+        if (normalCamera?.facing == Facing.BACK) {
+            normalCamera?.facing = Facing.FRONT
         } else {
-            normalCamera.facing = Facing.BACK
+            normalCamera?.facing = Facing.BACK
         }
     }
 
     /*Flash Control*/
     fun manualFlashSelection() {
-        if (normalCamera.flash == Flash.OFF) {
-            normalCamera.flash = Flash.ON
+        if (normalCamera?.flash == Flash.OFF) {
+            normalCamera?.flash = Flash.ON
         } else {
-            normalCamera.flash = Flash.OFF
+            normalCamera?.flash = Flash.OFF
         }
     }
 
