@@ -2,7 +2,7 @@ package com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.normal
 
 import android.os.Bundle
 import android.view.*
-import com.camerakit.CameraKitView
+import com.otaliastudios.cameraview.*
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.structure.camera.CameraActivity
 import com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.CameraBaseFragment
@@ -19,13 +19,9 @@ class NormalFragment : CameraBaseFragment() {
     /*Layout*/
     override fun cameraLayoutId(): Int = R.layout.fragment_cameranormal
 
-    override fun inOnCreateView(root: View?, container: ViewGroup?, savedInstanceState: Bundle?) {
-        //If something needs to be added to the custom layout
-        normalCamera = root!!.findViewById(R.id.fcn_cameraView)
-    }
-
     /*Properties*/
-    private lateinit var normalCamera: CameraKitView
+    private lateinit var normalCamera: CameraView
+    private var wasPictureTaken: Boolean = false
 
     /**
      * Companion
@@ -45,26 +41,44 @@ class NormalFragment : CameraBaseFragment() {
     }
 
     /*LifeCycle*/
+    override fun inOnCreateView(root: View?, container: ViewGroup?, savedInstanceState: Bundle?) {
+        //If something needs to be added to the custom layout
+        normalCamera = root!!.findViewById(R.id.fcn_cameraView)
+        normalCamera.mapGesture(Gesture.PINCH, GestureAction.ZOOM)
+        normalCamera.mapGesture(Gesture.TAP, GestureAction.FOCUS_WITH_MARKER)
+    }
+
+
     override fun onResume() {
         super.onResume()
-        normalCamera.onResume()
+        normalCamera.start()
 
     }
 
     override fun onPause() {
-        normalCamera.onPause()
         super.onPause()
+        normalCamera.stop()
+        wasPictureTaken = false
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        normalCamera.destroy()
     }
 
     /*Camera Event Handling*/
     fun takePicture() {
-        normalCamera.captureImage(object : CameraKitView.JpegBytesCallback {
-            override fun onImage(p0: CameraKitView?, p1: ByteArray?) {
-                p1?.let {
-                    imageCaptured(p1)
+        normalCamera.addCameraListener(object : CameraListener() {
+            override fun onPictureTaken(jpeg: ByteArray?) {
+                jpeg?.let {
+                    if (!wasPictureTaken) {
+                        imageCaptured(jpeg)
+                        wasPictureTaken = true
+                    }
                 }
             }
         })
+        normalCamera.capturePicture()
     }
 
     /*Image caching*/
@@ -75,28 +89,25 @@ class NormalFragment : CameraBaseFragment() {
         ResultHolder.setResultImage(image)
         ResultHolder.setResultTimeToCallback(callbackTime)
 
-        //TODO: Transition to Editing Preview
         val act = activity as CameraActivity
         act.getImageFilePath(null)
     }
 
     /*Camera Facing control*/
-    //TODO: facing options not working
     fun flipCamera() {
-        if (normalCamera.facing == CameraKitView.FACING_BACK) {
-            normalCamera.facing = CameraKitView.FACING_FRONT
+        if (normalCamera.facing == Facing.BACK) {
+            normalCamera.facing = Facing.FRONT
         } else {
-            normalCamera.facing = CameraKitView.FACING_BACK
+            normalCamera.facing = Facing.BACK
         }
     }
 
     /*Flash Control*/
-    //TODO: flash options not working
     fun manualFlashSelection() {
-        if (normalCamera.flash == CameraKitView.FLASH_OFF) {
-            normalCamera.flash = CameraKitView.FLASH_ON
+        if (normalCamera.flash == Flash.OFF) {
+            normalCamera.flash = Flash.ON
         } else {
-            normalCamera.flash = CameraKitView.FLASH_ON
+            normalCamera.flash = Flash.OFF
         }
     }
 

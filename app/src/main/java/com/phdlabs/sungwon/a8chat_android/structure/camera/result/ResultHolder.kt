@@ -1,6 +1,6 @@
 package com.phdlabs.sungwon.a8chat_android.structure.camera.result
 
-import com.camerakit.CameraKitView
+import com.otaliastudios.cameraview.Size
 import java.io.File
 
 /**
@@ -14,7 +14,7 @@ class ResultHolder {
         /*Private Static Properties*/
         private var image: ByteArray? = null
         private var video: File? = null
-        private var nativeCaptureSize: CameraKitView.Size? = null
+        private var nativeCaptureSize: Size? = null
         private var timeToCallback: Long = 0
 
         fun setResultImage(image: ByteArray?) {
@@ -33,11 +33,13 @@ class ResultHolder {
             return video
         }
 
-        fun setResultNativeCaptureSize(nativeCaptureSize: CameraKitView.Size?) {
-            ResultHolder.nativeCaptureSize = nativeCaptureSize
+        fun setResultNativeCaptureSize(nativeCaptureSize: Size?) {
+            nativeCaptureSize?.let {
+                ResultHolder.nativeCaptureSize = it
+            }
         }
 
-        fun getResultNativeCaptureSize(): CameraKitView.Size? {
+        fun getResultNativeCaptureSize(): Size? {
             return nativeCaptureSize
         }
 

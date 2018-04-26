@@ -4,25 +4,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!--Camera Preview-->
-    <!--<com.wonderkiln.camerakit.CameraView-->
-        <!--android:id="@+id/fcn_cameraView"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:adjustViewBounds="true"-->
-        <!--app:ckCropOutput="false"-->
-        <!--app:ckFlash="off"-->
-        <!--app:ckFocus="continuous"-->
-        <!--app:ckJpegQuality="100"-->
-        <!--app:ckMethod="still"-->
-        <!--app:ckPermissions="strict"-->
-        <!--app:ckPinchToZoom="true" />-->
-
-    <com.camerakit.CameraKitView xmlns:app="http://schemas.android.com/apk/res-auto"
+    <!--Camera View API -->
+    <com.otaliastudios.cameraview.CameraView
         android:id="@+id/fcn_cameraView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:camera_facing="back" />
-
+        android:keepScreenOn="true"
+        app:cameraAudio="off"
+        app:cameraCropOutput="false"
+        app:cameraFacing="back"
+        app:cameraFlash="off"
+        app:cameraGrid="off"
+        app:cameraHdr="off"
+        app:cameraJpegQuality="100"
+        app:cameraPlaySounds="true"
+        app:cameraSessionType="picture"
+        app:cameraWhiteBalance="auto" />
 
 </RelativeLayout>
