@@ -9,6 +9,7 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
+import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -27,6 +28,7 @@ import com.phdlabs.sungwon.a8chat_android.model.media.Media
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.structure.application.Application
 import com.phdlabs.sungwon.a8chat_android.structure.channel.ChannelContract
+import com.phdlabs.sungwon.a8chat_android.structure.channel.broadcast.BroadcastActivity
 import com.phdlabs.sungwon.a8chat_android.structure.channel.createPost.CreatePostActivity
 import com.phdlabs.sungwon.a8chat_android.structure.channel.postshow.ChannelPostShowActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
@@ -73,13 +75,13 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
     private var mUserId = 0
 
     /*Followed channels adapter*/
-    private lateinit var mFollowedChanellsAdapter: BaseRecyclerAdapter<Channel, BaseViewHolder>
+    private lateinit var mFollowedChannelsAdapter: BaseRecyclerAdapter<Channel, BaseViewHolder>
     /*Content Adapter*/
     private lateinit var mContentAdapter: BaseRecyclerAdapter<Message, BaseViewHolder>
     /*Post Media Adapter*/
     private lateinit var mPostMediaAdapter: BaseRecyclerAdapter<Media, BaseViewHolder>
     /*Files*/
-    lateinit var fileListerDialog: FileListerDialog
+    private lateinit var fileListerDialog: FileListerDialog
 
     /*LifeCycle*/
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -108,30 +110,6 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         }
         //Controller
         controller.onCreate()
-    }
-
-    private fun setupToolbar() {
-        showBackArrow(R.drawable.ic_back)
-        setToolbarTitle(mChannelName)
-        toolbar_right_picture.visibility = View.VISIBLE
-        //Channel Picture -> Access to settings
-        Picasso.with(this)
-                .load(ChannelsManager.instance.querySingleChannel(mChannelId)?.avatar)
-                .placeholder(R.drawable.addphoto)
-                .transform(CircleTransform())
-                .into(toolbar_right_picture)
-
-
-        //Access to Channel Settings
-        toolbar_right_picture.setOnClickListener {
-            //Chat Name
-            val intent = Intent(context, ChannelSettingsActivity::class.java)
-            intent.putExtra(Constants.IntentKeys.CHANNEL_NAME, mChannelName)
-            intent.putExtra(Constants.IntentKeys.CHANNEL_ID, mChannelId)
-            intent.putExtra(Constants.IntentKeys.ROOM_ID, mRoomId)
-            intent.putExtra(Constants.IntentKeys.OWNER_ID, mOwnerId)
-            startActivityForResult(intent, Constants.RequestCodes.CHANNEL_SETTINGS)
-        }
     }
 
     override fun onStart() {
@@ -174,25 +152,54 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         overridePendingTransition(0, 0)
     }
 
-    /*FOLLOWED CHANNELS*/
+    //Toolbar -> UI
+    private fun setupToolbar() {
+        showBackArrow(R.drawable.ic_back)
+        setToolbarTitle(mChannelName)
+        toolbar_right_picture.visibility = View.VISIBLE
+        //Channel Picture -> Access to settings
+        Picasso.with(this)
+                .load(ChannelsManager.instance.querySingleChannel(mChannelId)?.avatar)
+                .placeholder(R.drawable.ic_launcher_round)
+                .transform(CircleTransform())
+                .into(toolbar_right_picture)
+
+        //Access to Channel Settings
+        toolbar_right_picture.setOnClickListener {
+            //Chat Name
+            val intent = Intent(context, ChannelSettingsActivity::class.java)
+            intent.putExtra(Constants.IntentKeys.CHANNEL_NAME, mChannelName)
+            intent.putExtra(Constants.IntentKeys.CHANNEL_ID, mChannelId)
+            intent.putExtra(Constants.IntentKeys.ROOM_ID, mRoomId)
+            intent.putExtra(Constants.IntentKeys.OWNER_ID, mOwnerId)
+            startActivityForResult(intent, Constants.RequestCodes.CHANNEL_SETTINGS)
+        }
+    }
+
+    /*FOLLOWED CHANNELS -> Top Horizontal RecyclerView*/
     private fun setupFollowedChannelsRecycler() {
-        mFollowedChanellsAdapter = object : BaseRecyclerAdapter<Channel, BaseViewHolder>() {
+        mFollowedChannelsAdapter = object : BaseRecyclerAdapter<Channel, BaseViewHolder>() {
             override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: Channel?, position: Int, type: Int) {
 
                 val profilePic = viewHolder?.get<ImageView>(R.id.cvlc_picture_profile)
                 val channelName = viewHolder?.get<TextView>(R.id.cvlc_name_channel)
                 val unreadChannelIndicator = viewHolder?.get<ImageView>(R.id.cvlc_background_unread)
+
                 //Unread indicator
                 data?.unread_messages?.let {
                     if (it) {
-                        unreadChannelIndicator?.visibility = View.VISIBLE
+                        unreadChannelIndicator?.background = getDrawable(R.drawable.bg_circle_blue_lobby)
                     } else {
-                        unreadChannelIndicator?.visibility = View.GONE
+                        unreadChannelIndicator?.background = getDrawable(R.drawable.bg_circle_white_lobby)
                     }
                 }
-                Picasso.with(context).load(data?.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(profilePic)
+
                 channelName?.text = data?.name
 
+                Picasso.with(context).load(data?.avatar)
+                        .placeholder(R.drawable.ic_launcher_round)
+                        .transform(CircleTransform())
+                        .into(profilePic)
             }
 
             override fun viewHolder(inflater: LayoutInflater?, parent: ViewGroup?, type: Int): BaseViewHolder {
@@ -214,9 +221,23 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
                 }
             }
         }
-        mFollowedChanellsAdapter.setItems(controller.getFollowedChannels())
+        mFollowedChannelsAdapter.setItems(controller.getFollowedChannels())
         acm_fav_channel_recycler.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        acm_fav_channel_recycler.adapter = mFollowedChanellsAdapter
+        acm_fav_channel_recycler.adapter = mFollowedChannelsAdapter
+    }
+
+    /**
+     * [ViewHolderType] for shared content inside channels
+     * Warning, the order on the Enum class matters to identify
+     * the [ordinal] value inside the [RecyclerView]
+     * */
+    enum class ViewHolderType {
+        Message, //Simple text message
+        Media,   //Only Media
+        Post,    //Media with Text as Post
+        MessagePost, // Text as Post
+        File,    //Shared File
+        Broadcast //Live Broadcast
     }
 
     /*POSTS RECYCLER*/
@@ -225,34 +246,43 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
             override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: Message?, position: Int, type: Int) {
                 when (type) {
                 /*Message*/
-                    0 -> {
+                    ViewHolderType.Message.ordinal -> {
                         bindMessageViewHolder(viewHolder!!, data!!)
                     }
                 /*Media*/
-                    1 -> {
+                    ViewHolderType.Media.ordinal -> {
                         bindMediaViewHolder(viewHolder!!, data!!)
                     }
                 /*Post*/
-                    2 -> {
+                    ViewHolderType.Post.ordinal -> {
                         bindPostViewHolder(viewHolder!!, data!!)
                     }
                 /*Message Post*/
-                    3 -> {
+                    ViewHolderType.MessagePost.ordinal -> {
                         bindMessagePostViewHolder(viewHolder!!, data!!)
                     }
                 /*Sharing Files*/
-                    4 -> {
+                    ViewHolderType.File.ordinal -> {
                         bindSharedFiledViewHolder(viewHolder!!, data!!)
+                    }
+                /*Video Broadcasting*/
+                    ViewHolderType.Broadcast.ordinal -> {
+                        bindBroadcastViewHolder(viewHolder!!, data!!)
                     }
                 }
             }
 
             override fun getItemType(t: Message?): Int {
 
+                //Live Video Broadcast Message
+                t?.broadcastInfo?.let {
+                    return ViewHolderType.Broadcast.ordinal
+                }
+
                 //Check for files
                 t?.files?.let {
                     if (it.count() > 0) {
-                        return 4
+                        return ViewHolderType.File.ordinal
                     }
                 }
 
@@ -262,19 +292,19 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
                         //Media Post || Media
                         return if (t.post!!) {
                             //Media Post
-                            2
+                            ViewHolderType.Post.ordinal
                         } else {
                             //Media Only
-                            1
+                            ViewHolderType.Media.ordinal
                         }
                     } else {
                         t.let {
                             return if (t.post!!) {
                                 //Message Post
-                                3
+                                ViewHolderType.MessagePost.ordinal
                             } else {
                                 //Message
-                                0
+                                ViewHolderType.Message.ordinal
                             }
                         }
                     }
@@ -282,29 +312,31 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
                     t?.let {
                         t.post?.let {
                             return if (it) {
-                                3
+                                //Message Post
+                                ViewHolderType.MessagePost.ordinal
                             } else {
-                                0
+                                //Message
+                                ViewHolderType.Message.ordinal
                             }
                         }
                     }
                 }
-                return 0 //Message as default
+                return ViewHolderType.Message.ordinal //Message as default
             }
 
             override fun onLongPressItem(e: MotionEvent?, position: Int) {
                 val message = mContentAdapter.getItem(position)
                 val choiceArray = mutableListOf<String>()
                 var colorArray = intArrayOf(Color.BLUE)
-                if(message.isFavorited) choiceArray.add("Unfavorite Message") else choiceArray.add("Favorite Message")
+                if (message.isFavorited) choiceArray.add("Unfavorite Message") else choiceArray.add("Favorite Message")
                 val actionSheet = ActionSheet.Builder()
                         .setTitle("Select Action", Color.BLACK)
                         .setOtherBtn(choiceArray.toTypedArray(), colorArray)
                         .setCancelBtn("Cancel", Color.BLACK)
                         .setCancelableOnTouchOutside(true)
-                        .setActionSheetListener( object : ActionSheet.ActionSheetListener{
+                        .setActionSheetListener(object : ActionSheet.ActionSheetListener {
                             override fun onButtonClicked(actionSheet: ActionSheet?, index: Int) {
-                                when (index){
+                                when (index) {
                                     0 -> controller.favoriteMessage(message, mUserId, position)
                                 }
                             }
@@ -319,36 +351,31 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
             override fun viewHolder(inflater: LayoutInflater?, parent: ViewGroup?, type: Int): BaseViewHolder {
                 when (type) {
                 /*Message*/
-                    0 -> {
-                        return object : BaseViewHolder(R.layout.card_view_post_string, inflater!!, parent) {
-
-                        }
+                    ViewHolderType.Message.ordinal -> {
+                        return object : BaseViewHolder(R.layout.card_view_post_string, inflater!!, parent) {}
                     }
                 /*Media*/
-                    1 -> {
-                        return object : BaseViewHolder(R.layout.card_view_post_photo, inflater!!, parent) {
-
-                        }
+                    ViewHolderType.Media.ordinal -> {
+                        return object : BaseViewHolder(R.layout.card_view_post_photo, inflater!!, parent) {}
                     }
                 /*Post*/
-                    2 -> {
-                        return object : BaseViewHolder(R.layout.card_view_post_media, inflater!!, parent) {
-
-                        }
+                    ViewHolderType.Post.ordinal -> {
+                        return object : BaseViewHolder(R.layout.card_view_post_media, inflater!!, parent) {}
                     }
                 /*Message Post*/
-                    3 -> {
-                        return object : BaseViewHolder(R.layout.card_view_post_message_no_media, inflater!!, parent) {
-
-                        }
+                    ViewHolderType.MessagePost.ordinal -> {
+                        return object : BaseViewHolder(R.layout.card_view_post_message_no_media, inflater!!, parent) {}
                     }
                 /*Files Post*/
-                    4 -> {
-                        return object : BaseViewHolder(R.layout.card_view_files, inflater!!, parent) {
-
-                        }
+                    ViewHolderType.File.ordinal -> {
+                        return object : BaseViewHolder(R.layout.card_view_files, inflater!!, parent) {}
+                    }
+                /*Video Broadcast*/
+                    ViewHolderType.Broadcast.ordinal -> {
+                        return object : BaseViewHolder(R.layout.card_view_broadcasting, inflater!!, parent) {}
                     }
                 }
+                //Default -> Media
                 return object : BaseViewHolder(R.layout.card_view_post_media, inflater!!, parent) {
 
                 }
@@ -367,7 +394,8 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         val posterName = viewHolder.get<TextView>(R.id.cvps_poster_name)
         val postDate = viewHolder.get<TextView>(R.id.cvps_post_date)
 
-        Picasso.with(this).load(data.user!!.avatar).transform(CircleTransform()).into(pic)
+        Picasso.with(this).load(data.channel?.avatar)
+                .placeholder(R.drawable.ic_launcher_round).transform(CircleTransform()).into(pic)
         text.text = data.message
         posterName.text = data.getUserName()
         val formatter = SimpleDateFormat("EEE - h:mm aaa")
@@ -381,7 +409,8 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         val posterName = viewHolder.get<TextView>(R.id.cvpp_poster_name)
         val postDate = viewHolder.get<TextView>(R.id.cvpp_post_date)
 
-        Picasso.with(this).load(data.user!!.avatar).transform(CircleTransform()).into(pic)
+        Picasso.with(this).load(data.channel?.avatar)
+                .placeholder(R.drawable.ic_launcher_round).transform(CircleTransform()).into(pic)
         data.mediaArray?.let {
             Picasso.with(this).load(it[0]?.media_file).into(postPic)
         }
@@ -409,7 +438,8 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         val likeCount = viewHolder.get<TextView>(R.id.cvpm_like_count)
         val commentCount = viewHolder.get<TextView>(R.id.cvpmnm_comment_count)
         //Load info
-        picasso.load(data.user!!.avatar).transform(CircleTransform()).into(posterPic)
+        picasso.load(data.channel?.avatar)
+                .placeholder(R.drawable.ic_launcher_round).transform(CircleTransform()).into(posterPic)
         posterName.text = data.getUserName()
         //Date
         val formatter = SimpleDateFormat("EEE - h:mm aaa")
@@ -475,15 +505,14 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         //Content
         val postText = viewHolder.get<TextView>(R.id.cvpmnm_post_text)
         //Actions
-        val likeButton = viewHolder.get<ImageView>(R.id.cvpmnm_like_button)//TODO: LIKE
+        val likeButton = viewHolder.get<ImageView>(R.id.cvpmnm_like_button)
         val commentButton = viewHolder.get<ImageView>(R.id.cvpmnm_comment_button)
         val likeCount = viewHolder.get<TextView>(R.id.cvpmnm_like_count)
         val commentCount = viewHolder.get<TextView>(R.id.cvpmnm_comment_count)
 
         //Load Info
-        data.user?.avatar?.let {
-            picasso.load(it).transform(CircleTransform()).into(posterPic)
-        }
+        picasso.load(data.channel?.avatar)
+                .placeholder(R.drawable.ic_launcher_round).transform(CircleTransform()).into(posterPic)
         posterName.text = data.getUserName()
 
         //Date
@@ -561,9 +590,8 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         val fileName = viewHolder.get<TextView>(R.id.cvf_file_name)
         val container = viewHolder.get<LinearLayout>(R.id.cvf_file_container)
         //Load Info
-        data.user?.avatar?.let {
-            picasso.load(it).transform(CircleTransform()).into(posterPic)
-        }
+        picasso.load(data.channel?.avatar)
+                .placeholder(R.drawable.ic_launcher_round).transform(CircleTransform()).into(posterPic)
         posterName.text = data.getUserName()
 
         //Date
@@ -588,6 +616,39 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
             } catch (e: ActivityNotFoundException) {
                 Toast.makeText(this, "Can't open this type of File", Toast.LENGTH_SHORT).show()
             }
+        }
+    }
+
+    /*Live Video Broadcast*/
+    fun bindBroadcastViewHolder(viewHolder: BaseViewHolder, data: Message) {
+        val picasso = Picasso.with(this)
+        val channelPic = viewHolder.get<ImageView>(R.id.cvb_picture_profile)
+        val channelName = viewHolder.get<TextView>(R.id.cvb_channel_name)
+        val viewBroadcast = viewHolder.get<Button>(R.id.cvb_view_now_button)
+        picasso.load(data.channel?.avatar)
+                .placeholder(R.drawable.ic_launcher_round).transform(CircleTransform()).into(channelPic)
+        channelName.text = getString(R.string.live_broadcast, "$mChannelName")
+        viewBroadcast.setOnClickListener {
+            goToBroadcastActivity(data.id!!, io.agora.rtc.Constants.CLIENT_ROLE_AUDIENCE)
+        }
+    }
+
+    /**
+     * [goToBroadcastActivity]
+     * Called after a successfull broadcast start call on the API
+     * */
+    override fun goToBroadcastActivity(messageId: Int?, cRole: Int) {
+        messageId?.let {
+            val intent = Intent(this, BroadcastActivity::class.java)
+            /**
+             * Broadcast Room Name for Agora.io is [messageId]
+             * */
+            intent.putExtra(Constants.IntentKeys.BROADCAST_MESSAGE_ID, it)
+            intent.putExtra(Constants.Broadcast.ACTION_KEY_CROLE, cRole)//Broadcaster Role
+            intent.putExtra(Constants.IntentKeys.ROOM_ID, mRoomId)
+            intent.putExtra(Constants.IntentKeys.USER_ID, controller.getUserId)
+            intent.putExtra(Constants.IntentKeys.OWNER_ID, mOwnerId)
+            startActivityForResult(intent, Constants.RequestCodes.BROADCAST_REQ_CODE)
         }
     }
 
@@ -647,9 +708,9 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
     }
 
     override fun updateFollowedChannelsRecycler() {
-        mFollowedChanellsAdapter.clear()
-        mFollowedChanellsAdapter.setItems(controller.getFollowedChannels())
-        mFollowedChanellsAdapter.notifyDataSetChanged()
+        mFollowedChannelsAdapter.clear()
+        mFollowedChannelsAdapter.setItems(controller.getFollowedChannels())
+        mFollowedChannelsAdapter.notifyDataSetChanged()
         acm_fav_channel_recycler.smoothScrollToPosition(0)
     }
 
@@ -694,7 +755,17 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
             }
         }
         acm_drawer_broadcast.setOnClickListener {
-            //TODO: Video Broadcasting
+            if (controller.checkSelfPermissions()) {
+                //Not a contact
+                val alertDialog = AlertDialog.Builder(this)
+                alertDialog.setTitle("Would you like to start a live broadcast on $mChannelName?")
+                alertDialog.setPositiveButton("OK") { _, _ ->
+                    controller.keepSocketConnection(true)
+                    controller.startBroadcast(mRoomId)
+                }
+                alertDialog.setNegativeButton("Cancel") { _, _ -> /*Dismiss*/ }
+                alertDialog.show()
+            }
         }
         /*File*/
         acm_drawer_file.setOnClickListener {
@@ -721,42 +792,54 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        //Close Drawer
+        //Close Drawer every time the user navigates back to the channel feed
         if (acm_the_daddy_drawer.panelState == SlidingUpPanelLayout.PanelState.EXPANDED) {
             acm_the_daddy_drawer.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED
         }
 
-        //Picture
-        if (requestCode == CameraControl.instance.requestCode()) {
-            controller.onPictureOnlyResult(requestCode, resultCode, data)
-            controller.keepSocketConnection(false)
-        }
-
-        //Back from creating a post
-        else if (requestCode == Constants.RequestCodes.CREATE_NEW_POST_REQ_CODE) {
-            if (resultCode == Activity.RESULT_OK) {
-                //Push new post after socket is connected
-                val filepathArrayList = data?.extras?.getStringArrayList(Constants.IntentKeys.MEDIA_POST)
-                val postMessage = data?.extras?.getString(Constants.IntentKeys.MEDIA_POST_MESSAGE)
-                controller.createPost(postMessage, filepathArrayList)
+        /*Request Codes*/
+        when (requestCode) {
+        /*Picture*/
+            CameraControl.instance.requestCode() -> {
+                controller.onPictureOnlyResult(requestCode, resultCode, data)
                 controller.keepSocketConnection(false)
             }
-        }
-
-        //Back from viewing a post
-        else if (requestCode == Constants.RequestCodes.VIEW_POST_REQ_CODE) {
-            if (resultCode == Activity.RESULT_OK || resultCode == Activity.RESULT_CANCELED) {
-                controller.keepSocketConnection(false)
-                controller.retrieveChatHistory(true)
+        /*Back from creating a post*/
+            Constants.RequestCodes.CREATE_NEW_POST_REQ_CODE -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    //Push new post after socket is connected
+                    val filepathArrayList = data?.extras?.getStringArrayList(Constants.IntentKeys.MEDIA_POST)
+                    val postMessage = data?.extras?.getString(Constants.IntentKeys.MEDIA_POST_MESSAGE)
+                    controller.createPost(postMessage, filepathArrayList)
+                    controller.keepSocketConnection(false)//FIXME Should this keep the socket on?
+                }
             }
-        }
 
-        //Back from Channel Settings
-        else if (requestCode == Constants.RequestCodes.CHANNEL_SETTINGS) {
-            if (resultCode == Activity.RESULT_OK) {
-                data?.getBooleanExtra(Constants.IntentKeys.CHANNEL_DELETED, false)?.let {
-                    if (it) {
-                        onBackPressed()
+        /*Back from viewing a post*/
+            Constants.RequestCodes.VIEW_POST_REQ_CODE -> {
+                if (resultCode == Activity.RESULT_OK || resultCode == Activity.RESULT_CANCELED) {
+                    controller.keepSocketConnection(false)//FIXME Should this keep the socket on?
+                    controller.retrieveChatHistory(true)
+                }
+            }
+
+        /*Back from Channel Settings*/
+            Constants.RequestCodes.CHANNEL_SETTINGS -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    data?.getBooleanExtra(Constants.IntentKeys.CHANNEL_DELETED, false)?.let {
+                        if (it) {
+                            onBackPressed()
+                        }
+                    }
+                }
+            }
+        /*End Live Video Broadcast*/
+            Constants.RequestCodes.BROADCAST_REQ_CODE -> {
+                //End broadcast -> This will delete the Broadcast message in real time on the channel feed
+                controller.keepSocketConnection(true)
+                data?.getIntExtra(Constants.IntentKeys.BROADCAST_MESSAGE_ID, 0)?.let { messageId ->
+                    data.getIntExtra(Constants.IntentKeys.ROOM_ID, 0).let { roomId ->
+                        controller.endBroadcast(roomId, messageId)
                     }
                 }
             }

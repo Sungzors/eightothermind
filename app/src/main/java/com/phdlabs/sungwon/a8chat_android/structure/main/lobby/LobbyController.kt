@@ -63,18 +63,19 @@ class LobbyController(val mView: LobbyContract.View,
                 mView.hideProgress()
                 requestLocationPermissions()
                 return
+            } else {
+                try {
+                    mLocationManager?.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0L, 0f, locationListener)
+                } catch (ex: SecurityException) {
+                    println("No location available: " + ex.message)
+                }
             }
         }
-        try {
-            mLocationManager?.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0L, 0f, locationListener)
-        } catch (ex: SecurityException) {
-            println("No location available: " + ex.message)
-        }
+
     }
 
     override fun resume() {
         callMyChannels(refresh)
-        callEvent(refresh)
         callChats()
     }
 
@@ -242,6 +243,14 @@ class LobbyController(val mView: LobbyContract.View,
             }
         }
 
+    }
+
+    override fun callForEvent() {
+        try {
+            mLocationManager?.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0L, 0f, locationListener)
+        } catch (ex: SecurityException) {
+            println("No location available: " + ex.message)
+        }
     }
 
     override fun setRefreshFlag(shouldRefresh: Boolean) {

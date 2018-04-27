@@ -11,6 +11,7 @@ import com.phdlabs.sungwon.a8chat_android.model.media.Media
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.phdlabs.sungwon.a8chat_android.structure.application.Application
+import com.phdlabs.sungwon.a8chat_android.structure.channel.broadcast.BroadcastActivity
 import com.phdlabs.sungwon.a8chat_android.structure.channel.create.ChannelCreateActivity
 import com.phdlabs.sungwon.a8chat_android.structure.channel.createPost.CreatePostActivity
 import com.phdlabs.sungwon.a8chat_android.structure.channel.mychannel.MyChannelActivity
@@ -79,6 +80,7 @@ interface ChannelContract {
 
     interface MyChannel {
         interface View : BaseView<Controller> {
+            /*Shared properties*/
             val get8Application: Application
             val getActivity: MyChannelActivity
             val getMessageET: String
@@ -86,8 +88,13 @@ interface ChannelContract {
             val getRoomId: Int
             val getChannelId: Int
 
+            /*Recycler Control*/
             fun updateContentRecycler()
+
             fun updateFollowedChannelsRecycler()
+
+            /*Live Video Broadcast*/
+            fun goToBroadcastActivity(messageId: Int?, cRole: Int)
         }
 
         interface Controller : BaseController {
@@ -111,6 +118,9 @@ interface ChannelContract {
             /*Chat History*/
             fun getMessages(): MutableList<Message>
 
+            /*Delete Message*/
+            fun deleteMessage(messageId: Int)
+
             /*Picture Intent -> Post only media*/
             fun onPictureOnlyResult(requestCode: Int, resultCode: Int, data: Intent?)
 
@@ -120,11 +130,23 @@ interface ChannelContract {
             /*Like Post*/
             fun likePost(messageId: Int, unlike: Boolean)
 
+            /*Start Broadcast -> Broadcast Owner*/
+            fun startBroadcast(roomId: Int)
+
+            fun endBroadcast(roomId: Int, messageId: Int)
+
+            /*Broadcast message instance*/
+            var getBroadcastMessage: Message?
+            var getUserId: Int?
+
             /*Keep Channel-Room socket connection if opening a post*/
             fun keepSocketConnection(keepConnection: Boolean)
 
             /*Read Files Permissions*/
             fun requestReadingExternalStorage()
+
+            /*Live Broadcast Permissions*/
+            fun checkSelfPermissions(): Boolean
 
             fun permissionResults(requestCode: Int, permissions: Array<out String>, grantResults: IntArray): Boolean
 
@@ -179,6 +201,23 @@ interface ChannelContract {
             fun requestStoragePermissions()
             fun openMediaPicker()
             fun createPost()
+        }
+    }
+
+    /*BROADCAST*/
+    interface Broadcast {
+        interface View : BaseView<Controller> {
+            val get8Application: Application
+            val getRoomId: Int
+            val getActivity: BroadcastActivity
+            fun receivedLikeAnimation()
+            fun updateCommentsRecycler(comments: ArrayList<Comment>)
+        }
+
+        interface Controller : BaseController {
+            fun onCreate()
+            fun likePost(messageId: Int)
+            fun commentPost(messageId: String, comment: String)
         }
     }
 

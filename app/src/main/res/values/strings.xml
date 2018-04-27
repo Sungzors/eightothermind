@@ -169,6 +169,17 @@
     <string name="lobby_channels">Channels</string>
     <string name="email_address">Email Address</string>
     <string name="your_email">YOUR EMAIL ADDRESS</string>
+    <string name="disclosure">Please review and accept the Terms and Conditions, and Privacy Policy
+    before using this application as it describes how we use your data</string>
+    <string name="terms_and_conditions">Terms and Conditions</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="i_agree_to_the_terms_and_conditions">I agree to the terms and conditions</string>
+    <string name="i_agree_to_the_privacy_policy">I agree to the Privacy Policy</string>
+    <string name="view_now">View Now</string>
 
+    <!--Broadcast-->
+    <string name="live_broadcast">%1$s is Live!</string>
+    <string name="end">End</string>
+    <string name="leave_broadcast">Leave</string>
 
 </resources>

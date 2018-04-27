@@ -31,6 +31,7 @@ interface LobbyContract {
         fun refreshAll()
         fun setRefreshFlag(shouldRefresh: Boolean)
         fun getRefreshFlag(): Boolean
+        fun callForEvent()
     }
 
     interface Overlay {
