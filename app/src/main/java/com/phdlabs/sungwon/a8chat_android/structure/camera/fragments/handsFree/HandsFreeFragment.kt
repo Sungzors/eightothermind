@@ -3,6 +3,7 @@ package com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.handsFree
 import android.os.Bundle
 import android.view.*
 import android.widget.RelativeLayout
+import android.widget.Toast
 import com.otaliastudios.cameraview.*
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.CameraBaseFragment
@@ -20,7 +21,7 @@ class HandsFreeFragment : CameraBaseFragment() {
     override fun cameraLayoutId(): Int = R.layout.fragment_cameraview
 
     /*Properties*/
-    private var handsFreeCamera: CameraView? = null
+    var handsFreeCamera: CameraView? = null
     private lateinit var mTempFile: File
     private var mRelativeLayout: RelativeLayout? = null
     private var wasVideoTaken: Boolean = false
@@ -143,6 +144,8 @@ class HandsFreeFragment : CameraBaseFragment() {
         ResultHolder.setResultTimeToCallback(callbackTime)
         //TODO: Start video preview activity
         println("Video file path: ${videoFile.absolutePath}")
+        //TODO: Build Video Preview Activity
+        Toast.makeText(context, "Video Preview in progress", Toast.LENGTH_SHORT).show()
     }
 
     /*Camera Facing control*/
