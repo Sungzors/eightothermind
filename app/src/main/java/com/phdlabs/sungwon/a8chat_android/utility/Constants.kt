@@ -232,6 +232,7 @@ object Constants {
         val FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION
         val COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION
         val CONTACTS = Manifest.permission.READ_CONTACTS
+        val VIDEO_PERMISSIONS = arrayOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
     }
 
     /**
@@ -244,6 +245,7 @@ object Constants {
         val READ_EXTERNAL_STORAGE = 16
         val LOCATION_REQ_CODE = 3
         val CONTACTS_REQ_CODE = 4
+        val REQUEST_VIDEO_PERMISSIONS = 30
     }
 
     /**

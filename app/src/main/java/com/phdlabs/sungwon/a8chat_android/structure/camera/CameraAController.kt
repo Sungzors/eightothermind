@@ -6,6 +6,7 @@ import android.support.v4.view.ViewPager
 import android.view.View
 import com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.normal.NormalFragment
 import com.phdlabs.sungwon.a8chat_android.structure.camera.editing.EditingActivity
+import com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.handsFree.HandsFreeFragment
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 
 /**
@@ -18,6 +19,7 @@ class CameraAController(val mView: CameraContract.Camera.View) : CameraContract.
 
     /*Properties*/
     private var isFlashOn: Boolean = false
+    private var isRecording: Boolean = false
 
     /*Initialization*/
     init {
@@ -52,17 +54,17 @@ class CameraAController(val mView: CameraContract.Camera.View) : CameraContract.
             /*View pager item position*/
             viewPager.currentItem = it.position
             /*Show || Hide Camera Controls depending on tab*/
-            if (it.position.equals(Constants.CameraPager.NORMAL) ||
-                    it.position.equals(Constants.CameraPager.HANDS_FREE)) {
+            if (it.position == Constants.CameraPager.NORMAL ||
+                    it.position == Constants.CameraPager.HANDS_FREE) {
                 mView.getCameraControl().visibility = View.VISIBLE
             } else {
                 mView.getCameraControl().visibility = View.GONE
             }
             /**
-             * Hide close controls in the [CameraRollFragment] as they are embeded
+             * Hide close controls in the [CameraRollFragment] as they are embedded
              * within the toolbar
              * */
-            if (it.position.equals(Constants.CameraPager.CAMERA_ROLL)) {
+            if (it.position == Constants.CameraPager.CAMERA_ROLL) {
                 mView.getCameraCloseControl().visibility = View.GONE
             } else {
                 mView.getCameraCloseControl().visibility = View.VISIBLE
@@ -71,31 +73,60 @@ class CameraAController(val mView: CameraContract.Camera.View) : CameraContract.
     }
 
     /*Take picture*/
+    //TODO: Switch to camera kit functionality
     override fun takePhoto(viewPager: ViewPager) {
-        if (viewPager.currentItem == Constants.CameraPager.NORMAL) {
-            val normalFrag: NormalFragment = viewPager.adapter?.instantiateItem(viewPager, Constants.CameraPager.NORMAL) as NormalFragment
-            normalFrag.takePicture()
+
+        when (viewPager.currentItem) {
+        /*Normal Mode*/
+            Constants.CameraPager.NORMAL -> {
+                val normalFrag: NormalFragment = viewPager.adapter?.instantiateItem(viewPager, Constants.CameraPager.NORMAL) as NormalFragment
+                normalFrag.takePicture()
+            }
+        /*Hands Free Mode*/
+            Constants.CameraPager.HANDS_FREE -> {
+                //UI
+                mView.hideProgress()
+                val handsFreeFragment = viewPager.adapter?.instantiateItem(viewPager, Constants.CameraPager.HANDS_FREE) as HandsFreeFragment
+                handsFreeFragment.startVideoRecording()
+            }
+
         }
     }
 
     /*Camera Flip -> Front Lens || Back Lens*/
     override fun cameraFlip(viewPager: ViewPager) {
-        /*NormalCamera Fragment*/
-        if (viewPager.currentItem == Constants.CameraPager.NORMAL) {
-            viewPager.adapter?.notifyDataSetChanged()
+        when (viewPager.currentItem) {
+        /*Normal Mode*/
+            Constants.CameraPager.NORMAL -> {
+                val normalFrag: NormalFragment = viewPager.adapter?.instantiateItem(viewPager, Constants.CameraPager.NORMAL) as NormalFragment
+                normalFrag.flipCamera()
+            }
+        /*HandsFree Mode*/
+            Constants.CameraPager.HANDS_FREE -> {
+                val handsFreeFragment = viewPager.adapter?.instantiateItem(viewPager, Constants.CameraPager.HANDS_FREE) as HandsFreeFragment
+                handsFreeFragment.flipCamera()
+            }
         }
     }
 
     /*Turn on or off manual flash_off*/
     override fun manualFlash(viewPager: ViewPager) {
-        /*NormalCamera Fragment*/
-        if (viewPager.currentItem == Constants.CameraPager.NORMAL) {
-            val normalFrag: NormalFragment = viewPager.adapter?.instantiateItem(viewPager, Constants.CameraPager.NORMAL) as NormalFragment
-            normalFrag.manualFlashSelection()
-            //Flash UI
-            isFlashOn = !isFlashOn
-            mView.flashFeedback(isFlashOn)
+        when (viewPager.currentItem) {
+        /*Normal Mode*/
+            Constants.CameraPager.NORMAL -> {
+                val normalFrag: NormalFragment = viewPager.adapter?.instantiateItem(viewPager, Constants.CameraPager.NORMAL) as NormalFragment
+                normalFrag.manualFlashSelection()
+
+            }
+        /*HandsFree Mode*/
+            Constants.CameraPager.HANDS_FREE -> {
+                val handsFreeFragment = viewPager.adapter?.instantiateItem(viewPager, Constants.CameraPager.HANDS_FREE) as HandsFreeFragment
+                handsFreeFragment.manualFlashSelection()
+            }
         }
+        //Flash UI
+        isFlashOn = !isFlashOn
+        mView.flashFeedback(isFlashOn)
     }
 
     /*Start EditingActivity*/

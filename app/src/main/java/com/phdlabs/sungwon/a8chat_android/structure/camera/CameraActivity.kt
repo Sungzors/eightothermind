@@ -7,6 +7,7 @@ import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.view.View
 import android.widget.Toast
+import com.otaliastudios.cameraview.CameraView
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.structure.camera.adapters.CameraPagerAdapter
 import com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControls.CameraCloseView
@@ -31,16 +32,16 @@ class CameraActivity : CoreActivity(), CameraContract.Camera.View, TabLayout.OnT
     override fun layoutId() = R.layout.activity_camera
 
     /*User Interface container*/
-    override fun contentContainerId() = 0 //TODO: set container for the camera swipe
+    override fun contentContainerId() = 0
 
     /*Properties*/
-    var currentFragment: Fragment? = null
-
     override var activity: CameraActivity = this
+    var mCameraView: CameraView? = null
 
     /*LifeCycle*/
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        mCameraView = CameraView(this)
         CameraAController(this)
         setupUI()
     }
@@ -53,6 +54,11 @@ class CameraActivity : CoreActivity(), CameraContract.Camera.View, TabLayout.OnT
     override fun onResume() {
         super.onResume()
         controller.resume()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mCameraView?.destroy()
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
