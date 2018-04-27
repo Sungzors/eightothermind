@@ -1,14 +1,15 @@
 package com.phdlabs.sungwon.a8chat_android.structure.myProfile.update
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
+import android.telephony.TelephonyManager
 import android.view.View
-import android.view.WindowManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ImageView
+import android.widget.Toast
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.api.data.UserData
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
@@ -19,6 +20,7 @@ import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_my_profile_update.*
 import kotlinx.android.synthetic.main.toolbar.*
+import java.util.*
 
 /**
  * Created by SungWon on 10/2/2017.
@@ -30,6 +32,7 @@ class MyProfileUpdateActivity : CoreActivity(), ProfileContract.Update.View,
     /*Properties*/
     private var profilePic: ImageView? = null
     private var language: String = "english"
+    private var country: String = "United States"
 
     /*UI*/
     override fun layoutId() = R.layout.activity_my_profile_update
@@ -55,6 +58,15 @@ class MyProfileUpdateActivity : CoreActivity(), ProfileContract.Update.View,
             if (it) {
                 willEdit = it
             }
+        }
+
+
+        val tm = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+        if(tm.simState != TelephonyManager.SIM_STATE_ABSENT){
+            val loc = Locale("", tm.simCountryIso)
+            country = loc.displayCountry
+        } else {
+            Toast.makeText(context, "SIM Card not available. Defaulting country to US", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -112,9 +124,9 @@ class MyProfileUpdateActivity : CoreActivity(), ProfileContract.Update.View,
     override val getProfileImageView = profilePic
 
     override val getUserData: UserData
-        get() = UserData(ap_first_name.text.toString().trim(), ap_last_name.text.toString().trim(), language, "")
+        get() = UserData(ap_first_name.text.toString().trim(), ap_last_name.text.toString().trim(), language, "", ap_email_edit.text.toString().trim(), country)
 
-    override fun nullChecker(): Boolean = (ap_first_name.text.toString() == "" || ap_last_name.text.toString() == "")
+    override fun nullChecker(): Boolean = (ap_first_name.text.toString() == "" || ap_last_name.text.toString() == "" || ap_email_edit.text.toString() == "")
 
 
     /*On Click*/

@@ -171,6 +171,8 @@
     <string name="invited_notifications">Invited Notifications</string>
     <string name="write_a_comment">Write a comment</string>
     <string name="lobby_channels">Channels</string>
+    <string name="email_address">Email Address</string>
+    <string name="your_email">YOUR EMAIL ADDRESS</string>
     <string name="disclosure">Please review and accept the Terms and Conditions, and Privacy Policy
     before using this application as it describes how we use your data</string>
     <string name="terms_and_conditions">Terms and Conditions</string>

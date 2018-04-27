@@ -195,8 +195,9 @@ public abstract class CoreActivity extends AppCompatActivity {
     @SuppressLint("CommitTransaction")
     public void replaceFragment(@IdRes int containerId, @NonNull Fragment fragment, boolean addToBackStack) {
         String name = fragment.getClass().getName();
-        FragmentTransaction replaceTransaction = getSupportFragmentManager().beginTransaction()
-                .replace(containerId, fragment, name);
+        FragmentTransaction replaceTransaction = getSupportFragmentManager().beginTransaction();
+        replaceTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+        replaceTransaction.replace(containerId, fragment, name);
         if (addToBackStack) {
             replaceTransaction.addToBackStack(name);
         }
@@ -239,12 +240,13 @@ public abstract class CoreActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = fragmentManager.findFragmentByTag(fragmentClass.getName());
         if (fragment != null) {
-            fragmentManager.beginTransaction().remove(fragment).commit();
+            fragmentManager.beginTransaction().setCustomAnimations(android.R.animator.fade_out, android.R.animator.fade_in).remove(fragment).commit();
         }
     }
 
     public void popFragment() {
-        getSupportFragmentManager().popBackStack();
+        FragmentManager fm = getSupportFragmentManager();
+        fm.popBackStack();
     }
 
     public void closeFromChild() {

@@ -106,10 +106,35 @@
                     fontPath="fonts/NunitoSans-Regular.ttf"/>
 
                 <TextView
+                    android:id="@+id/ap_email_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="15dp"
+                    android:text="@string/your_email"
+                    android:layout_below="@id/ap_last_name"
+                    fontPath="fonts/NunitoSans-Bold.ttf"/>
+
+                <EditText
+                    android:id="@+id/ap_email_edit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/ap_email_text"
+                    android:hint="@string/email_address"
+                    android:layout_marginStart="23dp"
+                    android:layout_marginEnd="23dp"
+                    android:maxLines="1"
+                    android:textColor="@color/black"
+                    android:inputType="textEmailAddress"
+                    android:imeOptions="actionNext"
+                    fontPath="fonts/NunitoSans-Regular.ttf"
+                    />
+
+                <TextView
                     android:id="@+id/ap_language_question_fix"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/ap_last_name"
+                    android:layout_below="@id/ap_email_edit"
                     android:layout_marginStart="25dp"
                     android:layout_marginEnd="25dp"
                     android:layout_marginTop="20dp"

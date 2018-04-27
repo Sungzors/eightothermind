@@ -2,9 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/8Chat-Android.iml" filepath="$PROJECT_DIR$/8Chat-Android.iml" />
+      <module fileurl="file://C:\Users\SungWon\Documents\8Chat_Android\8Chat-Android.iml" filepath="C:\Users\SungWon\Documents\8Chat_Android\8Chat-Android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/8Chat_Android.iml" filepath="$PROJECT_DIR$/8Chat_Android.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/heartanimation/heartanimation.iml" filepath="$PROJECT_DIR$/heartanimation/heartanimation.iml" />
+      <module fileurl="file://C:\Users\SungWon\Documents\8Chat_Android\heartanimation\heartanimation.iml" filepath="C:\Users\SungWon\Documents\8Chat_Android\heartanimation\heartanimation.iml" />
       <module fileurl="file://$PROJECT_DIR$/photoeditorsdk/photoeditorsdk.iml" filepath="$PROJECT_DIR$/photoeditorsdk/photoeditorsdk.iml" />
     </modules>
   </component>

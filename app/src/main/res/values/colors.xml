@@ -20,6 +20,7 @@
     <color name="unselectfullGrey">#cfcfcf</color>
     <color name="tabbg">#e0e0e0</color>
     <color name="whiteTransparent">#BBFFFFFF</color>
+    <color name="whitethreequartertransparent">#e6ffffff</color>
     <color name="halftransparent">#84ffffff</color>
     <color name="cameraBlurView">#58e4e4e4</color>
     <color name="transparent">#00ffffff</color>

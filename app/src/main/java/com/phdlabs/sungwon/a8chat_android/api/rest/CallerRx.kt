@@ -302,6 +302,9 @@ interface CallerRx {
     @GET("/rooms/{roomId}")
     fun getRoomById(@Header(TOKEN) token: String, @Path("roomId") roomId: Int): Observable<RoomResponse>
 
+    @PATCH("/rooms/{roomId}/user/{userId}/notifications")
+    fun toggleNotification(@Header(TOKEN) token: String, @Path("roomId") roomId: Int, @Path("userId") userId: Int, @Query("message_notification") notif: Boolean): Observable<ErrorResponse>
+
     /*GROUP*/
     @POST("/groupChats")
     fun createGroupChat(@Header(TOKEN) token: String,

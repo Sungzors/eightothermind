@@ -1,10 +1,9 @@
-package com.phdlabs.sungwon.a8chat_android.structure.main.lobby
+package com.phdlabs.sungwon.a8chat_android.structure.main
 
 import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseController
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseView
-import com.phdlabs.sungwon.a8chat_android.structure.main.MainActivity
 
 /**
  * Created by SungWon on 10/17/2017.
@@ -33,5 +32,14 @@ interface LobbyContract {
         fun setRefreshFlag(shouldRefresh: Boolean)
         fun getRefreshFlag(): Boolean
         fun callForEvent()
+    }
+
+    interface Overlay {
+        interface View: BaseView<Controller>{
+            fun getActivityDirect(): MainActivity
+        }
+        interface Controller: BaseController {
+
+        }
     }
 }

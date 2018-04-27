@@ -101,6 +101,30 @@ class RoomManager {
         }
     }
 
+    fun toggleNotification(roomId: Int, notif: Boolean, callback: (String?) -> Unit){
+        UserManager.instance.getCurrentUser{success, user, token ->
+            if (success) {
+                user?.let {
+                    token?.token?.let {
+                        val call = Rest.getInstance().getmCallerRx().toggleNotification(it, roomId, user.id!!, notif)
+                        disposable.add(call.subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe({response ->
+                                    if(response.isSuccess) {
+                                        callback(null)
+                                    } else if (response.isError){
+                                        callback("Notification Toggle Unsuccessful")
+                                    }
+                                    disposable.clear()
+                                }, {
+                                    callback(it.localizedMessage)
+                                }))
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * [getRoomInfo]
      * - Used to pull room information
