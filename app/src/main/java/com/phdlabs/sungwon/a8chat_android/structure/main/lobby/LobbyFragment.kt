@@ -17,7 +17,9 @@ import com.phdlabs.sungwon.a8chat_android.structure.chat.ChatActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreFragment
 import com.phdlabs.sungwon.a8chat_android.structure.event.view.EventViewActivity
 import com.phdlabs.sungwon.a8chat_android.structure.groupchat.GroupChatActivity
+import com.phdlabs.sungwon.a8chat_android.structure.main.LobbyContract
 import com.phdlabs.sungwon.a8chat_android.structure.main.MainActivity
+import com.phdlabs.sungwon.a8chat_android.structure.main.lobbyOverlay.LobbyOverlayFragment
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseRecyclerAdapter
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseViewHolder
@@ -40,7 +42,7 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
     /*Adapters*/
     private lateinit var mAdapterChannels: BaseRecyclerAdapter<Channel, BaseViewHolder>
     private lateinit var mAdapterEvent: BaseRecyclerAdapter<Room, BaseViewHolder>
-    private lateinit var mAdapterChat: BaseRecyclerAdapter<Room, BaseViewHolder>
+    private var mAdapterChat: BaseRecyclerAdapter<Room, BaseViewHolder>? = null
 
     private var separatorPosition: Int = -1
 
@@ -251,7 +253,8 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
                 }
             }
         }
-        mAdapterChat.setItems(chats)
+        mAdapterChat?.setItems(chats)
+        mAdapterChat?.setSortComparator(EightQueries.Comparators.dateComparatorRooms)
         fl_chat_title.visibility = TextView.VISIBLE
         fl_chat_recycler.visibility = RecyclerView.VISIBLE
         fl_chat_recycler.layoutManager = object : LinearLayoutManager(coreActivity.context) {
@@ -269,6 +272,10 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
         val time = viewHolder.get<TextView>(R.id.cvle_time)
         if (data.chatType == "private") {
             Picasso.with(context).load(data.user!!.avatar).placeholder(R.drawable.ic_launcher_round).transform(CircleTransform()).into(eventPic)
+            eventPic.setOnLongClickListener {
+                getActivityDirect().replaceFragment(R.id.overlay_content_frame, LobbyOverlayFragment.newInstance(data.id!!, data.user!!.first_name + " " + data.user!!.last_name, data.user!!.avatar!!, data.user!!.phone!!), true)
+                true
+            }
             title.text = data.user!!.first_name + " " + data.user!!.last_name
             if (data.message != null) {
                 when (data.message!!.type) {
@@ -298,6 +305,10 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
         } else if (data.chatType == "group") {
             Picasso.with(context).load(data.groupChatInfo!!.avatar).placeholder(R.drawable.ic_launcher_round).transform(CircleTransform()).into(eventPic)
             title.text = data.groupChatInfo!!.name
+//            eventPic.setOnLongClickListener {
+//                getActivityDirect().replaceFragment(R.id.overlay_content_frame, LobbyOverlayFragment.newInstance(data.id!!, data.groupChatInfo!!.name!!, data.groupChatInfo!!.avatar!!), true)
+//                true
+//            }
             if (data.message != null) {
                 when (data.message!!.type) {
                     "string" -> message.text = data.message!!.message
@@ -353,9 +364,11 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
     }
 
     override fun refreshChat() {
-        mAdapterChat.setItems(controller.getChat())
-        mAdapterChat.setSortComparator(EightQueries.Comparators.dateComparatorRooms)
-        mAdapterChat.notifyDataSetChanged()
+        if(mAdapterChat!= null){
+            mAdapterChat?.setItems(controller.getChat())
+            mAdapterChat?.setSortComparator(EightQueries.Comparators.dateComparatorRooms)
+            mAdapterChat?.notifyDataSetChanged()
+        }
     }
 
     override fun setSeparatorCounter(pos: Int) {

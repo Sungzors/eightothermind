@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:id="@+id/flo_bg"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/whitethreequartertransparent"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingPrefix">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/flo_picture_event"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp" />
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_toEndOf="@id/flo_picture_event"
+            android:layout_marginTop="20dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:orientation="vertical">
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
+            <TextView
+                android:id="@+id/flo_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="barg"
+                android:textSize="14sp"
+                fontPath="fonts/NunitoSans-Bold.ttf"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
+            <TextView
+                android:id="@+id/flo_message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="No Message"
+                android:textSize="12sp"
+                fontPath="fonts/NunitoSans-Regular.ttf"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+        </LinearLayout>
+
+
+
+
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/flo_close"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="15dp"
+        android:background="@drawable/main_layout_close"
+        />
+
+    <ImageButton
+        android:id="@+id/flo_mute"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/main_layout_mute"
+        android:layout_alignBottom="@id/flo_close"
+        android:layout_toEndOf="@id/flo_close"
+        android:layout_marginBottom="105dp"
+        android:layout_marginStart="-7dp"
+        android:scaleX="1.4"
+        android:scaleY="1.4"/>
+
+    <ImageButton
+        android:id="@+id/flo_money"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/main_layout_money"
+        android:layout_alignBottom="@id/flo_close"
+        android:layout_toEndOf="@id/flo_close"
+        android:scaleX="1.4"
+        android:scaleY="1.4"
+        android:layout_marginStart="23dp"
+        android:layout_marginBottom="74dp"/>
+
+    <ImageButton
+        android:id="@+id/flo_call"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/main_layout_call"
+        android:layout_alignBottom="@id/flo_close"
+        android:layout_toEndOf="@id/flo_close"
+        android:scaleX="1.4"
+        android:scaleY="1.4"
+        android:layout_marginStart="36dp"
+        android:layout_marginBottom="10dp"
+        />
+
+    <ImageButton
+        android:id="@+id/flo_media"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/main_layout_media"
+        android:layout_alignBottom="@id/flo_close"
+        android:layout_toEndOf="@id/flo_close"
+        android:scaleX="1.4"
+        android:scaleY="1.4"
+        android:layout_marginStart="23dp"
+        android:layout_marginBottom="-74dp"
+        />
+    <ImageButton
+        android:id="@+id/flo_file"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/main_layout_file"
+        android:layout_alignBottom="@id/flo_close"
+        android:layout_toEndOf="@id/flo_close"
+        android:scaleX="1.4"
+        android:scaleY="1.4"
+        android:layout_marginBottom="-132dp"
+        android:layout_marginStart="-7dp"
+        />
+
+</RelativeLayout>

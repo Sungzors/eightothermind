@@ -20,6 +20,7 @@ import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.phdlabs.sungwon.a8chat_android.structure.event.create.EventCreateActivity
+import com.phdlabs.sungwon.a8chat_android.structure.main.LobbyContract
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.vicpin.krealmextensions.saveAll
 import org.greenrobot.eventbus.EventBus
@@ -158,7 +159,6 @@ class LobbyController(val mView: LobbyContract.View,
         })
     }
 
-    //TODO: Refactor Events API
     private fun callEvent(refresh: Boolean) {
         mView.showProgress()
         EventsManager.instance.getEvents(refresh, mLocation.first, mLocation.second, { response ->
@@ -176,7 +176,9 @@ class LobbyController(val mView: LobbyContract.View,
                         if(rooms.isEventActive){
                             mEvents.add(rooms)
                         } else {
-                            mChat.add(rooms)
+                            if(!mChat.contains(rooms)){
+                                mChat.add(rooms)
+                            }
                             chatCount++
                         }
                     }
