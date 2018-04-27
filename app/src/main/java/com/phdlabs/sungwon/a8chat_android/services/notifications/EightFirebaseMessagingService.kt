@@ -17,6 +17,8 @@ import com.phdlabs.sungwon.a8chat_android.db.channels.ChannelsManager
 import com.phdlabs.sungwon.a8chat_android.db.room.RoomManager
 import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.notifications.*
+import com.phdlabs.sungwon.a8chat_android.structure.channel.broadcast.BroadcastActivity
+import com.phdlabs.sungwon.a8chat_android.structure.channel.mychannel.MyChannelActivity
 import com.phdlabs.sungwon.a8chat_android.structure.channel.postshow.ChannelPostShowActivity
 import com.phdlabs.sungwon.a8chat_android.structure.chat.ChatActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
@@ -24,7 +26,6 @@ import com.vicpin.krealmextensions.save
 import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.logging.SimpleFormatter
 
 /**
  * Created by JPAM on 3/19/18.
@@ -34,6 +35,19 @@ import java.util.logging.SimpleFormatter
  * This also handles notifications in foreground, data payload, and upstream messages.
  */
 class EightFirebaseMessagingService : FirebaseMessagingService() {
+
+    /*Properties*/
+    private var mUserId: Int? = null
+
+    init {
+        UserManager.instance.getCurrentUser { success, user, _ ->
+            if (success) {
+                user?.id?.let {
+                    mUserId = it
+                }
+            }
+        }
+    }
 
 
     /*LifeCycle*/
@@ -71,7 +85,7 @@ class EightFirebaseMessagingService : FirebaseMessagingService() {
      * */
     private fun showNotification(notification: RemoteMessage.Notification?, data: MutableMap<String, String>?) {
         //Default Intent
-        var displayIntent: Intent? = Intent()
+        var displayIntent: Intent?
         //Notification Manager
         val mBuilder = NotificationCompat.Builder(this, Constants.Notifications.GLOBAL_CHANNEL)
                 .setSmallIcon(R.drawable.ic_default_notification)
@@ -93,13 +107,13 @@ class EightFirebaseMessagingService : FirebaseMessagingService() {
             mBuilder.setContentTitle(it.title)
             mBuilder.setContentText(it.body)
         }
-        //Check for Data Payload
+        //Check for Notification Data Payload
         data?.let {
             if (it.count() > 0) {
                 //Build Notification based on Type
                 val jsonObject = JSONObject(it)
-                //TODO: Verify I'm not the author of the notification -> It shouldn't be created
                 when (jsonObject.getString(Constants.Notifications.TYPE)) {
+
                 /*User has been invited to a GroupChat, Event || Channel*/
                     Constants.Notifications.USER_ADDED -> {//GroupChat, Event || Channel
                         //Parse Notification Data Payload
@@ -143,9 +157,10 @@ class EightFirebaseMessagingService : FirebaseMessagingService() {
                             })
                         }
                     }
+
                 /*User has been invited to a Private Chat*/
                     Constants.Notifications.PRIVATE_CHAT -> {//Private Chat Created -> Room
-                        //TODO: Not Yet Tested
+                        //TODO: Not working on Firebase Backend
                         //Parse Notification Data Payload
                         val data = GsonHolder.instance.get()?.fromJson(jsonObject.toString(), PrivateChatPayload::class.java)
                         //Intent
@@ -166,10 +181,23 @@ class EightFirebaseMessagingService : FirebaseMessagingService() {
                             }
                         }
                     }
+
                 /*Someone commented on a User's Post*/
                     Constants.Notifications.COMMENT -> {//Channel
                         //Parse Notification Data Payload
                         val data = GsonHolder.instance.get()?.fromJson(jsonObject.toString(), CommentPayLoad::class.java)
+                        //Verify if the user is in the broadcast to avoid notifications
+                        BroadcastActivity.isInBroadcast?.let {
+                            if (it) {
+                                return
+                            }
+                        }
+                        //Verify if I'm the author of the Comment
+                        mUserId?.let {
+                            if (data?.user_commenting_id == it.toString()) {
+                                return
+                            }
+                        }
                         //Intent
                         displayIntent = Intent(this, ChannelPostShowActivity::class.java)
                         //Refresh Message History on My Channels
@@ -212,10 +240,23 @@ class EightFirebaseMessagingService : FirebaseMessagingService() {
                             }
                         }
                     }
+
                 /*Someone liked a User's Post*/
                     Constants.Notifications.LIKE -> {//Channel
                         //Parse Notification Data Payload
                         val data = GsonHolder.instance.get()?.fromJson(jsonObject.toString(), LikePayload::class.java)
+                        //Verify if the user is in the broadcast to avoid notifications
+                        BroadcastActivity.isInBroadcast?.let {
+                            if (it) {
+                                return
+                            }
+                        }
+                        //Verify if I'm the author of the like
+                        mUserId?.let {
+                            if (data?.user_liking_id == it.toString()) {
+                                return
+                            }
+                        }
                         //Intent
                         displayIntent = Intent(this, ChannelPostShowActivity::class.java)
                         //Refresh Message History on My Channels
@@ -258,27 +299,85 @@ class EightFirebaseMessagingService : FirebaseMessagingService() {
                             }
                         }
                     }
+
                 /*New Post on a Followed Channel*/
+                    //FIXME: Not working on Firebase Backend
                     Constants.Notifications.POST -> {//Channel
                         //Parse Notification Data Payload
                         val data = GsonHolder.instance.get()?.fromJson(jsonObject.toString(), PostPayload::class.java)
-                        //TODO: Navigates to the Channel
+                        //Verify if I'm the author of the post
+                        mUserId?.let {
+                            if (data?.userId == it.toString()) {
+                                return
+                            }
+                        }
+                        //Get Channel Info from Room ID
+                        data?.roomId?.let { roomId ->
+                            val channel = ChannelsManager.instance.querySingleChannelWithRoomId(roomId.toInt())
+                            channel?.let {
+                                when (data.message_type) {
+                                /*Broadcast Post*/
+                                    Constants.MessageTypes.BROADCAST -> {
+                                        //Build Intent to access channel where the new broadcast is happening
+                                        displayIntent = Intent(this, MyChannelActivity::class.java)
+                                        displayIntent?.putExtra(Constants.IntentKeys.CHANNEL_ID, channel.id)
+                                        displayIntent?.putExtra(Constants.IntentKeys.CHANNEL_NAME, channel.name)
+                                        displayIntent?.putExtra(Constants.IntentKeys.ROOM_ID, roomId)
+                                        displayIntent?.putExtra(Constants.IntentKeys.OWNER_ID, data.userId)
+                                        displayNotification(mBuilder, mManager, displayIntent!!)
+                                    }
+                                /*Media or Message Post*/
+                                    else -> {
+                                        //Build Intent to access the new post
+                                        displayIntent = Intent(this, ChannelPostShowActivity::class.java)
+                                        ChannelsManager.instance.getChannelPosts(true, roomId.toInt(), null, {
+                                            //Check for commented post
+                                            it.first?.let {
+                                                if (it.count() > 0) {
+                                                    it.forEach {
+                                                        if (it.id.toString() == data.messageId) {
+                                                            //This is the post & belongs to that channel, create intent
+                                                            displayIntent?.putExtra(Constants.IntentKeys.MESSAGE_ID, it.id)
+                                                            displayIntent?.putExtra(Constants.IntentKeys.CHANNEL_NAME, channel.name)
+                                                            it.mediaArray?.let {
+                                                                if (it.count() > 0) {
+                                                                    displayIntent?.putExtra(Constants.IntentKeys.INCLUDES_MEDIA, true)
+                                                                }
+                                                            }
+                                                            displayIntent?.putExtra(Constants.IntentKeys.INCLUDES_MEDIA, false)
+                                                            displayNotification(mBuilder, mManager, displayIntent!!)
+                                                            return@getChannelPosts
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        })
+
+                                    }
+                                }
+                            }
+                        }
                     }
+
+                //TODO
                     Constants.Notifications.VOICE_CALL -> {
                         //Parse Notification Data Payload
                         val data = GsonHolder.instance.get()?.fromJson(jsonObject.toString(), IncommingCallPayload::class.java)
                         //TODO: Navigate to App's Phone Extension screen
                     }
+                //TODO
                     Constants.Notifications.MISSED_VOICE_CALL -> {
                         //Parse Notification Data Payload
                         val data = GsonHolder.instance.get()?.fromJson(jsonObject.toString(), MissedCallPayload::class.java)
                         //TODO: Navigate to Contact's page
                     }
+                //TODO
                     Constants.Notifications.VIDEO_CALL -> {
                         //Parse Notification Data Payload
                         val data = GsonHolder.instance.get()?.fromJson(jsonObject.toString(), IncommingCallPayload::class.java)
                         //TODO: Navigate to App's Video Call Extension screen
                     }
+                //TODO
                     Constants.Notifications.MISSED_VIDEO_CALL -> {
                         //Parse Notification Data Payload
                         val data = GsonHolder.instance.get()?.fromJson(jsonObject.toString(), MissedCallPayload::class.java)
@@ -319,6 +418,5 @@ class EightFirebaseMessagingService : FirebaseMessagingService() {
      * short period of time
      * */
     fun createId(): Int = Integer.parseInt(SimpleDateFormat("ddHHmmss", Locale.US).format(Date()))
-
 
 }

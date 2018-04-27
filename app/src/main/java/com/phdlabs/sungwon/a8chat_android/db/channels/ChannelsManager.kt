@@ -12,7 +12,6 @@ import com.phdlabs.sungwon.a8chat_android.model.channel.NewlyCreatedComment
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.vicpin.krealmextensions.*
-import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -84,9 +83,11 @@ class ChannelsManager {
                                             }
                                         } else if (response.isError) {
                                             callback(Pair(null, "could not download channels"))
+                                            disposable.clear()
                                         }
                                     }, { throwable ->
                                         callback(Pair(null, throwable.localizedMessage))
+                                        disposable.clear()
                                     }))
                         }
                     } else { //Local query
@@ -103,7 +104,6 @@ class ChannelsManager {
                 }
             }
         }
-        disposable.clear()
     }
 
     /**
@@ -320,7 +320,7 @@ class ChannelsManager {
                                 }, { throwable ->
                                     throwable.printStackTrace()
                                     callback(Pair(null, "You have to follow the channel to be able to comment"))
-                                })
+                                }))
                     }
                 }
             }
@@ -504,7 +504,7 @@ class ChannelsManager {
                 user?.let {
                     token?.token?.let {
                         val call = Rest.getInstance().getmCallerRx()
-                                .startBroadcast(it, BroadcastData(user.id.toString(), roomId.toString()), true)
+                                .startBroadcast(it, BroadcastData(user.id!!, roomId), true)
                         val disposable = call.subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({
@@ -535,7 +535,7 @@ class ChannelsManager {
                 user?.let {
                     token?.token?.let {
                         val call = Rest.getInstance().getmCallerRx()
-                                .finishBroadcast(it, messageId.toString(), BroadcastData(user.id.toString(), roomId.toString()))
+                                .finishBroadcast(it, messageId.toString(), BroadcastData(user.id!!, roomId))
                         val disposable = call.subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({
@@ -726,11 +726,13 @@ class ChannelsManager {
     }
 
     /**
-     * [querySingleChannel]
+     * [querySingleChannelWithChannelId]
      * @return channel that matches the provided ID
      * */
-    fun querySingleChannel(channelId: Int): Channel? =
+    fun querySingleChannelWithChannelId(channelId: Int): Channel? =
             Channel().queryFirst { equalTo("id", channelId) }
+    fun querySingleChannelWithRoomId(roomId: Int): Channel? =
+            Channel().queryFirst { equalTo("room_id", roomId) }
 
 
     /**

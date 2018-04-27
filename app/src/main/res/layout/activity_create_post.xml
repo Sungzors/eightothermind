@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/transparent"
     android:orientation="vertical"
     tools:ignore="MissingPrefix">
@@ -35,7 +35,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:padding="10dp"
-            android:visibility="gone"/>
+            android:visibility="gone" />
     </RelativeLayout>
 
     <!--Post message-->
@@ -48,13 +48,16 @@
         <!--Message-->
         <EditText
             android:id="@+id/cpa_message_post"
+            fontPath="fonts/NunitoSans-Regular.ttf"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/type_something"
             android:minLines="2"
-            android:padding="15dp"
-            fontPath="fonts/NunitoSans-Regular.ttf"/>
+            android:padding="15dp" />
     </RelativeLayout>
+
+    <!--Progress View-->
+    <include layout="@layout/progress_view" />
 
     <!--Add Media-->
     <RelativeLayout
@@ -78,19 +81,19 @@
 
         <Button
             android:id="@+id/acp_addmedia_button"
+            style="?android:attr/borderlessButtonStyle"
+            fontPath="fonts/NunitoSans-Regular.ttf"
             android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:layout_toEndOf="@+id/acp_addmedia_indicator"
-            android:layout_height="wrap_content"
             android:background="@color/transparent"
             android:gravity="center|start"
             android:text="@string/add_photos_or_videos"
             android:textColor="@color/eight_status_bar"
             android:textSize="12sp"
             android:textStyle="normal"
-            android:visibility="visible"
-            style="?android:attr/borderlessButtonStyle"
-            fontPath="fonts/NunitoSans-Regular.ttf"/>
+            android:visibility="visible" />
     </RelativeLayout>
 
 </RelativeLayout>

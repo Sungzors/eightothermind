@@ -192,6 +192,7 @@ interface ChannelContract {
 
         interface View : BaseView<Controller> {
             var activity: CreatePostActivity
+            val getRoomId: Int
             fun refreshMediaAdapter()
             fun validatePost(): Boolean
             fun getPostData(): Pair<String, MutableList<Uri>>

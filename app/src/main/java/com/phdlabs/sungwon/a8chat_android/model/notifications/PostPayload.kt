@@ -5,10 +5,10 @@ package com.phdlabs.sungwon.a8chat_android.model.notifications
  * New Post in Followed Channel
  */
 class PostPayload {
-    var messageId: String? = null
-    var userId: String? = null
-    var roomId: String? = null
-    var message_type: String? = null
+    var messageId: String? = null //Message -> Post ID
+    var userId: String? = null //Channel owner
+    var roomId: String? = null // Room id for the channel
+    var message_type: String? = null // MessageType
     var notification_type: String? = null
     var badges: String? = null
 }

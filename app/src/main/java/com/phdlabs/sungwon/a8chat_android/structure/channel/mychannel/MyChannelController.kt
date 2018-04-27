@@ -498,6 +498,7 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
 
     /*POST*/
     /*Create Post*/
+    //TODO: Remove post from channel controller
     override fun createPost(message: String?, filePaths: ArrayList<String>?) {
         UserManager.instance.getCurrentUser { isSuccess, user, token ->
             if (isSuccess) {
@@ -528,6 +529,7 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
                                         .subscribe({ response ->
                                             if (response.isSuccess) {
                                                 println("Message: " + response.messageInfo?.message)
+                                                retrieveChatHistory(true)
                                             } else if (response.isError) {
                                                 mView.showError("Could not post")
                                             }
@@ -546,6 +548,7 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
                                         .subscribe({ response ->
                                             if (response.isSuccess) {
                                                 println("Message: " + response.messageInfo?.message)
+                                                retrieveChatHistory(true)
                                             } else if (response.isError) {
                                                 mView.showError("Could not post")
                                             }
