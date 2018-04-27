@@ -24,7 +24,7 @@ class UserManager {
     /*Properties*/
     var user: User? = null
 
-    private val disposable = CompositeDisposable()
+    val disposable = CompositeDisposable()
 
     /**[getCurrentUser]
      * Method for retrieving current user from cached data or pull if non-existent

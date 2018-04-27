@@ -28,7 +28,7 @@ class EventsManager {
         val instance: EventsManager by lazy { Holder.instance }
     }
 
-    private val disposable = CompositeDisposable()
+    val disposable = CompositeDisposable()
 
     fun getEvents(refresh: Boolean, lat: Double, lng: Double, callback: (Pair<List<Room>?, String?>) -> Unit) {
         UserManager.instance.getCurrentUser { success, user, token ->

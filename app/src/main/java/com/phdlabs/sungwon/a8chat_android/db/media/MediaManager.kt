@@ -25,7 +25,7 @@ class MediaManager {
         val instance: MediaManager by lazy { Holder.instance }
     }
 
-    private val disposable = CompositeDisposable()
+    val disposable = CompositeDisposable()
 
     /**
      * [getPrivateMedia]

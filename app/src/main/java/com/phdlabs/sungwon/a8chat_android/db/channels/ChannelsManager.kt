@@ -33,7 +33,7 @@ class ChannelsManager {
         val instance: ChannelsManager by lazy { Holder.instance }
     }
 
-    private val disposable = CompositeDisposable()
+    val disposable = CompositeDisposable()
 
     /**
      * [getUserChannels]

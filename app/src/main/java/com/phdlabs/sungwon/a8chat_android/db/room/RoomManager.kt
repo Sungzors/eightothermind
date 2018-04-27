@@ -32,7 +32,7 @@ class RoomManager {
         val instance by lazy { Holder.instance }
     }
 
-    private val disposable = CompositeDisposable()
+    val disposable = CompositeDisposable()
 
 
     /**

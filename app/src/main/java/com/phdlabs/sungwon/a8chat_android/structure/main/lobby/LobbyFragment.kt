@@ -87,6 +87,9 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
     override fun onPause() {
         super.onPause()
         controller.pause()
+//        ChannelsManager.instance.disposable.clear()
+//        EventsManager.instance.disposable.clear()
+//        RoomManager.instance.disposable.clear()
     }
 
     override fun onStop() {

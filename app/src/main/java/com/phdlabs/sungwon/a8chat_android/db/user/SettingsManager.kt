@@ -22,7 +22,7 @@ class SettingsManager {
         val instance: SettingsManager by lazy { Holder.INSTANCE }
     }
 
-    private val disposable = CompositeDisposable()
+    val disposable = CompositeDisposable()
 
     /**
      *  [readUserSettings]

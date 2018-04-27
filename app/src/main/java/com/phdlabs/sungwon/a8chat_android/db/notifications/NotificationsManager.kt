@@ -31,7 +31,7 @@ class NotificationsManager {
      * */
     //TODO: RX call is ready
 
-    private val disposable = CompositeDisposable()
+    val disposable = CompositeDisposable()
 
     /**
      * [clearNotificationBadges]
