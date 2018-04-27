@@ -2,6 +2,7 @@ package com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.normal
 
 import android.os.Bundle
 import android.view.*
+import android.widget.RelativeLayout
 import com.otaliastudios.cameraview.*
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.structure.camera.CameraActivity
@@ -11,17 +12,17 @@ import com.phdlabs.sungwon.a8chat_android.structure.camera.result.ResultHolder
 
 /**
  * Created by JPAM on 12/28/17.
- * Camera Preview in Camera-Normal-Fragment with Camera API 2
+ * [NormalFragment] takes still picture with continuous focus mode
  */
 class NormalFragment : CameraBaseFragment() {
 
-
     /*Layout*/
-    override fun cameraLayoutId(): Int = R.layout.fragment_cameranormal
+    override fun cameraLayoutId(): Int = R.layout.fragment_cameraview
 
     /*Properties*/
     private var normalCamera: CameraView? = null
     private var wasPictureTaken: Boolean = false
+    private var mRelativeLayout: RelativeLayout? = null
 
     /**
      * Companion
@@ -38,8 +39,6 @@ class NormalFragment : CameraBaseFragment() {
     }
 
     /*LifeCycle*/
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         userVisibleHint = false
@@ -47,37 +46,67 @@ class NormalFragment : CameraBaseFragment() {
 
     override fun inOnCreateView(root: View?, container: ViewGroup?, savedInstanceState: Bundle?) {
         //If something needs to be added to the custom layout
-        normalCamera = root!!.findViewById(R.id.fcn_cameraView)
-        normalCamera?.mapGesture(Gesture.PINCH, GestureAction.ZOOM)
-        normalCamera?.mapGesture(Gesture.TAP, GestureAction.FOCUS_WITH_MARKER)
+        mRelativeLayout = root!!.findViewById(R.id.cameraViewRelativeLayout)
+        setCameraLayout()
+    }
+
+    private fun setCameraLayout() {
+        normalCamera = activity?.mCameraView
+        normalCamera?.layoutParams = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
+                RelativeLayout.LayoutParams.MATCH_PARENT)
+        setupCamera(normalCamera)
+        mRelativeLayout?.addView(normalCamera)
     }
 
     override fun setMenuVisibility(menuVisible: Boolean) {
         super.setMenuVisibility(menuVisible)
         if (menuVisible && isResumed) {
             userVisibleHint = true
+            if (mRelativeLayout?.childCount == 0) {
+                setCameraLayout()
+            }
             normalCamera?.start()
         } else {
             userVisibleHint = false
             normalCamera?.stop()
-            normalCamera?.destroy()
+            mRelativeLayout?.removeAllViews()
         }
     }
 
     override fun onResume() {
         super.onResume()
+        if (mRelativeLayout?.childCount == 0) {
+            setupCamera(normalCamera)
+            mRelativeLayout?.addView(normalCamera)
+        }
         normalCamera?.start()
     }
 
     override fun onPause() {
         super.onPause()
+        //Flag
         wasPictureTaken = false
+        //Camera View
         normalCamera?.stop()
+        mRelativeLayout?.removeAllViews()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        normalCamera?.destroy()
+    fun setupCamera(cameraView: CameraView?) {
+        //Camera View setup
+        cameraView?.keepScreenOn = true
+        cameraView?.audio = Audio.OFF
+        cameraView?.cropOutput = false
+        cameraView?.facing = Facing.BACK
+        cameraView?.flash = Flash.OFF
+        cameraView?.grid = Grid.OFF
+        cameraView?.hdr = Hdr.OFF
+        cameraView?.jpegQuality = 100
+        cameraView?.playSounds = true
+        cameraView?.sessionType = SessionType.PICTURE
+        cameraView?.whiteBalance = WhiteBalance.AUTO
+        //Gesture control
+        normalCamera?.mapGesture(Gesture.PINCH, GestureAction.ZOOM)
+        normalCamera?.mapGesture(Gesture.TAP, GestureAction.FOCUS_WITH_MARKER)
     }
 
     /*Camera Event Handling*/
@@ -97,12 +126,13 @@ class NormalFragment : CameraBaseFragment() {
 
     /*Image caching*/
     private fun imageCaptured(image: ByteArray) {
+        //TODO: Rotate selfie before setting result image
         //Result Callback
         val callbackTime = System.currentTimeMillis()
         ResultHolder.dispose()
         ResultHolder.setResultImage(image)
         ResultHolder.setResultTimeToCallback(callbackTime)
-
+        //Transition to editing activity
         val act = activity as CameraActivity
         act.getImageFilePath(null)
     }

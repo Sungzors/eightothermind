@@ -7,6 +7,7 @@ import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.view.View
 import android.widget.Toast
+import com.otaliastudios.cameraview.CameraView
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.structure.camera.adapters.CameraPagerAdapter
 import com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControls.CameraCloseView
@@ -31,20 +32,16 @@ class CameraActivity : CoreActivity(), CameraContract.Camera.View, TabLayout.OnT
     override fun layoutId() = R.layout.activity_camera
 
     /*User Interface container*/
-    override fun contentContainerId() = 0 //TODO: set container for the camera swipe
+    override fun contentContainerId() = 0
 
     /*Properties*/
-    var currentFragment: Fragment? = null
-
     override var activity: CameraActivity = this
-
-    enum class CAMERA_FEATURE {
-        CAMERA_ROLL, NORMAL, HANDS_FREE
-    }
+    var mCameraView: CameraView? = null
 
     /*LifeCycle*/
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        mCameraView = CameraView(this)
         CameraAController(this)
         setupUI()
     }
@@ -57,6 +54,11 @@ class CameraActivity : CoreActivity(), CameraContract.Camera.View, TabLayout.OnT
     override fun onResume() {
         super.onResume()
         controller.resume()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mCameraView?.destroy()
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -97,24 +99,7 @@ class CameraActivity : CoreActivity(), CameraContract.Camera.View, TabLayout.OnT
         tab?.select()
         /*Tab indicator & listeners*/
         cam_tabLayout_indicator.tabGravity = TabLayout.GRAVITY_FILL
-        cam_view_pager.addOnPageChangeListener(object : TabLayout.TabLayoutOnPageChangeListener(cam_tabLayout_indicator) {
-            override fun onPageSelected(position: Int) {
-                //Dev
-                println("Selected position is: $position")
-
-                //TODO: See if the camera preview fragment control is needed with Camera Kit
-
-//                val adapter = cam_view_pager.adapter as CameraPagerAdapter
-//                if (CAMERA_FEATURE.NORMAL.ordinal == position) {
-//                    adapter.swapCameraPreview(false, position)
-//                }else if (CAMERA_FEATURE.HANDS_FREE.ordinal == position) {
-//                    adapter.swapCameraPreview(true, position)
-//                }
-
-
-            }
-        })
-
+        cam_view_pager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(cam_tabLayout_indicator))
         cam_tabLayout_indicator.addOnTabSelectedListener(this)
         /*Actions*/
         iv_camera_action.setOnClickListener(this)
