@@ -236,7 +236,7 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
                                 val intent = Intent(context, GroupChatActivity::class.java)
                                 intent.putExtra(Constants.IntentKeys.CHAT_NAME, room.groupChatInfo?.name)
                                 intent.putExtra(Constants.IntentKeys.ROOM_ID, room.id)
-                                intent.putExtra(Constants.IntentKeys.CHAT_PIC, room.groupChatInfo?.avatar as String)
+                                intent.putExtra(Constants.IntentKeys.CHAT_PIC, room.groupChatInfo?.avatar?: "")
                                 startActivity(intent)
                             } else if (room.event!!){
                                 val data = getItem(adapterPosition)

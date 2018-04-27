@@ -120,7 +120,11 @@ public abstract class CoreActivity extends AppCompatActivity {
     public void showRightImageToolbar(String url){
         ImageView view = findById(R.id.toolbar_right_picture);
         view.setVisibility(ImageView.VISIBLE);
-        Picasso.with(this).load(url).transform(new CircleTransform()).placeholder(R.drawable.addphoto).into(view);
+        if (!url.isEmpty()) {
+            Picasso.with(this).load(url).transform(new CircleTransform()).placeholder(R.drawable.ic_launcher_round).into(view);
+        }else {
+            Picasso.with(this).load(R.drawable.ic_launcher_round).transform(new CircleTransform()).into(view);
+        }
     }
 
     public Toolbar getToolbar() {
