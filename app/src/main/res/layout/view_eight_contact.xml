@@ -58,7 +58,7 @@
                         android:layout_marginTop="15dp"
                         android:layout_toRightOf="@+id/fc_friend_profile_picture"
                         android:padding="5dp"
-                        android:textColor="@color/grey"
+                        android:textColor="@color/black"
                         android:textSize="15sp" 
                         xmlns:tools="http://schemas.android.com/tools"
                         tools:ignore="MissingPrefix"
