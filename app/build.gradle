@@ -150,6 +150,9 @@ dependencies {
     compile 'com.theartofdev.edmodo:android-image-cropper:2.6.0'
     compile project(':photoeditorsdk')
 
+    //Video Playback
+    compile 'net.protyposis.android.mediaplayer:mediaplayer:4.4.0'
+
     //Video Broadcasting
     compile 'io.agora.rtc:full-sdk:2.1.2'
     compile 'org.slf4j:slf4j-api:1.7.21'

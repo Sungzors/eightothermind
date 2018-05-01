@@ -166,11 +166,26 @@ class CameraActivity : CoreActivity(), CameraContract.Camera.View, TabLayout.OnT
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
         if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == Constants.CameraIntents.EDITING_REQUEST_CODE) {
-                if (cam_view_pager.adapter != null) {
-                    val adapter = cam_view_pager.adapter as CameraPagerAdapter
-                    adapter.refreshCameraRoll()
+            when (requestCode) {
+
+            /**Photo*/
+                Constants.CameraIntents.EDITING_REQUEST_CODE -> {
+                    if (cam_view_pager.adapter != null) {
+                        val adapter = cam_view_pager.adapter as CameraPagerAdapter
+                        adapter.refreshCameraRoll()
+                    }
                 }
+
+            /**Video*/
+                Constants.RequestCodes.VIDEO_PREVIEW_REQ_CODE -> {
+                    //Todo -> Needed actions after video preview
+                }
+
+                else -> {
+                    super.onActivityResult(requestCode, resultCode, data)
+
+                }
+
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data)

@@ -1,5 +1,6 @@
 package com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.handsFree
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import android.widget.RelativeLayout
@@ -8,6 +9,8 @@ import com.otaliastudios.cameraview.*
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.CameraBaseFragment
 import com.phdlabs.sungwon.a8chat_android.structure.camera.result.ResultHolder
+import com.phdlabs.sungwon.a8chat_android.structure.camera.videoPreview.VideoPreviewActivity
+import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.camera.ImageUtils
 import java.io.File
 
@@ -142,10 +145,11 @@ class HandsFreeFragment : CameraBaseFragment() {
         ResultHolder.dispose()
         ResultHolder.setResultVideo(videoFile)
         ResultHolder.setResultTimeToCallback(callbackTime)
-        //TODO: Start video preview activity
-        println("Video file path: ${videoFile.absolutePath}")
-        //TODO: Build Video Preview Activity
-        Toast.makeText(context, "Video Preview in progress", Toast.LENGTH_SHORT).show()
+        ResultHolder.setResultVideo(videoFile)
+        activity?.let {
+            val intent = Intent(it, VideoPreviewActivity::class.java)
+            it.startActivityForResult(intent, Constants.RequestCodes.VIDEO_PREVIEW_REQ_CODE)
+        }
     }
 
     /*Camera Facing control*/
