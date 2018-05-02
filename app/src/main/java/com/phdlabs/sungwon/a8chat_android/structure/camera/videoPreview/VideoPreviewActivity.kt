@@ -16,6 +16,8 @@ import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.utility.camera.LoadVideoAsyncLoader
 import kotlinx.android.synthetic.main.activity_video_preview.*
 import kotlinx.android.synthetic.main.view_camera_control_close.*
+import kotlinx.android.synthetic.main.view_camera_control_save.*
+import kotlinx.android.synthetic.main.view_camera_control_send.*
 import net.protyposis.android.mediaplayer.MediaPlayer
 import net.protyposis.android.mediaplayer.MediaSource
 
@@ -46,11 +48,11 @@ class VideoPreviewActivity : CoreActivity(), LoaderManager.LoaderCallbacks<Media
         mMediaPlayerControl = avp_video_view //Dummy player control
         //Controller
         mMediaController = MediaController(this)
-        mMediaController.setAnchorView(avp_container)
+        mMediaController.setAnchorView(avp_top_container)
         mMediaController.setMediaPlayer(mMediaPlayerControl)
         mMediaController.isEnabled = false
-
-
+        //UI
+        setupUI()
         //Get Result Info for video playback
         ResultHolder.getResultVideo()?.let {
             mVideoUri = Uri.fromFile(it)
@@ -103,11 +105,40 @@ class VideoPreviewActivity : CoreActivity(), LoaderManager.LoaderCallbacks<Media
         super.onStop()
     }
 
+    /**
+     * [setupUI]
+     * Handles reused views for [EditingActivity]
+     * and click controls
+     * */
+    private fun setupUI() {
+        //Hide Unwanted controls
+        clear_all_tv.visibility = View.GONE
+        clear_all_text_tv.visibility = View.GONE
+        iv_undo.visibility = View.GONE
+        undo_text_tv.visibility = View.GONE
+        //Click listeners
+        cc_close_back.setOnClickListener(this)
+        iv_camera_save.setOnClickListener(this)
+        iv_camera_send.setOnClickListener(this)
+
+    }
+
     override fun onClick(p0: View?) {
         when (p0) {
+        /*Close Video Preview*/
             cc_close_back -> {
                 setResult(Activity.RESULT_CANCELED)
                 finish()
+            }
+        /*Save Video Locally*/
+            iv_camera_save -> {
+                //TODO: Save video to Gallery
+                Toast.makeText(this, "Saved to Gallery", Toast.LENGTH_SHORT).show()
+            }
+        /*Share Video*/
+            iv_camera_send -> {
+                //TODO: Send Video to Share Screen -> Should generate a thumbnail
+                Toast.makeText(this, "Should transition to share screen", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -221,8 +252,12 @@ class VideoPreviewActivity : CoreActivity(), LoaderManager.LoaderCallbacks<Media
         }
     }
 
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
-        if (event?.action == MotionEvent.ACTION_UP) {
+    /**
+     * [onTouchEvent]
+     * Handles showing and hiding the video preview controls
+     * */
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        if (event.action == MotionEvent.ACTION_UP) {
             if (mMediaController.isShowing) {
                 mMediaController.hide()
             } else {

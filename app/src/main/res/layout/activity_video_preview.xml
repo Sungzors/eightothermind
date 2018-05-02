@@ -1,26 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/avp_container"
+    android:id="@+id/avp_top_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".structure.camera.videoPreview.VideoPreviewActivity">
 
+    <!--Video Preview-->
     <net.protyposis.android.mediaplayer.VideoView
         android:id="@+id/avp_video_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/avp_close_control_container"
+        android:layout_above="@+id/avp_bottom_container"/>
 
     <!--Top controls-->
     <FrameLayout
+        android:id="@+id/avp_close_control_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:gravity="top|center"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:background="@color/black">
 
-        <!--Editing Control-->
+        <!--Close Activity Control-->
         <com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControls.CameraCloseView
             android:id="@+id/cam_close_control"
             android:layout_width="wrap_content"
@@ -28,5 +33,34 @@
             android:layout_gravity="start" />
 
     </FrameLayout>
+
+    <!--Bottom Controls-->
+    <RelativeLayout
+        android:id="@+id/avp_bottom_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/black">
+
+
+        <!--Save control-->
+        <com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControls.CameraSaveView
+            android:id="@+id/avp_save_control"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:visibility="visible" />
+
+        <!--Send control-->
+        <com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControls.CameraSendView
+            android:id="@+id/avp_send_control"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:layout_gravity="end"
+            android:visibility="visible" />
+
+    </RelativeLayout>
 
 </RelativeLayout>
