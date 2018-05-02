@@ -8,8 +8,25 @@
 
     <net.protyposis.android.mediaplayer.VideoView
         android:id="@+id/avp_video_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_centerHorizontal="true" />
+
+    <!--Top controls-->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:gravity="top|center"
+        android:orientation="horizontal">
+
+        <!--Editing Control-->
+        <com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControls.CameraCloseView
+            android:id="@+id/cam_close_control"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start" />
+
+    </FrameLayout>
 
 </RelativeLayout>

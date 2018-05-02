@@ -1,5 +1,6 @@
 package com.phdlabs.sungwon.a8chat_android.structure.camera.videoPreview
 
+import android.app.Activity
 import android.app.LoaderManager
 import android.content.Loader
 import android.net.Uri
@@ -14,6 +15,7 @@ import com.phdlabs.sungwon.a8chat_android.structure.camera.result.ResultHolder
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.utility.camera.LoadVideoAsyncLoader
 import kotlinx.android.synthetic.main.activity_video_preview.*
+import kotlinx.android.synthetic.main.view_camera_control_close.*
 import net.protyposis.android.mediaplayer.MediaPlayer
 import net.protyposis.android.mediaplayer.MediaSource
 
@@ -21,7 +23,7 @@ import net.protyposis.android.mediaplayer.MediaSource
  * Created by JPAM on 4/30/18.
  * Video Preview based on protyposis/MediaPlayer-Extended
  */
-class VideoPreviewActivity : CoreActivity(), LoaderManager.LoaderCallbacks<MediaSource> {
+class VideoPreviewActivity : CoreActivity(), LoaderManager.LoaderCallbacks<MediaSource>, View.OnClickListener {
 
     /*Layout*/
     override fun layoutId(): Int = R.layout.activity_video_preview
@@ -101,17 +103,30 @@ class VideoPreviewActivity : CoreActivity(), LoaderManager.LoaderCallbacks<Media
         super.onStop()
     }
 
+    override fun onClick(p0: View?) {
+        when (p0) {
+            cc_close_back -> {
+                setResult(Activity.RESULT_CANCELED)
+                finish()
+            }
+        }
+    }
+
+    override fun onBackPressed() {
+        setResult(Activity.RESULT_CANCELED)
+        finish()
+    }
+
     /**
      * [initPlayer]
      * Start Video Playback on Video View
      * */
     private fun initPlayer() {
-        //Video title if action bar available
-        actionBar?.subtitle = mVideoUri.toString()
         //Video Listener
         avp_video_view.setOnPreparedListener { mp ->
             //UI
             mMediaController.isEnabled = true
+            mMediaController.show()
             //Cue Controls
             mp?.addCue(1000, "test cue @ 1000")
             mp?.addCue(2000, "test cue @ 2000")
@@ -200,7 +215,7 @@ class VideoPreviewActivity : CoreActivity(), LoaderManager.LoaderCallbacks<Media
             avp_video_view.setVideoSource(mVideoSource)
             avp_video_view.seekTo(mVideoPosition)
             avp_video_view.playbackSpeed = mVideoPlaybackSpeed
-            if (!mVideoPlaying) {
+            if (mVideoPlaying) {
                 avp_video_view.start()
             }
         }

@@ -4,14 +4,13 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.TabLayout
-import android.support.v4.app.Fragment
 import android.view.View
-import android.widget.Toast
 import com.otaliastudios.cameraview.CameraView
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.structure.camera.adapters.CameraPagerAdapter
 import com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControls.CameraCloseView
 import com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControls.CameraControlView
+import com.phdlabs.sungwon.a8chat_android.structure.camera.videoPreview.VideoPreviewActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import kotlinx.android.synthetic.main.activity_camera.*
@@ -139,7 +138,6 @@ class CameraActivity : CoreActivity(), CameraContract.Camera.View, TabLayout.OnT
             iv_camera_flip -> {
                 /*Flip camera*/
                 controller.cameraFlip(cam_view_pager)
-
             }
             cc_close_back -> {
                 /*Finish camera activity*/
@@ -148,10 +146,17 @@ class CameraActivity : CoreActivity(), CameraContract.Camera.View, TabLayout.OnT
         }
     }
 
-    /*Start preview activity*/
+    /*Start photo preview activity*/
     fun getImageFilePath(filePath: String?) {
         controller.startPreviewActivity(filePath)
     }
+
+    fun startVideoPreview() {
+        val intent = Intent(this, VideoPreviewActivity::class.java)
+        startActivityForResult(intent, Constants.RequestCodes.VIDEO_PREVIEW_REQ_CODE)
+        //TODO: Reset controllers
+    }
+
 
     /*Flash UI*/
     override fun flashFeedback(isFLashOn: Boolean) {
@@ -178,7 +183,8 @@ class CameraActivity : CoreActivity(), CameraContract.Camera.View, TabLayout.OnT
 
             /**Video*/
                 Constants.RequestCodes.VIDEO_PREVIEW_REQ_CODE -> {
-                    //Todo -> Needed actions after video preview
+                    val adapter = cam_view_pager.adapter as CameraPagerAdapter
+                    adapter.refreshCameraRoll()
                 }
 
                 else -> {
@@ -187,8 +193,9 @@ class CameraActivity : CoreActivity(), CameraContract.Camera.View, TabLayout.OnT
                 }
 
             }
-        } else {
+        } else if (resultCode == Activity.RESULT_CANCELED) {
             super.onActivityResult(requestCode, resultCode, data)
+
         }
     }
 
