@@ -83,6 +83,11 @@
             android:theme="@style/Camera" />
 
         <activity
+            android:name=".structure.camera.videoPreview.VideoPreviewActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Camera" />
+
+        <activity
             android:name=".structure.camera.share.ShareCameraMediaActivity"
             android:screenOrientation="portrait" />
         <activity
