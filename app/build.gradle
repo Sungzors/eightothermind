@@ -17,7 +17,6 @@ repositories {
 
 android {
     compileSdkVersion Integer.parseInt(project.ANDROID_BUILD_SDK_VERSION)
-    buildToolsVersion project.ANDROID_BUILD_TOOLS_VERSION
 
     defaultConfig {
         applicationId "com.phdlabs.sungwon.a8chat_android"
@@ -28,9 +27,6 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         renderscriptSupportModeEnabled true
         multiDexEnabled true
-        jackOptions {
-            enabled false
-        }
 
         ndk {
             abiFilters "armeabi-v7a", "x86" // DO NOT MODIFY THIS LINE, IT'S UPDATED BY BUILD MACHINE AUTOMATICALLY.
@@ -51,6 +47,7 @@ android {
     dataBinding {
         enabled = true
     }
+    buildToolsVersion '27.0.3'
 }
 
 dependencies {
@@ -109,6 +106,7 @@ dependencies {
     //OkHttp
     compile 'com.squareup.okhttp3:okhttp:3.8.0'
     compile 'com.squareup.okhttp3:logging-interceptor:3.7.0'
+    compile 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.1.0'
 
     //EventBus
     compile 'org.greenrobot:eventbus:3.0.0'
@@ -124,9 +122,6 @@ dependencies {
 
     //RX Binding
     compile 'com.jakewharton.rxbinding2:rxbinding:2.0.0'
-
-    //Data Binding
-    kapt 'com.android.databinding:compiler:3.0.1'
 
     //Realm Annotations
     kapt "io.realm:realm-annotations:4.3.1"
