@@ -10,7 +10,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.hardware.camera2.CameraCharacteristics
-import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
@@ -23,7 +22,6 @@ import android.util.DisplayMetrics
 import android.util.Log
 import com.phdlabs.sungwon.a8chat_android.BuildConfig
 import com.phdlabs.sungwon.a8chat_android.R
-import kotlinx.android.synthetic.main.activity_camera_preview.*
 import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -415,7 +413,7 @@ class CameraControl private constructor() {
             try {
                 `is` = context.contentResolver.openInputStream(uri)
                 val bmp = BitmapFactory.decodeStream(`is`)
-                return ImageUtils.instance.savePicture(context, bmp, uri.path.hashCode().toString())
+                return ImageUtils.instance.cachePicture(context, bmp, uri.path.hashCode().toString())
             } catch (e: FileNotFoundException) {
                 e.printStackTrace()
             } finally {
@@ -640,7 +638,7 @@ class CameraControl private constructor() {
 
     fun mediaFileNaming(): String {
         val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-        val imageFileName = "JPEG_" + timeStamp + "_"
+        val imageFileName = timeStamp + "_"
         return imageFileName
     }
 

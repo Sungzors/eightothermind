@@ -13,6 +13,8 @@ import android.widget.Toast
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.structure.camera.result.ResultHolder
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
+import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
+import com.phdlabs.sungwon.a8chat_android.utility.camera.ImageUtils
 import com.phdlabs.sungwon.a8chat_android.utility.camera.LoadVideoAsyncLoader
 import kotlinx.android.synthetic.main.activity_video_preview.*
 import kotlinx.android.synthetic.main.view_camera_control_close.*
@@ -132,7 +134,12 @@ class VideoPreviewActivity : CoreActivity(), LoaderManager.LoaderCallbacks<Media
             }
         /*Save Video Locally*/
             iv_camera_save -> {
-                //TODO: Save video to Gallery
+                CameraControl.instance.addToGallery(
+                        context,
+                        ImageUtils.instance.saveVideoWithSuffix(
+                                "8",
+                                CameraControl.instance.mediaFileNaming())
+                )
                 Toast.makeText(this, "Saved to Gallery", Toast.LENGTH_SHORT).show()
             }
         /*Share Video*/

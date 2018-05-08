@@ -3,9 +3,17 @@ package com.phdlabs.sungwon.a8chat_android.utility.camera
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.media.MediaScannerConnection
+import android.net.Uri
+import android.os.Environment
+import android.provider.MediaStore
+import android.util.Log
+import android.widget.Toast
 import java.io.File
+import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
+import kotlin.properties.Delegates
 
 /**
  * Created by JPAM on 11/8/17.
@@ -45,15 +53,12 @@ class ImageUtils private constructor() {
         val instance: ImageUtils by lazy { Holder.INSTANCE }
     }
 
-    fun getTemporalFile(context: Context, payload: String): File {
+    fun getTemporalFile(context: Context, payload: String): File =
+            File(context.externalCacheDir, BASE_IMAGE_NAME + payload)
 
 
-
-        return File(context.externalCacheDir, BASE_IMAGE_NAME + payload)
-    }
-
-    fun savePicture(context: Context, bitmap: Bitmap, imageSuffix: String): String {
-        val savedImage = getTemporalFile(context, imageSuffix + ".jpeg")
+    fun cachePicture(context: Context, bitmap: Bitmap, imageSuffix: String): String {
+        val savedImage = getTemporalFile(context, "$imageSuffix.jpeg")
         var fos: FileOutputStream? = null
         if (savedImage.exists()) {
             savedImage.delete()
@@ -69,6 +74,7 @@ class ImageUtils private constructor() {
             }
             if (fos != null) {
                 try {
+                    fos.flush()
                     fos.close()
                 } catch (e: IOException) {
                     e.printStackTrace()
@@ -78,6 +84,41 @@ class ImageUtils private constructor() {
         }
 
         return savedImage.absolutePath
+    }
+
+    fun saveVideoWithSuffix(folderName: String, videoName: String): String {
+        var selectedOutputPath = ""
+        if (isSDCARDMounted()) {
+            val mediaStorageDir = File(
+                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), folderName)
+            // Create a storage directory if it does not exist
+            if (!mediaStorageDir.exists()) {
+                if (!mediaStorageDir.mkdirs()) {
+                    Log.d("Image Utils", "Failed to create directory")
+                }
+            }
+
+            // Create a media file name
+            selectedOutputPath = mediaStorageDir.path + File.separator + videoName + ".mp4"
+            Log.d("ImageUtils", "selected video path $selectedOutputPath")
+            val file = File(selectedOutputPath)
+            try {
+                val out = FileOutputStream(file)
+                out.flush()
+                out.close()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+
+        }
+
+
+        return selectedOutputPath
+    }
+
+    private fun isSDCARDMounted(): Boolean {
+        val status = Environment.getExternalStorageState()
+        return status == Environment.MEDIA_MOUNTED
     }
 
 }

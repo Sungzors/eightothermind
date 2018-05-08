@@ -13,11 +13,9 @@ import android.graphics.drawable.ShapeDrawable
 import android.graphics.drawable.shapes.OvalShape
 import android.net.Uri
 import android.os.Bundle
-import android.os.CountDownTimer
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.DisplayMetrics
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -33,7 +31,6 @@ import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseRecyclerAdapter
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseViewHolder
-import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
 import com.phdlabs.sungwon.a8chat_android.utility.camera.ImageUtils
 import com.theartofdev.edmodo.cropper.CropImage
 import kotlinx.android.synthetic.main.activity_camera_preview.*
@@ -41,7 +38,6 @@ import kotlinx.android.synthetic.main.view_camera_control_close.*
 import kotlinx.android.synthetic.main.view_camera_control_editing.*
 import kotlinx.android.synthetic.main.view_camera_control_save.*
 import kotlinx.android.synthetic.main.view_camera_control_send.*
-import java.text.SimpleDateFormat
 import java.util.*
 
 /**
@@ -91,7 +87,7 @@ class EditingActivity : CoreActivity(),
         if (imgFilePath.isNullOrBlank()) {
             ResultHolder.getResultImage()?.let {
                 val bitmap = BitmapFactory.decodeByteArray(it, 0, it.size)
-                imgFilePath = ImageUtils.instance.savePicture(this, bitmap, System.currentTimeMillis().toString())
+                imgFilePath = ImageUtils.instance.cachePicture(this, bitmap, System.currentTimeMillis().toString())
             }
         }
         isFromCameraRoll = intent.extras.getBoolean(Constants.CameraIntents.IS_FROM_CAMERA_ROLL)
