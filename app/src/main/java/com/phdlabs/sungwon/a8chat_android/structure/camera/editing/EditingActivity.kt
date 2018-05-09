@@ -73,10 +73,9 @@ class EditingActivity : CoreActivity(),
     private lateinit var colorPickerAdapter: BaseRecyclerAdapter<Int, BaseViewHolder>
     override var isFromCameraRoll: Boolean = false
 
-    /*LifeCycle*/
-    override
 
-    fun onCreate(savedInstanceState: Bundle?) {
+    /*LifeCycle*/
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         /*Controller init*/
@@ -124,26 +123,34 @@ class EditingActivity : CoreActivity(),
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-
         //Sharing
-        if (requestCode == Constants.RequestCodes.SHARE_MEDIA && resultCode == Activity.RESULT_OK) {
-            //Close Camera Activity -> Back to Lobby
-            //TODO: Probably set result OK to finish camera App or restart camera App -> Ask Design Team.
-            finish()
-        }
-        //Editing
-        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            val result: CropImage.ActivityResult = CropImage.getActivityResult(data)
-            if (resultCode == Activity.RESULT_OK) {
-                //Complete filepath
-                imgFilePath = result.uri.toString()
-                //File path for displaying image with picasso
-                val resultUri = result.uri.toString().substring(7)
-                //Load image in UI
-                controller.loadImagePreview(resultUri)
-            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                //Error
-                showError(result.error.localizedMessage)
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+            /*Share Media*/
+                Constants.RequestCodes.SHARE_MEDIA -> {
+                    //Close Camera Activity -> Back to Lobby
+                    //TODO: Probably set result OK to finish camera App or restart camera App -> Ask Design Team.
+                    finish()
+                }
+            /*Photo Editing*/
+                CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE -> {
+                    val result: CropImage.ActivityResult = CropImage.getActivityResult(data)
+                    if (resultCode == Activity.RESULT_OK) {
+                        //Complete filepath
+                        imgFilePath = result.uri.toString()
+                        //File path for displaying image with picasso
+                        val resultUri = result.uri.toString().substring(7)
+                        //Load image in UI
+                        controller.loadImagePreview(resultUri)
+                    } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                        //Error
+                        showError(result.error.localizedMessage)
+                    }
+                }
+            /*Photo Filtering*/
+                Constants.RequestCodes.FILTER_REQUEST_CODE -> {
+                    //Todo: Handle Photo Filter Activity Request Code
+                }
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data)
@@ -179,6 +186,7 @@ class EditingActivity : CoreActivity(),
         ll_camera_text.setOnClickListener(this)
         ll_camera_crop.setOnClickListener(this)
         ll_camera_draw.setOnClickListener(this)
+        ll_camera_filter.setOnClickListener(this)
         //Send
         iv_camera_send.setOnClickListener(this)
     }
@@ -374,6 +382,12 @@ class EditingActivity : CoreActivity(),
                     controller.saveImageToGallery()
                 }
             }
+        /*Add Filter*/
+            ll_camera_filter -> {
+                imgFilePath?.let {
+                    controller.addFilter(it)
+                }
+            }
         /*Add Text*/
             ll_camera_text -> {
                 openAddTextPopUpWindow("", -1)
@@ -398,7 +412,7 @@ class EditingActivity : CoreActivity(),
             }
         /*Clear All Changes*/
             clear_all_tv -> {
-                controller.clearAllViews() //TODO
+                controller.clearAllViews()
             }
 
         /*Undo Last Change*/

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".structure.camera.filters.ImageFilterActivity">
+
+    <!--Selected Filter-->
+    <RelativeLayout
+        android:id="@+id/acf_selectedFilter_container"
+        android:layout_width="400dp"
+        android:layout_height="400dp"
+        android:layout_centerHorizontal="true">
+
+        <ImageView
+            android:id="@+id/acf_photo_iv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop" />
+
+        <ImageView
+            android:id="@+id/acf_filter_iv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:scaleType="centerCrop" />
+
+    </RelativeLayout>
+
+    <!--Filter Selection-->
+    <LinearLayout
+        android:id="@+id/acf_filter_container"
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:layout_below="@+id/acf_selectedFilter_container"
+        android:layout_centerHorizontal="true">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/acf_filter_rv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/acf_controls_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/acf_filter_container"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20sp"
+        android:background="@color/dark_black_transparent"
+        android:orientation="horizontal"
+        android:paddingTop="20sp">
+
+
+        <ImageView
+            android:id="@+id/acf_save_photo"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="15sp"
+            android:background="@drawable/save_photo" />
+
+        <ImageView
+            android:id="@+id/acf_share_photo"
+            android:layout_width="22dp"
+            android:layout_height="26dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="15sp"
+            android:background="@drawable/camera_send" />
+
+
+    </RelativeLayout>
+
+</RelativeLayout>

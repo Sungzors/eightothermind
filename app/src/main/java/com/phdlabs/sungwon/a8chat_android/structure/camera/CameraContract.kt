@@ -102,4 +102,16 @@ interface CameraContract {
         }
     }
 
+    /*Filters*/
+    interface Filters {
+
+        interface View : BaseView<Controller> {
+
+        }
+
+        interface Controller : BaseController {
+
+        }
+    }
+
 }

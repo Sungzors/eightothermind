@@ -48,6 +48,7 @@ interface EditingContract {
         fun undoViews()
         fun eraseDrawing()
         fun sendImage()
+        fun addFilter(imgFilePath: String)
     }
 
 }
