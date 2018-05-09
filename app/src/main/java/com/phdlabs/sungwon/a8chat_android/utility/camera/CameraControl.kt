@@ -49,7 +49,6 @@ class CameraControl private constructor() {
         private val DEFAULT_MIN_WIDTH_QUALITY = 400
         private val DEFAULT_MIN_HEIGHT_QUALITY = 400
         private val TAG = "CameraControlView"
-        private val TEMP_IMAGE_NAME = "tempImage"
 
         private var minWidthQuality = DEFAULT_MIN_WIDTH_QUALITY
         private var minHeightQuality = DEFAULT_MIN_HEIGHT_QUALITY
@@ -63,12 +62,6 @@ class CameraControl private constructor() {
 
     }
 
-    /*Initializer Log used for testing
-     *
-     * INFO:
-     * init will be called when this class is initialized for
-     * the first time (i.e. when calling CameraControlView.INSTANCE)
-     * */
     init {
         println("CameraControlView ($this) is a Singleton")
     }
@@ -542,6 +535,32 @@ class CameraControl private constructor() {
         return Bitmap.createBitmap(bm, 0, 0, bm.width, bm.height, matrixPreRotateRight, true)
     }
 
+    /**
+     * [roatedBitmapCameraFrontLens] used for display purposes
+     * TODO: ROTATE BITMAP
+     *
+     * */
+    fun rotatedBitmapCameraFrontLens(image: ByteArray): ByteArray {
+        //Create bitmap
+        val options: BitmapFactory.Options = BitmapFactory.Options()
+        options.inJustDecodeBounds = true
+        options.inJustDecodeBounds = false
+        //Rotate Image
+        val matrixPreRotateRight = Matrix()
+        //Mirror matrix
+        val mirrorY = floatArrayOf(-1f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 1f)
+        val matrixRotateRight = Matrix()
+        val matrixMirrorY = Matrix()
+        matrixMirrorY.setValues(mirrorY)
+        matrixPreRotateRight.postConcat(matrixMirrorY)
+        matrixRotateRight.preRotate(270f) //Unwanted behavior
+        var bm = BitmapFactory.decodeByteArray(image, 0, image.size, options)
+        bm = Bitmap.createBitmap(bm, 0, 0, bm.width, bm.height, matrixPreRotateRight, true)
+        //Create byte array
+        val byteArray = ByteArrayOutputStream()
+        bm.compress(Bitmap.CompressFormat.JPEG, 100, byteArray)
+        return byteArray.toByteArray()
+    }
 
     /**
      * Minimum image quality to be processed

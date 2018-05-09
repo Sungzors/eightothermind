@@ -1,5 +1,7 @@
 package com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.normal
 
+import android.graphics.Camera
+import android.hardware.camera2.CameraCharacteristics
 import android.os.Bundle
 import android.view.*
 import android.widget.RelativeLayout
@@ -8,6 +10,7 @@ import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.structure.camera.CameraActivity
 import com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.CameraBaseFragment
 import com.phdlabs.sungwon.a8chat_android.structure.camera.result.ResultHolder
+import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
 
 
 /**
@@ -134,12 +137,20 @@ class NormalFragment : CameraBaseFragment() {
 
     /*Image caching*/
     private fun imageCaptured(image: ByteArray) {
-        //TODO: Rotate selfie before setting result image
-        //Result Callback
-        val callbackTime = System.currentTimeMillis()
-        ResultHolder.dispose()
-        ResultHolder.setResultImage(image)
-        ResultHolder.setResultTimeToCallback(callbackTime)
+        if (normalCamera?.facing == Facing.FRONT) {
+            val rotatedImage = CameraControl.instance.rotatedBitmapCameraFrontLens(image)
+            //Result Callback
+            val callbackTime = System.currentTimeMillis()
+            ResultHolder.dispose()
+            ResultHolder.setResultImage(rotatedImage)
+            ResultHolder.setResultTimeToCallback(callbackTime)
+        } else {
+            //Result Callback
+            val callbackTime = System.currentTimeMillis()
+            ResultHolder.dispose()
+            ResultHolder.setResultImage(image)
+            ResultHolder.setResultTimeToCallback(callbackTime)
+        }
         //Transition to editing activity
         val act = activity as CameraActivity
         act.getImageFilePath(null)

@@ -134,12 +134,13 @@ class VideoPreviewActivity : CoreActivity(), LoaderManager.LoaderCallbacks<Media
             }
         /*Save Video Locally*/
             iv_camera_save -> {
-                CameraControl.instance.addToGallery(
-                        context,
-                        ImageUtils.instance.saveVideoWithSuffix(
-                                "8",
-                                CameraControl.instance.mediaFileNaming())
-                )
+                //Save video to external storage & send broadcast to gallery
+                ResultHolder.getResultVideo()?.let {
+                    CameraControl.instance.addToGallery(context,
+                            ImageUtils.instance.saveVideoWithSuffix(context, "8", it.absolutePath)
+                    )
+                }
+
                 Toast.makeText(this, "Saved to Gallery", Toast.LENGTH_SHORT).show()
             }
         /*Share Video*/
