@@ -201,6 +201,11 @@ object Constants {
          * */
         const val BROADCAST_REQ_CODE = 29
 
+        /**
+         * Start Video Preview Activity after shooting video in Hands Free Mode
+         * */
+        const val VIDEO_PREVIEW_REQ_CODE = 31
+
     }
 
     /**

@@ -170,5 +170,32 @@ class UserManager {
         }
     }
 
+    fun getTwilioAccessToken(callback: (String?, String?) -> kotlin.Unit, roomId: Int){
+        getCurrentUser { success, user, token ->
+            if (success) {
+                user?.let {
+                    token?.token?.let {
+                        val call = Rest.getInstance().getmCallerRx().getAccessTokenTwilio(it, user.id!!, roomId)
+                        disposable.add(call.subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe({ response ->
+                                    if (response.isSuccess) {
+                                        callback(response.user.jwt_twilio_video_calling_access_token, null)
+                                    } else if (response.isError) {
+                                        //Ignore
+                                        //println("Error updating Firebase Token")
+                                        //TODO: Setup Schedulers to ask for token again
+                                        callback(null, "Error while retrieving jwt token")
+                                    }
+                                }, {
+                                    //Ignore
+                                    //println(it.localizedMessage)
+                                    //TODO: Setup Schedulers to ask for token again
+                                }))
+                    }
+                }
+            }
+        }
+    }
 
 }

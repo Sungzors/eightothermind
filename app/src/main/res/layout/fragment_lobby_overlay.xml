@@ -44,7 +44,7 @@
                 android:maxLines="1"
                 android:text="barg"
                 android:textSize="14sp"
-                fontPath="fonts/NunitoSans-Bold.ttf"/>
+                fontPath="fonts/AkzidenzGroteskBE-Medium.otf"/>
 
             <View
                 android:layout_width="match_parent"
@@ -59,7 +59,7 @@
                 android:maxLines="1"
                 android:text="No Message"
                 android:textSize="12sp"
-                fontPath="fonts/NunitoSans-Regular.ttf"/>
+                fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
 
             <View
                 android:layout_width="match_parent"

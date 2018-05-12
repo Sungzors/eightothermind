@@ -130,7 +130,7 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
                 unreadChannelIndicator.background = activity?.getDrawable(R.drawable.bg_circle_white_lobby)
             }
         }
-        Picasso.with(coreActivity.context).load(data.avatar).placeholder(R.drawable.ic_launcher_round).transform(CircleTransform()).into(profilePic)
+        Picasso.with(coreActivity.context).load(data.avatar).placeholder(R.mipmap.ic_launcher_round).transform(CircleTransform()).into(profilePic)
         channelName.text = data.name
         profilePic.setOnClickListener {
             val intent = Intent(activity, MyChannelActivity::class.java)
@@ -190,7 +190,7 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
         val message = viewHolder.get<TextView>(R.id.cvle_message)
         val time = viewHolder.get<TextView>(R.id.cvle_time)
         val event = data.events
-        Picasso.with(coreActivity.context).load(event?.avatar).placeholder(R.drawable.ic_launcher_round).transform(CircleTransform()).into(eventPic)
+        Picasso.with(coreActivity.context).load(event?.avatar).placeholder(R.mipmap.ic_launcher_round).transform(CircleTransform()).into(eventPic)
         title.text = event?.name
         if (data.message != null) {
             when (data.message!!.type) {
@@ -276,7 +276,7 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
         val message = viewHolder.get<TextView>(R.id.cvle_message)
         val time = viewHolder.get<TextView>(R.id.cvle_time)
         if (data.chatType == "private") {
-            Picasso.with(context).load(data.user!!.avatar).placeholder(R.drawable.ic_launcher_round).transform(CircleTransform()).into(eventPic)
+            Picasso.with(context).load(data.user!!.avatar).placeholder(R.mipmap.ic_launcher_round).transform(CircleTransform()).into(eventPic)
             eventPic.setOnLongClickListener {
                 getActivityDirect().replaceFragment(R.id.overlay_content_frame, LobbyOverlayFragment.newInstance(data.id!!, data.user!!.first_name + " " + data.user!!.last_name, data.user!!.avatar!!, data.user!!.phone!!), true)
                 true
@@ -308,7 +308,7 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
                 eventIndicator.visibility = ImageView.INVISIBLE
             }
         } else if (data.chatType == "group") {
-            Picasso.with(context).load(data.groupChatInfo!!.avatar).placeholder(R.drawable.ic_launcher_round).transform(CircleTransform()).into(eventPic)
+            Picasso.with(context).load(data.groupChatInfo!!.avatar).placeholder(R.mipmap.ic_launcher_round).transform(CircleTransform()).into(eventPic)
             title.text = data.groupChatInfo!!.name
 //            eventPic.setOnLongClickListener {
 //                getActivityDirect().replaceFragment(R.id.overlay_content_frame, LobbyOverlayFragment.newInstance(data.id!!, data.groupChatInfo!!.name!!, data.groupChatInfo!!.avatar!!), true)
@@ -340,7 +340,7 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
             }
         } else if (data.event!!){
             val event = data.events
-            Picasso.with(coreActivity.context).load(event?.avatar).placeholder(R.drawable.ic_launcher_round).transform(CircleTransform()).into(eventPic)
+            Picasso.with(coreActivity.context).load(event?.avatar).placeholder(R.mipmap.ic_launcher_round).transform(CircleTransform()).into(eventPic)
             title.text = event?.name
             if (data.message != null) {
                 when (data.message!!.type) {

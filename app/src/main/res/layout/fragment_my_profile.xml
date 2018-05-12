@@ -83,7 +83,7 @@
                                 android:padding="2dp"
                                 android:text="@string/first_name"
                                 android:textColor="@color/my_profile_name"
-                                fontPath="fonts/NunitoSans-Bold.ttf" />
+                                fontPath="fonts/AkzidenzGroteskBE-Medium.otf" />
 
                             <!--Phone number-->
                             <TextView
@@ -94,7 +94,7 @@
                                 android:text="@string/phone_number"
                                 android:textColor="@color/my_profile_name"
                                 android:textStyle="normal"
-                                fontPath="fonts/NunitoSans-Regular.ttf" />
+                                fontPath="fonts/AkzidenzGroteskBE-Regular.otf" />
 
                             <!--Language-->
                             <TextView
@@ -104,7 +104,7 @@
                                 android:padding="2dp"
                                 android:text="@string/my_language"
                                 android:textColor="@color/my_language_color"
-                                fontPath="fonts/NunitoSans-Regular.ttf"/>
+                                fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
 
                         </LinearLayout>
 
@@ -152,7 +152,7 @@
                                 android:padding="2dp"
                                 android:text="@string/my_calendars"
                                 android:textColor="@color/my_profile_settings_text"
-                                fontPath="fonts/NunitoSans-Regular.ttf" />
+                                fontPath="fonts/AkzidenzGroteskBE-Regular.otf" />
 
                         </LinearLayout>
 
@@ -191,7 +191,7 @@
                                 android:padding="2dp"
                                 android:text="@string/payments"
                                 android:textColor="@color/my_profile_settings_text"
-                                fontPath="fonts/NunitoSans-Regular.ttf" />
+                                fontPath="fonts/AkzidenzGroteskBE-Regular.otf" />
                         </LinearLayout>
 
                     </LinearLayout>
@@ -238,7 +238,7 @@
                                 android:padding="2dp"
                                 android:text="@string/notification_settings"
                                 android:textColor="@color/my_profile_settings_text"
-                                fontPath="fonts/NunitoSans-Regular.ttf" />
+                                fontPath="fonts/AkzidenzGroteskBE-Regular.otf" />
 
                         </LinearLayout>
 
@@ -277,7 +277,7 @@
                                 android:padding="2dp"
                                 android:text="@string/fave_messages"
                                 android:textColor="@color/my_profile_settings_text"
-                                fontPath="fonts/NunitoSans-Regular.ttf" />
+                                fontPath="fonts/AkzidenzGroteskBE-Regular.otf" />
                         </LinearLayout>
 
                     </LinearLayout>
@@ -316,7 +316,7 @@
                                 android:paddingStart="10dp"
                                 android:text="@string/my_account"
                                 android:textColor="@color/my_profile_settings_text"
-                                fontPath="fonts/NunitoSans-Regular.ttf"  />
+                                fontPath="fonts/AkzidenzGroteskBE-Regular.otf"  />
 
                         </LinearLayout>
 
@@ -348,7 +348,7 @@
                                 android:paddingStart="10dp"
                                 android:text="@string/terms_support"
                                 android:textColor="@color/my_profile_settings_text"
-                                fontPath="fonts/NunitoSans-Regular.ttf"  />
+                                fontPath="fonts/AkzidenzGroteskBE-Regular.otf"  />
                         </LinearLayout>
 
                         <!--Separator-->
@@ -379,7 +379,7 @@
                                 android:paddingStart="10dp"
                                 android:text="@string/invite_friends"
                                 android:textColor="@color/my_profile_settings_text"
-                                fontPath="fonts/NunitoSans-Regular.ttf"  />
+                                fontPath="fonts/AkzidenzGroteskBE-Regular.otf"  />
 
                         </LinearLayout>
 

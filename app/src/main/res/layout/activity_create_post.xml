@@ -48,7 +48,7 @@
         <!--Message-->
         <EditText
             android:id="@+id/cpa_message_post"
-            fontPath="fonts/NunitoSans-Regular.ttf"
+            fontPath="fonts/AkzidenzGroteskBE-Regular.otf"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/type_something"
@@ -82,7 +82,7 @@
         <Button
             android:id="@+id/acp_addmedia_button"
             style="?android:attr/borderlessButtonStyle"
-            fontPath="fonts/NunitoSans-Regular.ttf"
+            fontPath="fonts/AkzidenzGroteskBE-Regular.otf"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"

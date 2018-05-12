@@ -4,25 +4,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/toolbar"
     android:layout_width="match_parent"
-    android:layout_height="40dp"
-    android:background="@drawable/gradient_eightchatblue_updown"
+    android:layout_height="50dp"
+    android:background="@drawable/gradient_eightchatblue"
     tools:ignore="MissingPrefix">
 
     <!--Profile Picture View-->
     <ImageView
         android:id="@+id/toolbar_left_action"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingEnd="15dp"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp"
+        android:layout_width="28dp"
+        android:layout_height="16dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
         android:src="@drawable/toolbar_left"/>
 
     <!--Toolbar title-->
     <ImageView
         android:id="@+id/debug_access"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:layout_gravity="center"
         android:background="@drawable/white_logo" />
 
@@ -66,11 +66,12 @@
 
     <ImageView
         android:id="@+id/toolbar_right_picture"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="24dp"
+        android:layout_height="19dp"
         android:layout_gravity="center_vertical|end"
-        android:layout_marginEnd="10dp"
-        android:padding="5dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="5dp"
         android:src="@drawable/toolbar_right"/>
 
 

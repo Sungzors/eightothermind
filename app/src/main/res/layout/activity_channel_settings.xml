@@ -103,7 +103,7 @@
                                     android:padding="2dp"
                                     android:text="@string/first_name"
                                     android:textColor="@color/my_profile_name"
-                                    fontPath="fonts/NunitoSans-Bold.ttf"/>
+                                    fontPath="fonts/AkzidenzGroteskBE-Medium.otf"/>
 
                                 <!--Follower Number XX Followers-->
                                 <TextView
@@ -114,7 +114,7 @@
                                     android:text="@string/channel_followers"
                                     android:textColor="@color/my_profile_name"
                                     android:textStyle="normal"
-                                    fontPath="fonts/NunitoSans-Regular.ttf"/>
+                                    fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
 
                             </LinearLayout>
 
@@ -159,7 +159,7 @@
                             android:gravity="start"
                             android:padding="5sp"
                             android:text="@string/channel_description"
-                            fontPath="fonts/NunitoSans-Bold.ttf"/>
+                            fontPath="fonts/AkzidenzGroteskBE-Medium.otf"/>
 
                     </LinearLayout>
 
@@ -199,7 +199,7 @@
                             android:layout_toEndOf="@id/ang_comment_notif_icon"
                             android:text="@string/notification"
                             tools:ignore="RelativeOverlap"
-                            fontPath="fonts/NunitoSans-Regular.ttf"/>
+                            fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
 
                         <Switch
                             android:id="@+id/achs_notif_switch"
@@ -241,7 +241,7 @@
                             android:layout_toEndOf="@+id/achs_favemsg_icon"
                             android:drawableEnd="@drawable/ic_keyboard_arrow_right_black_24dp"
                             android:text="@string/fave_messages"
-                            fontPath="fonts/NunitoSans-Regular.ttf" />
+                            fontPath="fonts/AkzidenzGroteskBE-Regular.otf" />
 
                     </RelativeLayout>
                     <!--Share container-->
@@ -264,7 +264,7 @@
                             android:layout_margin="20dp"
                             android:layout_toEndOf="@id/achs_share_icon"
                             android:text="@string/share_channel"
-                            fontPath="fonts/NunitoSans-Regular.ttf"/>
+                            fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
                     </RelativeLayout>
                     <!--Delete Channel-->
                     <RelativeLayout
@@ -286,7 +286,7 @@
                             android:layout_margin="20dp"
                             android:layout_toEndOf="@id/achs_delete_icon"
                             android:text="@string/delete_channel"
-                            fontPath="fonts/NunitoSans-Regular.ttf"/>
+                            fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
                     </RelativeLayout>
                 </LinearLayout>
             </android.support.v7.widget.CardView>
@@ -309,7 +309,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    fontPath="fonts/NunitoSans-Regular.ttf"/>
+                    fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
 
                 <!--Files-->
                 <RadioButton
@@ -318,7 +318,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    fontPath="fonts/NunitoSans-Regular.ttf"/>
+                    fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
             </info.hoang8f.android.segmented.SegmentedGroup>
 
             <!--Media & Files Frag Container-->

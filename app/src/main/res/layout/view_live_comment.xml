@@ -19,7 +19,7 @@
             android:layout_height="45dp"
             android:layout_margin="5dp"
             android:contentDescription="@string/friend_profile_picture"
-            android:src="@drawable/ic_launcher_round" />
+            android:src="@mipmap/ic_launcher_round" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -28,7 +28,7 @@
             <!--Friend Full Name-->
             <TextView
                 android:id="@+id/vlc_friend_name"
-                fontPath="fonts/NunitoSans-Regular.ttf"
+                fontPath="fonts/AkzidenzGroteskBE-Regular.otf"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="15sp"
@@ -44,7 +44,7 @@
             <!--Comment-->
             <TextView
                 android:id="@+id/vlc_comment"
-                fontPath="fonts/NunitoSans-Regular.ttf"
+                fontPath="fonts/AkzidenzGroteskBE-Regular.otf"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5sp"

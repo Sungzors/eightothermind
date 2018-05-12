@@ -6,10 +6,14 @@
     <color name="tabunselect">#616161</color>
     <color name="tabselect">#4dd0e1</color>
     <color name="confirmText">#4a90e2</color>
-    <color name="gradientLeft">#495fff</color>
-    <color name="gradientLeftOpaque">#55495fff</color>
-    <color name="gradientRight">#0ccafe</color>
-    <color name="gradientRightOpaque">#550ccafe</color>
+    <color name="hangupgradientLeft">#ffab66</color>
+    <color name="hangupgradientRight">#ff5799</color>
+    <color name="largergradientLeft">#3f42ff</color>
+    <color name="largergradientRight">#e91e63</color>
+    <color name="gradientLeft">#009dff</color>
+    <color name="gradientLeftOpaque">#55009dff</color>
+    <color name="gradientRight">#f41caf</color>
+    <color name="gradientRightOpaque">#55f41caf</color>
     <color name="gradientUp">#357fff</color>
     <color name="gradientDown">#08a4ff</color>
     <color name="settingBlue">#08a4ff</color>
@@ -34,6 +38,8 @@
     <color name="white_smoke">#F5F5F5</color>
     <color name="blue_transparent">#224786ff</color>
     <color name="eight_status_bar">#4786ff</color>
+    <color name="call_layer1">#92CEFE</color>
+    <color name="call_layer2">#C9E4FE</color>
 
     <!--Camera Editing Colors-->
     <color name="black">#000000</color>

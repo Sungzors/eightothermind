@@ -160,7 +160,7 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         //Channel Picture -> Access to settings
         Picasso.with(this)
                 .load(ChannelsManager.instance.querySingleChannelWithChannelId(mChannelId)?.avatar)
-                .placeholder(R.drawable.ic_launcher_round)
+                .placeholder(R.mipmap.ic_launcher_round)
                 .transform(CircleTransform())
                 .into(toolbar_right_picture)
 
@@ -197,7 +197,7 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
                 channelName?.text = data?.name
 
                 Picasso.with(context).load(data?.avatar)
-                        .placeholder(R.drawable.ic_launcher_round)
+                        .placeholder(R.mipmap.ic_launcher_round)
                         .transform(CircleTransform())
                         .into(profilePic)
             }
@@ -395,7 +395,7 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         val postDate = viewHolder.get<TextView>(R.id.cvps_post_date)
 
         Picasso.with(this).load(data.channel?.avatar)
-                .placeholder(R.drawable.ic_launcher_round).transform(CircleTransform()).into(pic)
+                .placeholder(R.mipmap.ic_launcher_round).transform(CircleTransform()).into(pic)
         text.text = data.message
         posterName.text = data.getUserName()
         val formatter = SimpleDateFormat("EEE - h:mm aaa")
@@ -410,7 +410,7 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         val postDate = viewHolder.get<TextView>(R.id.cvpp_post_date)
 
         Picasso.with(this).load(data.channel?.avatar)
-                .placeholder(R.drawable.ic_launcher_round).transform(CircleTransform()).into(pic)
+                .placeholder(R.mipmap.ic_launcher_round).transform(CircleTransform()).into(pic)
         data.mediaArray?.let {
             Picasso.with(this).load(it[0]?.media_file).into(postPic)
         }
@@ -439,7 +439,7 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         val commentCount = viewHolder.get<TextView>(R.id.cvpmnm_comment_count)
         //Load info
         picasso.load(data.channel?.avatar)
-                .placeholder(R.drawable.ic_launcher_round).transform(CircleTransform()).into(posterPic)
+                .placeholder(R.mipmap.ic_launcher_round).transform(CircleTransform()).into(posterPic)
         posterName.text = data.getUserName()
         //Date
         val formatter = SimpleDateFormat("EEE - h:mm aaa")
@@ -512,7 +512,7 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
 
         //Load Info
         picasso.load(data.channel?.avatar)
-                .placeholder(R.drawable.ic_launcher_round).transform(CircleTransform()).into(posterPic)
+                .placeholder(R.mipmap.ic_launcher_round).transform(CircleTransform()).into(posterPic)
         posterName.text = data.getUserName()
 
         //Date
@@ -591,7 +591,7 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         val container = viewHolder.get<LinearLayout>(R.id.cvf_file_container)
         //Load Info
         picasso.load(data.channel?.avatar)
-                .placeholder(R.drawable.ic_launcher_round).transform(CircleTransform()).into(posterPic)
+                .placeholder(R.mipmap.ic_launcher_round).transform(CircleTransform()).into(posterPic)
         posterName.text = data.getUserName()
 
         //Date
@@ -626,7 +626,7 @@ class MyChannelActivity : CoreActivity(), ChannelContract.MyChannel.View {
         val channelName = viewHolder.get<TextView>(R.id.cvb_channel_name)
         val viewBroadcast = viewHolder.get<Button>(R.id.cvb_view_now_button)
         picasso.load(data.channel?.avatar)
-                .placeholder(R.drawable.ic_launcher_round).transform(CircleTransform()).into(channelPic)
+                .placeholder(R.mipmap.ic_launcher_round).transform(CircleTransform()).into(channelPic)
         channelName.text = getString(R.string.live_broadcast, "$mChannelName")
         viewBroadcast.setOnClickListener {
             goToBroadcastActivity(data.id!!, io.agora.rtc.Constants.CLIENT_ROLE_AUDIENCE)

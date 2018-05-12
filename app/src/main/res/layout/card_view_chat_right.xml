@@ -16,7 +16,7 @@
         android:layout_marginBottom="8dp"
         android:text="SAT 11:09 PM"
         android:textSize="14sp"
-        fontPath="fonts/NunitoSans-Regular.ttf"/>
+        fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
 
     <RelativeLayout
         android:id="@+id/cvc_message_container"
@@ -48,7 +48,7 @@
             android:textAlignment="textEnd"
             android:textColor="@color/black"
             android:layout_toEndOf="@id/cvc_message_pic_small"
-            fontPath="fonts/NunitoSans-Regular.ttf"/>
+            fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
         <LinearLayout
             android:id="@+id/cvc_message_pic_container_1"
             android:layout_width="wrap_content"
@@ -69,7 +69,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/cvc_message"
             android:text="@string/accept"
-            fontPath="fonts/NunitoSans-Regular.ttf"/>
+            fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
         <Button
             android:id="@+id/cvc_message_button_money_decline"
             android:layout_width="wrap_content"
@@ -77,7 +77,7 @@
             android:layout_toStartOf="@id/cvc_message_button_money_accept"
             android:layout_below="@id/cvc_message"
             android:text="@string/decline"
-            fontPath="fonts/NunitoSans-Regular.ttf"/>
+            fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
 
 
     </RelativeLayout>

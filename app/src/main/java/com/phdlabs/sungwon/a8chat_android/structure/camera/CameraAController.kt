@@ -21,7 +21,7 @@ class CameraAController(val mView: CameraContract.Camera.View) : CameraContract.
 
     /*Properties*/
     private var isFlashOn: Boolean = false
-    private var isRecording: Boolean = false
+    private var isHandsFreeRecording: Boolean = false
 
     /*Initialization*/
     init {
@@ -75,7 +75,6 @@ class CameraAController(val mView: CameraContract.Camera.View) : CameraContract.
     }
 
     /*Take picture*/
-    //TODO: Switch to camera kit functionality
     override fun takePhoto(viewPager: ViewPager) {
 
         when (viewPager.currentItem) {
@@ -91,12 +90,12 @@ class CameraAController(val mView: CameraContract.Camera.View) : CameraContract.
                 val handsFreeFragment = viewPager.adapter?.instantiateItem(viewPager, Constants.CameraPager.HANDS_FREE) as HandsFreeFragment
                 handsFreeFragment.startVideoRecording()
                 //UI
-                handsFreeFragment.handsFreeCamera?.isCapturingVideo?.let {
-                    if (it) {
-                        mView.getCameraControl().iv_camera_action.setImageResource(R.drawable.snap_stop)
-                    } else {
-                        mView.getCameraControl().iv_camera_action.setImageResource(R.drawable.snap)
-                    }
+                isHandsFreeRecording = if (!isHandsFreeRecording) {
+                    mView.getCameraControl().iv_camera_action.setImageResource(R.drawable.snap_stop)
+                    true
+                } else {
+                    mView.getCameraControl().iv_camera_action.setImageResource(R.drawable.snap)
+                    false
                 }
             }
 

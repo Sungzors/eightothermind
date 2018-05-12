@@ -12,4 +12,4 @@
     android:textStyle="bold"
     xmlns:tools="http://schemas.android.com/tools"
     tools:ignore="MissingPrefix"
-    fontPath="fonts/NunitoSans-Regular.ttf"/>
+    fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>

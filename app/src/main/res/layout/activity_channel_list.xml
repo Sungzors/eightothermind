@@ -40,7 +40,7 @@
             android:inputType="text"
             android:maxLines="1"
             android:imeOptions="actionSearch"
-            fontPath="fonts/NunitoSans-Regular.ttf"/>
+            fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
     </LinearLayout>
 
     <LinearLayout
@@ -58,7 +58,7 @@
             android:paddingBottom="20dp"
             android:paddingStart="10dp"
             android:paddingEnd="10dp"
-            fontPath="fonts/NunitoSans-Bold.ttf"/>
+            fontPath="fonts/AkzidenzGroteskBE-Medium.otf"/>
         <android.support.v7.widget.RecyclerView
             android:id="@+id/acl_my_channels"
             android:layout_width="match_parent"

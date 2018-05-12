@@ -72,7 +72,7 @@
                 android:layout_height="wrap_content"
                 android:text="Name"
                 android:textColor="@color/black"
-                fontPath="fonts/NunitoSans-Regular.ttf"/>
+                fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
 
             <View
                 android:layout_width="match_parent"
@@ -84,7 +84,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Date"
-                fontPath="fonts/NunitoSans-Regular.ttf"/>
+                fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
 
             <View
                 android:layout_width="match_parent"

@@ -75,7 +75,7 @@
                     android:layout_marginStart="25dp"
                     android:layout_marginTop="15dp"
                     android:text="@string/your_name"
-                    fontPath="fonts/NunitoSans-Bold.ttf"/>
+                    fontPath="fonts/AkzidenzGroteskBE-Medium.otf"/>
 
                 <EditText
                     android:id="@+id/ap_first_name"
@@ -89,7 +89,7 @@
                     android:textColor="@color/black"
                     android:inputType="textCapSentences"
                     android:imeOptions="actionNext"
-                    fontPath="fonts/NunitoSans-Regular.ttf"/>
+                    fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
 
                 <EditText
                     android:id="@+id/ap_last_name"
@@ -103,7 +103,7 @@
                     android:textColor="@color/black"
                     android:inputType="textCapSentences"
                     android:imeOptions="actionNext"
-                    fontPath="fonts/NunitoSans-Regular.ttf"/>
+                    fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
 
                 <TextView
                     android:id="@+id/ap_email_text"
@@ -113,7 +113,7 @@
                     android:layout_marginTop="15dp"
                     android:text="@string/your_email"
                     android:layout_below="@id/ap_last_name"
-                    fontPath="fonts/NunitoSans-Bold.ttf"/>
+                    fontPath="fonts/AkzidenzGroteskBE-Medium.otf"/>
 
                 <EditText
                     android:id="@+id/ap_email_edit"
@@ -127,7 +127,7 @@
                     android:textColor="@color/black"
                     android:inputType="textEmailAddress"
                     android:imeOptions="actionNext"
-                    fontPath="fonts/NunitoSans-Regular.ttf"
+                    fontPath="fonts/AkzidenzGroteskBE-Regular.otf"
                     />
 
                 <TextView
@@ -139,7 +139,7 @@
                     android:layout_marginEnd="25dp"
                     android:layout_marginTop="20dp"
                     android:text="@string/what_languages_do_you_speak"
-                    fontPath="fonts/NunitoSans-Bold.ttf"/>
+                    fontPath="fonts/AkzidenzGroteskBE-Medium.otf"/>
 
                 <Spinner
                     android:id="@+id/ap_language_spinner"
@@ -165,7 +165,7 @@
             android:layout_marginStart="30dp"
             android:layout_marginEnd="30dp"
             android:text="@string/get_started"
-            fontPath="fonts/NunitoSans-Regular.ttf"/>
+            fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
         <View
             android:layout_width="match_parent"
             android:layout_height="0dp"

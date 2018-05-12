@@ -12,6 +12,7 @@ import com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControls.Camera
 import com.phdlabs.sungwon.a8chat_android.structure.camera.share.ShareCameraMediaActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseController
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseView
+import net.protyposis.android.mediaplayer.MediaSource
 
 /**
  * Created by JPAM on 12/28/17.
@@ -89,6 +90,7 @@ interface CameraContract {
 
             //Validation
             fun validatedSelection(channels: List<Channel>?, events: List<EventsEight>?, contacts: List<Contact>?): Boolean
+
             fun infoValidation(filePath: String?, message: String?): ShareCameraMediaActivity.ShareType?
 
             //Push Data

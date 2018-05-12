@@ -35,6 +35,12 @@ class Application : Application() {
         //DEV
         print("REALM PATH: " + realmConfig.path) //Path for realm browser
 
+//        val picasso: Picasso.Builder = Picasso.Builder(this)
+//        picasso.downloader(OkHttp3Downloader(this, Long.MAX_VALUE))
+//        val built = picasso.build()
+//        built.setIndicatorsEnabled(true)
+//        built.isLoggingEnabled = true
+//        Picasso.setSingletonInstance(built)
 
         /*Sockets*/
         try {
