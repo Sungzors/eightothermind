@@ -34,7 +34,7 @@
                 android:padding="5sp"
                 android:textColor="@color/black"
                 android:textColorHighlight="@color/white"
-                fontPath="fonts/NunitoSans-Regular.ttf"/>
+                fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
 
         </RelativeLayout>
 

@@ -26,7 +26,6 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:largeHeap="true"
-        android:roundIcon="@drawable/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
@@ -172,6 +171,10 @@
         <activity
             android:name=".structure.login.DisclosureActivity"
             android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".structure.call.CallActivity"
+            android:screenOrientation="portrait"/>
 
         <!--Photos & Images File Provider-->
         <provider

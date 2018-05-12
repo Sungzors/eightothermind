@@ -238,7 +238,7 @@ open class BroadcastActivity : CoreActivity(), ChannelContract.Broadcast.View, A
                 data?.user?.let {
                     Picasso.with(context)
                             .load(it.avatar)
-                            .placeholder(R.drawable.ic_launcher_round)
+                            .placeholder(R.mipmap.ic_launcher_round)
                             .resize(45, 45)
                             .centerCrop()
                             .transform(CircleTransform())

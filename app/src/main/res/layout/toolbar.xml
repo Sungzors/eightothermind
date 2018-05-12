@@ -35,7 +35,7 @@
         android:textAlignment="center"
         android:textColor="@color/black"
         android:textSize="14sp"
-        fontPath="fonts/NunitoSans-Regular.ttf" />
+        fontPath="fonts/AkzidenzGroteskBE-Regular.otf" />
 
 
     <LinearLayout
@@ -55,7 +55,7 @@
             android:textAlignment="center"
             android:textColor="@color/black"
             android:textSize="14sp"
-            fontPath="fonts/NunitoSans-Regular.ttf" />
+            fontPath="fonts/AkzidenzGroteskBE-Regular.otf" />
 
         <TextView
             android:id="@+id/toolbar_title_double_bottom"
@@ -65,7 +65,7 @@
             android:textAlignment="center"
             android:textColor="@color/black"
             android:textSize="10sp"
-            fontPath="fonts/NunitoSans-Light.ttf" />
+            fontPath="fonts/AkzidenzGroteskBE-Light.otf" />
     </LinearLayout>
 
     <!--<LinearLayout-->
@@ -85,7 +85,7 @@
             android:gravity="center|end"
             android:textColor="@color/black"
             android:visibility="gone"
-            fontPath="fonts/NunitoSans-Regular.ttf" />
+            fontPath="fonts/AkzidenzGroteskBE-Regular.otf" />
 
         <ImageView
             android:id="@+id/toolbar_right_picture"

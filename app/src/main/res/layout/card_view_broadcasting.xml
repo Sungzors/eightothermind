@@ -36,7 +36,7 @@
                 android:layout_centerInParent="true"
                 android:elevation="4dp"
                 android:padding="3sp"
-                android:src="@drawable/ic_launcher_round" />
+                android:src="@mipmap/ic_launcher_round" />
         </RelativeLayout>
 
         <!--Channel Name-->

@@ -369,4 +369,9 @@ interface CallerRx {
     @PATCH("users/{userId}/leave/{roomId}")
     fun leaveRoom(@Header(TOKEN) token: String, @Path("userId") userId: Int,
                   @Path("roomId") roomId: Int): Observable<EnterLeaveRoomResponse>
+
+
+    @GET("/users/{userId}/{roomId}/twilio/video/auth")
+    fun getAccessTokenTwilio(@Header(TOKEN) token: String, @Path("userId") userId: Int,
+                             @Path("roomId") roomId: Int): Observable<UserDataResponse>
 }

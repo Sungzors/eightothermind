@@ -6,15 +6,10 @@
     tools:ignore="MissingPrefix">
 
     <RelativeLayout
-        android:layout_width="750dp"
-        android:layout_height="420dp"
-        android:layout_marginTop="-200dp"
-        android:layout_gravity="center_horizontal">
-        <ImageView
-            android:layout_width="750dp"
-            android:layout_height="420dp"
-            android:layout_centerHorizontal="true"
-            android:background="@drawable/gradient_oval_call"/>
+        android:layout_width="match_parent"
+        android:layout_height="220dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/bg_call">
 
         <RelativeLayout
             android:id="@+id/ac_photo_holder"
@@ -50,7 +45,7 @@
             android:textColor="@color/white"
             android:textSize="16sp"
             android:textAllCaps="true"
-            fontPath="fonts/NunitoSans-Bold.ttf"/>
+            fontPath="fonts/AkzidenzGroteskBE-Medium.otf"/>
 
     </RelativeLayout>
     <LinearLayout
@@ -160,11 +155,13 @@
         android:layout_height="0dp"
         android:layout_weight="1"/>
 
-    <ImageButton
+    <FrameLayout
         android:id="@+id/ac_call_end"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_gravity="center_horizontal"/>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal">
+        <include layout="@layout/btn_hangup"/>
+    </FrameLayout>
 
     <View
         android:layout_width="match_parent"

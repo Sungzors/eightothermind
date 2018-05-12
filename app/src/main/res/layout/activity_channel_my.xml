@@ -84,7 +84,7 @@
                 android:layout_gravity="center"
                 android:hint="@string/type_something"
                 android:textSize="12sp"
-                fontPath="fonts/NunitoSans-Regular.ttf"/>
+                fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
             <ImageView
                 android:id="@+id/acm_emitting_button_of_green_arrow"
                 android:layout_width="35dp"
@@ -122,7 +122,7 @@
                     android:layout_marginTop="5dp"
                     android:text="@string/share_media"
                     android:textAlignment="center"
-                    fontPath="fonts/NunitoSans-Light.ttf"/>
+                    fontPath="fonts/AkzidenzGroteskBE-Light.otf"/>
             </LinearLayout>
 
             <View
@@ -145,7 +145,7 @@
                     android:layout_marginTop="5dp"
                     android:text="@string/create_post"
                     android:textAlignment="center"
-                    fontPath="fonts/NunitoSans-Light.ttf"/>
+                    fontPath="fonts/AkzidenzGroteskBE-Light.otf"/>
             </LinearLayout>
             <View
                 android:layout_width="0dp"
@@ -176,7 +176,7 @@
                     android:layout_marginTop="5dp"
                     android:text="@string/share_file"
                     android:textAlignment="center"
-                    fontPath="fonts/NunitoSans-Light.ttf"/>
+                    fontPath="fonts/AkzidenzGroteskBE-Light.otf"/>
             </LinearLayout>
 
             <View
@@ -199,7 +199,7 @@
                     android:layout_marginTop="5dp"
                     android:text="@string/live_braodcast"
                     android:textAlignment="center"
-                    fontPath="fonts/NunitoSans-Light.ttf"/>
+                    fontPath="fonts/AkzidenzGroteskBE-Light.otf"/>
             </LinearLayout>
             <View
                 android:layout_width="0dp"

@@ -30,7 +30,7 @@
             android:drawableEnd="@drawable/ic_keyboard_arrow_right_black_24dp"
             android:textColor="@color/grey"
             android:textSize="15sp"
-            fontPath="fonts/NunitoSans-Regular.ttf"/>
+            fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
 
     </LinearLayout>
 

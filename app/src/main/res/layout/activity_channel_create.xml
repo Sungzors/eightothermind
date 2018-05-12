@@ -54,7 +54,7 @@
                     android:text="@string/name_your_channel"
                     android:textAllCaps="true"
                     android:textSize="12sp"
-                    fontPath="fonts/NunitoSans-Bold.ttf"/>
+                    fontPath="fonts/AkzidenzGroteskBE-Medium.otf"/>
 
                 <EditText
                     android:id="@+id/acc_channel_name"
@@ -66,7 +66,7 @@
                     android:layout_toEndOf="@id/acc_channel_picture"
                     android:imeOptions="actionNext"
                     android:inputType="textCapSentences"
-                    fontPath="fonts/NunitoSans-Regular.ttf"
+                    fontPath="fonts/AkzidenzGroteskBE-Regular.otf"
                     />
 
                 <TextView
@@ -79,7 +79,7 @@
                     android:text="@string/unique_id"
                     android:textAllCaps="true"
                     android:textSize="12sp"
-                    fontPath="fonts/NunitoSans-Bold.ttf"/>
+                    fontPath="fonts/AkzidenzGroteskBE-Medium.otf"/>
 
                 <EditText
                     android:id="@+id/acc_unique_id"
@@ -90,7 +90,7 @@
                     android:layout_marginStart="20dp"
                     android:imeOptions="actionNext"
                     android:inputType="textCapSentences"
-                    fontPath="fonts/NunitoSans-Regular.ttf" />
+                    fontPath="fonts/AkzidenzGroteskBE-Regular.otf" />
 
                 <TextView
                     android:id="@+id/acc_short_f_description"
@@ -102,7 +102,7 @@
                     android:text="@string/short_description"
                     android:textAllCaps="true"
                     android:textSize="12sp"
-                    fontPath="fonts/NunitoSans-Bold.ttf"/>
+                    fontPath="fonts/AkzidenzGroteskBE-Medium.otf"/>
 
                 <EditText
                     android:id="@+id/acc_short_description"
@@ -114,7 +114,7 @@
                     android:layout_marginStart="20dp"
                     android:imeOptions="actionDone"
                     android:inputType="textCapSentences"
-                    fontPath="fonts/NunitoSans-Regular.ttf" />
+                    fontPath="fonts/AkzidenzGroteskBE-Regular.otf" />
 
             </RelativeLayout>
         </android.support.v7.widget.CardView>
@@ -140,7 +140,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="20dp"
                     android:text="@string/add_to_profile"
-                    fontPath="fonts/NunitoSans-Regular.ttf"/>
+                    fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
 
                 <Switch
                     android:id="@+id/acc_add_to_profile_button"

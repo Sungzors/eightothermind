@@ -15,7 +15,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Name"
-            fontPath="fonts/NunitoSans-Regular.ttf"/>
+            fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
 
         <View
             android:layout_width="0dp"
@@ -27,7 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="time"
-            fontPath="fonts/NunitoSans-Regular.ttf"/>
+            fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
     </LinearLayout>
 
     <RelativeLayout
@@ -60,7 +60,7 @@
                 android:text="test"
                 android:textColor="@color/black"
                 android:layout_toEndOf="@id/cvfl_message_pic_small"
-                fontPath="fonts/NunitoSans-Regular.ttf"/>
+                fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
             <LinearLayout
                 android:id="@+id/cvfl_message_pic_container_1"
                 android:layout_width="wrap_content"
@@ -81,7 +81,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/cvfl_message"
                 android:text="@string/decline"
-                fontPath="fonts/NunitoSans-Regular.ttf"/>
+                fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
 
             <Button
                 android:id="@+id/cvfl_message_button_money_accept"
@@ -90,7 +90,7 @@
                 android:layout_toEndOf="@id/cvfl_message_button_money_decline"
                 android:layout_below="@id/cvfl_message"
                 android:text="@string/accept"
-                fontPath="fonts/NunitoSans-Regular.ttf"/>
+                fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
 
 
         </RelativeLayout>
