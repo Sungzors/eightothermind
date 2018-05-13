@@ -8,8 +8,9 @@
     <!--Selected Filter-->
     <RelativeLayout
         android:id="@+id/acf_selectedFilter_container"
-        android:layout_width="400dp"
-        android:layout_height="400dp"
+        android:layout_width="match_parent"
+        android:layout_height="440sp"
+        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true">
 
         <ImageView
@@ -18,43 +19,42 @@
             android:layout_height="match_parent"
             android:layout_centerInParent="true"
             android:adjustViewBounds="true"
-            android:scaleType="centerCrop" />
-
-        <ImageView
-            android:id="@+id/acf_filter_iv"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerInside"
+            android:background="@drawable/media_background"
+            android:padding="6sp"/>
 
     </RelativeLayout>
 
     <!--Filter Selection-->
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/acf_filter_container"
         android:layout_width="match_parent"
-        android:layout_height="75dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/acf_controls_container"
         android:layout_below="@+id/acf_selectedFilter_container"
-        android:layout_centerHorizontal="true">
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="5sp"
+        android:layout_marginTop="5sp"
+        android:background="@color/dark_black_transparent"
+        android:gravity="center|bottom"
+        android:foregroundGravity="center">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/acf_filter_rv"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal" />
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:orientation="horizontal"
+            android:paddingTop="10sp"/>
 
-    </LinearLayout>
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/acf_controls_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="70sp"
         android:layout_alignParentBottom="true"
-        android:layout_below="@+id/acf_filter_container"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="20sp"
         android:background="@color/dark_black_transparent"
         android:orientation="horizontal"
         android:paddingTop="20sp">

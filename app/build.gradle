@@ -150,6 +150,7 @@ dependencies {
     compile project(':photoeditorsdk')
 
     //Photo Filters
+    compile 'net.alhazmy13.ImageFilters:library:0.1.2-beta'
 
     //Video Playback
     compile 'net.protyposis.android.mediaplayer:mediaplayer:4.4.0'

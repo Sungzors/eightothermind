@@ -38,6 +38,7 @@ import kotlinx.android.synthetic.main.view_camera_control_close.*
 import kotlinx.android.synthetic.main.view_camera_control_editing.*
 import kotlinx.android.synthetic.main.view_camera_control_save.*
 import kotlinx.android.synthetic.main.view_camera_control_send.*
+import org.apache.commons.io.FileUtils
 import java.util.*
 
 /**
@@ -107,6 +108,11 @@ class EditingActivity : CoreActivity(),
         super.onStop()
         controller.stop()
         restoreUI()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        FileUtils.deleteQuietly(applicationContext?.externalCacheDir)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {

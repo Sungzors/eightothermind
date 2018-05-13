@@ -623,7 +623,7 @@ class CameraControl private constructor() {
             imagePath = file.absolutePath
             try {
                 val fos = FileOutputStream(file)
-                scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 70, fos)
+                scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 30, fos)
                 fos.flush()
                 fos.close()
             } catch (e: FileNotFoundException) {
