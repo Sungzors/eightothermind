@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.structure.camera.CameraContract
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
@@ -22,8 +23,9 @@ import com.phdlabs.sungwon.a8chat_android.utility.adapter.ViewMap
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
 import com.phdlabs.sungwon.a8chat_android.utility.camera.PhotoFilterAsyncLoader
 import kotlinx.android.synthetic.main.activity_camera_filters.*
-import kotlinx.android.synthetic.main.progress_view.view.*
-import org.apache.commons.io.FileUtils
+import kotlinx.android.synthetic.main.view_camera_control_save.*
+import kotlinx.android.synthetic.main.view_camera_control_send.*
+import net.alhazmy13.imagefilter.ImageFilter
 
 /**
  * Created by JPAM on 5/9/18.
@@ -47,7 +49,10 @@ class ImageFilterActivity : CoreActivity(), CameraContract.Filters.View, LoaderM
     /*LifeCycle*/
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        //Controller
         ImageFilterActController(this)
+        //Setup Clickers
+        setupClickers()
         //Get Photo
         intent.getStringExtra(Constants.CameraIntents.IMAGE_FILE_PATH)?.let {
             imgFilePath = it
@@ -69,6 +74,33 @@ class ImageFilterActivity : CoreActivity(), CameraContract.Filters.View, LoaderM
     override fun onBackPressed() {
         super.onBackPressed()
         finish()
+    }
+
+    /**
+     * [setupClickers]
+     * On click listeners
+     * */
+    fun setupClickers() {
+        /*Save to gallery*/
+        iv_camera_save.setOnClickListener {
+            Toast.makeText(context, "Saved to gallery", Toast.LENGTH_SHORT).show()
+        }
+
+        /*Clear filter*/
+        clear_all_tv.setOnClickListener {
+            var imageRotation = 0f
+            if (DeviceInfo.INSTANCE.isWarningDevice(Build.MODEL)) {
+                imageRotation = 90f
+            }
+            acf_photo_iv.setImageURI(Uri.parse(imgFilePath))
+            acf_photo_iv.rotation = imageRotation
+        }
+
+        /*Send photo*/
+        iv_camera_send.setOnClickListener {
+            Toast.makeText(context, "Send", Toast.LENGTH_SHORT).show()
+        }
+
     }
 
     /**
@@ -110,6 +142,22 @@ class ImageFilterActivity : CoreActivity(), CameraContract.Filters.View, LoaderM
             override fun viewHolder(inflater: LayoutInflater?, parent: ViewGroup?, type: Int): BaseViewHolder {
                 return object : BaseViewHolder(R.layout.view_filter_image, inflater!!, parent) {
                     override fun addClicks(views: ViewMap?) {
+                        //Selected thumbnail will trigger a filter preview
+                        views?.click {
+                            imgFilePath?.let {
+                                for (filter in FILTERS.values()) {
+                                    if (getItem(adapterPosition)?.second == filter.name) {
+                                        //Process original photo with filter
+                                        acf_photo_iv.setImageBitmap(
+                                                ImageFilter.applyFilter(
+                                                        CameraControl.instance.getImageFromPath(
+                                                                this@ImageFilterActivity, it), filter.filter)
+                                        )
+                                        acf_photo_iv.rotation = imageRotation
+                                    }
+                                }
+                            }
+                        }
                         super.addClicks(views)
                     }
                 }
@@ -123,6 +171,12 @@ class ImageFilterActivity : CoreActivity(), CameraContract.Filters.View, LoaderM
         loaderManager.initLoader(0, null, this).forceLoad()
     }
 
+    /*Process filter preview*/
+    override fun processFilter(filter: ImageFilter.Filter) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    /*Load Filter thumbnails*/
     override fun onCreateLoader(p0: Int, p1: Bundle?): Loader<List<Pair<String, String>?>?> =
             PhotoFilterAsyncLoader(this, imgFilePath)
 
@@ -135,11 +189,9 @@ class ImageFilterActivity : CoreActivity(), CameraContract.Filters.View, LoaderM
                     mFilterList?.add(filteredPhoto)
                 }
 
-
                 /*Picture count subtitle & toolbar swap*/
                 mFilterList?.size?.let {
                     if (it > 0) {
-                        //fcr_refresh.isRefreshing = false
                         /*Setup RecyclerView with fresh data*/
                         mFilterAdapter.setItems(mFilterList)
                         mFilterAdapter.notifyDataSetChanged()

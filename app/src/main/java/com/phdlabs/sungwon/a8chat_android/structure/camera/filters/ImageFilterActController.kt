@@ -7,19 +7,26 @@ import com.phdlabs.sungwon.a8chat_android.structure.camera.CameraContract
  */
 class ImageFilterActController(var mView: CameraContract.Filters.View) : CameraContract.Filters.Controller {
 
+    /*LifeCycle*/
     override fun start() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun resume() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun pause() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun stop() {
+    }
+
+    /*Save*/
+    override fun savePhoto() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    /*Share*/
+    override fun sendPhoto() {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 

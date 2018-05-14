@@ -4,6 +4,7 @@ import android.content.AsyncTaskLoader
 import android.content.Context
 import android.graphics.Bitmap
 import android.hardware.camera2.CameraCharacteristics
+import com.phdlabs.sungwon.a8chat_android.structure.camera.filters.FILTERS
 import net.alhazmy13.imagefilter.ImageFilter
 
 /**
@@ -16,31 +17,6 @@ class PhotoFilterAsyncLoader(mContext: Context, var filePath: String?) : AsyncTa
     //Filtered Photo List
     var filteredPhotos: MutableList<Pair<String, String>>? = null
 
-    /**
-     * [FILTERS]
-     * Enum Filters used for [Bitmap] processing
-     * */
-    enum class FILTERS(val filter: ImageFilter.Filter, val filterName: String) {
-        GRAY(ImageFilter.Filter.GRAY, "gray"),
-        RELIEF(ImageFilter.Filter.RELIEF, "relief"),
-        AVERAGE_BLUR(ImageFilter.Filter.AVERAGE_BLUR, "blur"),
-        OIL(ImageFilter.Filter.OIL, "oil"),
-        NEON(ImageFilter.Filter.NEON, "neon"),
-        PIXELATE(ImageFilter.Filter.PIXELATE, "pixelate"),
-        TV(ImageFilter.Filter.TV, "tv"),
-        INVERT_COLOR(ImageFilter.Filter.INVERT, "invert"),
-        BLOCK(ImageFilter.Filter.BLOCK, "block"),
-        OLD(ImageFilter.Filter.OLD, "old"),
-        SHARPEN(ImageFilter.Filter.SHARPEN, "sharpen"),
-        LIGHT(ImageFilter.Filter.LIGHT, "light"),
-        LOMO(ImageFilter.Filter.LOMO, "lomo"),
-        HDR(ImageFilter.Filter.HDR, "hdr"),
-        GAUSSIAN_BLUR(ImageFilter.Filter.GAUSSIAN_BLUR, "g-blur"),
-        SOFT_GLOW(ImageFilter.Filter.SOFT_GLOW, "glow"),
-        SKETCH(ImageFilter.Filter.SKETCH, "sketch"),
-        MOTION_BLUR(ImageFilter.Filter.MOTION_BLUR, "motion"),
-        GOTHAM(ImageFilter.Filter.GOTHAM, "gotam")
-    }
 
     override fun loadInBackground(): List<Pair<String, String>?>? {
         return try {
@@ -63,7 +39,7 @@ class PhotoFilterAsyncLoader(mContext: Context, var filePath: String?) : AsyncTa
                             bm?.let {
                                 filteredPhotos?.add(0,
                                         Pair(iu.cachePicture(context, ImageFilter.applyFilter(it, FILTERS.GRAY.filter),
-                                                cc.mediaFileNaming()+FILTERS.GRAY.filterName), FILTERS.GRAY.filterName))
+                                                cc.mediaFileNaming() + FILTERS.GRAY.filterName), FILTERS.GRAY.filterName))
 
                             }
                         }
@@ -71,126 +47,126 @@ class PhotoFilterAsyncLoader(mContext: Context, var filePath: String?) : AsyncTa
                             bm?.let {
                                 filteredPhotos?.add(1,
                                         Pair(iu.cachePicture(context, ImageFilter.applyFilter(it, FILTERS.RELIEF.filter),
-                                                cc.mediaFileNaming()+FILTERS.RELIEF.filterName), FILTERS.RELIEF.filterName))
+                                                cc.mediaFileNaming() + FILTERS.RELIEF.filterName), FILTERS.RELIEF.filterName))
                             }
                         }
                         FILTERS.AVERAGE_BLUR -> {
                             bm?.let {
                                 filteredPhotos?.add(2,
                                         Pair(iu.cachePicture(context, ImageFilter.applyFilter(it, FILTERS.AVERAGE_BLUR.filter),
-                                                cc.mediaFileNaming()+FILTERS.AVERAGE_BLUR.filterName), FILTERS.AVERAGE_BLUR.filterName))
+                                                cc.mediaFileNaming() + FILTERS.AVERAGE_BLUR.filterName), FILTERS.AVERAGE_BLUR.filterName))
                             }
                         }
                         FILTERS.OIL -> {
                             bm?.let {
                                 filteredPhotos?.add(3,
                                         Pair(iu.cachePicture(context, ImageFilter.applyFilter(it, FILTERS.OIL.filter),
-                                                cc.mediaFileNaming()+FILTERS.OIL.filterName), FILTERS.OIL.filterName))
+                                                cc.mediaFileNaming() + FILTERS.OIL.filterName), FILTERS.OIL.filterName))
                             }
                         }
                         FILTERS.NEON -> {
                             bm?.let {
                                 filteredPhotos?.add(4,
                                         Pair(iu.cachePicture(context, ImageFilter.applyFilter(it, FILTERS.NEON.filter),
-                                                cc.mediaFileNaming()+FILTERS.NEON.filterName), FILTERS.NEON.filterName))
+                                                cc.mediaFileNaming() + FILTERS.NEON.filterName), FILTERS.NEON.filterName))
                             }
                         }
                         FILTERS.PIXELATE -> {
                             bm?.let {
                                 filteredPhotos?.add(5,
                                         Pair(iu.cachePicture(context, ImageFilter.applyFilter(it, FILTERS.PIXELATE.filter),
-                                                cc.mediaFileNaming()+FILTERS.PIXELATE.filterName), FILTERS.PIXELATE.filterName))
+                                                cc.mediaFileNaming() + FILTERS.PIXELATE.filterName), FILTERS.PIXELATE.filterName))
                             }
                         }
                         FILTERS.TV -> {
                             bm?.let {
                                 filteredPhotos?.add(6,
                                         Pair(iu.cachePicture(context, ImageFilter.applyFilter(it, FILTERS.TV.filter),
-                                                cc.mediaFileNaming()+FILTERS.TV.filterName), FILTERS.TV.filterName))
+                                                cc.mediaFileNaming() + FILTERS.TV.filterName), FILTERS.TV.filterName))
                             }
                         }
                         FILTERS.INVERT_COLOR -> {
                             bm?.let {
                                 filteredPhotos?.add(7,
                                         Pair(iu.cachePicture(context, ImageFilter.applyFilter(it, FILTERS.INVERT_COLOR.filter),
-                                                cc.mediaFileNaming()+FILTERS.INVERT_COLOR.filterName), FILTERS.INVERT_COLOR.filterName))
+                                                cc.mediaFileNaming() + FILTERS.INVERT_COLOR.filterName), FILTERS.INVERT_COLOR.filterName))
                             }
                         }
                         FILTERS.BLOCK -> {
                             bm?.let {
                                 filteredPhotos?.add(8,
                                         Pair(iu.cachePicture(context, ImageFilter.applyFilter(it, FILTERS.BLOCK.filter),
-                                                cc.mediaFileNaming()+FILTERS.BLOCK.filterName), FILTERS.BLOCK.filterName))
+                                                cc.mediaFileNaming() + FILTERS.BLOCK.filterName), FILTERS.BLOCK.filterName))
                             }
                         }
                         FILTERS.OLD -> {
                             bm?.let {
                                 filteredPhotos?.add(9,
                                         Pair(iu.cachePicture(context, ImageFilter.applyFilter(it, FILTERS.OLD.filter),
-                                                cc.mediaFileNaming()+FILTERS.OLD.filterName), FILTERS.OLD.filterName))
+                                                cc.mediaFileNaming() + FILTERS.OLD.filterName), FILTERS.OLD.filterName))
                             }
                         }
                         FILTERS.SHARPEN -> {
                             bm?.let {
                                 filteredPhotos?.add(10,
                                         Pair(iu.cachePicture(context, ImageFilter.applyFilter(it, FILTERS.SHARPEN.filter),
-                                                cc.mediaFileNaming()+FILTERS.SHARPEN.filterName), FILTERS.SHARPEN.filterName))
+                                                cc.mediaFileNaming() + FILTERS.SHARPEN.filterName), FILTERS.SHARPEN.filterName))
                             }
                         }
                         FILTERS.LIGHT -> {
                             bm?.let {
                                 filteredPhotos?.add(11,
                                         Pair(iu.cachePicture(context, ImageFilter.applyFilter(it, FILTERS.LIGHT.filter),
-                                                cc.mediaFileNaming()+FILTERS.LIGHT.filterName), FILTERS.LIGHT.filterName))
+                                                cc.mediaFileNaming() + FILTERS.LIGHT.filterName), FILTERS.LIGHT.filterName))
                             }
                         }
                         FILTERS.LOMO -> {
                             bm?.let {
                                 filteredPhotos?.add(12,
                                         Pair(iu.cachePicture(context, ImageFilter.applyFilter(it, FILTERS.LOMO.filter),
-                                                cc.mediaFileNaming()+FILTERS.LOMO.filterName), FILTERS.LOMO.filterName))
+                                                cc.mediaFileNaming() + FILTERS.LOMO.filterName), FILTERS.LOMO.filterName))
                             }
                         }
                         FILTERS.HDR -> {
                             bm?.let {
                                 filteredPhotos?.add(13,
                                         Pair(iu.cachePicture(context, ImageFilter.applyFilter(it, FILTERS.HDR.filter),
-                                                cc.mediaFileNaming()+FILTERS.HDR.filterName), FILTERS.HDR.filterName))
+                                                cc.mediaFileNaming() + FILTERS.HDR.filterName), FILTERS.HDR.filterName))
                             }
                         }
                         FILTERS.GAUSSIAN_BLUR -> {
                             bm?.let {
                                 filteredPhotos?.add(14,
                                         Pair(iu.cachePicture(context, ImageFilter.applyFilter(it, FILTERS.GAUSSIAN_BLUR.filter),
-                                                cc.mediaFileNaming()+FILTERS.GAUSSIAN_BLUR.filterName), FILTERS.GAUSSIAN_BLUR.filterName))
+                                                cc.mediaFileNaming() + FILTERS.GAUSSIAN_BLUR.filterName), FILTERS.GAUSSIAN_BLUR.filterName))
                             }
                         }
                         FILTERS.SOFT_GLOW -> {
                             bm?.let {
                                 filteredPhotos?.add(15,
                                         Pair(iu.cachePicture(context, ImageFilter.applyFilter(it, FILTERS.SOFT_GLOW.filter),
-                                                cc.mediaFileNaming()+FILTERS.SOFT_GLOW.filterName), FILTERS.SOFT_GLOW.filterName))
+                                                cc.mediaFileNaming() + FILTERS.SOFT_GLOW.filterName), FILTERS.SOFT_GLOW.filterName))
                             }
                         }
                         FILTERS.SKETCH -> {
                             bm?.let {
                                 filteredPhotos?.add(16,
                                         Pair(iu.cachePicture(context, ImageFilter.applyFilter(it, FILTERS.SKETCH.filter),
-                                                cc.mediaFileNaming()+FILTERS.SKETCH.filterName), FILTERS.SKETCH.filterName))
+                                                cc.mediaFileNaming() + FILTERS.SKETCH.filterName), FILTERS.SKETCH.filterName))
                             }
                         }
                         FILTERS.MOTION_BLUR -> {
                             bm?.let {
                                 filteredPhotos?.add(17,
                                         Pair(iu.cachePicture(context, ImageFilter.applyFilter(it, FILTERS.MOTION_BLUR.filter),
-                                                cc.mediaFileNaming()+FILTERS.MOTION_BLUR.filterName), FILTERS.MOTION_BLUR.filterName))
+                                                cc.mediaFileNaming() + FILTERS.MOTION_BLUR.filterName), FILTERS.MOTION_BLUR.filterName))
                             }
                         }
                         FILTERS.GOTHAM -> {
                             bm?.let {
                                 filteredPhotos?.add(18,
                                         Pair(iu.cachePicture(context, ImageFilter.applyFilter(it, FILTERS.GOTHAM.filter),
-                                                cc.mediaFileNaming()+FILTERS.GOTHAM.filterName), FILTERS.GOTHAM.filterName))
+                                                cc.mediaFileNaming() + FILTERS.GOTHAM.filterName), FILTERS.GOTHAM.filterName))
                             }
                         }
                     }

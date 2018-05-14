@@ -12,6 +12,7 @@ import com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControls.Camera
 import com.phdlabs.sungwon.a8chat_android.structure.camera.share.ShareCameraMediaActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseController
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseView
+import net.alhazmy13.imagefilter.ImageFilter
 import net.protyposis.android.mediaplayer.MediaSource
 
 /**
@@ -106,11 +107,12 @@ interface CameraContract {
     interface Filters {
 
         interface View : BaseView<Controller> {
-
+            fun processFilter(filter: ImageFilter.Filter)
         }
 
         interface Controller : BaseController {
-
+            fun savePhoto()
+            fun sendPhoto()
         }
     }
 
