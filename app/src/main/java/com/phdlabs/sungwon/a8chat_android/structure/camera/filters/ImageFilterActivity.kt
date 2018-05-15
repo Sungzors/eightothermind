@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
@@ -26,6 +27,7 @@ import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
 import com.phdlabs.sungwon.a8chat_android.utility.camera.PhotoFilterAsyncLoader
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_camera_filters.*
+import kotlinx.android.synthetic.main.progress_view.view.*
 import kotlinx.android.synthetic.main.view_camera_control_save.*
 import kotlinx.android.synthetic.main.view_camera_control_send.*
 import net.alhazmy13.imagefilter.ImageFilter
@@ -93,12 +95,7 @@ class ImageFilterActivity : CoreActivity(), CameraContract.Filters.View, LoaderM
         val editingFont: Typeface = Typeface.createFromAsset(assets, "Eventtus-Icons.ttf")
         clear_all_tv.typeface = editingFont
         clear_all_tv.setOnClickListener {
-            var imageRotation = 0f
-            if (DeviceInfo.INSTANCE.isWarningDevice(Build.MODEL)) {
-                imageRotation = 90f
-            }
             acf_photo_iv.setImageURI(Uri.parse(imgFilePath))
-            acf_photo_iv.rotation = imageRotation
         }
 
         /*Send photo*/
@@ -114,13 +111,8 @@ class ImageFilterActivity : CoreActivity(), CameraContract.Filters.View, LoaderM
      * */
     private fun setupPhoto(imgFilePath: String) {
         //Filtered image rotation
-        var imageRotation = 0f
-        if (DeviceInfo.INSTANCE.isWarningDevice(Build.MODEL)) {
-            imageRotation = 90f
-        }
         val bm = CameraControl.instance.getImageFromPath(this, imgFilePath)
         acf_photo_iv.setImageBitmap(bm)
-        acf_photo_iv.rotation = imageRotation
     }
 
 
@@ -129,11 +121,6 @@ class ImageFilterActivity : CoreActivity(), CameraContract.Filters.View, LoaderM
      * Setup photo with filter previews
      * */
     private fun setupFilters() {
-        //Filtered image rotation
-        var imageRotation = 0f
-        if (DeviceInfo.INSTANCE.isWarningDevice(Build.MODEL)) {
-            imageRotation = 90f
-        }
         //Filter Recycler
         mFilterAdapter = object : BaseRecyclerAdapter<Pair<String, String>?, BaseViewHolder>() {
             override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: Pair<String, String>?, position: Int, type: Int) {
@@ -141,7 +128,6 @@ class ImageFilterActivity : CoreActivity(), CameraContract.Filters.View, LoaderM
                 val filterName = viewHolder?.get<TextView>(R.id.vfi_name)
                 //Load photo
                 Picasso.with(context).load("file://" + data?.first).transform(RoundedCornersTransform(20, 8)).into(photoFilter)
-                photoFilter?.rotation = imageRotation
                 //Load title
                 filterName?.text = data?.second
             }
@@ -155,12 +141,10 @@ class ImageFilterActivity : CoreActivity(), CameraContract.Filters.View, LoaderM
                                 for (filter in FILTERS.values()) {
                                     if (getItem(adapterPosition)?.second == filter.filterName) {
                                         //Process original photo with filter
-                                        acf_photo_iv.setImageBitmap(
-                                                ImageFilter.applyFilter(
-                                                        CameraControl.instance.getImageFromPath(
-                                                                this@ImageFilterActivity, it), filter.filter)
+                                        acf_photo_iv.setImageBitmap(ImageFilter.applyFilter(
+                                                CameraControl.instance.getImageFromPath(
+                                                        this@ImageFilterActivity, it), filter.filter)
                                         )
-                                        acf_photo_iv.rotation = imageRotation
                                     }
                                 }
                             }

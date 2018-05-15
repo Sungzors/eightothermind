@@ -61,26 +61,12 @@ class EditingActivityController(val mView: EditingContract.View) : EditingContra
 
     /*Load image preview*/
     override fun loadImagePreview(filePath: String?) {
-
-        //TODO: Load 90Degrees for Portrait & 0 || 270 Degrees for Landscape. Also for the sharing screen thumbnail.
-
         filePath?.let {
             //Load Image Preview
             imageFilePath = it
-            if (DeviceInfo.INSTANCE.isWarningDevice(Build.MODEL)) {
-                var presentWithRotation: Float = 90f
-                if (mView.isFromCameraRoll) {
-                    presentWithRotation = 0f
-                }
-                Picasso.with(mView.getContext())
-                        .load(File(it))
-                        .rotate(presentWithRotation) //Full screen
-                        .into(mView.getPreviewLayout())
-            } else {
-                Picasso.with(mView.getContext())
-                        .load(File(it))
-                        .into(mView.getPreviewLayout())
-            }
+            Picasso.with(mView.getContext())
+                    .load(File(it))
+                    .into(mView.getPreviewLayout())
         }
     }
 

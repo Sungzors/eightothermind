@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -27,6 +26,7 @@
             android:padding="10sp"
             android:scaleType="centerInside" />
 
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/acf_filter_rv"
             android:layout_width="match_parent"
@@ -39,28 +39,6 @@
 
     </RelativeLayout>
 
-    <!--&lt;!&ndash;Filter Selection&ndash;&gt;-->
-    <!--<RelativeLayout-->
-    <!--android:id="@+id/acf_filter_container"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_above="@+id/acf_controls_container"-->
-    <!--android:layout_below="@+id/acf_selectedFilter_container"-->
-    <!--android:layout_centerHorizontal="true"-->
-    <!--android:background="@color/transparent"-->
-    <!--android:foregroundGravity="center"-->
-    <!--android:gravity="center|bottom">-->
-
-    <!--<android.support.v7.widget.RecyclerView-->
-    <!--android:id="@+id/acf_filter_rv"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_gravity="center"-->
-    <!--android:background="@color/dark_black_transparent"-->
-    <!--android:orientation="horizontal"-->
-    <!--android:paddingTop="10sp" />-->
-
-    <!--</RelativeLayout>-->
 
     <RelativeLayout
         android:id="@+id/acf_controls_container"

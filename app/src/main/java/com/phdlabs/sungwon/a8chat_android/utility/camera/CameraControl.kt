@@ -9,7 +9,11 @@ import android.content.res.AssetFileDescriptor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
+import android.hardware.Camera
+import android.hardware.Sensor
 import android.hardware.camera2.CameraCharacteristics
+import android.hardware.camera2.CameraDevice
+import android.hardware.camera2.CameraManager
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
@@ -20,6 +24,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v4.content.FileProvider
 import android.util.DisplayMetrics
 import android.util.Log
+import com.otaliastudios.cameraview.Facing
 import com.phdlabs.sungwon.a8chat_android.BuildConfig
 import com.phdlabs.sungwon.a8chat_android.R
 import java.io.*
@@ -341,6 +346,9 @@ class CameraControl private constructor() {
             Log.i(TAG, "selectedImage: " + selectedImage!!)
 
             bm = decodeBitmap(context, selectedImage)
+
+            //TODO: Image rotation
+
 //            val rotation = ImageRotator.getRotation(context, selectedImage, isCamera)
 //            bm = ImageRotator.rotate(bm, rotation)
         }
@@ -513,6 +521,53 @@ class CameraControl private constructor() {
         return outputBitmap
     }
 
+
+    /**
+     * [getCorrectCameraOrientation]
+     * Used to retrieve correct camera orientation based on device's camera sensor placement
+     * This method helps support Samsung & Nexus devices for rotation
+     * @param context
+     * @return degrees to rotate bitmap before storing
+     * */
+    private fun getCorrectCameraOrientation(context: Context, lensFacing: Facing): Float {
+
+        val cameraManager: CameraManager = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
+        val cameraIds = cameraManager.cameraIdList
+        var degrees = 0f
+        var currentSensorOrientation = 0
+        for (cameraId in cameraIds) {
+            val character = cameraManager.getCameraCharacteristics(cameraId)
+            /**
+             * - TODO: Report bug to [CameraView] developers
+             * CameraView library used has opposite LENS_FACING values
+             * Android LENS_FACING_BACK = 1
+             * Android LENS_FACING_FRONT = 0
+             * CameraView BACK = 0
+             * CameraView FRONT = 1
+             * */
+            //Match used lens
+            if (lensFacing == Facing.BACK && lensFacing.ordinal != character.get(CameraCharacteristics.LENS_FACING)) {
+                currentSensorOrientation = character.get(CameraCharacteristics.SENSOR_ORIENTATION)
+                when (currentSensorOrientation) {
+                    0 -> {
+                        degrees = 0f
+                    }
+                    90 -> {
+                        degrees = 0f
+                    }
+                    180 -> {
+                        degrees = 180f
+                    }
+                    270 -> {
+                        degrees = 270f
+                    }
+                }
+            }
+        }
+
+        return (currentSensorOrientation - degrees + 360) % 360
+    }
+
     /**
      * [rotatedBitmapCameraFrontLens] used for display purposes
      * @param facingLens of current camera
@@ -537,8 +592,9 @@ class CameraControl private constructor() {
 
     /**
      * [roatedBitmapCameraFrontLens] used for display purposes
-     * TODO: ROTATE BITMAP
-     *
+     * Used for the [CameraView] library handling ByteArrays to deliver Results
+     * @param image ByteArray
+     * @return ByteArray
      * */
     fun rotatedBitmapCameraFrontLens(image: ByteArray): ByteArray {
         //Create bitmap
@@ -557,6 +613,23 @@ class CameraControl private constructor() {
         var bm = BitmapFactory.decodeByteArray(image, 0, image.size, options)
         bm = Bitmap.createBitmap(bm, 0, 0, bm.width, bm.height, matrixPreRotateRight, true)
         //Create byte array
+        val byteArray = ByteArrayOutputStream()
+        bm.compress(Bitmap.CompressFormat.JPEG, 100, byteArray)
+        return byteArray.toByteArray()
+    }
+
+    /**
+     * [rotateImage]
+     * Used for 90 degrees rotation before saving image
+     * @param image ByteArray
+     * @param degrees Degrees to rotate
+     * */
+    fun rotateBitmap(context: Context, image: ByteArray, facing: Facing): ByteArray {
+        val degrees = getCorrectCameraOrientation(context, facing)
+        val matrix = Matrix()
+        val bmp = BitmapFactory.decodeByteArray(image, 0, image.size)
+        matrix.postRotate(degrees)
+        val bm = Bitmap.createBitmap(bmp, 0, 0, bmp.width, bmp.height, matrix, true)
         val byteArray = ByteArrayOutputStream()
         bm.compress(Bitmap.CompressFormat.JPEG, 100, byteArray)
         return byteArray.toByteArray()

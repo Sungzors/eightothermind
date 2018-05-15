@@ -137,20 +137,21 @@ class NormalFragment : CameraBaseFragment() {
 
     /*Image caching*/
     private fun imageCaptured(image: ByteArray) {
-        if (normalCamera?.facing == Facing.FRONT) {
-            val rotatedImage = CameraControl.instance.rotatedBitmapCameraFrontLens(image)
-            //Result Callback
-            val callbackTime = System.currentTimeMillis()
-            ResultHolder.dispose()
-            ResultHolder.setResultImage(rotatedImage)
-            ResultHolder.setResultTimeToCallback(callbackTime)
-        } else {
-            //Result Callback
-            val callbackTime = System.currentTimeMillis()
-            ResultHolder.dispose()
-            ResultHolder.setResultImage(image)
-            ResultHolder.setResultTimeToCallback(callbackTime)
+
+        //Rotate to match device orientation in 90 degrees
+        var rotatedImage: ByteArray = image
+        context?.let {
+            rotatedImage = CameraControl.instance.rotateBitmap(it, image, normalCamera?.facing!!)
         }
+
+        //Mirror Image if it's been taken with the front lens
+        if (normalCamera?.facing == Facing.FRONT) {
+            rotatedImage = CameraControl.instance.rotatedBitmapCameraFrontLens(image)
+        }
+        val callbackTime = System.currentTimeMillis()
+        ResultHolder.dispose()
+        ResultHolder.setResultImage(rotatedImage)
+        ResultHolder.setResultTimeToCallback(callbackTime)
         //Transition to editing activity
         val act = activity as CameraActivity
         act.getImageFilePath(null)
