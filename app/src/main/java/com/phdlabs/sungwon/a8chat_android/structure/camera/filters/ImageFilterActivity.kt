@@ -3,6 +3,7 @@ package com.phdlabs.sungwon.a8chat_android.structure.camera.filters
 import android.app.Activity
 import android.app.LoaderManager
 import android.content.Loader
+import android.graphics.Typeface
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -17,11 +18,13 @@ import com.phdlabs.sungwon.a8chat_android.structure.camera.CameraContract
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.DeviceInfo
+import com.phdlabs.sungwon.a8chat_android.utility.RoundedCornersTransform
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseRecyclerAdapter
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseViewHolder
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.ViewMap
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
 import com.phdlabs.sungwon.a8chat_android.utility.camera.PhotoFilterAsyncLoader
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_camera_filters.*
 import kotlinx.android.synthetic.main.view_camera_control_save.*
 import kotlinx.android.synthetic.main.view_camera_control_send.*
@@ -87,6 +90,8 @@ class ImageFilterActivity : CoreActivity(), CameraContract.Filters.View, LoaderM
         }
 
         /*Clear filter*/
+        val editingFont: Typeface = Typeface.createFromAsset(assets, "Eventtus-Icons.ttf")
+        clear_all_tv.typeface = editingFont
         clear_all_tv.setOnClickListener {
             var imageRotation = 0f
             if (DeviceInfo.INSTANCE.isWarningDevice(Build.MODEL)) {
@@ -134,8 +139,10 @@ class ImageFilterActivity : CoreActivity(), CameraContract.Filters.View, LoaderM
             override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: Pair<String, String>?, position: Int, type: Int) {
                 val photoFilter = viewHolder?.get<ImageView>(R.id.vfi_iv)
                 val filterName = viewHolder?.get<TextView>(R.id.vfi_name)
-                photoFilter?.setImageURI(Uri.parse(data?.first))
+                //Load photo
+                Picasso.with(context).load("file://" + data?.first).transform(RoundedCornersTransform(20, 8)).into(photoFilter)
                 photoFilter?.rotation = imageRotation
+                //Load title
                 filterName?.text = data?.second
             }
 
@@ -146,7 +153,7 @@ class ImageFilterActivity : CoreActivity(), CameraContract.Filters.View, LoaderM
                         views?.click {
                             imgFilePath?.let {
                                 for (filter in FILTERS.values()) {
-                                    if (getItem(adapterPosition)?.second == filter.name) {
+                                    if (getItem(adapterPosition)?.second == filter.filterName) {
                                         //Process original photo with filter
                                         acf_photo_iv.setImageBitmap(
                                                 ImageFilter.applyFilter(

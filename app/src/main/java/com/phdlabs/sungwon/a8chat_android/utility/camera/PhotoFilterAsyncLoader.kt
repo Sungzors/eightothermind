@@ -22,14 +22,14 @@ class PhotoFilterAsyncLoader(mContext: Context, var filePath: String?) : AsyncTa
         return try {
             //Filtered photos
             filteredPhotos = mutableListOf()
+
             //Get Bitmap
             val cc = CameraControl.instance
             val iu = ImageUtils.instance
-            var bm: Bitmap? = null
+            var bm: Bitmap?
+
             filePath?.let {
-                var newFilePath = CameraControl.instance.compressFile(it, 135, 135, 0)
-                //bm = ImageScaling.instance.decodeFileToBitmap(it, 100, 100,
-                //        ImageScaling.ScalingLogic.FIT, CameraCharacteristics.LENS_FACING_FRONT)
+                val newFilePath = CameraControl.instance.compressFile(it, 155, 155, 0)
                 bm = cc.getImageFromPath(context, newFilePath)
 
                 //Process photo in different filters

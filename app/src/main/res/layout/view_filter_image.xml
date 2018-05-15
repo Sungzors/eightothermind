@@ -8,8 +8,8 @@
     <!--Filtered Photo-->
     <ImageView
         android:id="@+id/vfi_iv"
-        android:layout_width="135sp"
-        android:layout_height="135sp"
+        android:layout_width="155sp"
+        android:layout_height="155sp"
         android:contentDescription="@string/camera_filter" />
 
     <!--Filter Name-->
