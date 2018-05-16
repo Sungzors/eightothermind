@@ -34,6 +34,7 @@ object Constants {
         const val CHANNEL_DELETED = "channel_deleted"
         const val FAVE_TYPE = "fave_type"
         const val BROADCAST_MESSAGE_ID = "messageId"
+        const val FILTERS = "filters"
     }
 
     /**

@@ -2,14 +2,13 @@ package com.phdlabs.sungwon.a8chat_android.structure.camera.filters
 
 import android.app.Activity
 import android.app.LoaderManager
+import android.content.Intent
 import android.content.Loader
 import android.graphics.Typeface
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
@@ -18,7 +17,6 @@ import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.structure.camera.CameraContract
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
-import com.phdlabs.sungwon.a8chat_android.utility.DeviceInfo
 import com.phdlabs.sungwon.a8chat_android.utility.RoundedCornersTransform
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseRecyclerAdapter
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseViewHolder
@@ -27,9 +25,7 @@ import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
 import com.phdlabs.sungwon.a8chat_android.utility.camera.PhotoFilterAsyncLoader
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_camera_filters.*
-import kotlinx.android.synthetic.main.progress_view.view.*
-import kotlinx.android.synthetic.main.view_camera_control_save.*
-import kotlinx.android.synthetic.main.view_camera_control_send.*
+import kotlinx.android.synthetic.main.view_camera_control_filters.*
 import net.alhazmy13.imagefilter.ImageFilter
 
 /**
@@ -50,7 +46,7 @@ class ImageFilterActivity : CoreActivity(), CameraContract.Filters.View, LoaderM
     private var imgFilePath: String? = null
     private lateinit var mFilterAdapter: BaseRecyclerAdapter<Pair<String, String>?, BaseViewHolder>
     private var mFilterList: MutableList<Pair<String, String>?>? = null
-
+    private var mSelectedFilter: String? = null
     /*LifeCycle*/
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,8 +73,15 @@ class ImageFilterActivity : CoreActivity(), CameraContract.Filters.View, LoaderM
     }
 
     override fun onBackPressed() {
-        super.onBackPressed()
-        finish()
+        mSelectedFilter?.let {
+            val intent = Intent()
+            intent.putExtra(Constants.IntentKeys.FILTERS, mSelectedFilter)
+            setResult(Activity.RESULT_OK, intent)
+            finish()
+        } ?: run {
+            setResult(Activity.RESULT_CANCELED)
+            finish()
+        }
     }
 
     /**
@@ -87,8 +90,8 @@ class ImageFilterActivity : CoreActivity(), CameraContract.Filters.View, LoaderM
      * */
     fun setupClickers() {
         /*Save to gallery*/
-        iv_camera_save.setOnClickListener {
-            Toast.makeText(context, "Saved to gallery", Toast.LENGTH_SHORT).show()
+        iv_camera_back.setOnClickListener {
+            onBackPressed()
         }
 
         /*Clear filter*/
@@ -96,11 +99,7 @@ class ImageFilterActivity : CoreActivity(), CameraContract.Filters.View, LoaderM
         clear_all_tv.typeface = editingFont
         clear_all_tv.setOnClickListener {
             acf_photo_iv.setImageURI(Uri.parse(imgFilePath))
-        }
-
-        /*Send photo*/
-        iv_camera_send.setOnClickListener {
-            Toast.makeText(context, "Send", Toast.LENGTH_SHORT).show()
+            mSelectedFilter = null
         }
 
     }
@@ -143,8 +142,8 @@ class ImageFilterActivity : CoreActivity(), CameraContract.Filters.View, LoaderM
                                         //Process original photo with filter
                                         acf_photo_iv.setImageBitmap(ImageFilter.applyFilter(
                                                 CameraControl.instance.getImageFromPath(
-                                                        this@ImageFilterActivity, it), filter.filter)
-                                        )
+                                                        this@ImageFilterActivity, it), filter.filter))
+                                        mSelectedFilter = filter.name
                                     }
                                 }
                             }

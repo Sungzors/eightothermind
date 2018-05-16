@@ -51,21 +51,11 @@
 
 
         <!--Save control-->
-        <com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControls.CameraSaveView
+        <com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControls.CameraFilterView
             android:id="@+id/cam_save_control"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
-            android:visibility="visible" />
-
-        <!--Send control-->
-        <com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControls.CameraSendView
-            android:id="@+id/cam_send_control"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentTop="true"
-            android:layout_gravity="end"
             android:visibility="visible" />
 
 

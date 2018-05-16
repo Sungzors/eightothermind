@@ -26,11 +26,13 @@ import com.ahmedadeltito.photoeditorsdk.OnPhotoEditorSDKListener
 import com.ahmedadeltito.photoeditorsdk.PhotoEditorSDK
 import com.ahmedadeltito.photoeditorsdk.ViewType
 import com.phdlabs.sungwon.a8chat_android.R
+import com.phdlabs.sungwon.a8chat_android.structure.camera.filters.FILTERS
 import com.phdlabs.sungwon.a8chat_android.structure.camera.result.ResultHolder
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseRecyclerAdapter
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseViewHolder
+import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
 import com.phdlabs.sungwon.a8chat_android.utility.camera.ImageUtils
 import com.theartofdev.edmodo.cropper.CropImage
 import kotlinx.android.synthetic.main.activity_camera_preview.*
@@ -38,6 +40,7 @@ import kotlinx.android.synthetic.main.view_camera_control_close.*
 import kotlinx.android.synthetic.main.view_camera_control_editing.*
 import kotlinx.android.synthetic.main.view_camera_control_save.*
 import kotlinx.android.synthetic.main.view_camera_control_send.*
+import net.alhazmy13.imagefilter.ImageFilter
 import org.apache.commons.io.FileUtils
 import java.util.*
 
@@ -135,7 +138,6 @@ class EditingActivity : CoreActivity(),
             /*Share Media*/
                 Constants.RequestCodes.SHARE_MEDIA -> {
                     //Close Camera Activity -> Back to Lobby
-                    //TODO: Probably set result OK to finish camera App or restart camera App -> Ask Design Team.
                     finish()
                 }
             /*Photo Editing*/
@@ -155,7 +157,16 @@ class EditingActivity : CoreActivity(),
                 }
             /*Photo Filtering*/
                 Constants.RequestCodes.FILTER_REQUEST_CODE -> {
-                    //Todo: Handle Photo Filter Activity Request Code
+                    val filterName = data?.getStringExtra(Constants.IntentKeys.FILTERS)
+                    filterName?.let {
+                        imgFilePath?.let {
+                            //photo_edit_iv.setImageBitmap(ImageFilter.applyFilter(CameraControl.instance.getImageFromPath(this@EditingActivity, it))
+                            photo_edit_iv.setImageBitmap(ImageFilter.applyFilter(
+                                    CameraControl.instance.getImageFromPath(
+                                            this@EditingActivity, it)
+                                    , ImageFilter.Filter.valueOf(filterName)))
+                        }
+                    }
                 }
             }
         } else {
@@ -482,6 +493,13 @@ class EditingActivity : CoreActivity(),
             ViewType.IMAGE -> println("IMAGE: " + "onStopViewChangeListener")
             ViewType.TEXT -> println("TEXT: " + "onStopViewChangeListener")
             else -> println("UNKNOWN: " + "onStopViewChangeListener")
+        }
+    }
+
+    /*Clear added filter*/
+    override fun clearFilter() {
+        imgFilePath?.let {
+            controller.loadImagePreview(it)
         }
     }
 

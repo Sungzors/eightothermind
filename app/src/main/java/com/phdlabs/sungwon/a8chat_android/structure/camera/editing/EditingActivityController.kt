@@ -70,6 +70,17 @@ class EditingActivityController(val mView: EditingContract.View) : EditingContra
         }
     }
 
+    /*Load filtered image*/
+    override fun loadFilteredImage(filePath: String?) {
+        filePath?.let {
+            //Load Image Preview
+            imageFilePath = it
+            Picasso.with(mView.getContext())
+                    .load(File(it))
+                    .into(mView.getPreviewLayout())
+        }
+    }
+
     /*Save file*/
     override fun saveImageToGallery() {
         imageFilePath.let {
@@ -134,6 +145,7 @@ class EditingActivityController(val mView: EditingContract.View) : EditingContra
         undoViews()
         mView.getPhotoEditor().clearBrushAllViews()
         mView.getPhotoEditor().clearAllViews()
+        mView.clearFilter()
     }
 
     /**

@@ -187,5 +187,6 @@
     <string name="end">End</string>
     <string name="leave_broadcast">Leave</string>
     <string name="camera_filter">Camera Filter</string>
+    <string name="back">back</string>
 
 </resources>

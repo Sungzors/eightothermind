@@ -85,11 +85,11 @@ class PhotoFilterAsyncLoader(mContext: Context, var filePath: String?) : AsyncTa
                                                 cc.mediaFileNaming() + FILTERS.TV.filterName), FILTERS.TV.filterName))
                             }
                         }
-                        FILTERS.INVERT_COLOR -> {
+                        FILTERS.INVERT -> {
                             bm?.let {
                                 filteredPhotos?.add(7,
-                                        Pair(iu.cachePicture(context, ImageFilter.applyFilter(it, FILTERS.INVERT_COLOR.filter),
-                                                cc.mediaFileNaming() + FILTERS.INVERT_COLOR.filterName), FILTERS.INVERT_COLOR.filterName))
+                                        Pair(iu.cachePicture(context, ImageFilter.applyFilter(it, FILTERS.INVERT.filter),
+                                                cc.mediaFileNaming() + FILTERS.INVERT.filterName), FILTERS.INVERT.filterName))
                             }
                         }
                         FILTERS.BLOCK -> {

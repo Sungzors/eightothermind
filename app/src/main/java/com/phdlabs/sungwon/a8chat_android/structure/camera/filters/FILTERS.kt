@@ -16,7 +16,7 @@ enum class FILTERS(val filter: ImageFilter.Filter, val filterName: String) {
     NEON(ImageFilter.Filter.NEON, "neon"),
     PIXELATE(ImageFilter.Filter.PIXELATE, "pixelate"),
     TV(ImageFilter.Filter.TV, "tv"),
-    INVERT_COLOR(ImageFilter.Filter.INVERT, "invert"),
+    INVERT(ImageFilter.Filter.INVERT, "invert"),
     BLOCK(ImageFilter.Filter.BLOCK, "bock"),
     OLD(ImageFilter.Filter.OLD, "old"),
     SHARPEN(ImageFilter.Filter.SHARPEN, "sharpen"),
