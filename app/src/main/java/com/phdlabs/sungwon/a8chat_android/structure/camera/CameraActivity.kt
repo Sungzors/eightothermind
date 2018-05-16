@@ -13,6 +13,7 @@ import com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControls.Camera
 import com.phdlabs.sungwon.a8chat_android.structure.camera.videoPreview.VideoPreviewActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
+import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
 import kotlinx.android.synthetic.main.activity_camera.*
 import kotlinx.android.synthetic.main.view_camera_control_close.*
 import kotlinx.android.synthetic.main.view_camera_control_tabs.*

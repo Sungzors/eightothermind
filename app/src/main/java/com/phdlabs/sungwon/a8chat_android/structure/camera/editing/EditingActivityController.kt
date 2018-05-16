@@ -8,6 +8,7 @@ import android.os.Build
 import android.support.v13.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import com.phdlabs.sungwon.a8chat_android.R
+import com.phdlabs.sungwon.a8chat_android.structure.camera.filters.ImageFilterActivity
 import com.phdlabs.sungwon.a8chat_android.structure.camera.share.ShareCameraMediaActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.DeviceInfo
@@ -60,26 +61,23 @@ class EditingActivityController(val mView: EditingContract.View) : EditingContra
 
     /*Load image preview*/
     override fun loadImagePreview(filePath: String?) {
-
-        //TODO: Load 90Degrees for Portrait & 0 || 270 Degrees for Landscape. Also for the sharing screen thumbnail.
-
         filePath?.let {
             //Load Image Preview
             imageFilePath = it
-            if (DeviceInfo.INSTANCE.isWarningDevice(Build.MODEL)) {
-                var presentWithRotation: Float = 90f
-                if (mView.isFromCameraRoll) {
-                    presentWithRotation = 0f
-                }
-                Picasso.with(mView.getContext())
-                        .load(File(it))
-                        .rotate(presentWithRotation) //Full screen
-                        .into(mView.getPreviewLayout())
-            } else {
-                Picasso.with(mView.getContext())
-                        .load(File(it))
-                        .into(mView.getPreviewLayout())
-            }
+            Picasso.with(mView.getContext())
+                    .load(File(it))
+                    .into(mView.getPreviewLayout())
+        }
+    }
+
+    /*Load filtered image*/
+    override fun loadFilteredImage(filePath: String?) {
+        filePath?.let {
+            //Load Image Preview
+            imageFilePath = it
+            Picasso.with(mView.getContext())
+                    .load(File(it))
+                    .into(mView.getPreviewLayout())
         }
     }
 
@@ -147,6 +145,7 @@ class EditingActivityController(val mView: EditingContract.View) : EditingContra
         undoViews()
         mView.getPhotoEditor().clearBrushAllViews()
         mView.getPhotoEditor().clearAllViews()
+        mView.clearFilter()
     }
 
     /**
@@ -187,5 +186,14 @@ class EditingActivityController(val mView: EditingContract.View) : EditingContra
         }
     }
 
+    /**
+     * [addFilter]
+     * Add Filter to Photo -> Transition to [ImageFilterActivity]
+     * */
+    override fun addFilter(imgFilePath: String) {
+        val intent = Intent(mView.activity, ImageFilterActivity::class.java)
+        intent.putExtra(Constants.CameraIntents.IMAGE_FILE_PATH, imgFilePath)
+        mView.activity?.startActivityForResult(intent, Constants.RequestCodes.FILTER_REQUEST_CODE)
+    }
 
 }

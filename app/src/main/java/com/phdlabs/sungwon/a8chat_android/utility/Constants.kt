@@ -34,6 +34,7 @@ object Constants {
         const val CHANNEL_DELETED = "channel_deleted"
         const val FAVE_TYPE = "fave_type"
         const val BROADCAST_MESSAGE_ID = "messageId"
+        const val FILTERS = "filters"
     }
 
     /**
@@ -205,6 +206,10 @@ object Constants {
          * Start Video Preview Activity after shooting video in Hands Free Mode
          * */
         const val VIDEO_PREVIEW_REQ_CODE = 31
+        /**
+         * Photo Filtering Activity Request Code
+         * */
+        val FILTER_REQUEST_CODE = 32
 
     }
 

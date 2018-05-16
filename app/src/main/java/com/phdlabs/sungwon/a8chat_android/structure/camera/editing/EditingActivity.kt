@@ -13,11 +13,9 @@ import android.graphics.drawable.ShapeDrawable
 import android.graphics.drawable.shapes.OvalShape
 import android.net.Uri
 import android.os.Bundle
-import android.os.CountDownTimer
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.DisplayMetrics
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -28,6 +26,7 @@ import com.ahmedadeltito.photoeditorsdk.OnPhotoEditorSDKListener
 import com.ahmedadeltito.photoeditorsdk.PhotoEditorSDK
 import com.ahmedadeltito.photoeditorsdk.ViewType
 import com.phdlabs.sungwon.a8chat_android.R
+import com.phdlabs.sungwon.a8chat_android.structure.camera.filters.FILTERS
 import com.phdlabs.sungwon.a8chat_android.structure.camera.result.ResultHolder
 import com.phdlabs.sungwon.a8chat_android.structure.core.CoreActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
@@ -41,7 +40,8 @@ import kotlinx.android.synthetic.main.view_camera_control_close.*
 import kotlinx.android.synthetic.main.view_camera_control_editing.*
 import kotlinx.android.synthetic.main.view_camera_control_save.*
 import kotlinx.android.synthetic.main.view_camera_control_send.*
-import java.text.SimpleDateFormat
+import net.alhazmy13.imagefilter.ImageFilter
+import org.apache.commons.io.FileUtils
 import java.util.*
 
 /**
@@ -77,10 +77,9 @@ class EditingActivity : CoreActivity(),
     private lateinit var colorPickerAdapter: BaseRecyclerAdapter<Int, BaseViewHolder>
     override var isFromCameraRoll: Boolean = false
 
-    /*LifeCycle*/
-    override
 
-    fun onCreate(savedInstanceState: Bundle?) {
+    /*LifeCycle*/
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         /*Controller init*/
@@ -91,7 +90,7 @@ class EditingActivity : CoreActivity(),
         if (imgFilePath.isNullOrBlank()) {
             ResultHolder.getResultImage()?.let {
                 val bitmap = BitmapFactory.decodeByteArray(it, 0, it.size)
-                imgFilePath = ImageUtils.instance.savePicture(this, bitmap, System.currentTimeMillis().toString())
+                imgFilePath = ImageUtils.instance.cachePicture(this, bitmap, System.currentTimeMillis().toString())
             }
         }
         isFromCameraRoll = intent.extras.getBoolean(Constants.CameraIntents.IS_FROM_CAMERA_ROLL)
@@ -114,6 +113,11 @@ class EditingActivity : CoreActivity(),
         restoreUI()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        FileUtils.deleteQuietly(applicationContext?.externalCacheDir)
+    }
+
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         if (requestCode == Constants.PermissionsReqCode.WRITE_EXTERNAL_REQ_CODE) {
             if (grantResults.size != 1 || grantResults.get(0) != PackageManager.PERMISSION_GRANTED) {
@@ -128,26 +132,42 @@ class EditingActivity : CoreActivity(),
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-
         //Sharing
-        if (requestCode == Constants.RequestCodes.SHARE_MEDIA && resultCode == Activity.RESULT_OK) {
-            //Close Camera Activity -> Back to Lobby
-            //TODO: Probably set result OK to finish camera App or restart camera App -> Ask Design Team.
-            finish()
-        }
-        //Editing
-        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            val result: CropImage.ActivityResult = CropImage.getActivityResult(data)
-            if (resultCode == Activity.RESULT_OK) {
-                //Complete filepath
-                imgFilePath = result.uri.toString()
-                //File path for displaying image with picasso
-                val resultUri = result.uri.toString().substring(7)
-                //Load image in UI
-                controller.loadImagePreview(resultUri)
-            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                //Error
-                showError(result.error.localizedMessage)
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+            /*Share Media*/
+                Constants.RequestCodes.SHARE_MEDIA -> {
+                    //Close Camera Activity -> Back to Lobby
+                    finish()
+                }
+            /*Photo Editing*/
+                CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE -> {
+                    val result: CropImage.ActivityResult = CropImage.getActivityResult(data)
+                    if (resultCode == Activity.RESULT_OK) {
+                        //Complete filepath
+                        imgFilePath = result.uri.toString()
+                        //File path for displaying image with picasso
+                        val resultUri = result.uri.toString().substring(7)
+                        //Load image in UI
+                        controller.loadImagePreview(resultUri)
+                    } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                        //Error
+                        showError(result.error.localizedMessage)
+                    }
+                }
+            /*Photo Filtering*/
+                Constants.RequestCodes.FILTER_REQUEST_CODE -> {
+                    val filterName = data?.getStringExtra(Constants.IntentKeys.FILTERS)
+                    filterName?.let {
+                        imgFilePath?.let {
+                            //photo_edit_iv.setImageBitmap(ImageFilter.applyFilter(CameraControl.instance.getImageFromPath(this@EditingActivity, it))
+                            photo_edit_iv.setImageBitmap(ImageFilter.applyFilter(
+                                    CameraControl.instance.getImageFromPath(
+                                            this@EditingActivity, it)
+                                    , ImageFilter.Filter.valueOf(filterName)))
+                        }
+                    }
+                }
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data)
@@ -183,6 +203,7 @@ class EditingActivity : CoreActivity(),
         ll_camera_text.setOnClickListener(this)
         ll_camera_crop.setOnClickListener(this)
         ll_camera_draw.setOnClickListener(this)
+        ll_camera_filter.setOnClickListener(this)
         //Send
         iv_camera_send.setOnClickListener(this)
     }
@@ -378,6 +399,12 @@ class EditingActivity : CoreActivity(),
                     controller.saveImageToGallery()
                 }
             }
+        /*Add Filter*/
+            ll_camera_filter -> {
+                imgFilePath?.let {
+                    controller.addFilter(it)
+                }
+            }
         /*Add Text*/
             ll_camera_text -> {
                 openAddTextPopUpWindow("", -1)
@@ -402,7 +429,7 @@ class EditingActivity : CoreActivity(),
             }
         /*Clear All Changes*/
             clear_all_tv -> {
-                controller.clearAllViews() //TODO
+                controller.clearAllViews()
             }
 
         /*Undo Last Change*/
@@ -466,6 +493,13 @@ class EditingActivity : CoreActivity(),
             ViewType.IMAGE -> println("IMAGE: " + "onStopViewChangeListener")
             ViewType.TEXT -> println("TEXT: " + "onStopViewChangeListener")
             else -> println("UNKNOWN: " + "onStopViewChangeListener")
+        }
+    }
+
+    /*Clear added filter*/
+    override fun clearFilter() {
+        imgFilePath?.let {
+            controller.loadImagePreview(it)
         }
     }
 

@@ -7,7 +7,6 @@ import android.content.pm.PackageManager
 import android.graphics.Point
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
-import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.GridLayoutManager
 import android.view.LayoutInflater
 import android.view.View
@@ -46,17 +45,14 @@ class CameraRollFragment : CameraBaseFragment(),
         fun create(): CameraRollFragment = CameraRollFragment()
     }
 
-    /*Initialization*/
-    init {
-
-    }
-
     /*Required*/
     override fun cameraLayoutId(): Int = R.layout.fragment_cameraroll
 
     override fun inOnCreateView(root: View?, container: ViewGroup?, savedInstanceState: Bundle?) {
+        //If something needs to be added to the custom layout
     }
 
+    /*LifeCycle*/
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         //Toolbar setup -> Default
         toolbar_title_double_container.visibility = View.GONE
@@ -69,6 +65,28 @@ class CameraRollFragment : CameraBaseFragment(),
         super.onViewCreated(view, savedInstanceState)
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (ContextCompat.checkSelfPermission(activity!!, Constants.AppPermissions.WRITE_EXTERNAL) != PackageManager.PERMISSION_GRANTED) {
+            requestExternalStoragePermissions()
+        } else {
+            activity!!.loaderManager.initLoader(0, null, this).forceLoad()
+        }
+        userVisibleHint = false
+    }
+
+    override fun setMenuVisibility(menuVisible: Boolean) {
+        super.setMenuVisibility(menuVisible)
+        if (menuVisible && isResumed) {
+            userVisibleHint = true
+            if (mGalleryPhotos.isEmpty()) {
+                fcr_refresh.post { fcr_refresh.isRefreshing = true }
+            }
+        } else {
+            userVisibleHint = false
+        }
+    }
+
     /**
      * [setupClickListeners] on the buttons
      * */
@@ -76,24 +94,23 @@ class CameraRollFragment : CameraBaseFragment(),
         toolbar_leftoolbart_action.setOnClickListener(this)
         val currentContext = this
         fcr_refresh.setColorSchemeResources(R.color.blue_color_picker, R.color.sky_blue_color_picker)
-        fcr_refresh.setOnRefreshListener(object : SwipeRefreshLayout.OnRefreshListener {
-            override fun onRefresh() {
+        fcr_refresh.setOnRefreshListener {
+            activity?.let {
                 //Refresh pictures
-                if (ContextCompat.checkSelfPermission(activity!!, Constants.AppPermissions.WRITE_EXTERNAL) != PackageManager.PERMISSION_GRANTED) {
+                if (ContextCompat.checkSelfPermission(it, Constants.AppPermissions.WRITE_EXTERNAL) != PackageManager.PERMISSION_GRANTED) {
                     requestExternalStoragePermissions()
                 } else {
-                    activity!!.loaderManager.initLoader(0, null, currentContext).forceLoad()
+                    it.loaderManager.initLoader(0, null, currentContext).forceLoad()
                 }
             }
-
-        })
+        }
     }
 
     /**
      * [toolbarVisibility] will change depending on the amount of
      * available pictures
      * */
-    fun toolbarVisibility(photoCount: Int) {
+    private fun toolbarVisibility(photoCount: Int) {
         if (photoCount > 0) {
             //Hide original title
             toolbar_title.visibility = View.GONE
@@ -113,16 +130,6 @@ class CameraRollFragment : CameraBaseFragment(),
             toolbar_title_double_bottom.visibility = View.GONE
             //Show original title
             toolbar_title.visibility = View.GONE
-        }
-    }
-
-    /*LifeCycle*/
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        if (ContextCompat.checkSelfPermission(activity!!, Constants.AppPermissions.WRITE_EXTERNAL) != PackageManager.PERMISSION_GRANTED) {
-            requestExternalStoragePermissions()
-        } else {
-            activity!!.loaderManager.initLoader(0, null, this).forceLoad()
         }
     }
 
@@ -194,8 +201,7 @@ class CameraRollFragment : CameraBaseFragment(),
             }
         }
         mAdapter?.setItems(mGalleryPhotos)
-        val gridLayoutManager = GridLayoutManager(context, 3)
-        cr_recyclerView.layoutManager = gridLayoutManager
+        cr_recyclerView.layoutManager = GridLayoutManager(context, 3)
         cr_recyclerView.adapter = mAdapter
 
     }
@@ -210,8 +216,9 @@ class CameraRollFragment : CameraBaseFragment(),
      * [LoaderManager] LifeCycle required methods
      * Required methods
      * */
-    override fun onCreateLoader(id: Int, args: Bundle?): Loader<List<GalleryPhoto>> =
-            PhotoGalleryAsyncLoader(context!!)
+    override fun onCreateLoader(id: Int, args: Bundle?): Loader<List<GalleryPhoto>> {
+        return PhotoGalleryAsyncLoader(context!!)
+    }
 
     override fun onLoadFinished(loader: Loader<List<GalleryPhoto>>?, data: List<GalleryPhoto>?) {
         mGalleryPhotos.clear()
@@ -222,7 +229,7 @@ class CameraRollFragment : CameraBaseFragment(),
             }
 
             /*Picture count subtitle & toolbar swap*/
-            if(mGalleryPhotos.count() > 0) {
+            if (mGalleryPhotos.count() > 0) {
                 toolbarVisibility(mGalleryPhotos.count())
                 fcr_refresh.isRefreshing = false
 

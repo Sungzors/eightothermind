@@ -161,6 +161,10 @@
         <activity
             android:name=".structure.groupchat.groupinvite.GroupInviteActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".structure.camera.filters.ImageFilterActivity"
+            android:screenOrientation="portrait"
+            android:hardwareAccelerated="true"
+            android:theme="@style/Camera"/>
 
         <!--Global Notifications-->
         <activity

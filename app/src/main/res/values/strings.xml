@@ -57,6 +57,7 @@
     <string name="camera_send">cameraSend</string>
     <string name="camerarollimage">CameraRollImage</string>
     <string name="cameraroll_saved_photo">Saved to gallery</string>
+    <string name="normal">normal</string>
     <!--Camera Editing-->
     <string name="photo_editing">photo editing</string>
     <string name="done">Done</string>
@@ -185,5 +186,7 @@
     <string name="live_broadcast">%1$s is Live!</string>
     <string name="end">End</string>
     <string name="leave_broadcast">Leave</string>
+    <string name="camera_filter">Camera Filter</string>
+    <string name="back">back</string>
 
 </resources>

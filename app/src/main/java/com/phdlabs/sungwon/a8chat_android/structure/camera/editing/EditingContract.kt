@@ -16,22 +16,27 @@ interface EditingContract {
     interface View : BaseView<Controller> {
         /*Photo*/
         fun getPreviewLayout(): ImageView
+
         fun getPhotoEditor(): PhotoEditorSDK
 
         /*Toast*/
         fun feedback(message: String)
 
         /*Activity*/
-        var activity:EditingActivity?
+        var activity: EditingActivity?
 
         /*Navigation*/
         var isFromCameraRoll: Boolean
+
+        /*Clear Filter*/
+        fun clearFilter()
     }
 
     interface Controller : BaseController {
         /*load image from path*/
         fun loadImagePreview(filePath: String?)
 
+        fun loadFilteredImage(filePath: String?)
         /*save image*/
         fun saveImageToGallery()
 
@@ -43,11 +48,13 @@ interface EditingContract {
 
         /*Photo SDK Controller*/
         fun addImageToPhotoSDK(image: Bitmap)
+
         fun addTextToPhotoSDK(string: String, colorCodeTextView: Int)
         fun clearAllViews()
         fun undoViews()
         fun eraseDrawing()
         fun sendImage()
+        fun addFilter(imgFilePath: String)
     }
 
 }

@@ -12,6 +12,7 @@ import com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControls.Camera
 import com.phdlabs.sungwon.a8chat_android.structure.camera.share.ShareCameraMediaActivity
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseController
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseView
+import net.alhazmy13.imagefilter.ImageFilter
 import net.protyposis.android.mediaplayer.MediaSource
 
 /**
@@ -99,6 +100,19 @@ interface CameraContract {
             fun pushToEvent(events: List<EventsEight>?, shareType: ShareCameraMediaActivity.ShareType?)
             fun pushToContact(contacts: List<Contact>?, shareType: ShareCameraMediaActivity.ShareType?)
 
+        }
+    }
+
+    /*Filters*/
+    interface Filters {
+
+        interface View : BaseView<Controller> {
+            fun processFilter(filter: ImageFilter.Filter)
+        }
+
+        interface Controller : BaseController {
+            fun savePhoto()
+            fun sendPhoto()
         }
     }
 
