@@ -135,7 +135,7 @@ interface ChannelContract {
 
             fun endBroadcast(roomId: Int, messageId: Int)
 
-            /*Broadcast message instance*/
+            /*Broadcast message INSTANCE*/
             var getBroadcastMessage: Message?
             var getUserId: Int?
 

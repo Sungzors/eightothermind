@@ -182,7 +182,7 @@
 
         <!--Photos & Images File Provider-->
         <provider
-            android:name=".utility.camera.PhotoFileProvider"
+            android:name=".utility.camera.GalleryFileProvider"
             android:authorities="${applicationId}.provider"
             android:exported="false"
             android:grantUriPermissions="true">

@@ -3,30 +3,30 @@ package com.phdlabs.sungwon.a8chat_android.utility.camera
 
 import android.content.Context
 import android.content.AsyncTaskLoader
-import com.phdlabs.sungwon.a8chat_android.model.media.GalleryPhoto
+import com.phdlabs.sungwon.a8chat_android.model.media.GalleryItem
 
 /**
  * Created by jpam on 1/22/18.
- * [PhotoGalleryAsyncLoader] used to load image resources in the background of a Fragment
+ * [GalleryAsyncLoader] used to load image resources in the background of a Fragment
  * @param mContext
  */
-class PhotoGalleryAsyncLoader(mContext: Context) : AsyncTaskLoader<List<GalleryPhoto>>(mContext) {
+class GalleryAsyncLoader(mContext: Context) : AsyncTaskLoader<List<GalleryItem>>(mContext) {
 
     /*Properties*/
-    private var mPhotoItems: List<GalleryPhoto>? = listOf()
+    private var mItemItems: List<GalleryItem>? = listOf()
 
     /**
-     * Called in background & generates all of the [GalleryPhoto] data needed
+     * Called in background & generates all of the [GalleryItem] data needed
      * to be published by the loader
      * */
-    override fun loadInBackground(): List<GalleryPhoto> =
-            PhotoFileProvider.instance.getAlbumImages(context)
-
+    override fun loadInBackground(): List<GalleryItem> =
+            GalleryFileProvider.INSTANCE.getAlbumImages(context)
+            //GalleryFileProvider.INSTANCE.getAlbumVideos(context)
     /**
      * Called when there is new data to deliver to the client.
      * Super class will take care of the delivery
      * */
-    override fun deliverResult(data: List<GalleryPhoto>?) {
+    override fun deliverResult(data: List<GalleryItem>?) {
         if (isReset) {
             //Async query came in while the loader has stopped
             if (data != null) {
@@ -34,8 +34,8 @@ class PhotoGalleryAsyncLoader(mContext: Context) : AsyncTaskLoader<List<GalleryP
             }
         }
 
-        val oldPhotos = mPhotoItems
-        mPhotoItems = data
+        val oldPhotos = mItemItems
+        mItemItems = data
 
         if (isStarted) {
             //If the loader has started we can deliver the results
@@ -52,9 +52,9 @@ class PhotoGalleryAsyncLoader(mContext: Context) : AsyncTaskLoader<List<GalleryP
      * Handles a request to start the loader
      * */
     override fun onStartLoading() {
-        if (mPhotoItems != null) {
+        if (mItemItems != null) {
             //Deliver if a result is available
-            deliverResult(mPhotoItems)
+            deliverResult(mItemItems)
         } else {
             //Start load if the data has changed on the source
             forceLoad()
@@ -72,7 +72,7 @@ class PhotoGalleryAsyncLoader(mContext: Context) : AsyncTaskLoader<List<GalleryP
     /**
      * Handles request to cancel the load
      * */
-    override fun onCanceled(data: List<GalleryPhoto>?) {
+    override fun onCanceled(data: List<GalleryItem>?) {
         super.onCanceled(data)
         //Release resources is there is a cancelled request
         onReleaseResources(data)
@@ -86,9 +86,9 @@ class PhotoGalleryAsyncLoader(mContext: Context) : AsyncTaskLoader<List<GalleryP
         //Make sure the loader has stopped
         onStopLoading()
         //Release resources
-        if (mPhotoItems != null) {
-            onReleaseResources(mPhotoItems)
-            mPhotoItems = null
+        if (mItemItems != null) {
+            onReleaseResources(mItemItems)
+            mItemItems = null
         }
     }
 
@@ -97,7 +97,7 @@ class PhotoGalleryAsyncLoader(mContext: Context) : AsyncTaskLoader<List<GalleryP
      * [onReleaseResources]
      * Helper function to release resources associated with an active dataset
      * */
-    fun onReleaseResources(galleryPhotos: List<GalleryPhoto>?) {
+    fun onReleaseResources(galleryItems: List<GalleryItem>?) {
         //For a simple List<> there is nothing to do, for a cursor we would close it here
         //TODO: Implement for further memory management
     }

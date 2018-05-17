@@ -4,8 +4,11 @@ import android.app.LoaderManager
 import android.content.Intent
 import android.content.Loader
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.graphics.Point
+import android.media.ThumbnailUtils
 import android.os.Bundle
+import android.provider.MediaStore
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.GridLayoutManager
 import android.view.LayoutInflater
@@ -13,14 +16,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import com.phdlabs.sungwon.a8chat_android.R
-import com.phdlabs.sungwon.a8chat_android.model.media.GalleryPhoto
+import com.phdlabs.sungwon.a8chat_android.R.id.toolbar_title_double_container
+import com.phdlabs.sungwon.a8chat_android.model.media.GalleryItem
 import com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.CameraBaseFragment
 import com.phdlabs.sungwon.a8chat_android.structure.camera.editing.EditingActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseRecyclerAdapter
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseViewHolder
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.ViewMap
-import com.phdlabs.sungwon.a8chat_android.utility.camera.PhotoGalleryAsyncLoader
+import com.phdlabs.sungwon.a8chat_android.utility.camera.GalleryAsyncLoader
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_cameraroll.*
 import kotlinx.android.synthetic.main.toolbar.*
@@ -33,12 +37,12 @@ import java.io.File
  * for the user to select & then preview after selection
  */
 class CameraRollFragment : CameraBaseFragment(),
-        LoaderManager.LoaderCallbacks<List<GalleryPhoto>>,
+        LoaderManager.LoaderCallbacks<List<GalleryItem>>,
         View.OnClickListener {
 
     /*Properties*/
-    private var mAdapter: BaseRecyclerAdapter<GalleryPhoto, BaseViewHolder>? = null
-    private var mGalleryPhotos: ArrayList<GalleryPhoto> = ArrayList()
+    private var mAdapter: BaseRecyclerAdapter<GalleryItem, BaseViewHolder>? = null
+    private var mGalleryItems: ArrayList<GalleryItem> = ArrayList()
 
     /*Companion*/
     companion object {
@@ -79,7 +83,7 @@ class CameraRollFragment : CameraBaseFragment(),
         super.setMenuVisibility(menuVisible)
         if (menuVisible && isResumed) {
             userVisibleHint = true
-            if (mGalleryPhotos.isEmpty()) {
+            if (mGalleryItems.isEmpty()) {
                 fcr_refresh.post { fcr_refresh.isRefreshing = true }
             }
         } else {
@@ -160,18 +164,19 @@ class CameraRollFragment : CameraBaseFragment(),
     }
 
     /*Setup recycler adapters*/
-    fun setupRecycler() {
+    private fun setupRecycler() {
         val displaySize = Point()
         activity?.windowManager?.defaultDisplay?.getSize(displaySize)
         val imageWidth = displaySize.x / 3
         val imageHeight = imageWidth
-        mAdapter = object : BaseRecyclerAdapter<GalleryPhoto, BaseViewHolder>() {
+        mAdapter = object : BaseRecyclerAdapter<GalleryItem, BaseViewHolder>() {
 
-            override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: GalleryPhoto?, position: Int, type: Int) {
+            override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: GalleryItem?, position: Int, type: Int) {
                 val imageView = viewHolder?.get<ImageView>(R.id.cr_iv_photo)
                 viewHolder?.let {
                     context?.let {
-                        Picasso.with(it).load(File(data?.mFullPath)).centerInside().resize(imageWidth, imageHeight).into(imageView)
+                        Picasso.with(it).load("file://"+data?.mThumbnailPath).centerInside().resize(imageWidth, imageHeight).into(imageView)
+                        //imageView?.setImageBitmap(videoThumbnail(data?.mFullPath))
                         println("DATE_TAKEN: " + data?.mDate)
                     }
                 }
@@ -200,7 +205,7 @@ class CameraRollFragment : CameraBaseFragment(),
                 }
             }
         }
-        mAdapter?.setItems(mGalleryPhotos)
+        mAdapter?.setItems(mGalleryItems)
         cr_recyclerView.layoutManager = GridLayoutManager(context, 3)
         cr_recyclerView.adapter = mAdapter
 
@@ -216,21 +221,21 @@ class CameraRollFragment : CameraBaseFragment(),
      * [LoaderManager] LifeCycle required methods
      * Required methods
      * */
-    override fun onCreateLoader(id: Int, args: Bundle?): Loader<List<GalleryPhoto>> {
-        return PhotoGalleryAsyncLoader(context!!)
+    override fun onCreateLoader(id: Int, args: Bundle?): Loader<List<GalleryItem>> {
+        return GalleryAsyncLoader(context!!)
     }
 
-    override fun onLoadFinished(loader: Loader<List<GalleryPhoto>>?, data: List<GalleryPhoto>?) {
-        mGalleryPhotos.clear()
+    override fun onLoadFinished(loader: Loader<List<GalleryItem>>?, data: List<GalleryItem>?) {
+        mGalleryItems.clear()
         data?.let {
 
             for (galleryPhoto in it) {
-                mGalleryPhotos.add(galleryPhoto)
+                mGalleryItems.add(galleryPhoto)
             }
 
             /*Picture count subtitle & toolbar swap*/
-            if (mGalleryPhotos.count() > 0) {
-                toolbarVisibility(mGalleryPhotos.count())
+            if (mGalleryItems.count() > 0) {
+                toolbarVisibility(mGalleryItems.count())
                 fcr_refresh.isRefreshing = false
 
                 /*Setup RecyclerView with fresh data*/
@@ -239,8 +244,8 @@ class CameraRollFragment : CameraBaseFragment(),
         }
     }
 
-    override fun onLoaderReset(loader: Loader<List<GalleryPhoto>>?) {
-        mGalleryPhotos.clear()
+    override fun onLoaderReset(loader: Loader<List<GalleryItem>>?) {
+        mGalleryItems.clear()
     }
 
     /*On Click action listeners*/
@@ -254,4 +259,10 @@ class CameraRollFragment : CameraBaseFragment(),
         }
     }
 
+    /**
+     * [videoThumbnail]
+     * Creates a video thumbnail for displaying the specified file
+     * */
+    fun videoThumbnail(filePath: String?): Bitmap =
+            ThumbnailUtils.createVideoThumbnail(filePath, MediaStore.Video.Thumbnails.MINI_KIND)
 }

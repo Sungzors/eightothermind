@@ -131,7 +131,7 @@ class GroupCreateActivity : CoreActivity(), GroupChatContract.Create.View{
                     TemporaryManager.instance.mMemberList.remove(data)
                     notifyItemRemoved(position)
                     mAdapter?.setItems(TemporaryManager.instance.mMemberList)
-//                    notifyItemRangeChanged(position, TemporaryManager.instance.mMemberList.size)
+//                    notifyItemRangeChanged(position, TemporaryManager.INSTANCE.mMemberList.size)
                 }
             }
 

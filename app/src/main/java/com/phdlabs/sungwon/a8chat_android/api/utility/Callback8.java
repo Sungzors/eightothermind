@@ -30,7 +30,7 @@ public abstract class Callback8<Result, EventClass extends Event> implements Cal
 
     @SuppressWarnings({"unchecked", "TryWithIdenticalCatches"})
     private void initParameter() {
-        // Get the class name of this instance's type.
+        // Get the class name of this INSTANCE's type.
         ParameterizedType pt = (ParameterizedType) getClass().getGenericSuperclass();
         // You may need this split or not, use logging to check
         String parameterClassName = pt.getActualTypeArguments()[1].toString().split("\\s")[1];

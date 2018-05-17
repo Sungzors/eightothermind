@@ -160,7 +160,7 @@ class EditingActivity : CoreActivity(),
                     val filterName = data?.getStringExtra(Constants.IntentKeys.FILTERS)
                     filterName?.let {
                         imgFilePath?.let {
-                            //photo_edit_iv.setImageBitmap(ImageFilter.applyFilter(CameraControl.instance.getImageFromPath(this@EditingActivity, it))
+                            //photo_edit_iv.setImageBitmap(ImageFilter.applyFilter(CameraControl.INSTANCE.getImageFromPath(this@EditingActivity, it))
                             photo_edit_iv.setImageBitmap(ImageFilter.applyFilter(
                                     CameraControl.instance.getImageFromPath(
                                             this@EditingActivity, it)

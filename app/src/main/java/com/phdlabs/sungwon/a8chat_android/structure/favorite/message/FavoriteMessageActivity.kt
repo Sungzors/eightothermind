@@ -355,7 +355,7 @@ class FavoriteMessageActivity : CoreActivity(), FavoriteContract.Message.View{
 //            message.files?.let {
 //                val mime = MimeTypeMap.getSingleton()
 //                val intent = Intent(Intent.ACTION_VIEW)
-//                val mimeType = mime.getMimeTypeFromExtension(SuffixDetector.instance.getFileSuffix(it[0]?.file_string.toString()))
+//                val mimeType = mime.getMimeTypeFromExtension(SuffixDetector.INSTANCE.getFileSuffix(it[0]?.file_string.toString()))
 //                intent.setDataAndType(Uri.parse(it[0]?.s3_url), mimeType)
 //                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
 //                try {
