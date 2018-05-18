@@ -10,7 +10,7 @@ import com.phdlabs.sungwon.a8chat_android.model.media.GalleryItem
  * [GalleryAsyncLoader] used to load image resources in the background of a Fragment
  * @param mContext
  */
-class GalleryAsyncLoader(mContext: Context) : AsyncTaskLoader<List<GalleryItem>>(mContext) {
+class GalleryAsyncLoader(mContext: Context, var type: GalleryFileProvider.GALLERYFILETYPE, var galleryProvider: GalleryFileProvider) : AsyncTaskLoader<List<GalleryItem>>(mContext) {
 
     /*Properties*/
     private var mItemItems: List<GalleryItem>? = listOf()
@@ -19,14 +19,31 @@ class GalleryAsyncLoader(mContext: Context) : AsyncTaskLoader<List<GalleryItem>>
      * Called in background & generates all of the [GalleryItem] data needed
      * to be published by the loader
      * */
-    override fun loadInBackground(): List<GalleryItem> =
-            GalleryFileProvider.INSTANCE.getAlbumImages(context)
-            //GalleryFileProvider.INSTANCE.getAlbumVideos(context)
+    override fun loadInBackground(): List<GalleryItem> = galleryType(type)
+
+    /**
+     * [galleryType]
+     * Fetch the desired type of files
+     * */
+    private fun galleryType(type: GalleryFileProvider.GALLERYFILETYPE): List<GalleryItem> {
+        //Setup Gallery Provider
+        var galleryContent: List<GalleryItem> = emptyList()
+        //Choose the type of data to be returned by the provider
+        if (type == GalleryFileProvider.GALLERYFILETYPE.PHOTO) {
+            galleryContent = galleryProvider.getAlbumImages(context)
+
+        } else if (type == GalleryFileProvider.GALLERYFILETYPE.VIDEO) {
+            galleryContent = galleryProvider.getAlbumVideos(context)
+        }
+        return galleryContent
+    }
+
     /**
      * Called when there is new data to deliver to the client.
      * Super class will take care of the delivery
      * */
     override fun deliverResult(data: List<GalleryItem>?) {
+
         if (isReset) {
             //Async query came in while the loader has stopped
             if (data != null) {
@@ -91,7 +108,6 @@ class GalleryAsyncLoader(mContext: Context) : AsyncTaskLoader<List<GalleryItem>>
             mItemItems = null
         }
     }
-
 
     /**
      * [onReleaseResources]

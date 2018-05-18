@@ -29,6 +29,28 @@ class GalleryFileProvider : FileProvider() {
         VIDEO
     }
 
+    /*Properties*/
+    var mOffset = 0
+    var mItemsPerPage = 0
+
+    /**
+     * Content Offset
+     * */
+    fun setContentOffset(offset: Int) {
+        mOffset = offset
+    }
+
+    private fun getContentOffset(): String = mOffset.toString()
+
+    /**
+     * Number of pages per item
+     * */
+    fun setNumberOfItemsPerPage(items: Int) {
+        mItemsPerPage = items
+    }
+
+    private fun getNumberOfItemsPerPage(): Int = mItemsPerPage
+
     /**
      * [getAlbumVideos] Fetches Videos from gallery
      * via single query
@@ -88,7 +110,7 @@ class GalleryFileProvider : FileProvider() {
                 fullPhotoProjection, // Which columns to return
                 null, // Return all rows
                 null,
-                MediaStore.Images.Media.DATE_ADDED// Ordered by Date Taken
+                MediaStore.Images.Media.DATE_ADDED + " limit " + getNumberOfItemsPerPage() + " offset " + getContentOffset()
         )
 
         //Extract proper columns
