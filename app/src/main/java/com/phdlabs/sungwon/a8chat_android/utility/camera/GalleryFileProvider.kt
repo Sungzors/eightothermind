@@ -127,7 +127,7 @@ class GalleryFileProvider : FileProvider() {
                 //Orientation
                 val imageOrientation = retrieveOrientation(fullPhotoCursor, context)
                 //Gallery Item
-                val galleryPhoto = GalleryItem(fullImageUri.toString(), thumbnail, dateTaken, imageOrientation)
+                val galleryPhoto = GalleryItem(fullImageUri.first, thumbnail, dateTaken, imageOrientation)
                 //Result
                 fullPhotoResult.add(galleryPhoto)
             } while (fullPhotoCursor.moveToNext())
@@ -143,7 +143,7 @@ class GalleryFileProvider : FileProvider() {
      * @param context
      * @return file path [Uri] + imageId [String]
      * */
-    private fun uriToFullImage(cursor: Cursor, context: Context): Pair<Uri, String> {
+    private fun uriToFullImage(cursor: Cursor, context: Context): Pair<String, String> {
         val imageId = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media._ID))
         //Request image
         val filepathColumn = arrayOf(MediaStore.Images.Media.DATA)
@@ -158,10 +158,10 @@ class GalleryFileProvider : FileProvider() {
             val columnIndex = imageCursor.getColumnIndex(filepathColumn[0])
             val filePath = imageCursor.getString(columnIndex)
             imageCursor.close()
-            return Pair(Uri.parse(filePath), imageId)
+            return Pair(filePath, imageId)
         } else {
             imageCursor.close()
-            return Pair(Uri.parse(""), "")
+            return Pair("", "")
         }
     }
 

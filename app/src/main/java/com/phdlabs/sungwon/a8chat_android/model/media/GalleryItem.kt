@@ -57,4 +57,5 @@ class GalleryItem() : Parcelable {
 
         override fun newArray(size: Int): Array<GalleryItem?> = arrayOfNulls(size)
     }
+
 }

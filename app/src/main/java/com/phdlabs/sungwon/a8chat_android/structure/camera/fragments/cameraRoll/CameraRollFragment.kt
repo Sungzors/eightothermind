@@ -26,6 +26,7 @@ import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseRecyclerAdapter
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseViewHolder
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.EndlessRecyclerViewScrollListener
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.ViewMap
+import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
 import com.phdlabs.sungwon.a8chat_android.utility.camera.GalleryAsyncLoader
 import com.phdlabs.sungwon.a8chat_android.utility.camera.GalleryFileProvider
 import com.squareup.picasso.Picasso
@@ -195,9 +196,11 @@ class CameraRollFragment : CameraBaseFragment(),
                 val imageView = viewHolder?.get<ImageView>(R.id.cr_iv_photo)
                 viewHolder?.let {
                     context?.let {
-                        Picasso.with(it).load("file://" + data?.mThumbnailPath).centerInside().resize(imageSquare, imageSquare).into(imageView)
+                        //Picasso.with(it).load(data?.mThumbnailPath).centerInside().resize(imageSquare, imageSquare).into(imageView)
                         //imageView?.setImageBitmap(videoThumbnail(data?.mFullPath))
-                        println("DATE_TAKEN: " + data?.mDate)
+                        //imageView?.setImageBitmap(CameraControl.instance.getImageFromPath(context, data?.mThumbnailPath!!))
+                        Picasso.with(it).load(data?.mFullPath).centerInside().resize(imageSquare, imageSquare).into(imageView)
+                        println("ORIENTATION: $data")
                     }
                 }
             }
@@ -259,6 +262,11 @@ class CameraRollFragment : CameraBaseFragment(),
         //mGalleryItems.clear()
         data?.let {
 
+            if (it.size == mGalleryItems.count() || it.isEmpty()) {
+                fcr_refresh.isRefreshing = false
+                return
+            }
+
             for (galleryPhoto in it) {
                 mGalleryItems.add(galleryPhoto)
             }
@@ -270,10 +278,12 @@ class CameraRollFragment : CameraBaseFragment(),
 
                 /*Setup RecyclerView with fresh data*/
                 mAdapter?.setItems(mGalleryItems)
-                if (mGalleryItems.size > galleryProvider.mItemsPerPage) {
-                    mAdapter?.notifyItemRangeChanged(mAdapter?.itemCount!!, mGalleryItems.size - galleryProvider.mItemsPerPage)
-                } else {
-                    mAdapter?.notifyItemRangeChanged(0, mAdapter?.itemCount!!)
+                cr_recyclerView?.post {
+                    if (mGalleryItems.size > galleryProvider.mItemsPerPage) {
+                        mAdapter?.notifyItemRangeChanged(mAdapter?.itemCount!!, mGalleryItems.size - galleryProvider.mItemsPerPage)
+                    } else {
+                        mAdapter?.notifyItemRangeChanged(0, mAdapter?.itemCount!!)
+                    }
                 }
             }
         }
