@@ -127,9 +127,13 @@ class GalleryFileProvider : FileProvider() {
                 //Orientation
                 val imageOrientation = retrieveOrientation(fullPhotoCursor, context)
                 //Gallery Item
-                val galleryPhoto = GalleryItem(fullImageUri.first, thumbnail, dateTaken, imageOrientation)
+                val galleryPhoto = ImageUtils.instance.correctRotation(
+                        GalleryItem(fullImageUri.first, thumbnail, dateTaken, imageOrientation)
+                )
                 //Result
-                fullPhotoResult.add(galleryPhoto)
+                galleryPhoto?.let {
+                    fullPhotoResult.add(it)
+                }
             } while (fullPhotoCursor.moveToNext())
         }
         fullPhotoCursor.close()

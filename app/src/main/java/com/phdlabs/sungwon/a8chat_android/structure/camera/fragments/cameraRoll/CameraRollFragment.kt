@@ -29,6 +29,7 @@ import com.phdlabs.sungwon.a8chat_android.utility.adapter.ViewMap
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
 import com.phdlabs.sungwon.a8chat_android.utility.camera.GalleryAsyncLoader
 import com.phdlabs.sungwon.a8chat_android.utility.camera.GalleryFileProvider
+import com.phdlabs.sungwon.a8chat_android.utility.camera.ImageUtils
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_cameraroll.*
 import kotlinx.android.synthetic.main.toolbar.*
@@ -196,10 +197,27 @@ class CameraRollFragment : CameraBaseFragment(),
                 val imageView = viewHolder?.get<ImageView>(R.id.cr_iv_photo)
                 viewHolder?.let {
                     context?.let {
-                        //Picasso.with(it).load(data?.mThumbnailPath).centerInside().resize(imageSquare, imageSquare).into(imageView)
+
+                        //Video
                         //imageView?.setImageBitmap(videoThumbnail(data?.mFullPath))
-                        //imageView?.setImageBitmap(CameraControl.instance.getImageFromPath(context, data?.mThumbnailPath!!))
-                        Picasso.with(it).load(data?.mFullPath).centerInside().resize(imageSquare, imageSquare).into(imageView)
+
+                        //Photo
+                        data?.mThumbnailPath?.let {
+                            Picasso.with(context)
+                                    .load("file://$it")
+                                    .rotate(data.mCorrectedOrientatiion)
+                                    .centerInside().resize(imageSquare, imageSquare)
+                                    .into(imageView)
+                        } ?: run {
+                            data?.mFullPath?.let {
+                                Picasso.with(context)
+                                        .load("file://$it")
+                                        .rotate(data.mCorrectedOrientatiion)
+                                        .centerInside().resize(imageSquare, imageSquare)
+                                        .into(imageView)
+                            }
+                        }
+
                         println("ORIENTATION: $data")
                     }
                 }
@@ -262,7 +280,7 @@ class CameraRollFragment : CameraBaseFragment(),
         //mGalleryItems.clear()
         data?.let {
 
-            if (it.size == mGalleryItems.count() || it.isEmpty()) {
+            if (fcr_refresh.isRefreshing || it.isEmpty()) {
                 fcr_refresh.isRefreshing = false
                 return
             }
@@ -286,6 +304,8 @@ class CameraRollFragment : CameraBaseFragment(),
                     }
                 }
             }
+        } ?: run {
+            fcr_refresh.isRefreshing = false
         }
     }
 

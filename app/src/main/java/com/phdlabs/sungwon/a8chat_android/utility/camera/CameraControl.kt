@@ -9,10 +9,7 @@ import android.content.res.AssetFileDescriptor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
-import android.hardware.Camera
-import android.hardware.Sensor
 import android.hardware.camera2.CameraCharacteristics
-import android.hardware.camera2.CameraDevice
 import android.hardware.camera2.CameraManager
 import android.net.Uri
 import android.os.Build
@@ -27,6 +24,7 @@ import android.util.Log
 import com.otaliastudios.cameraview.Facing
 import com.phdlabs.sungwon.a8chat_android.BuildConfig
 import com.phdlabs.sungwon.a8chat_android.R
+import com.phdlabs.sungwon.a8chat_android.model.media.GalleryItem
 import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -619,12 +617,12 @@ class CameraControl private constructor() {
     }
 
     /**
-     * [rotateImage]
-     * Used for 90 degrees rotation before saving image
+     * [rotateBitmapAsByteArray]
+     * Used for 90 degrees rotation before saving image interacting with camera location
      * @param image ByteArray
      * @param degrees Degrees to rotate
      * */
-    fun rotateBitmap(context: Context, image: ByteArray, facing: Facing): ByteArray {
+    fun rotateBitmapAsByteArray(context: Context, image: ByteArray, facing: Facing): ByteArray {
         val degrees = getCorrectCameraOrientation(context, facing)
         val matrix = Matrix()
         val bmp = BitmapFactory.decodeByteArray(image, 0, image.size)

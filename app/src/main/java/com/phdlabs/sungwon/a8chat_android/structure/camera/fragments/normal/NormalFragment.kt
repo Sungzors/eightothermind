@@ -1,7 +1,5 @@
 package com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.normal
 
-import android.graphics.Camera
-import android.hardware.camera2.CameraCharacteristics
 import android.os.Bundle
 import android.view.*
 import android.widget.RelativeLayout
@@ -141,7 +139,7 @@ class NormalFragment : CameraBaseFragment() {
         //Rotate to match device orientation in 90 degrees
         var rotatedImage: ByteArray = image
         context?.let {
-            rotatedImage = CameraControl.instance.rotateBitmap(it, image, normalCamera?.facing!!)
+            rotatedImage = CameraControl.instance.rotateBitmapAsByteArray(it, image, normalCamera?.facing!!)
         }
 
         //Mirror Image if it's been taken with the front lens

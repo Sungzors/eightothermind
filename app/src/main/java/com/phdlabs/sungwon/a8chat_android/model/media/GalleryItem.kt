@@ -16,6 +16,7 @@ class GalleryItem() : Parcelable {
     var mThumbnailPath: String? = null
     var mDate: String? = null
     var mOrientation: String? = null
+    var mCorrectedOrientatiion: Float = 0f
 
     /*Constructors*/
     constructor(fullPath: String, thumbnailPath: String?, date: String?, orientation: String?) : this() {
@@ -42,6 +43,10 @@ class GalleryItem() : Parcelable {
         //Orientation path
         mOrientation?.let {
             parcel.writeString(it)
+        }
+        //Corrected orientation
+        mCorrectedOrientatiion?.let {
+            parcel.writeFloat(it)
         }
     }
 

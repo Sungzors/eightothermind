@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.os.Environment
 import android.util.Log
+import com.phdlabs.sungwon.a8chat_android.model.media.GalleryItem
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -138,6 +139,33 @@ class ImageUtils private constructor() {
         }
 
         return videoStorageDir
+    }
+
+    /**
+     * [correctRotation]
+     * Read & correct photo rotation based on orientation metadata
+     * */
+    fun correctRotation(galleryItem: GalleryItem): GalleryItem {
+
+        return galleryItem.mOrientation.let {
+            val orient = it?.toInt()
+            when (orient) {
+                0 -> {
+                    galleryItem.mCorrectedOrientatiion = 0f
+                }
+                90 -> {
+                    galleryItem.mCorrectedOrientatiion = 90f
+                }
+                180 -> {
+                    galleryItem.mCorrectedOrientatiion = 180f
+                }
+                270 -> {
+                    galleryItem.mCorrectedOrientatiion = 270f
+                }
+
+            }
+            return@let galleryItem
+        }
     }
 
 }
