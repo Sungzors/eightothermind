@@ -231,15 +231,7 @@ class CameraRollFragment : CameraBaseFragment(),
                          * when an image is tapped
                          * */
                         views?.click {
-                            val intent = Intent(activity, EditingActivity::class.java)
-                            intent.putExtra(
-                                    Constants.CameraIntents.IMAGE_FILE_PATH,
-                                    getItem(adapterPosition).mFullPath
-                            )
-                            intent.putExtra(
-                                    Constants.CameraIntents.IS_FROM_CAMERA_ROLL, true
-                            )
-                            activity?.startActivity(intent)
+                            activity?.controller?.startPreviewActivity(getItem(adapterPosition).mFullPath, true)
                         }
                         super.addClicks(views)
                     }

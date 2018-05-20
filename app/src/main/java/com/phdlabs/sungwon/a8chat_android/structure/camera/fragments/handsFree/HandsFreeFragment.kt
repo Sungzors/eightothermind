@@ -121,9 +121,9 @@ class HandsFreeFragment : CameraBaseFragment() {
         cameraView?.hdr = Hdr.OFF
         cameraView?.playSounds = true
         cameraView?.sessionType = SessionType.VIDEO
-        cameraView?.videoCodec = VideoCodec.DEVICE_DEFAULT
+        cameraView?.videoCodec = VideoCodec.DEVICE_DEFAULT // Do not change
         cameraView?.videoMaxDuration = 720000 // 12 min
-        cameraView?.videoQuality = VideoQuality.MAX_2160P
+        cameraView?.videoQuality = VideoQuality.HIGHEST // Do not change
         cameraView?.whiteBalance = WhiteBalance.AUTO
         //Gesture Control
         cameraView?.mapGesture(Gesture.PINCH, GestureAction.ZOOM)

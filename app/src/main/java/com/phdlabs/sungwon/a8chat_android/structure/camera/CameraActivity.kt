@@ -149,7 +149,7 @@ class CameraActivity : CoreActivity(), CameraContract.Camera.View, TabLayout.OnT
 
     /*Start photo preview activity*/
     fun getImageFilePath(filePath: String?) {
-        controller.startPreviewActivity(filePath)
+        controller.startPreviewActivity(filePath, false)
     }
 
     fun startVideoPreview() {

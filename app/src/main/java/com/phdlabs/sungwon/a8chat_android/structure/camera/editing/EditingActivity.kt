@@ -85,6 +85,8 @@ class EditingActivity : CoreActivity(),
         /*Controller init*/
         EditingActivityController(this)
 
+
+        //TODO: Check if the camera lens +90 degrees
         /*Load image*/
         imgFilePath = intent.extras.getString(Constants.CameraIntents.IMAGE_FILE_PATH)
         if (imgFilePath.isNullOrBlank()) {

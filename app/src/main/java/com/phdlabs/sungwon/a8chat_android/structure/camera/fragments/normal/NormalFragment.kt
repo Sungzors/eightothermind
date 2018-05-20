@@ -146,6 +146,7 @@ class NormalFragment : CameraBaseFragment() {
         if (normalCamera?.facing == Facing.FRONT) {
             rotatedImage = CameraControl.instance.rotatedBitmapCameraFrontLens(image)
         }
+
         val callbackTime = System.currentTimeMillis()
         ResultHolder.dispose()
         ResultHolder.setResultImage(rotatedImage)

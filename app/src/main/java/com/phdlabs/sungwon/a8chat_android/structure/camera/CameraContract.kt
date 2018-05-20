@@ -54,7 +54,7 @@ interface CameraContract {
             fun manualFlash(viewPager: ViewPager)
 
             /*Start Preview Activity*/
-            fun startPreviewActivity(imageFilePath: String?)
+            fun startPreviewActivity(imageFilePath: String?, isFromCameraRoll: Boolean)
 
         }
     }

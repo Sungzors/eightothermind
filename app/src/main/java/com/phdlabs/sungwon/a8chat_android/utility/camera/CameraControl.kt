@@ -607,9 +607,10 @@ class CameraControl private constructor() {
         val matrixMirrorY = Matrix()
         matrixMirrorY.setValues(mirrorY)
         matrixPreRotateRight.postConcat(matrixMirrorY)
-        matrixRotateRight.preRotate(270f) //Unwanted behavior
+        matrixRotateRight.preRotate(90f)//Test pre rotation on different phones
         var bm = BitmapFactory.decodeByteArray(image, 0, image.size, options)
         bm = Bitmap.createBitmap(bm, 0, 0, bm.width, bm.height, matrixPreRotateRight, true)
+        bm = Bitmap.createBitmap(bm, 0, 0, bm.width, bm.height, matrixRotateRight, true)
         //Create byte array
         val byteArray = ByteArrayOutputStream()
         bm.compress(Bitmap.CompressFormat.JPEG, 100, byteArray)
