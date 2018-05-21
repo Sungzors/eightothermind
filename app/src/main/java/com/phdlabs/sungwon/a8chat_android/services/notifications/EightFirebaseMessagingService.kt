@@ -38,8 +38,10 @@ class EightFirebaseMessagingService : FirebaseMessagingService() {
 
     /*Properties*/
     private var mUserId: Int? = null
+    private lateinit var mChannelManager: ChannelsManager
 
     init {
+        //Current User Info
         UserManager.instance.getCurrentUser { success, user, _ ->
             if (success) {
                 user?.id?.let {
@@ -47,6 +49,9 @@ class EightFirebaseMessagingService : FirebaseMessagingService() {
                 }
             }
         }
+        //Channels Manager
+        mChannelManager = ChannelsManager.instance
+
     }
 
 
@@ -166,7 +171,7 @@ class EightFirebaseMessagingService : FirebaseMessagingService() {
                         //Intent
                         displayIntent = Intent(this, ChatActivity::class.java)
                         displayIntent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                        RoomManager.instance.getPrivateAndGroupChats { response ->
+                        RoomManager.instance.getPrivateAndGroupChats(true) { response ->
                             response.first?.let {
                                 it.forEach { room ->
                                     if (room.id.toString() == data?.roomId) {
@@ -205,11 +210,11 @@ class EightFirebaseMessagingService : FirebaseMessagingService() {
                             if (success) {
                                 user?.id?.let {
                                     if (data?.channel_creator_id == it.toString()) {
-                                        ChannelsManager.instance.getUserChannels(it, true, {
+                                        mChannelManager.getUserChannels(it, true, {
                                             it.first?.let {
                                                 it.forEach { channel ->
                                                     channel.room_id?.let {
-                                                        ChannelsManager.instance.getChannelPosts(true, it, null, {
+                                                        mChannelManager.getChannelPosts(true, it, null, {
                                                             //Check for commented post
                                                             it.first?.let {
                                                                 if (it.count() > 0) {
@@ -264,11 +269,11 @@ class EightFirebaseMessagingService : FirebaseMessagingService() {
                             if (success) {
                                 user?.id?.let {
                                     if (data?.channel_creator_id == it.toString()) {
-                                        ChannelsManager.instance.getUserChannels(it, true, {
+                                        mChannelManager.getUserChannels(it, true, {
                                             it.first?.let {
                                                 it.forEach { channel ->
                                                     channel.room_id?.let {
-                                                        ChannelsManager.instance.getChannelPosts(true, it, null, {
+                                                        mChannelManager.getChannelPosts(true, it, null, {
                                                             //Check for commented post
                                                             it.first?.let {
                                                                 if (it.count() > 0) {
@@ -301,7 +306,7 @@ class EightFirebaseMessagingService : FirebaseMessagingService() {
                     }
 
                 /*New Post on a Followed Channel*/
-                    //FIXME: Not working on Firebase Backend
+                //FIXME: Not working on Firebase Backend
                     Constants.Notifications.POST -> {//Channel
                         //Parse Notification Data Payload
                         val data = GsonHolder.instance.get()?.fromJson(jsonObject.toString(), PostPayload::class.java)
@@ -313,7 +318,7 @@ class EightFirebaseMessagingService : FirebaseMessagingService() {
                         }
                         //Get Channel Info from Room ID
                         data?.roomId?.let { roomId ->
-                            val channel = ChannelsManager.instance.querySingleChannelWithRoomId(roomId.toInt())
+                            val channel = mChannelManager.querySingleChannelWithRoomId(roomId.toInt())
                             channel?.let {
                                 when (data.message_type) {
                                 /*Broadcast Post*/
@@ -330,7 +335,7 @@ class EightFirebaseMessagingService : FirebaseMessagingService() {
                                     else -> {
                                         //Build Intent to access the new post
                                         displayIntent = Intent(this, ChannelPostShowActivity::class.java)
-                                        ChannelsManager.instance.getChannelPosts(true, roomId.toInt(), null, {
+                                        mChannelManager.getChannelPosts(true, roomId.toInt(), null, {
                                             //Check for commented post
                                             it.first?.let {
                                                 if (it.count() > 0) {
@@ -409,6 +414,8 @@ class EightFirebaseMessagingService : FirebaseMessagingService() {
                 PendingIntent.FLAG_ONE_SHOT)
         )
         manager.notify(createId(), builder.build())
+        //Dispose active network calls
+        mChannelManager.clearDisposables()
     }
 
     /**

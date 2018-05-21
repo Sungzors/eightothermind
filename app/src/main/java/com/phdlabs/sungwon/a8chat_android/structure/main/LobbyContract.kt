@@ -10,19 +10,27 @@ import com.phdlabs.sungwon.a8chat_android.structure.core.BaseView
  */
 interface LobbyContract {
 
+    //Lobby VC
     interface View: BaseView<Controller>{
-        fun setUpChannelRecycler(myChannels: MutableList<Channel>)
-        fun addFollowedChannels(followedChannels: MutableList<Channel>)
-        fun setUpEventsRecycler(events: MutableList<Room>)
-        fun setUpChatRecycler(chats: MutableList<Room>)
+        //UI
+        fun setUpChannelRecycler()
+        fun setUpEventsRecycler()
+        fun setUpChatRecycler()
         fun setSeparatorCounter(pos: Int)
 
-        fun getActivityDirect(): MainActivity
+        //Activity
+        fun activity(): MainActivity
 
+        /*Refresh UI*/
         fun refreshChat()
+        fun refreshMyChannels()
+        fun refreshFollowedChannels()
+        fun refreshEvents()
+
     }
 
     interface Controller: BaseController {
+        fun onViewCreated()
         fun getMyChannels(): MutableList<Channel>
         fun getChannelsFollowed(): MutableList<Channel>
         fun getEvents(): MutableList<Room>
@@ -31,9 +39,10 @@ interface LobbyContract {
         fun refreshAll()
         fun setRefreshFlag(shouldRefresh: Boolean)
         fun getRefreshFlag(): Boolean
-        fun callForEvent()
+        //fun updateLocationForEvents()
     }
 
+    //Pop up Menu VC
     interface Overlay {
         interface View: BaseView<Controller>{
             fun getActivityDirect(): MainActivity

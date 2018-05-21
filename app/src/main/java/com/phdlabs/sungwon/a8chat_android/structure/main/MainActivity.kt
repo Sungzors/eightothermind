@@ -2,12 +2,14 @@ package com.phdlabs.sungwon.a8chat_android.structure.main
 
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
+import android.widget.Toast
 import com.github.nkzawa.socketio.client.Socket
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
@@ -47,6 +49,7 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
 
     /*Instances*/
     private var mLobbyFragment: LobbyFragment = LobbyFragment.newInstance(true)
+    private var mProfileFragment: MyProfileFragment = MyProfileFragment()
 
 
     /*LifeCycle*/
@@ -66,7 +69,7 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
                 startActivity(intent)
                 finish()
             } else {
-               controller.updateTokens()
+                controller.updateTokens()
                 controller.updateNotificationBadges()
                 controller.readGlobalSettings()
                 mSocket.emit("user-entered-8", user?.id, Date())
@@ -125,7 +128,9 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
                     //todo: required contacts action if needed
                 }
                 Constants.ProfileIntents.EDIT_MY_PROFIILE -> { //Profile
-                    //todo: required profile action if needed
+                    //Update user info
+                    mProfileFragment.displayUserInfo()
+
                 }
                 Constants.ContactItems.INVITE_CONTACTS_REQ_CODE -> { //Invite Contact
                     //todo: required invite contact action if needed
@@ -152,7 +157,7 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
                     }
                     Constants.RequestCodes.CREATE_NEW_BACK_REQ_CODE -> {
                         //Don't refreshChannels Lobby
-                        mLobbyFragment.controller.setRefreshFlag(true)
+                        mLobbyFragment.controller.setRefreshFlag(false)
                         //Set home button selected
                         am_bottom_tab_nav.setOnNavigationItemSelectedListener(null)
                         showTabs(false, false)
@@ -166,6 +171,18 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
                 }
             else -> super.onActivityResult(requestCode, resultCode, data)
         }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        if (requestCode == Constants.PermissionsReqCode.LOCATION_REQ_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                //Update location
+                controller.updateLocationForEvents()
+            }
+        } else {
+            Toast.makeText(context, "Cannot retrieve location at this time", Toast.LENGTH_SHORT).show()
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
     /*Toolbar Control*/
@@ -198,7 +215,7 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
         }
     }
 
-    /*Tab Control*/
+    /*Tab Control & Automated selection*/
     private fun showTabs(isLaunch: Boolean, backFromCamera: Boolean) {
         //Last selected item
         if (backFromCamera) {
@@ -228,11 +245,11 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
                 /*If coming back from profile, do not refreshChannels data*/
                 lastSelectedTabId?.let {
                     if (it == R.id.mmt_profile) {
+                        popFragment()
                         mLobbyFragment = LobbyFragment.newInstance(false)
                     }
                 }
-                replaceFragment(contentContainerId(), mLobbyFragment, false)
-
+                replaceFragment(contentContainerId(), mLobbyFragment, true)
                 lastSelectedTabId = R.id.mmt_home
             }
 
@@ -243,7 +260,8 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
             R.id.mmt_profile -> {
                 super.onPostResume()
                 toolbarControl(false)
-                replaceFragment(contentContainerId(), MyProfileFragment.newInstance(), false)
+                popFragment()
+                addFragment(contentContainerId(), mProfileFragment, true)
                 lastSelectedTabId = R.id.mmt_profile
             }
         }

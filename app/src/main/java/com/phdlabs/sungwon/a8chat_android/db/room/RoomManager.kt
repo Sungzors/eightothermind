@@ -6,13 +6,15 @@ import com.phdlabs.sungwon.a8chat_android.model.files.File
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.phdlabs.sungwon.a8chat_android.model.user.UserRooms
+import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.vicpin.krealmextensions.query
 import com.vicpin.krealmextensions.queryFirst
 import com.vicpin.krealmextensions.save
 import com.vicpin.krealmextensions.saveAll
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import io.realm.RealmQuery
 
 /**
  * Created by JPAM on 2/28/18.
@@ -32,20 +34,39 @@ class RoomManager {
         val instance by lazy { Holder.instance }
     }
 
-    val disposable = CompositeDisposable()
 
+    /*Properties*/
+    private var mUserManager: UserManager
+    val disposables: MutableList<Disposable> = mutableListOf()
+
+    init {
+        mUserManager = UserManager.instance
+    }
+
+    /**
+     * [clearDisposables]
+     * Release API RX Call resources for memory management
+     * */
+    fun clearDisposables() {
+        for (disposable in disposables) {
+            if (!disposable.isDisposed) {
+                disposable.dispose()
+            }
+        }
+        disposables.clear()
+    }
 
     /**
      * [enterRoom]
      * Alerts API the room the user entered
      * */
     fun enterRoom(roomId: Int, callback: (UserRooms?) -> Unit) {
-        UserManager.instance.getCurrentUser { isSuccess, user, token ->
+        mUserManager.getCurrentUser { isSuccess, user, token ->
             if (isSuccess) {
                 user?.let {
                     token?.token?.let {
                         val call = Rest.getInstance().getmCallerRx().enterRoom(it, user.id!!, roomId)
-                        disposable.add(call.subscribeOn(Schedulers.io())
+                        disposables.add(call.subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({ response ->
                                     if (response.isSuccess) {
@@ -56,7 +77,6 @@ class RoomManager {
                                     } else if (response.isError) {
                                         println("Could not update user entering Room")
                                     }
-                                    disposable.clear()
                                 }, { throwable ->
                                     println(throwable.localizedMessage)
                                     println(throwable.stackTrace)
@@ -66,6 +86,7 @@ class RoomManager {
                 }
             }
         }
+        mUserManager.clearDisposables()
     }
 
     /**
@@ -73,12 +94,12 @@ class RoomManager {
      * Alerts API the room the user left
      * */
     fun leaveRoom(roomId: Int, callback: (UserRooms?) -> Unit) {
-        UserManager.instance.getCurrentUser { isSuccess, user, token ->
+        mUserManager.getCurrentUser { isSuccess, user, token ->
             if (isSuccess) {
                 user?.let {
                     token?.token?.let {
                         val call = Rest.getInstance().getmCallerRx().leaveRoom(it, user.id!!, roomId)
-                        disposable.add(call.subscribeOn(Schedulers.io())
+                        disposables.add(call.subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({ response ->
                                     if (response.isSuccess) {
@@ -99,23 +120,23 @@ class RoomManager {
                 }
             }
         }
+        mUserManager.clearDisposables()
     }
 
-    fun toggleNotification(roomId: Int, notif: Boolean, callback: (String?) -> Unit){
-        UserManager.instance.getCurrentUser{success, user, token ->
+    fun toggleNotification(roomId: Int, notif: Boolean, callback: (String?) -> Unit) {
+        mUserManager.getCurrentUser { success, user, token ->
             if (success) {
                 user?.let {
                     token?.token?.let {
                         val call = Rest.getInstance().getmCallerRx().toggleNotification(it, roomId, user.id!!, notif)
-                        disposable.add(call.subscribeOn(Schedulers.io())
+                        disposables.add(call.subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe({response ->
-                                    if(response.isSuccess) {
+                                .subscribe({ response ->
+                                    if (response.isSuccess) {
                                         callback(null)
-                                    } else if (response.isError){
+                                    } else if (response.isError) {
                                         callback("Notification Toggle Unsuccessful")
                                     }
-                                    disposable.clear()
                                 }, {
                                     callback(it.localizedMessage)
                                 }))
@@ -123,6 +144,7 @@ class RoomManager {
                 }
             }
         }
+        mUserManager.clearDisposables()
     }
 
     /**
@@ -130,12 +152,12 @@ class RoomManager {
      * - Used to pull room information
      * */
     fun getRoomInfo(roomId: Int, callback: (Pair<Room?, String?>) -> Unit) {
-        UserManager.instance.getCurrentUser { success, user, token ->
+        mUserManager.getCurrentUser { success, user, token ->
             if (success) {
                 user?.let {
                     token?.token?.let {
                         val call = Rest.getInstance().getmCallerRx().getRoomById(it, roomId)
-                        disposable.add(call.subscribeOn(Schedulers.io())
+                        disposables.add(call.subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({ response ->
                                     if (response.isSuccess) {
@@ -145,7 +167,6 @@ class RoomManager {
                                     } else if (response.isError) {
                                         callback(Pair(null, "Room not found"))
                                     }
-                                    disposable.clear()
                                 }, { throwable ->
                                     callback(Pair(null, throwable.localizedMessage))
                                 }))
@@ -153,13 +174,14 @@ class RoomManager {
                 }
             }
         }
+        mUserManager.clearDisposables()
     }
 
     /**
      * [getRealmRoom]
      * - Pull Room from Realm
      */
-    fun getRealmRoom(roomId: Int, callback: (Room?) -> Unit){
+    fun getRealmRoom(roomId: Int, callback: (Room?) -> Unit) {
         Room().queryFirst { equalTo("id", roomId) }?.let {
             callback(it)
         }
@@ -170,12 +192,12 @@ class RoomManager {
      * - Used to pull messages from a Room -> Currently used for Private Chats
      * */
     fun getRoomMessageHistory(roomId: Int, callback: (Pair<List<Message>?, String?>) -> Unit) {
-        UserManager.instance.getCurrentUser { success, user, token ->
+        mUserManager.getCurrentUser { success, user, token ->
             if (success) {
                 user?.let {
                     token?.token?.let {
                         val call = Rest.getInstance().getmCallerRx().getChatHistory(it, roomId, user.id!!)
-                        disposable.add(call.subscribeOn(Schedulers.io())
+                        disposables.add(call.subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({ response ->
                                     if (response.isSuccess) {
@@ -186,7 +208,6 @@ class RoomManager {
                                     } else if (response.isError) {
                                         callback(Pair(null, "Could not retrieve Chat history"))
                                     }
-                                    disposable.clear()
                                 }, { throwable ->
                                     callback(Pair(null, throwable.localizedMessage))
                                 }))
@@ -194,6 +215,7 @@ class RoomManager {
                 }
             }
         }
+        mUserManager.clearDisposables()
     }
 
     /**
@@ -201,32 +223,37 @@ class RoomManager {
      * Retrieve private chats information & GroupChats information
      * Used for notifications access to designated Activity
      * */
-    fun getPrivateAndGroupChats(callback: (Pair<List<Room>?, String?>) -> Unit) {
-        UserManager.instance.getCurrentUser { success, user, token ->
+    fun getPrivateAndGroupChats(refresh: Boolean, callback: (Pair<List<Room>?, String?>) -> Unit) {
+        mUserManager.getCurrentUser { success, user, token ->
             if (success) {
                 user?.let {
                     token?.token?.let {
-                        val call = Rest.getInstance().getmCallerRx().getPrivateAndGroupChats(it, user.id!!)
-                        disposable.add(call.subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe({ response ->
-                                    if (response.isSuccess) {
-                                        response.chats?.let {
-                                            if (it.count() > 0) {
-                                                callback(Pair(it.toList(), null))
+                        if (refresh) {
+                            val call = Rest.getInstance().getmCallerRx().getPrivateAndGroupChats(it, user.id!!)
+                            disposables.add(call.subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe({ response ->
+                                        if (response.isSuccess) {
+                                            response.chats?.let {
+                                                if (it.count() > 0) {
+                                                    callback(Pair(it.toList(), null))
+                                                    it.saveAll()
+                                                }
                                             }
+                                        } else if (response.isError) {
+                                            callback(Pair(null, "Could not download private & group chats"))
                                         }
-                                    } else if (response.isError) {
-                                        callback(Pair(null, "Could not download private & group chats"))
-                                    }
-                                    disposable.clear()
-                                }, { throwable ->
-                                    callback(Pair(null, throwable.localizedMessage))
-                                }))
+                                    }, { throwable ->
+                                        callback(Pair(null, throwable.localizedMessage))
+                                    }))
+                        } else {
+                            callback(Pair(getPrivateAndGroupChats(), null))
+                        }
                     }
                 }
             }
         }
+        mUserManager.clearDisposables()
     }
 
     /**
@@ -235,50 +262,73 @@ class RoomManager {
      * @callback Pair(Rooms, ErrorMessage)
      * WARNING -> NOT CURRENTLY USED - IT DOESN'T CONFORM TO [Room] Model
      * */
-    fun getPrivateChats(callback: (Pair<List<Room>?, String?>) -> Unit) {
-        UserManager.instance.getCurrentUser { success, user, token ->
+    fun getPrivateChats(refresh: Boolean, callback: (Pair<List<Room>?, String?>) -> Unit) {
+        mUserManager.getCurrentUser { success, user, token ->
             if (success) {
                 user?.let {
                     token?.token?.let {
-                        val call = Rest.getInstance().getmCallerRx().getPrivateChats(it, user.id!!)
-                        disposable.add(call.subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe({ response ->
-                                    if (response.isSuccess) {
-                                        var rooms: MutableList<Room> = mutableListOf()
-                                        //Unread & Favorites
-                                        response.privateChats?.unreadAndFavorite?.let {
-                                            rooms.addAll(it)
+                        if (refresh) {
+                            val call = Rest.getInstance().getmCallerRx().getPrivateChats(it, user.id!!)
+                            disposables.add(call.subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe({ response ->
+                                        if (response.isSuccess) {
+                                            var rooms: MutableList<Room> = mutableListOf()
+                                            //Unread & Favorites
+                                            response.privateChats?.unreadAndFavorite?.let {
+                                                rooms.addAll(it)
+                                            }
+                                            //Favorites
+                                            response.privateChats?.favorite?.let {
+                                                rooms.addAll(it)
+                                            }
+                                            //Unread
+                                            response.privateChats?.unread?.let {
+                                                rooms.addAll(it)
+                                            }
+                                            //Read
+                                            response.privateChats?.read?.let {
+                                                rooms.addAll(it)
+                                            }
+                                            //Cache chats
+                                            rooms.saveAll()
+                                            //Callback
+                                            callback(Pair(rooms, null))
+                                        } else if (response.isError) {
+                                            callback(Pair(null, "Could not download private chats"))
                                         }
-                                        //Favorites
-                                        response.privateChats?.favorite?.let {
-                                            rooms.addAll(it)
-                                        }
-                                        //Unread
-                                        response.privateChats?.unread?.let {
-                                            rooms.addAll(it)
-                                        }
-                                        //Read
-                                        response.privateChats?.read?.let {
-                                            rooms.addAll(it)
-                                        }
-                                        callback(Pair(rooms, null))
-                                    } else if (response.isError) {
-                                        callback(Pair(null, "Could not download private chats"))
-                                    }
 
-                                    disposable.clear()
-                                }, { throwable ->
-                                    callback(Pair(null, throwable.localizedMessage))
-                                }))
+                                    }, { throwable ->
+                                        callback(Pair(null, throwable.localizedMessage))
+                                    }))
+                        } else {
+                            callback(Pair(getPrivateAndGroupChats(), null))
+                        }
                     }
                 }
             }
         }
+        mUserManager.clearDisposables()
     }
 
 
     /*Queries*/
+
+
+    /**
+     * [getPrivateAndGroupChats]
+     * @return List of [Room]
+     * */
+    private fun getPrivateAndGroupChats(): List<Room>? {
+        val rooms = mutableListOf<Room>()
+        rooms.addAll(Room().query {
+            equalTo("chatType", Constants.ChatTypes.PRIVATE)
+        })
+        rooms.addAll(Room().query {
+            equalTo("chatType", Constants.ChatTypes.GROUP)
+        })
+        return rooms
+    }
 
     /**
      * [getCurrentEnteredUserRoom]

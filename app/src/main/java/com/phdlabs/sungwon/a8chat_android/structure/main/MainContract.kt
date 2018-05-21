@@ -28,5 +28,9 @@ interface MainContract {
 
         /*Global Settings*/
         fun readGlobalSettings()
+
+        /*Location*/
+        fun requestLocationPermissions()
+        fun updateLocationForEvents()
     }
 }

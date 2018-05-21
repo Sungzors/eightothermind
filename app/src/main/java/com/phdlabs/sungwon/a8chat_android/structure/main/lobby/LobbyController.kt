@@ -1,29 +1,16 @@
 package com.phdlabs.sungwon.a8chat_android.structure.main.lobby
 
-import android.content.Context
-import android.content.pm.PackageManager
-import android.location.Location
-import android.location.LocationListener
-import android.location.LocationManager
-import android.os.Bundle
-import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat
-import com.phdlabs.sungwon.a8chat_android.api.event.Event
-import com.phdlabs.sungwon.a8chat_android.api.response.ChatsRetrievalResponse
+import android.widget.Toast
 import com.phdlabs.sungwon.a8chat_android.api.rest.Caller
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
-import com.phdlabs.sungwon.a8chat_android.api.utility.Callback8
-import com.phdlabs.sungwon.a8chat_android.db.EventBusManager
 import com.phdlabs.sungwon.a8chat_android.db.channels.ChannelsManager
-import com.phdlabs.sungwon.a8chat_android.db.events.EventsManager
+import com.phdlabs.sungwon.a8chat_android.db.room.RoomManager
 import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
-import com.phdlabs.sungwon.a8chat_android.structure.event.create.EventCreateActivity
+import com.phdlabs.sungwon.a8chat_android.model.user.User
+import com.phdlabs.sungwon.a8chat_android.model.user.registration.Token
 import com.phdlabs.sungwon.a8chat_android.structure.main.LobbyContract
-import com.phdlabs.sungwon.a8chat_android.utility.Constants
-import com.vicpin.krealmextensions.saveAll
-import org.greenrobot.eventbus.EventBus
 
 /**
  * Created by SungWon on 10/17/2017.
@@ -39,173 +26,135 @@ class LobbyController(val mView: LobbyContract.View,
     private val mChannel = mutableListOf<Channel>()
     private val mChat = mutableListOf<Room>()
 
-    private var mLocation: Pair<Double, Double> = Pair(0.0, 0.0)
+    //User
+    private var mUser: User? = null
+    private var mToken: Token? = null
+    private var mUserManager: UserManager
 
+    //API
+    private var mChannelManager: ChannelsManager
+    private var mRoomManager: RoomManager
     private val mCaller: Caller
-    private val mEventBus: EventBus
-    private var mLocationManager: LocationManager? = null
 
     init {
+        //Controller
         mView.controller = this
+        //User
+        mUserManager = UserManager.instance
+        mUserManager.getCurrentUser { success, user, token ->
+            if (success) {
+                mUser = user
+                mToken = token
+            }
+        }
+        //API
+        mRoomManager = RoomManager.instance
         mCaller = Rest.getInstance().caller
-        mEventBus = EventBusManager.instance().mDataEventBus
-        mLocationManager = mView.getContext()?.getSystemService(Context.LOCATION_SERVICE) as LocationManager?
+        mChannelManager = ChannelsManager.instance
+    }
+
+    override fun onViewCreated() {
+        mView.setUpChannelRecycler()
+        mView.setUpEventsRecycler()
+        mView.setUpChatRecycler()
     }
 
     override fun start() {
-        mView.getContext()?.let {
-            /*Location permissions*/
-            if (ActivityCompat.checkSelfPermission(
-                            it, Constants.AppPermissions.FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                    ActivityCompat.checkSelfPermission(
-                            it, Constants.AppPermissions.COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
-            ) {
-                mView.hideProgress()
-                requestLocationPermissions()
-                return
-            } else {
-                try {
-                    mLocationManager?.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0L, 0f, locationListener)
-                } catch (ex: SecurityException) {
-                    println("No location available: " + ex.message)
-                }
-            }
-        }
-
     }
 
     override fun resume() {
         callMyChannels(refresh)
-        callChats()
+        callChats(refresh)
+
     }
 
     override fun pause() {
-
     }
 
     override fun stop() {
+        //TODO: Dispose network resources
+        mChannelManager.clearDisposables()
+        mUserManager.clearDisposables()
+        mRoomManager.clearDisposables()
     }
 
     /**
-     * [locationListener] handles the current location update
-     * once & then stops tracking location once the user leaves
-     * the [EventCreateActivity] lifecycle
+     * [callMyChannels]
+     * Retrieve cached channels or refresh from API depending on user navigation
      * */
-    private val locationListener: LocationListener = object : LocationListener {
-        /*Current Location*/
-        override fun onLocationChanged(location: Location) {
-
-            if(mLocation.first - location.latitude > 0.001 || mLocation.second - location.longitude > 0.001){
-
-                mLocation = Pair(location.latitude, location.longitude)
-                if(mView != null){
-                    callEvent(true)
-                }
-
-            }
-        }
-
-        /*Not necessary to handle on single location update*/
-        override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {}
-
-        /*Not necessary to handle on single location update*/
-        override fun onProviderEnabled(provider: String) {}
-
-        /*Not necessary to handle on single location update*/
-        override fun onProviderDisabled(provider: String) {}
-    }
-
-    /**
-     * [requestLocationPermissions]
-     * Requests FineLocation & Includes CoarseLocation for battery saving
-     * if the first is not available
-     * Callback is handled on Activity's[onRequestPermissionsResult]
-     * */
-    private fun requestLocationPermissions() {
-        val whatPermissions = arrayOf(Constants.AppPermissions.FINE_LOCATION,
-                Constants.AppPermissions.COARSE_LOCATION)
-        mView.getContext()?.let {
-            //Request Permissions
-            if (ContextCompat.checkSelfPermission(it, whatPermissions.get(0)) != PackageManager.PERMISSION_GRANTED &&
-                    ContextCompat.checkSelfPermission(it, whatPermissions.get(1)) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(mView.getActivityDirect(), whatPermissions, Constants.PermissionsReqCode.LOCATION_REQ_CODE)
-            }
-        }
-    }
-
     private fun callMyChannels(refresh: Boolean) {
-        mView.showProgress()
-        ChannelsManager.instance.getUserChannels(null, refresh, { response ->
+        //mView.showProgress()
+        mChannelManager.getUserChannels(null, refresh, { response ->
             response.second?.let {
                 //Error
-                mView.hideProgress()
-                /*When no channels are available it triggers a localized error message not wanted*/
-                //mView.showError(it)
-                callFollow(true)
+                //Retrieve Followed Channels
+                getFollowedChannels(true)
             } ?: run {
-                mView.hideProgress()
+                //mView.hideProgress()
                 response.first?.let {
                     //Channels
                     mMyChannel.clear()
                     mMyChannel = it.toMutableList()
                     if (mMyChannel.size > 0) {
                         //UI
-                        mView.setUpChannelRecycler(mMyChannel)
-                        callFollow(true)
-                    }else {
-                        callFollow(true)
+                        mView.refreshMyChannels()
+                        getFollowedChannels(true)
+                    } else {
+                        getFollowedChannels(true)
                     }
                 }
             }
         })
     }
 
+    //FIXME: Review Event call
     private fun callEvent(refresh: Boolean) {
-        mView.showProgress()
-        EventsManager.instance.getEvents(refresh, mLocation.first, mLocation.second, { response ->
-            response.second?.let {
-                // Error
-                mView.hideProgress()
-                /*When no events are available it triggers a localized error message not wanted*/
-                //mView.showError(it)
-            } ?: run {
-                mView.hideProgress()
-                response.first?.let {
-                    //Events
-                    var chatCount = 0
-                    for (rooms in it){
-                        if(rooms.isEventActive){
-                            mEvents.add(rooms)
-                        } else {
-                            if(!mChat.contains(rooms)){
-                                mChat.add(rooms)
-                            }
-                            chatCount++
-                        }
-                    }
-                    if (mEvents.size > 0) {
-                        //UI
-                        mView.setUpEventsRecycler(mEvents)
-                    }
-                    if (chatCount>0){
-                        mView.refreshChat()
-                    }
-                }
-            }
-        })
+        //mView.showProgress() //FIXME: Crashes on fast changes through tabs
+//        EventsManager.instance.getEvents(refresh, mLocation.first, mLocation.second, { response ->
+//            response.second?.let {
+//                // Error
+//                //mView.hideProgress()
+//                /*When no events are available it triggers a localized error message not wanted*/
+//                //mView.showError(it)
+//            } ?: run {
+//                //mView.hideProgress()
+//                response.first?.let {
+//                    //Events
+//                    var chatCount = 0
+//                    for (rooms in it) {
+//                        if (rooms.isEventActive) {
+//                            mEvents.add(rooms)
+//                        } else {
+//                            if (!mChat.contains(rooms)) {
+//                                mChat.add(rooms)
+//                            }
+//                            chatCount++
+//                        }
+//                    }
+//                    if (mEvents.size > 0) {
+//                        //UI
+//                        mView.setUpEventsRecycler(mEvents)
+//                    }
+//                    if (chatCount > 0) {
+//                        mView.refreshChat()
+//                    }
+//                }
+//            }
+//        })
     }
 
-    private fun callFollow(refresh: Boolean) {
+    /**
+     * [getFollowedChannels]
+     * Retrieve cached followed channels or refresh from API
+     * */
+    private fun getFollowedChannels(refresh: Boolean) {
+        //Channel separator
         mView.setSeparatorCounter(mMyChannel.size - 1)
-        mView.showProgress()
-        ChannelsManager.instance.getMyFollowedChannelsWithFlags(refresh, { _, followedChannels, errorMessage ->
+        mChannelManager.getMyFollowedChannelsWithFlags(refresh, { _, followedChannels, errorMessage ->
             errorMessage?.let {
                 //Error
-                mView.hideProgress()
-                /*When no followed channels are available it triggers a localized error message not wanted*/
-                //mView.showError(it)
+                Toast.makeText(mView.getContext(), "Start following channels", Toast.LENGTH_SHORT).show()
             } ?: run {
-                mView.hideProgress()
                 mChannelsFollowed.clear()
                 //Channels I Follow
                 followedChannels?.let {
@@ -220,38 +169,32 @@ class LobbyController(val mView: LobbyContract.View,
                 }
                 //UI
                 if (mChannelsFollowed.size > 0) {
-                    mView.addFollowedChannels(mChannelsFollowed) //TODO: Sould be called after getting my channels
+                    mView.refreshFollowedChannels()
                 }
             }
         })
     }
 
-    private fun callChats() {
-        UserManager.instance.getCurrentUser { success, user, token ->
-            if (success) {
-                mChat.clear()
-                val call = mCaller.getAllChats(token?.token, user?.id!!)
-                call.enqueue(object : Callback8<ChatsRetrievalResponse, Event>(mEventBus) {
-                    override fun onSuccess(data: ChatsRetrievalResponse?) {
-                        mChat.addAll(data!!.chats!!)
-                        if (mChat.size > 0) {
-                            mChat.saveAll()
-                            mView.setUpChatRecycler(mChat)
-                        }
+    //TODO: Switch chat calls to RX
+    private fun callChats(refresh: Boolean) {
+        mRoomManager.getPrivateAndGroupChats(refresh) {
+            it.second?.let {
+                //Error
+                Toast.makeText(mView.getContext(), "Start a private chat", Toast.LENGTH_SHORT).show()
+            } ?: run {
+                it.first?.let {
+                    if (it.count() > 0) {
+                        mChat.clear()
+                        mChat.addAll(it)
+                        mView.refreshChat()
                     }
-                })
+
+                }
             }
         }
-
     }
 
-    override fun callForEvent() {
-        try {
-            mLocationManager?.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0L, 0f, locationListener)
-        } catch (ex: SecurityException) {
-            println("No location available: " + ex.message)
-        }
-    }
+    //FIXME: Review all refreshing actions
 
     override fun setRefreshFlag(shouldRefresh: Boolean) {
         refresh = shouldRefresh
@@ -259,13 +202,15 @@ class LobbyController(val mView: LobbyContract.View,
 
     override fun getRefreshFlag(): Boolean = refresh
 
+    //FIXME: Not used -> Maybe a swipe refresh view
     override fun refreshAll() {
         callMyChannels(true)
         callEvent(true)
-        callFollow(true)
-        callChats()
+        getFollowedChannels(true)
+        callChats(true)
     }
 
+    //TODO: Review getters
     override fun getMyChannels(): MutableList<Channel> = mMyChannel
 
     override fun getEvents(): MutableList<Room> = mEvents

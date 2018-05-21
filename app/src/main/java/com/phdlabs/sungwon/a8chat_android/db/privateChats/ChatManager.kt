@@ -24,5 +24,22 @@ class ChatManager {
      * */
     fun getPrivateChats(refresh: Boolean, callback: (List<Room>) -> Unit) {
         //TODO: Get messages from the private chat rooms
+
+        //        UserManager.instance.getCurrentUser { success, user, token ->
+//            if (success) {
+//                mChat.clear()
+//                val call = mCaller.getAllChats(token?.token, user?.id!!)
+//                call.enqueue(object : Callback8<ChatsRetrievalResponse, Event>(mEventBus) {
+//                    override fun onSuccess(data: ChatsRetrievalResponse?) {
+//                        mChat.addAll(data!!.chats!!)
+//                        if (mChat.size > 0) {
+//                            mChat.saveAll()
+//                            mView.setUpChatRecycler(mChat)
+//                        }
+//                    }
+//                })
+//            }
+//        }
     }
+
 }

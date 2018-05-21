@@ -83,7 +83,7 @@ public abstract class CoreActivity extends AppCompatActivity {
         }
     }
 
-    public void setDoubleToolbarTitle(String titleTop, String titleBottom){
+    public void setDoubleToolbarTitle(String titleTop, String titleBottom) {
         LinearLayout doubleContainer = findById(R.id.toolbar_title_double_container);
         View singleTV = findById(R.id.toolbar_title);
         doubleContainer.setVisibility(LinearLayout.VISIBLE);
@@ -117,12 +117,12 @@ public abstract class CoreActivity extends AppCompatActivity {
         Picasso.with(this).load(resId).transform(new CircleTransform()).into(view);
     }
 
-    public void showRightImageToolbar(String url){
+    public void showRightImageToolbar(String url) {
         ImageView view = findById(R.id.toolbar_right_picture);
         view.setVisibility(ImageView.VISIBLE);
         if (!url.isEmpty()) {
             Picasso.with(this).load(url).transform(new CircleTransform()).placeholder(R.mipmap.ic_launcher_round).into(view);
-        }else {
+        } else {
             Picasso.with(this).load(R.mipmap.ic_launcher_round).transform(new CircleTransform()).into(view);
         }
     }
@@ -143,8 +143,8 @@ public abstract class CoreActivity extends AppCompatActivity {
         });
     }
 
-    public void showBackArrow(int icon, boolean finish){
-        if(finish){
+    public void showBackArrow(int icon, boolean finish) {
+        if (finish) {
             mToolbar.setNavigationIcon(icon);
             mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
@@ -177,7 +177,7 @@ public abstract class CoreActivity extends AppCompatActivity {
         addFragment(contentContainerId(), fragment, addToBackStack);
     }
 
-    public void replaceFragment(@NonNull Fragment fragment, boolean addToBackStack) {
+    public void replaceFragment(@NonNull CoreFragment fragment, boolean addToBackStack) {
         replaceFragment(contentContainerId(), fragment, addToBackStack);
     }
 
@@ -193,10 +193,10 @@ public abstract class CoreActivity extends AppCompatActivity {
     }
 
     @SuppressLint("CommitTransaction")
-    public void replaceFragment(@IdRes int containerId, @NonNull Fragment fragment, boolean addToBackStack) {
+    public void replaceFragment(@IdRes int containerId, @NonNull CoreFragment fragment, boolean addToBackStack) {
         String name = fragment.getClass().getName();
         FragmentTransaction replaceTransaction = getSupportFragmentManager().beginTransaction();
-        replaceTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+        replaceTransaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
         replaceTransaction.replace(containerId, fragment, name);
         if (addToBackStack) {
             replaceTransaction.addToBackStack(name);
