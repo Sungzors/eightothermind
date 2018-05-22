@@ -3,6 +3,7 @@ package com.phdlabs.sungwon.a8chat_android.structure.main
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Location
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
@@ -141,6 +142,9 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
                     am_bottom_tab_nav.setOnNavigationItemSelectedListener(null)
                     showTabs(false, false)
                 }
+                Constants.RequestCodes.EVENT_CHAT_REQ_CODE -> {
+                    //Coming back from opening an active Event
+                }
 
             //Result Cancelled
             }
@@ -167,6 +171,9 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
                         mLobbyFragment.controller.setRefreshFlag(false)
                         am_bottom_tab_nav.setOnNavigationItemSelectedListener(null)
                         showTabs(false, true) //Preserve last selected tab
+                    }
+                    Constants.RequestCodes.EVENT_CHAT_REQ_CODE -> {
+                        //Coming back from opening an active event
                     }
                 }
             else -> super.onActivityResult(requestCode, resultCode, data)
@@ -298,6 +305,11 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
 
             }
         }
+    }
+
+
+    override fun getEventsWithLocation(location: Location) {
+        mLobbyFragment.controller.callEvents(true, location)
     }
 
 }

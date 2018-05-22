@@ -1,7 +1,6 @@
 package com.phdlabs.sungwon.a8chat_android.structure.main.lobby
 
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -10,11 +9,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import com.phdlabs.sungwon.a8chat_android.R
-import com.phdlabs.sungwon.a8chat_android.api.event.Event
 import com.phdlabs.sungwon.a8chat_android.db.EightQueries
 import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
+import com.phdlabs.sungwon.a8chat_android.model.event.EventsEight
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.phdlabs.sungwon.a8chat_android.structure.channel.mychannel.MyChannelActivity
 import com.phdlabs.sungwon.a8chat_android.structure.chat.ChatActivity
@@ -27,10 +25,11 @@ import com.phdlabs.sungwon.a8chat_android.structure.main.lobbyOverlay.LobbyOverl
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseRecyclerAdapter
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseViewHolder
-import com.phdlabs.sungwon.a8chat_android.utility.adapter.EndlessRecyclerViewScrollListener
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.ViewMap
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform
 import com.squareup.picasso.Picasso
+import com.vicpin.krealmextensions.query
+import com.vicpin.krealmextensions.queryFirst
 import kotlinx.android.synthetic.main.fragment_lobby.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -39,6 +38,7 @@ import java.util.*
  * Created by SungWon on 10/17/2017.
  * Updated by JPAM on 03/09/2018
  */
+
 class LobbyFragment : CoreFragment(), LobbyContract.View {
 
     /*Controller*/
@@ -49,8 +49,8 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
     private lateinit var mAdapterChannels: BaseRecyclerAdapter<Channel, BaseViewHolder>
     private var mMyChannelsList: MutableList<Channel> = mutableListOf()
     //Events
-    private lateinit var mAdapterEvent: BaseRecyclerAdapter<Room, BaseViewHolder>
-    private var mEventsList: MutableList<Room> = mutableListOf()
+    private lateinit var mAdapterEvent: BaseRecyclerAdapter<Pair<Room, EventsEight?>?, BaseViewHolder>
+    private var mEventsList: MutableList<Pair<Room, EventsEight?>> = mutableListOf()
     //Private Chats
     private lateinit var mAdapterChat: BaseRecyclerAdapter<Room, BaseViewHolder>
     private var mChatsList: MutableList<Room> = mutableListOf()
@@ -164,9 +164,10 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
     /**EVENTS*/
     /*Events*/
     override fun setUpEventsRecycler() {
-        mAdapterEvent = object : BaseRecyclerAdapter<Room, BaseViewHolder>() {
-            override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: Room?, position: Int, type: Int) {
+        mAdapterEvent = object : BaseRecyclerAdapter<Pair<Room, EventsEight?>?, BaseViewHolder>() {
+            override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: Pair<Room, EventsEight?>?, position: Int, type: Int) {
                 bindEventViewHolder(viewHolder!!, data!!)
+
             }
 
             override fun viewHolder(inflater: LayoutInflater?, parent: ViewGroup?, type: Int): BaseViewHolder {
@@ -174,17 +175,16 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
                     override fun addClicks(views: ViewMap?) {
                         views!!.click {
                             val data = getItem(adapterPosition)
+                            //TODO: Only Pass event id & room id
                             val intent = Intent(context, EventViewActivity::class.java)
-                            intent.putExtra(Constants.IntentKeys.EVENT_ID, data.events?.id)
-                            intent.putExtra(Constants.IntentKeys.EVENT_NAME, data.events?.name)
-                            intent.putExtra(Constants.IntentKeys.EVENT_LOCATION, data.events?.location_name)
-                            intent.putExtra(Constants.IntentKeys.ROOM_ID, data.id)
-                            startActivity(intent)
+                            intent.putExtra(Constants.IntentKeys.EVENT_ID, data?.second?.id)
+                            startActivityForResult(intent, Constants.RequestCodes.EVENT_CHAT_REQ_CODE)
                         }
                     }
                 }
             }
         }
+
         mAdapterEvent.setItems(mEventsList)
         fl_events_title.visibility = TextView.VISIBLE
         fl_events_recycler.visibility = RecyclerView.VISIBLE
@@ -193,33 +193,34 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
     }
 
     //TODO: make this method more maintainable
-    private fun bindEventViewHolder(viewHolder: BaseViewHolder, data: Room) {
+    private fun bindEventViewHolder(viewHolder: BaseViewHolder, data: Pair<Room, EventsEight?>) {
         val eventPic = viewHolder.get<ImageView>(R.id.cvle_picture_event)
         val eventIndicator = viewHolder.get<ImageView>(R.id.cvle_read_indicator)
         val title = viewHolder.get<TextView>(R.id.cvle_title)
         val message = viewHolder.get<TextView>(R.id.cvle_message)
         val time = viewHolder.get<TextView>(R.id.cvle_time)
-        val event = data.events
+        val event = data.second
+        //Room Info
         Picasso.with(context).load(event?.avatar).placeholder(R.mipmap.ic_launcher_round).transform(CircleTransform()).into(eventPic)
         title.text = event?.name
-        if (data.message != null) {
-            when (data.message!!.type) {
-                "string" -> message.text = data.message!!.message
+        if (data.first.message != null) {
+            when (data.first.message!!.type) {
+                "string" -> message.text = data.first.message!!.message
                 "media" -> message.text = "Picture posted"
-                "contact" -> message.text = data.message!!.contactInfo!!.first_name + " " + data.message!!.contactInfo!!.last_name
-                "channel" -> message.text = data.message!!.channelInfo!!.name
-                "location" -> message.text = data.message!!.locationInfo!!.streetAddress
+                "contact" -> message.text = data.first.message!!.contactInfo!!.first_name + " " + data.first.message!!.contactInfo!!.last_name
+                "channel" -> message.text = data.first.message!!.channelInfo!!.name
+                "location" -> message.text = data.first.message!!.locationInfo!!.streetAddress
             }
-            if (Date().time.minus(data.last_activity!!.time) >= 24 * 60 * 60 * 1000) {
-                time.text = SimpleDateFormat("EEE").format(data.last_activity)
+            if (Date().time.minus(data.first.last_activity!!.time) >= 24 * 60 * 60 * 1000) {
+                time.text = SimpleDateFormat("EEE").format(data.first.last_activity)
             } else {
-                time.text = SimpleDateFormat("h:mm aaa").format(data.last_activity)
+                time.text = SimpleDateFormat("h:mm aaa").format(data.first.last_activity)
             }
         } else {
             message.text = ""
             time.text = ""
         }
-        if (!data.isRead) {
+        if (!data.first.isRead) {
             eventIndicator.visibility = ImageView.VISIBLE
         } else {
             eventIndicator.visibility = ImageView.INVISIBLE
@@ -357,32 +358,32 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
                 eventIndicator.visibility = ImageView.INVISIBLE
             }
         } else if (data.event!!) {
-            val event = data.events
-            Picasso.with(context).load(event?.avatar).placeholder(R.mipmap.ic_launcher_round).transform(CircleTransform()).into(eventPic)
-            title.text = event?.name
-            if (data.message != null) {
-                when (data.message!!.type) {
-                    "string" -> message.text = data.message!!.message
-                    "media" -> message.text = "Picture posted"
-                    "contact" -> message.text = data.message!!.contactInfo!!.first_name + " " + data.message!!.contactInfo!!.last_name
-                    "channel" -> message.text = data.message!!.channelInfo!!.name
-                    "location" -> message.text = data.message!!.locationInfo!!.streetAddress
-                }
-                if (Date().time.minus(data.last_activity!!.time) >= 24 * 60 * 60 * 1000) {
-                    time.text = SimpleDateFormat("EEE").format(data.last_activity)
+            EventsEight().queryFirst { equalTo("room_id", data.id) }.let {
+                Picasso.with(context).load(it?.avatar).placeholder(R.mipmap.ic_launcher_round).transform(CircleTransform()).into(eventPic)
+                title.text = it?.name
+                if (data.message != null) {
+                    when (data.message!!.type) {
+                        "string" -> message.text = data.message!!.message
+                        "media" -> message.text = "Picture posted"
+                        "contact" -> message.text = data.message!!.contactInfo!!.first_name + " " + data.message!!.contactInfo!!.last_name
+                        "channel" -> message.text = data.message!!.channelInfo!!.name
+                        "location" -> message.text = data.message!!.locationInfo!!.streetAddress
+                    }
+                    if (Date().time.minus(data.last_activity!!.time) >= 24 * 60 * 60 * 1000) {
+                        time.text = SimpleDateFormat("EEE").format(data.last_activity)
+                    } else {
+                        time.text = SimpleDateFormat("h:mm aaa").format(data.last_activity)
+                    }
                 } else {
-                    time.text = SimpleDateFormat("h:mm aaa").format(data.last_activity)
+                    message.text = ""
+                    time.text = ""
                 }
-            } else {
-                message.text = ""
-                time.text = ""
+                if (!data.isRead) {
+                    eventIndicator.visibility = ImageView.VISIBLE
+                } else {
+                    eventIndicator.visibility = ImageView.INVISIBLE
+                }
             }
-            if (!data.isRead) {
-                eventIndicator.visibility = ImageView.VISIBLE
-            } else {
-                eventIndicator.visibility = ImageView.INVISIBLE
-            }
-
         }
     }
 
@@ -400,8 +401,24 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
     }
 
     override fun refreshEvents() {
-        //TODO: If there are no events remove the EVENTS banner
-        mAdapterEvent.setItems(controller.getEvents())
+        /**
+         * Load events & begin object relationship with realm [Room] [EventsEight]
+         * */
+        val events = controller.getEvents()
+        val eventsList = mutableListOf<Pair<Room, EventsEight?>>()
+        for (event in events) {
+            EventsEight().queryFirst {
+                equalTo("room_id", event.id)
+            }.let {
+                eventsList.add(Pair(event, it))
+            }
+        }
+        //UI
+        if (eventsList.isEmpty()) {
+            fl_events_title.visibility = TextView.GONE
+        }
+
+        mAdapterEvent.setItems(eventsList)
         mAdapterEvent.notifyDataSetChanged()
     }
 

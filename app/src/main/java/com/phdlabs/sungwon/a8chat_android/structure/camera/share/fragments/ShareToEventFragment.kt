@@ -71,7 +71,7 @@ class ShareToEventFragment : CoreFragment() {
         val message = viewHolder.get<TextView>(R.id.cvle_message)
         val time = viewHolder.get<TextView>(R.id.cvle_time)
         Picasso.with(coreActivity.context).load(data.avatar).placeholder(R.drawable.addphoto).transform(CircleTransform()).into(eventPic)
-        title.text = data.event_name
+        title.text = data.name
         if (data.message != null) {
             when (data.message!!.type) {
                 "string" -> message.text = data.message!!.message
@@ -115,7 +115,7 @@ class ShareToEventFragment : CoreFragment() {
         p0?.let {
             //Filter Adapter
             mAdapterEvent?.setFilter { filter ->
-                filter?.event_name?.toLowerCase()?.startsWith(p0.toLowerCase(), false)
+                filter?.name?.toLowerCase()?.startsWith(p0.toLowerCase(), false)
             }
         }
     }

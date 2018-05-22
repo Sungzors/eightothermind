@@ -9,6 +9,7 @@ import android.location.LocationManager
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
+import android.widget.Toast
 import com.github.nkzawa.socketio.client.Socket
 import com.google.firebase.iid.FirebaseInstanceId
 import com.phdlabs.sungwon.a8chat_android.db.notifications.NotificationsManager
@@ -132,11 +133,15 @@ class MainAController(val mView: MainContract.View) : MainContract.Controller {
         SettingsManager.instance.readUserSettings()
     }
 
+    /**
+     * [updateLocationForEvents]
+     * Triggers location update
+     * */
     override fun updateLocationForEvents() {
         try {
             mLocationManager?.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0L, 0f, locationListener)
         } catch (ex: SecurityException) {
-            println("No location available: " + ex.message)
+            Toast.makeText(mView.getContext(), "Enable location permissions", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -151,18 +156,9 @@ class MainAController(val mView: MainContract.View) : MainContract.Controller {
         override fun onLocationChanged(location: Location) {
 
             if (mLocation.first - location.latitude > 0.001 || mLocation.second - location.longitude > 0.001) {
-
                 mLocation = Pair(location.latitude, location.longitude)
-
-
-                //TODO: Pass location to Lobby Fragment & trigger event call
-
-                //fixme: Review statement
-//                if (mView != null) {
-//                    callEvent(true)
-//                }
-
-
+                //Update events based on location
+                mView.getEventsWithLocation(location)
             }
         }
 

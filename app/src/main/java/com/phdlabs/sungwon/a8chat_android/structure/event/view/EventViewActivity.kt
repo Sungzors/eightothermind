@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import com.phdlabs.sungwon.a8chat_android.R
+import com.phdlabs.sungwon.a8chat_android.model.event.EventsEight
 import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.structure.application.Application
 import com.phdlabs.sungwon.a8chat_android.structure.channel.mychannels.MyChannelsListActivity
@@ -23,6 +24,7 @@ import com.phdlabs.sungwon.a8chat_android.utility.adapter.ViewMap
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.squareup.picasso.Picasso
+import com.vicpin.krealmextensions.queryFirst
 import kotlinx.android.synthetic.main.activity_chat.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -37,7 +39,6 @@ class EventViewActivity : CoreActivity(), EventContract.ViewDetail.View {
     override fun layoutId(): Int = R.layout.activity_chat
 
     override fun contentContainerId(): Int = 0
-    private var mEventId: Int? = 0
     private lateinit var mEventName: String
     private var mEventLocation: String? = null
     private var mRoomId: Int = 0
@@ -48,10 +49,21 @@ class EventViewActivity : CoreActivity(), EventContract.ViewDetail.View {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         EventViewController(this)
-        mEventId = intent.getIntExtra(Constants.IntentKeys.EVENT_ID, 0)
-        mEventName = intent.getStringExtra(Constants.IntentKeys.EVENT_NAME)
-        mEventLocation = intent.getStringExtra(Constants.IntentKeys.EVENT_LOCATION)
-        mRoomId = intent.getIntExtra(Constants.IntentKeys.ROOM_ID, 0)
+        intent.getIntExtra(Constants.IntentKeys.EVENT_ID, 0).let {
+            if (it != 0) {
+                EventsEight().queryFirst { equalTo("id", it) }?.let {
+                    it.name?.let {
+                        mEventName = it
+                    }
+                    it.location_name?.let {
+                        mEventLocation = it
+                    }
+                    it.room_id?.let {
+                        mRoomId = it
+                    }
+                }
+            }
+        }
         showBackArrow(R.drawable.ic_back)
         mEventLocation?.let {
             setDoubleToolbarTitle(mEventName, mEventLocation)
@@ -419,11 +431,11 @@ class EventViewActivity : CoreActivity(), EventContract.ViewDetail.View {
 
             val view = this.currentFocus
 
-            if (view != null){
+            if (view != null) {
                 val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.hideSoftInputFromWindow(view.windowToken, 0)
             }
-            if(ac_the_daddy_drawer.panelState == SlidingUpPanelLayout.PanelState.COLLAPSED){
+            if (ac_the_daddy_drawer.panelState == SlidingUpPanelLayout.PanelState.COLLAPSED) {
 
                 ac_the_daddy_drawer.panelState = SlidingUpPanelLayout.PanelState.EXPANDED
             } else {

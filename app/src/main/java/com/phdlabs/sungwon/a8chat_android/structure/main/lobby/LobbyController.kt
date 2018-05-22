@@ -1,16 +1,20 @@
 package com.phdlabs.sungwon.a8chat_android.structure.main.lobby
 
+import android.location.Location
 import android.widget.Toast
 import com.phdlabs.sungwon.a8chat_android.api.rest.Caller
 import com.phdlabs.sungwon.a8chat_android.api.rest.Rest
 import com.phdlabs.sungwon.a8chat_android.db.channels.ChannelsManager
+import com.phdlabs.sungwon.a8chat_android.db.events.EventsManager
 import com.phdlabs.sungwon.a8chat_android.db.room.RoomManager
 import com.phdlabs.sungwon.a8chat_android.db.user.UserManager
 import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
+import com.phdlabs.sungwon.a8chat_android.model.event.EventsEight
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.phdlabs.sungwon.a8chat_android.model.user.User
 import com.phdlabs.sungwon.a8chat_android.model.user.registration.Token
 import com.phdlabs.sungwon.a8chat_android.structure.main.LobbyContract
+import com.vicpin.krealmextensions.query
 
 /**
  * Created by SungWon on 10/17/2017.
@@ -20,10 +24,9 @@ class LobbyController(val mView: LobbyContract.View,
                       private var refresh: Boolean) : LobbyContract.Controller {
 
     /*Properties*/
-    private var mMyChannel = mutableListOf<Channel>()
-    private var mEvents = mutableListOf<Room>()
+    private var mMyChannels = mutableListOf<Channel>()
+    private var mEventsRoom = mutableListOf<Room>()
     private var mChannelsFollowed = mutableListOf<Channel>()
-    private val mChannel = mutableListOf<Channel>()
     private val mChat = mutableListOf<Room>()
 
     //User
@@ -34,6 +37,7 @@ class LobbyController(val mView: LobbyContract.View,
     //API
     private var mChannelManager: ChannelsManager
     private var mRoomManager: RoomManager
+    private var mEventManager: EventsManager
     private val mCaller: Caller
 
     init {
@@ -51,6 +55,7 @@ class LobbyController(val mView: LobbyContract.View,
         mRoomManager = RoomManager.instance
         mCaller = Rest.getInstance().caller
         mChannelManager = ChannelsManager.instance
+        mEventManager = EventsManager.instance
     }
 
     override fun onViewCreated() {
@@ -63,19 +68,20 @@ class LobbyController(val mView: LobbyContract.View,
     }
 
     override fun resume() {
+        /*Get Channels, Chats & Events*/
         callMyChannels(refresh)
         callChats(refresh)
-
+        callCachedActiveEvents()
     }
 
     override fun pause() {
     }
 
     override fun stop() {
-        //TODO: Dispose network resources
         mChannelManager.clearDisposables()
         mUserManager.clearDisposables()
         mRoomManager.clearDisposables()
+        mEventManager.clearDisposables()
     }
 
     /**
@@ -93,9 +99,9 @@ class LobbyController(val mView: LobbyContract.View,
                 //mView.hideProgress()
                 response.first?.let {
                     //Channels
-                    mMyChannel.clear()
-                    mMyChannel = it.toMutableList()
-                    if (mMyChannel.size > 0) {
+                    mMyChannels.clear()
+                    mMyChannels = it.toMutableList()
+                    if (mMyChannels.size > 0) {
                         //UI
                         mView.refreshMyChannels()
                         getFollowedChannels(true)
@@ -107,40 +113,95 @@ class LobbyController(val mView: LobbyContract.View,
         })
     }
 
+    /***
+     * [callEvent]
+     * Retrieve cached events or refresh from API depending on user navigation
+     */
     //FIXME: Review Event call
-    private fun callEvent(refresh: Boolean) {
+    override fun callEvents(refresh: Boolean, location: Location) {
+
         //mView.showProgress() //FIXME: Crashes on fast changes through tabs
-//        EventsManager.instance.getEvents(refresh, mLocation.first, mLocation.second, { response ->
-//            response.second?.let {
-//                // Error
-//                //mView.hideProgress()
-//                /*When no events are available it triggers a localized error message not wanted*/
-//                //mView.showError(it)
-//            } ?: run {
-//                //mView.hideProgress()
-//                response.first?.let {
-//                    //Events
-//                    var chatCount = 0
-//                    for (rooms in it) {
-//                        if (rooms.isEventActive) {
-//                            mEvents.add(rooms)
-//                        } else {
-//                            if (!mChat.contains(rooms)) {
-//                                mChat.add(rooms)
-//                            }
-//                            chatCount++
-//                        }
-//                    }
-//                    if (mEvents.size > 0) {
-//                        //UI
-//                        mView.setUpEventsRecycler(mEvents)
-//                    }
-//                    if (chatCount > 0) {
-//                        mView.refreshChat()
-//                    }
-//                }
-//            }
-//        })
+        mEventManager.getAllEvents(refresh, location.latitude, location.longitude, { response ->
+            response.second?.let {
+                // Error
+                //mView.hideProgress()
+                /*When no events are available it triggers a localized error message not wanted*/
+                //mView.showError(it)
+            } ?: run {
+
+                //mView.hideProgress()
+                response.first?.let { eventsList ->
+
+                    //Active events
+                    mEventsRoom.clear()
+
+                    for (event in eventsList) {
+                        //Active event
+                        if (event.active!!) {
+                            mRoomManager.getRoomInfo(event.room_id!!, { roomResponse ->
+                                roomResponse.second?.let {
+                                    //Error
+                                } ?: run {
+                                    roomResponse.first?.let {
+                                        mEventsRoom.add(it)
+                                        mView.refreshEvents()
+                                    }
+                                }
+                            })
+
+                        } else {
+
+                            //Get Event Rooms
+                            mRoomManager.getRoomInfo(event.room_id!!, { roomResponse ->
+                                roomResponse.second?.let {
+                                    //Error
+                                } ?: run {
+                                    roomResponse.first?.let {
+                                        if (!mChat.contains(it)) {
+                                            mChat.add(it)
+                                            mView.refreshChat()
+                                        }
+                                    }
+                                }
+                            })
+
+                        }
+                    }
+                }
+            }
+        })
+    }
+
+    /**
+     * [callCachedActiveEvents]
+     * Retrieve cached local events & wait until next location update
+     */
+    private fun callCachedActiveEvents() {
+        Room().query {
+            equalTo("event", true)
+        }.let { rooms ->
+            for (room in rooms) {
+                //Room query
+                EventsEight().query {
+                    equalTo("room_id", room.id)
+                }.let { events ->
+                    //Event query
+                    for (event in events) {
+                        event.active?.let {
+                            if (it) {
+                                if (!mEventsRoom.contains(room)) {
+                                    mEventsRoom.add(room)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            //UI
+            if (mEventsRoom.count() > 0) {
+                mView.refreshEvents()
+            }
+        }
     }
 
     /**
@@ -149,7 +210,7 @@ class LobbyController(val mView: LobbyContract.View,
      * */
     private fun getFollowedChannels(refresh: Boolean) {
         //Channel separator
-        mView.setSeparatorCounter(mMyChannel.size - 1)
+        mView.setSeparatorCounter(mMyChannels.size - 1)
         mChannelManager.getMyFollowedChannelsWithFlags(refresh, { _, followedChannels, errorMessage ->
             errorMessage?.let {
                 //Error
@@ -205,19 +266,17 @@ class LobbyController(val mView: LobbyContract.View,
     //FIXME: Not used -> Maybe a swipe refresh view
     override fun refreshAll() {
         callMyChannels(true)
-        callEvent(true)
+        //callEvent(true)
         getFollowedChannels(true)
         callChats(true)
     }
 
     //TODO: Review getters
-    override fun getMyChannels(): MutableList<Channel> = mMyChannel
+    override fun getMyChannels(): MutableList<Channel> = mMyChannels
 
-    override fun getEvents(): MutableList<Room> = mEvents
+    override fun getEvents(): MutableList<Room> = mEventsRoom
 
     override fun getChannelsFollowed(): MutableList<Channel> = mChannelsFollowed
-
-    override fun getChannel(): MutableList<Channel> = mChannel
 
     override fun getChat(): MutableList<Room> = mChat
 

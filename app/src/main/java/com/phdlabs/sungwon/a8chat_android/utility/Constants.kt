@@ -211,6 +211,11 @@ object Constants {
          * */
         val FILTER_REQUEST_CODE = 32
 
+        /**
+         * Open an active event & transition into content chat
+         */
+        const val EVENT_CHAT_REQ_CODE = 33
+
     }
 
     /**
