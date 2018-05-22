@@ -220,11 +220,11 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
 
     private fun toolbarControl(homeToolbar: Boolean) {
         if (homeToolbar) {
-            window.statusBarColor = ContextCompat.getColor(this, R.color.gradientRight)
+            window.statusBarColor = ContextCompat.getColor(this, R.color.status_bar)
             home_toolbar.visibility = View.VISIBLE
             profile_toolbar.visibility = View.GONE
         } else {
-            window.statusBarColor = ContextCompat.getColor(this, R.color.eight_status_bar)
+            window.statusBarColor = ContextCompat.getColor(this, R.color.status_bar)
             home_toolbar.visibility = View.GONE
             profile_toolbar.visibility = View.VISIBLE
         }
@@ -260,11 +260,11 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
                 /*If coming back from profile, do not refreshChannels data*/
                 lastSelectedTabId?.let {
                     if (it == R.id.mmt_profile) {
-                        popFragment()
                         mLobbyFragment = LobbyFragment.newInstance(false)
                     }
                 }
-                replaceFragment(contentContainerId(), mLobbyFragment, false, false)
+                popFragment()
+                addFragment(contentContainerId(), mLobbyFragment, true)
                 lastSelectedTabId = R.id.mmt_home
             }
 
@@ -275,7 +275,8 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
             R.id.mmt_profile -> {
                 super.onPostResume()
                 toolbarControl(false)
-                replaceFragment(contentContainerId(), mProfileFragment, true, true)
+                popFragment()
+                addFragment(contentContainerId(), mProfileFragment, true)
                 lastSelectedTabId = R.id.mmt_profile
             }
         }
