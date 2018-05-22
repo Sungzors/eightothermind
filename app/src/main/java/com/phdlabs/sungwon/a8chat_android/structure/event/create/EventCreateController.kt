@@ -289,8 +289,8 @@ class EventCreateController(val mView: EventContract.Create.View) : EventContrac
         /*Current Location*/
         override fun onLocationChanged(location: Location) {
             mView.getLocation(Pair(
-                    location.longitude.toString().trim(),
-                    location.latitude.toString().trim())
+                    location.latitude.toString().trim(),
+                    location.longitude.toString().trim())
             )
         }
 

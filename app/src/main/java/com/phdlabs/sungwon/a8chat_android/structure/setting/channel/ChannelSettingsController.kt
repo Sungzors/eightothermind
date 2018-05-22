@@ -119,7 +119,7 @@ class ChannelSettingsController(val mView: SettingContract.Channel.View) : Setti
             }
             //If media is available set the fragment
             mView.activity?.replaceFragment(R.id.achs_fragment_container,
-                    MediaSettingFragment.newInstanceChannelRoom(roomId), false)
+                    MediaSettingFragment.newInstanceChannelRoom(roomId), false, false)
         }
     }
 
@@ -137,7 +137,7 @@ class ChannelSettingsController(val mView: SettingContract.Channel.View) : Setti
             }
             //If files are available set the fragment
             mView.activity?.replaceFragment(R.id.achs_fragment_container,
-                    FileSettingsFragment.newInstanceChannelRoom(roomId), false)
+                    FileSettingsFragment.newInstanceChannelRoom(roomId), false, true)
         }
     }
 

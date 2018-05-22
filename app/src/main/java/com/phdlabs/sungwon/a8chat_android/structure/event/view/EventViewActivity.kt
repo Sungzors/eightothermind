@@ -54,6 +54,7 @@ class EventViewActivity : CoreActivity(), EventContract.ViewDetail.View {
                 EventsEight().queryFirst { equalTo("id", it) }?.let {
                     it.name?.let {
                         mEventName = it
+                        setToolbarTitle(it)
                     }
                     it.location_name?.let {
                         mEventLocation = it
@@ -67,8 +68,6 @@ class EventViewActivity : CoreActivity(), EventContract.ViewDetail.View {
         showBackArrow(R.drawable.ic_back)
         mEventLocation?.let {
             setDoubleToolbarTitle(mEventName, mEventLocation)
-        } ?: run {
-            setToolbarTitle(mEventName)
         }
         controller.getUserId { id ->
             id?.let {

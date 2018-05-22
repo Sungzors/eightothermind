@@ -102,7 +102,7 @@ class CreateNewActivity : CoreActivity(), CreateNewContract.CreateNew.View, View
     override fun setupDefaultUI() {
         //Default Contacts Fragment
         acn_fragment_container.visibility = View.VISIBLE
-        replaceFragment(contentContainerId(), contactSearchFragment, false)
+        replaceFragment(contentContainerId(), contactSearchFragment, false, true)
     }
 
     /*On Click*/
@@ -130,7 +130,7 @@ class CreateNewActivity : CoreActivity(), CreateNewContract.CreateNew.View, View
             }
         /*Create Event*/
             acn_event_container -> {
-                startActivity(Intent(this, EventCreateActivity::class.java))
+                startActivityForResult(Intent(this, EventCreateActivity::class.java), Constants.RequestCodes.CREATE_NEW_BACK_REQ_CODE)
             }
         /*Full touchable search view*/
             tcn_searchview -> {

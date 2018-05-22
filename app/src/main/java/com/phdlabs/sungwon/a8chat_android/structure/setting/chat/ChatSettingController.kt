@@ -112,7 +112,7 @@ class ChatSettingController(val mView: SettingContract.Chat.View) : SettingContr
             if (it.second == null) { //Success
                 //Set fragment
                 mView.activity?.replaceFragment(R.id.asc_fragment_container,
-                        MediaSettingFragment.newInstanceChatRoom(contactId), false)
+                        MediaSettingFragment.newInstanceChatRoom(contactId), false, false)
             }
         })
     }
@@ -121,7 +121,7 @@ class ChatSettingController(val mView: SettingContract.Chat.View) : SettingContr
         RoomManager.instance.getFilesFromPrivateChat(chatRoomId)?.let {
             if (it.count() > 0) {
                 mView.activity?.replaceFragment(R.id.asc_fragment_container,
-                        FileSettingsFragment.newInstanceChatRoom(chatRoomId), false)
+                        FileSettingsFragment.newInstanceChatRoom(chatRoomId), false, true)
             }
         }
     }

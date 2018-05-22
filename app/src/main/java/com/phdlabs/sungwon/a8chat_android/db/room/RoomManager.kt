@@ -162,6 +162,7 @@ class RoomManager {
                                 .subscribe({ response ->
                                     if (response.isSuccess) {
                                         response?.room?.let {
+                                            it.save()
                                             callback(Pair(it, null))
                                         }
                                     } else if (response.isError) {

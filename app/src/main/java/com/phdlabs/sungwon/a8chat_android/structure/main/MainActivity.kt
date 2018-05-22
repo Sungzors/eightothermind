@@ -184,7 +184,9 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
         if (requestCode == Constants.PermissionsReqCode.LOCATION_REQ_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 //Update location
-                controller.updateLocationForEvents()
+                if (mLobbyFragment.controller.getRefreshFlag()) {
+                    controller.updateLocationForEvents()
+                }
             }
         } else {
             Toast.makeText(context, "Cannot retrieve location at this time", Toast.LENGTH_SHORT).show()
@@ -256,7 +258,7 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
                         mLobbyFragment = LobbyFragment.newInstance(false)
                     }
                 }
-                replaceFragment(contentContainerId(), mLobbyFragment, true)
+                replaceFragment(contentContainerId(), mLobbyFragment, true, false)
                 lastSelectedTabId = R.id.mmt_home
             }
 

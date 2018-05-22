@@ -40,22 +40,18 @@ class MainAController(val mView: MainContract.View) : MainContract.Controller {
     }
 
     override fun start() {
-
-        //TODO: Request Contacts on background thread
-
-        //TODO: Request Location on background thread -> Pass location to Lobby Fragment & start pulling events
         mView.getContext()?.let {
             /*Location permissions*/
-            if (ActivityCompat.checkSelfPermission(
-                            it, Constants.AppPermissions.FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                    ActivityCompat.checkSelfPermission(
-                            it, Constants.AppPermissions.COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+            if (ActivityCompat.checkSelfPermission(it, Constants.AppPermissions.FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(it, Constants.AppPermissions.COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(it, Constants.AppPermissions.CONTACTS) != PackageManager.PERMISSION_GRANTED
             ) {
                 //mView.hideProgress()
                 requestLocationPermissions()
                 return
             } else {
                 try {
+                    //Request Location
                     mLocationManager?.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0L, 0f, locationListener)
                 } catch (ex: SecurityException) {
                     println("No location available: " + ex.message)
@@ -181,12 +177,14 @@ class MainAController(val mView: MainContract.View) : MainContract.Controller {
     override fun requestLocationPermissions() {
         val whatPermissions = arrayOf(
                 Constants.AppPermissions.FINE_LOCATION,
-                Constants.AppPermissions.COARSE_LOCATION
+                Constants.AppPermissions.COARSE_LOCATION,
+                Constants.AppPermissions.CONTACTS
         )
         mView.getContext()?.let {
 
             if (ContextCompat.checkSelfPermission(it, whatPermissions[0]) != PackageManager.PERMISSION_GRANTED &&
-                    ContextCompat.checkSelfPermission(it, whatPermissions[1]) != PackageManager.PERMISSION_GRANTED) {
+                    ContextCompat.checkSelfPermission(it, whatPermissions[1]) != PackageManager.PERMISSION_GRANTED &&
+                    ContextCompat.checkSelfPermission(it, whatPermissions[2]) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(mView.activity, whatPermissions, Constants.PermissionsReqCode.LOCATION_REQ_CODE)
             }
         }

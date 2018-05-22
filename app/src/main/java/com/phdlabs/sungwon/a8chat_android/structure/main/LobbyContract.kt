@@ -38,6 +38,7 @@ interface LobbyContract {
         fun getMyChannels(): MutableList<Channel>
         fun getChannelsFollowed(): MutableList<Channel>
         fun getEvents(): MutableList<Room>
+        fun callCachedActiveEvents()
         fun callEvents(refresh: Boolean, location: Location)
         fun getChat(): MutableList<Room>
         fun refreshAll()

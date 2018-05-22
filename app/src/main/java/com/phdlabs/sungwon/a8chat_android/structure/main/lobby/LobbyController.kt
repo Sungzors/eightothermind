@@ -68,10 +68,14 @@ class LobbyController(val mView: LobbyContract.View,
     }
 
     override fun resume() {
-        /*Get Channels, Chats & Events*/
+        /*Get Channels, Events & Chats*/
         callMyChannels(refresh)
+        if (!getRefreshFlag()) {
+            callCachedActiveEvents()
+        } else {
+            mView.activity().controller.updateLocationForEvents()
+        }
         callChats(refresh)
-        callCachedActiveEvents()
     }
 
     override fun pause() {
@@ -120,6 +124,8 @@ class LobbyController(val mView: LobbyContract.View,
     //FIXME: Review Event call
     override fun callEvents(refresh: Boolean, location: Location) {
 
+        //Clear Active events
+        mEventsRoom.clear()
         //mView.showProgress() //FIXME: Crashes on fast changes through tabs
         mEventManager.getAllEvents(refresh, location.latitude, location.longitude, { response ->
             response.second?.let {
@@ -131,9 +137,6 @@ class LobbyController(val mView: LobbyContract.View,
 
                 //mView.hideProgress()
                 response.first?.let { eventsList ->
-
-                    //Active events
-                    mEventsRoom.clear()
 
                     for (event in eventsList) {
                         //Active event
@@ -167,6 +170,7 @@ class LobbyController(val mView: LobbyContract.View,
 
                         }
                     }
+                    mView.refreshEvents()
                 }
             }
         })
@@ -176,31 +180,33 @@ class LobbyController(val mView: LobbyContract.View,
      * [callCachedActiveEvents]
      * Retrieve cached local events & wait until next location update
      */
-    private fun callCachedActiveEvents() {
+    override fun callCachedActiveEvents() {
         Room().query {
             equalTo("event", true)
         }.let { rooms ->
+            mEventsRoom.clear()
             for (room in rooms) {
                 //Room query
                 EventsEight().query {
                     equalTo("room_id", room.id)
                 }.let { events ->
-                    //Event query
-                    for (event in events) {
-                        event.active?.let {
-                            if (it) {
-                                if (!mEventsRoom.contains(room)) {
+                    if (!events.isEmpty()) {
+                        //Event query
+                        for (event in events) {
+                            event.active?.let {
+                                if (it) {
                                     mEventsRoom.add(room)
                                 }
+                            } ?: run {
+                                //Add my inactive events to the chat list
+                                mChat.add(room)
                             }
                         }
                     }
                 }
             }
-            //UI
-            if (mEventsRoom.count() > 0) {
-                mView.refreshEvents()
-            }
+            mView.refreshEvents()
+            mView.refreshChat()
         }
     }
 

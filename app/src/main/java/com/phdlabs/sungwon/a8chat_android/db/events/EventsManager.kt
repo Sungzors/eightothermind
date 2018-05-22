@@ -67,15 +67,10 @@ class EventsManager {
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .subscribe({ response ->
                                         if (response.isSuccess) {
-                                            //TODO logic to save to realm
                                             response?.events?.let { events ->
                                                 for (event in events) {
-                                                    //Active events && in range
-                                                    if (isEventNearby(lat, lng, event)) {
-                                                        event.save()
-                                                    }
-                                                    //My Events
-                                                    if (event.user_creator_id == user.id) {
+                                                    //Fetch events in range && my events
+                                                    if (isEventNearby(lat, lng, event) || event.user_creator_id == user.id) {
                                                         event.save()
                                                     }
                                                 }
@@ -104,8 +99,15 @@ class EventsManager {
 
         event.active?.let {
             if (it) {
+
                 //Get Event location
                 event.location?.coordinates?.let {
+                    /**
+                     * Realm list stores first latitude & then longitude, placing them
+                     * backwards in the array.
+                     * @param latitude array[1]
+                     * @param longitude array[0]
+                     * */
                     it[1]?.doubleValue?.let {
                         eventLat = it
                     }
@@ -120,7 +122,7 @@ class EventsManager {
                 return if (lat != eventLat && lng != eventLng) {
                     val a = ((Math.acos(
                             (Math.sin(lat) * Math.sin(eventLat)) + (Math.cos(lat) * Math.cos(eventLat) * Math.cos(eventLng - lng)))) * earthRadius)
-                    if (a > 0 && a < 300) { //mts
+                    if (a > 0 && a < 300) { //300 mts for event range
                         println("METERS AWAY FROM EVENT: $a")
                         true
                     } else {

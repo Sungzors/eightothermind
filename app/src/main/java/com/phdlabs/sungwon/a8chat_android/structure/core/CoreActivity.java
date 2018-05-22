@@ -177,8 +177,8 @@ public abstract class CoreActivity extends AppCompatActivity {
         addFragment(contentContainerId(), fragment, addToBackStack);
     }
 
-    public void replaceFragment(@NonNull CoreFragment fragment, boolean addToBackStack) {
-        replaceFragment(contentContainerId(), fragment, addToBackStack);
+    public void replaceFragment(@NonNull CoreFragment fragment, boolean addToBackStack, boolean oppositeAnimation) {
+        replaceFragment(contentContainerId(), fragment, addToBackStack, oppositeAnimation);
     }
 
     /*Fragment transactions*/
@@ -193,10 +193,14 @@ public abstract class CoreActivity extends AppCompatActivity {
     }
 
     @SuppressLint("CommitTransaction")
-    public void replaceFragment(@IdRes int containerId, @NonNull CoreFragment fragment, boolean addToBackStack) {
+    public void replaceFragment(@IdRes int containerId, @NonNull CoreFragment fragment, boolean addToBackStack, boolean oppositeAnimation) {
         String name = fragment.getClass().getName();
         FragmentTransaction replaceTransaction = getSupportFragmentManager().beginTransaction();
-        replaceTransaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+        if (oppositeAnimation) {
+            replaceTransaction.setCustomAnimations(android.R.anim.fade_out, android.R.anim.slide_out_right);
+        } else {
+            replaceTransaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+        }
         replaceTransaction.replace(containerId, fragment, name);
         if (addToBackStack) {
             replaceTransaction.addToBackStack(name);

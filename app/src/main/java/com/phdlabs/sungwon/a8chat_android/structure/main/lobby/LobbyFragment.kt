@@ -28,7 +28,6 @@ import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseViewHolder
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.ViewMap
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform
 import com.squareup.picasso.Picasso
-import com.vicpin.krealmextensions.query
 import com.vicpin.krealmextensions.queryFirst
 import kotlinx.android.synthetic.main.fragment_lobby.*
 import java.text.SimpleDateFormat
@@ -297,7 +296,7 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
         if (data.chatType == "private") {
             Picasso.with(context).load(data.user!!.avatar).placeholder(R.mipmap.ic_launcher_round).transform(CircleTransform()).into(eventPic)
             eventPic.setOnLongClickListener {
-                activity().replaceFragment(R.id.overlay_content_frame, LobbyOverlayFragment.newInstance(data.id!!, data.user!!.first_name + " " + data.user!!.last_name, data.user!!.avatar!!, data.user!!.phone!!), true)
+                activity().replaceFragment(R.id.overlay_content_frame, LobbyOverlayFragment.newInstance(data.id!!, data.user!!.first_name + " " + data.user!!.last_name, data.user!!.avatar!!, data.user!!.phone!!), true, true)
                 true
             }
             title.text = data.user!!.first_name + " " + data.user!!.last_name
@@ -416,9 +415,12 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
         //UI
         if (eventsList.isEmpty()) {
             fl_events_title.visibility = TextView.GONE
+        } else {
+            fl_events_title.visibility = TextView.VISIBLE
         }
-
+        mAdapterEvent.clear()
         mAdapterEvent.setItems(eventsList)
+        eventsList.clear()
         mAdapterEvent.notifyDataSetChanged()
     }
 
