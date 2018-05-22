@@ -181,15 +181,21 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        if (requestCode == Constants.PermissionsReqCode.LOCATION_REQ_CODE) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                //Update location
-                if (mLobbyFragment.controller.getRefreshFlag()) {
-                    controller.updateLocationForEvents()
+        when (requestCode) {
+            Constants.PermissionsReqCode.LOCATION_REQ_CODE -> {
+                //Location
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    //Update location
+                    if (mLobbyFragment.controller.getRefreshFlag()) {
+                        controller.updateLocationForEvents()
+                    }
                 }
+                //Contacts
+                controller.initContactsLoader()
             }
-        } else {
-            Toast.makeText(context, "Cannot retrieve location at this time", Toast.LENGTH_SHORT).show()
+            else -> {
+                Toast.makeText(context, "Cannot retrieve location at this time", Toast.LENGTH_SHORT).show()
+            }
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
@@ -258,7 +264,7 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
                         mLobbyFragment = LobbyFragment.newInstance(false)
                     }
                 }
-                replaceFragment(contentContainerId(), mLobbyFragment, true, false)
+                replaceFragment(contentContainerId(), mLobbyFragment, false, false)
                 lastSelectedTabId = R.id.mmt_home
             }
 
@@ -269,8 +275,7 @@ class MainActivity : CoreActivity(), MainContract.View, View.OnClickListener {
             R.id.mmt_profile -> {
                 super.onPostResume()
                 toolbarControl(false)
-                popFragment()
-                addFragment(contentContainerId(), mProfileFragment, true)
+                replaceFragment(contentContainerId(), mProfileFragment, true, true)
                 lastSelectedTabId = R.id.mmt_profile
             }
         }

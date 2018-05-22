@@ -34,5 +34,8 @@ interface MainContract {
         /*Location*/
         fun requestLocationPermissions()
         fun updateLocationForEvents()
+
+        /*Contacts*/
+        fun initContactsLoader()
     }
 }
