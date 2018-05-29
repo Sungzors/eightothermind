@@ -4,28 +4,35 @@ import android.app.LoaderManager
 import android.content.Intent
 import android.content.Loader
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.graphics.Point
+import android.media.ThumbnailUtils
 import android.os.Bundle
+import android.os.Parcelable
+import android.provider.MediaStore
 import android.support.v4.content.ContextCompat
-import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.GridLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import com.phdlabs.sungwon.a8chat_android.R
-import com.phdlabs.sungwon.a8chat_android.model.media.GalleryPhoto
+import com.phdlabs.sungwon.a8chat_android.model.media.GalleryItem
 import com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.CameraBaseFragment
 import com.phdlabs.sungwon.a8chat_android.structure.camera.editing.EditingActivity
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseRecyclerAdapter
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseViewHolder
+import com.phdlabs.sungwon.a8chat_android.utility.adapter.EndlessRecyclerViewScrollListener
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.ViewMap
-import com.phdlabs.sungwon.a8chat_android.utility.camera.PhotoGalleryAsyncLoader
+import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
+import com.phdlabs.sungwon.a8chat_android.utility.camera.GalleryAsyncLoader
+import com.phdlabs.sungwon.a8chat_android.utility.camera.GalleryFileProvider
+import com.phdlabs.sungwon.a8chat_android.utility.camera.ImageUtils
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_cameraroll.*
 import kotlinx.android.synthetic.main.toolbar.*
-import java.io.File
 
 
 /**
@@ -34,29 +41,29 @@ import java.io.File
  * for the user to select & then preview after selection
  */
 class CameraRollFragment : CameraBaseFragment(),
-        LoaderManager.LoaderCallbacks<List<GalleryPhoto>>,
+        LoaderManager.LoaderCallbacks<List<GalleryItem>>,
         View.OnClickListener {
 
     /*Properties*/
-    private var mAdapter: BaseRecyclerAdapter<GalleryPhoto, BaseViewHolder>? = null
-    private var mGalleryPhotos: ArrayList<GalleryPhoto> = ArrayList()
+    private var mAdapter: BaseRecyclerAdapter<GalleryItem, BaseViewHolder>? = null
+    private var mGalleryItems: ArrayList<GalleryItem> = ArrayList()
+    private lateinit var mScrollListener: EndlessRecyclerViewScrollListener
+    private lateinit var galleryAsyncLoader: GalleryAsyncLoader
+    private lateinit var galleryProvider: GalleryFileProvider
 
     /*Companion*/
     companion object {
         fun create(): CameraRollFragment = CameraRollFragment()
     }
 
-    /*Initialization*/
-    init {
-
-    }
-
     /*Required*/
     override fun cameraLayoutId(): Int = R.layout.fragment_cameraroll
 
     override fun inOnCreateView(root: View?, container: ViewGroup?, savedInstanceState: Bundle?) {
+        //If something needs to be added to the custom layout
     }
 
+    /*LifeCycle*/
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         //Toolbar setup -> Default
         toolbar_title_double_container.visibility = View.GONE
@@ -69,6 +76,41 @@ class CameraRollFragment : CameraBaseFragment(),
         super.onViewCreated(view, savedInstanceState)
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        //Gallery Provider
+        galleryProvider = GalleryFileProvider.INSTANCE
+        galleryProvider.setContentOffset(0)
+        galleryProvider.setNumberOfItemsPerPage(40)
+        //Gallery Loader
+        galleryAsyncLoader = GalleryAsyncLoader(context!!, GalleryFileProvider.GALLERYFILETYPE.PHOTO, galleryProvider)
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        setupRecycler()
+        //Load Images
+        if (ContextCompat.checkSelfPermission(activity!!, Constants.AppPermissions.WRITE_EXTERNAL) != PackageManager.PERMISSION_GRANTED) {
+            requestExternalStoragePermissions()
+        } else {
+            activity!!.loaderManager.initLoader(0, null, this).forceLoad()
+        }
+        userVisibleHint = false
+    }
+
+    override fun setMenuVisibility(menuVisible: Boolean) {
+        super.setMenuVisibility(menuVisible)
+        if (menuVisible && isResumed) {
+            userVisibleHint = true
+            if (mGalleryItems.isEmpty()) {
+                fcr_refresh.post { fcr_refresh.isRefreshing = true }
+            }
+        } else {
+            userVisibleHint = false
+        }
+    }
+
     /**
      * [setupClickListeners] on the buttons
      * */
@@ -76,24 +118,23 @@ class CameraRollFragment : CameraBaseFragment(),
         toolbar_leftoolbart_action.setOnClickListener(this)
         val currentContext = this
         fcr_refresh.setColorSchemeResources(R.color.blue_color_picker, R.color.sky_blue_color_picker)
-        fcr_refresh.setOnRefreshListener(object : SwipeRefreshLayout.OnRefreshListener {
-            override fun onRefresh() {
+        fcr_refresh.setOnRefreshListener {
+            activity?.let {
                 //Refresh pictures
-                if (ContextCompat.checkSelfPermission(activity!!, Constants.AppPermissions.WRITE_EXTERNAL) != PackageManager.PERMISSION_GRANTED) {
+                if (ContextCompat.checkSelfPermission(it, Constants.AppPermissions.WRITE_EXTERNAL) != PackageManager.PERMISSION_GRANTED) {
                     requestExternalStoragePermissions()
                 } else {
-                    activity!!.loaderManager.initLoader(0, null, currentContext).forceLoad()
+                    it.loaderManager.initLoader(0, null, currentContext).forceLoad()
                 }
             }
-
-        })
+        }
     }
 
     /**
      * [toolbarVisibility] will change depending on the amount of
      * available pictures
      * */
-    fun toolbarVisibility(photoCount: Int) {
+    private fun toolbarVisibility(photoCount: Int) {
         if (photoCount > 0) {
             //Hide original title
             toolbar_title.visibility = View.GONE
@@ -113,16 +154,6 @@ class CameraRollFragment : CameraBaseFragment(),
             toolbar_title_double_bottom.visibility = View.GONE
             //Show original title
             toolbar_title.visibility = View.GONE
-        }
-    }
-
-    /*LifeCycle*/
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        if (ContextCompat.checkSelfPermission(activity!!, Constants.AppPermissions.WRITE_EXTERNAL) != PackageManager.PERMISSION_GRANTED) {
-            requestExternalStoragePermissions()
-        } else {
-            activity!!.loaderManager.initLoader(0, null, this).forceLoad()
         }
     }
 
@@ -153,19 +184,41 @@ class CameraRollFragment : CameraBaseFragment(),
     }
 
     /*Setup recycler adapters*/
-    fun setupRecycler() {
+    private fun setupRecycler() {
+        //Image scaling
         val displaySize = Point()
         activity?.windowManager?.defaultDisplay?.getSize(displaySize)
-        val imageWidth = displaySize.x / 3
-        val imageHeight = imageWidth
-        mAdapter = object : BaseRecyclerAdapter<GalleryPhoto, BaseViewHolder>() {
+        val imageSquare = displaySize.x / 3
 
-            override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: GalleryPhoto?, position: Int, type: Int) {
+        //Adapter
+        mAdapter = object : BaseRecyclerAdapter<GalleryItem, BaseViewHolder>() {
+
+            override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: GalleryItem?, position: Int, type: Int) {
                 val imageView = viewHolder?.get<ImageView>(R.id.cr_iv_photo)
                 viewHolder?.let {
                     context?.let {
-                        Picasso.with(it).load(File(data?.mFullPath)).centerInside().resize(imageWidth, imageHeight).into(imageView)
-                        println("DATE_TAKEN: " + data?.mDate)
+
+                        //Video
+                        //imageView?.setImageBitmap(videoThumbnail(data?.mFullPath))
+
+                        //Photo
+                        data?.mThumbnailPath?.let {
+                            Picasso.with(context)
+                                    .load("file://$it")
+                                    .rotate(data.mCorrectedOrientatiion)
+                                    .centerInside().resize(imageSquare, imageSquare)
+                                    .into(imageView)
+                        } ?: run {
+                            data?.mFullPath?.let {
+                                Picasso.with(context)
+                                        .load("file://$it")
+                                        .rotate(data.mCorrectedOrientatiion)
+                                        .centerInside().resize(imageSquare, imageSquare)
+                                        .into(imageView)
+                            }
+                        }
+
+                        println("ORIENTATION: $data")
                     }
                 }
             }
@@ -178,31 +231,34 @@ class CameraRollFragment : CameraBaseFragment(),
                          * when an image is tapped
                          * */
                         views?.click {
-                            val intent = Intent(activity, EditingActivity::class.java)
-                            intent.putExtra(
-                                    Constants.CameraIntents.IMAGE_FILE_PATH,
-                                    getItem(adapterPosition).mFullPath
-                            )
-                            intent.putExtra(
-                                    Constants.CameraIntents.IS_FROM_CAMERA_ROLL, true
-                            )
-                            activity?.startActivity(intent)
+                            activity?.controller?.startPreviewActivity(getItem(adapterPosition).mFullPath, true)
                         }
                         super.addClicks(views)
                     }
                 }
             }
         }
-        mAdapter?.setItems(mGalleryPhotos)
-        val gridLayoutManager = GridLayoutManager(context, 3)
-        cr_recyclerView.layoutManager = gridLayoutManager
+        mAdapter?.setItems(mGalleryItems)
+        var gridLayout = GridLayoutManager(context, 3)
+        cr_recyclerView.layoutManager = gridLayout
         cr_recyclerView.adapter = mAdapter
 
+        //Endless Scroll Listener
+        mScrollListener = object : EndlessRecyclerViewScrollListener(gridLayout) {
+            override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
+                //Load data from Content Provider
+                galleryProvider.setContentOffset(mGalleryItems.size)
+                activity!!.loaderManager.initLoader(0, null, this@CameraRollFragment).forceLoad()
+            }
+
+        }
+
+        cr_recyclerView.addOnScrollListener(mScrollListener)
     }
 
     fun refreshRecycler() {
         if (!loaderManager.hasRunningLoaders()) {
-            activity!!.loaderManager.initLoader(0, null, this).forceLoad()
+            activity!!.loaderManager.initLoader(0, null, this).forceLoad() //TODO: Add loader initial value for pagination
         }
     }
 
@@ -210,31 +266,45 @@ class CameraRollFragment : CameraBaseFragment(),
      * [LoaderManager] LifeCycle required methods
      * Required methods
      * */
-    override fun onCreateLoader(id: Int, args: Bundle?): Loader<List<GalleryPhoto>> =
-            PhotoGalleryAsyncLoader(context!!)
+    override fun onCreateLoader(id: Int, args: Bundle?): Loader<List<GalleryItem>> = galleryAsyncLoader
 
-    override fun onLoadFinished(loader: Loader<List<GalleryPhoto>>?, data: List<GalleryPhoto>?) {
-        mGalleryPhotos.clear()
+    override fun onLoadFinished(loader: Loader<List<GalleryItem>>?, data: List<GalleryItem>?) {
+        //mGalleryItems.clear()
         data?.let {
 
+            if (fcr_refresh.isRefreshing || it.isEmpty()) {
+                fcr_refresh.isRefreshing = false
+                return
+            }
+
             for (galleryPhoto in it) {
-                mGalleryPhotos.add(galleryPhoto)
+                mGalleryItems.add(galleryPhoto)
             }
 
             /*Picture count subtitle & toolbar swap*/
-            if(mGalleryPhotos.count() > 0) {
-                toolbarVisibility(mGalleryPhotos.count())
+            if (mGalleryItems.count() > 0) {
+                toolbarVisibility(mGalleryItems.count())
                 fcr_refresh.isRefreshing = false
 
                 /*Setup RecyclerView with fresh data*/
-                setupRecycler()
+                mAdapter?.setItems(mGalleryItems)
+                cr_recyclerView?.post {
+                    if (mGalleryItems.size > galleryProvider.mItemsPerPage) {
+                        mAdapter?.notifyItemRangeChanged(mAdapter?.itemCount!!, mGalleryItems.size - galleryProvider.mItemsPerPage)
+                    } else {
+                        mAdapter?.notifyItemRangeChanged(0, mAdapter?.itemCount!!)
+                    }
+                }
             }
+        } ?: run {
+            fcr_refresh.isRefreshing = false
         }
     }
 
-    override fun onLoaderReset(loader: Loader<List<GalleryPhoto>>?) {
-        mGalleryPhotos.clear()
+    override fun onLoaderReset(loader: Loader<List<GalleryItem>>?) {
+        mGalleryItems.clear()
     }
+
 
     /*On Click action listeners*/
     override fun onClick(p0: View?) {
@@ -247,4 +317,10 @@ class CameraRollFragment : CameraBaseFragment(),
         }
     }
 
+    /**
+     * [videoThumbnail]
+     * Creates a video thumbnail for displaying the specified file
+     * */
+    fun videoThumbnail(filePath: String?): Bitmap =
+            ThumbnailUtils.createVideoThumbnail(filePath, MediaStore.Video.Thumbnails.MINI_KIND)
 }

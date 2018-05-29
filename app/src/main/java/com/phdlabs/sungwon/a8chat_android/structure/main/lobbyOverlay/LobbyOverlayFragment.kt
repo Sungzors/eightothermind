@@ -85,7 +85,7 @@ class LobbyOverlayFragment : CoreFragment(), LobbyContract.Overlay.View{
     }
 
     private fun setupView(){
-        Picasso.with(context).load(mUserPic).placeholder(R.drawable.ic_launcher_round).transform(CircleTransform()).into(flo_picture_event)
+        Picasso.with(context).load(mUserPic).placeholder(R.mipmap.ic_launcher_round).transform(CircleTransform()).into(flo_picture_event)
         flo_title.text = mUserName
         flo_message.addTextChangedListener(PhoneNumberFormattingTextWatcher())
         flo_message.text = mUserPhone

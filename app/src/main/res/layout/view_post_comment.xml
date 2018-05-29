@@ -18,7 +18,7 @@
             android:layout_height="45dp"
             android:layout_margin="15dp"
             android:contentDescription="@string/friend_profile_picture"
-            android:src="@drawable/ic_launcher_round"/>
+            android:src="@mipmap/ic_launcher_round"/>
 
         <!--Friend Full Name-->
         <TextView
@@ -31,7 +31,7 @@
             android:padding="5dp"
             android:textColor="@color/grey"
             android:textSize="15sp"
-            fontPath="fonts/NunitoSans-Regular.ttf"
+            fontPath="fonts/AkzidenzGroteskBE-Regular.otf"
             android:text="@string/name"/>
 
     </LinearLayout>
@@ -46,7 +46,7 @@
         android:minLines="2"
         android:textAlignment="textStart"
         android:textStyle="normal"
-        fontPath="fonts/NunitoSans-Regular.ttf"
+        fontPath="fonts/AkzidenzGroteskBE-Regular.otf"
         android:text="@string/comment"/>
 
     <!--Separator-->

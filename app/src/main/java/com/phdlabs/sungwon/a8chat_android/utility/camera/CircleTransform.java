@@ -30,9 +30,7 @@ public class CircleTransform implements Transformation {
          * https://github.com/square/picasso/issues/997
          * @see config
          * */
-        Bitmap.Config config = source.getConfig() != null ? source.getConfig() : Bitmap.Config.ARGB_8888;
-        Bitmap bitmap = Bitmap.createBitmap(size, size, config);
-
+        Bitmap bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
 
         Canvas canvas = new Canvas(bitmap);
         Paint paint = new Paint();

@@ -8,6 +8,7 @@ import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.structure.camera.CameraActivity
 import com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.CameraBaseFragment
 import com.phdlabs.sungwon.a8chat_android.structure.camera.result.ResultHolder
+import com.phdlabs.sungwon.a8chat_android.utility.camera.CameraControl
 
 
 /**
@@ -17,7 +18,7 @@ import com.phdlabs.sungwon.a8chat_android.structure.camera.result.ResultHolder
 class NormalFragment : CameraBaseFragment() {
 
     /*Layout*/
-    override fun cameraLayoutId(): Int = R.layout.fragment_cameraview
+    override fun cameraLayoutId(): Int = R.layout.fragment_camera_normal
 
     /*Properties*/
     private var normalCamera: CameraView? = null
@@ -46,40 +47,45 @@ class NormalFragment : CameraBaseFragment() {
 
     override fun inOnCreateView(root: View?, container: ViewGroup?, savedInstanceState: Bundle?) {
         //If something needs to be added to the custom layout
-        mRelativeLayout = root!!.findViewById(R.id.cameraViewRelativeLayout)
-        setCameraLayout()
+        mRelativeLayout = root!!.findViewById(R.id.fcn_camera_view_container)
     }
 
+    /**
+     * [setCameraLayout]
+     * Normal camera setup , layout management & camera preview start
+     * */
     private fun setCameraLayout() {
         normalCamera = activity?.mCameraView
         normalCamera?.layoutParams = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
                 RelativeLayout.LayoutParams.MATCH_PARENT)
         setupCamera(normalCamera)
+        if (normalCamera?.parent != null) {
+            val viewGroup: ViewGroup = normalCamera?.parent as ViewGroup
+            viewGroup.removeView(normalCamera)
+        }
         mRelativeLayout?.addView(normalCamera)
+        normalCamera?.start()
     }
 
+    /**
+     * Should only show layout after fragment is visible
+     * Showing Surface Views if screen is not visible to the user
+     * consumes too much memory
+     * */
     override fun setMenuVisibility(menuVisible: Boolean) {
         super.setMenuVisibility(menuVisible)
         if (menuVisible && isResumed) {
             userVisibleHint = true
-            if (mRelativeLayout?.childCount == 0) {
-                setCameraLayout()
-            }
-            normalCamera?.start()
+            setCameraLayout()
         } else {
             userVisibleHint = false
             normalCamera?.stop()
-            mRelativeLayout?.removeAllViews()
         }
     }
 
     override fun onResume() {
         super.onResume()
-        if (mRelativeLayout?.childCount == 0) {
-            setupCamera(normalCamera)
-            mRelativeLayout?.addView(normalCamera)
-        }
-        normalCamera?.start()
+        setCameraLayout()
     }
 
     override fun onPause() {
@@ -88,10 +94,13 @@ class NormalFragment : CameraBaseFragment() {
         wasPictureTaken = false
         //Camera View
         normalCamera?.stop()
-        mRelativeLayout?.removeAllViews()
     }
 
-    fun setupCamera(cameraView: CameraView?) {
+    /**
+     * [setupCamera]
+     * Setup Normal Camera for pictures
+     * */
+    private fun setupCamera(cameraView: CameraView?) {
         //Camera View setup
         cameraView?.keepScreenOn = true
         cameraView?.audio = Audio.OFF
@@ -126,11 +135,21 @@ class NormalFragment : CameraBaseFragment() {
 
     /*Image caching*/
     private fun imageCaptured(image: ByteArray) {
-        //TODO: Rotate selfie before setting result image
-        //Result Callback
+
+        //Rotate to match device orientation in 90 degrees
+        var rotatedImage: ByteArray = image
+        context?.let {
+            rotatedImage = CameraControl.instance.rotateBitmapAsByteArray(it, image, normalCamera?.facing!!)
+        }
+
+        //Mirror Image if it's been taken with the front lens
+        if (normalCamera?.facing == Facing.FRONT) {
+            rotatedImage = CameraControl.instance.rotatedBitmapCameraFrontLens(image)
+        }
+
         val callbackTime = System.currentTimeMillis()
         ResultHolder.dispose()
-        ResultHolder.setResultImage(image)
+        ResultHolder.setResultImage(rotatedImage)
         ResultHolder.setResultTimeToCallback(callbackTime)
         //Transition to editing activity
         val act = activity as CameraActivity

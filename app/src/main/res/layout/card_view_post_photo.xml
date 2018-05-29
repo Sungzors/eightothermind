@@ -44,7 +44,7 @@
                 android:layout_height="wrap_content"
                 android:text="tjoaiewjwer"
                 android:textColor="@color/black"
-                fontPath="fonts/NunitoSans-Regular.ttf"/>
+                fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -54,7 +54,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="aofiweoj"
-                fontPath="fonts/NunitoSans-Regular.ttf"/>
+                fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0dp"

@@ -57,7 +57,7 @@
             android:textAlignment="center"
             xmlns:tools="http://schemas.android.com/tools"
             tools:ignore="MissingPrefix"
-            fontPath="fonts/NunitoSans-Bold.ttf"/>
+            fontPath="fonts/AkzidenzGroteskBE-Medium.otf"/>
 
     </LinearLayout>
 

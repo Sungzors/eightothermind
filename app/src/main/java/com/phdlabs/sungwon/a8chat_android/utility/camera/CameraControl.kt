@@ -10,7 +10,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.hardware.camera2.CameraCharacteristics
-import android.media.ExifInterface
+import android.hardware.camera2.CameraManager
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
@@ -21,9 +21,10 @@ import android.support.v4.content.ContextCompat
 import android.support.v4.content.FileProvider
 import android.util.DisplayMetrics
 import android.util.Log
+import com.otaliastudios.cameraview.Facing
 import com.phdlabs.sungwon.a8chat_android.BuildConfig
 import com.phdlabs.sungwon.a8chat_android.R
-import kotlinx.android.synthetic.main.activity_camera_preview.*
+import com.phdlabs.sungwon.a8chat_android.model.media.GalleryItem
 import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -51,7 +52,6 @@ class CameraControl private constructor() {
         private val DEFAULT_MIN_WIDTH_QUALITY = 400
         private val DEFAULT_MIN_HEIGHT_QUALITY = 400
         private val TAG = "CameraControlView"
-        private val TEMP_IMAGE_NAME = "tempImage"
 
         private var minWidthQuality = DEFAULT_MIN_WIDTH_QUALITY
         private var minHeightQuality = DEFAULT_MIN_HEIGHT_QUALITY
@@ -65,12 +65,6 @@ class CameraControl private constructor() {
 
     }
 
-    /*Initializer Log used for testing
-     *
-     * INFO:
-     * init will be called when this class is initialized for
-     * the first time (i.e. when calling CameraControlView.INSTANCE)
-     * */
     init {
         println("CameraControlView ($this) is a Singleton")
     }
@@ -350,6 +344,9 @@ class CameraControl private constructor() {
             Log.i(TAG, "selectedImage: " + selectedImage!!)
 
             bm = decodeBitmap(context, selectedImage)
+
+            //TODO: Image rotation
+
 //            val rotation = ImageRotator.getRotation(context, selectedImage, isCamera)
 //            bm = ImageRotator.rotate(bm, rotation)
         }
@@ -415,7 +412,7 @@ class CameraControl private constructor() {
             try {
                 `is` = context.contentResolver.openInputStream(uri)
                 val bmp = BitmapFactory.decodeStream(`is`)
-                return ImageUtils.instance.savePicture(context, bmp, uri.path.hashCode().toString())
+                return ImageUtils.instance.cachePicture(context, bmp, uri.path.hashCode().toString())
             } catch (e: FileNotFoundException) {
                 e.printStackTrace()
             } finally {
@@ -522,6 +519,53 @@ class CameraControl private constructor() {
         return outputBitmap
     }
 
+
+    /**
+     * [getCorrectCameraOrientation]
+     * Used to retrieve correct camera orientation based on device's camera sensor placement
+     * This method helps support Samsung & Nexus devices for rotation
+     * @param context
+     * @return degrees to rotate bitmap before storing
+     * */
+    private fun getCorrectCameraOrientation(context: Context, lensFacing: Facing): Float {
+
+        val cameraManager: CameraManager = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
+        val cameraIds = cameraManager.cameraIdList
+        var degrees = 0f
+        var currentSensorOrientation = 0
+        for (cameraId in cameraIds) {
+            val character = cameraManager.getCameraCharacteristics(cameraId)
+            /**
+             * - TODO: Report bug to [CameraView] developers
+             * CameraView library used has opposite LENS_FACING values
+             * Android LENS_FACING_BACK = 1
+             * Android LENS_FACING_FRONT = 0
+             * CameraView BACK = 0
+             * CameraView FRONT = 1
+             * */
+            //Match used lens
+            if (lensFacing == Facing.BACK && lensFacing.ordinal != character.get(CameraCharacteristics.LENS_FACING)) {
+                currentSensorOrientation = character.get(CameraCharacteristics.SENSOR_ORIENTATION)
+                when (currentSensorOrientation) {
+                    0 -> {
+                        degrees = 0f
+                    }
+                    90 -> {
+                        degrees = 0f
+                    }
+                    180 -> {
+                        degrees = 180f
+                    }
+                    270 -> {
+                        degrees = 270f
+                    }
+                }
+            }
+        }
+
+        return (currentSensorOrientation - degrees + 360) % 360
+    }
+
     /**
      * [rotatedBitmapCameraFrontLens] used for display purposes
      * @param facingLens of current camera
@@ -544,6 +588,51 @@ class CameraControl private constructor() {
         return Bitmap.createBitmap(bm, 0, 0, bm.width, bm.height, matrixPreRotateRight, true)
     }
 
+    /**
+     * [roatedBitmapCameraFrontLens] used for display purposes
+     * Used for the [CameraView] library handling ByteArrays to deliver Results
+     * @param image ByteArray
+     * @return ByteArray
+     * */
+    fun rotatedBitmapCameraFrontLens(image: ByteArray): ByteArray {
+        //Create bitmap
+        val options: BitmapFactory.Options = BitmapFactory.Options()
+        options.inJustDecodeBounds = true
+        options.inJustDecodeBounds = false
+        //Rotate Image
+        val matrixPreRotateRight = Matrix()
+        //Mirror matrix
+        val mirrorY = floatArrayOf(-1f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 1f)
+        val matrixRotateRight = Matrix()
+        val matrixMirrorY = Matrix()
+        matrixMirrorY.setValues(mirrorY)
+        matrixPreRotateRight.postConcat(matrixMirrorY)
+        matrixRotateRight.preRotate(90f)//Test pre rotation on different phones
+        var bm = BitmapFactory.decodeByteArray(image, 0, image.size, options)
+        bm = Bitmap.createBitmap(bm, 0, 0, bm.width, bm.height, matrixPreRotateRight, true)
+        bm = Bitmap.createBitmap(bm, 0, 0, bm.width, bm.height, matrixRotateRight, true)
+        //Create byte array
+        val byteArray = ByteArrayOutputStream()
+        bm.compress(Bitmap.CompressFormat.JPEG, 100, byteArray)
+        return byteArray.toByteArray()
+    }
+
+    /**
+     * [rotateBitmapAsByteArray]
+     * Used for 90 degrees rotation before saving image interacting with camera location
+     * @param image ByteArray
+     * @param degrees Degrees to rotate
+     * */
+    fun rotateBitmapAsByteArray(context: Context, image: ByteArray, facing: Facing): ByteArray {
+        val degrees = getCorrectCameraOrientation(context, facing)
+        val matrix = Matrix()
+        val bmp = BitmapFactory.decodeByteArray(image, 0, image.size)
+        matrix.postRotate(degrees)
+        val bm = Bitmap.createBitmap(bmp, 0, 0, bmp.width, bmp.height, matrix, true)
+        val byteArray = ByteArrayOutputStream()
+        bm.compress(Bitmap.CompressFormat.JPEG, 100, byteArray)
+        return byteArray.toByteArray()
+    }
 
     /**
      * Minimum image quality to be processed
@@ -606,7 +695,7 @@ class CameraControl private constructor() {
             imagePath = file.absolutePath
             try {
                 val fos = FileOutputStream(file)
-                scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 70, fos)
+                scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 30, fos)
                 fos.flush()
                 fos.close()
             } catch (e: FileNotFoundException) {
@@ -640,7 +729,7 @@ class CameraControl private constructor() {
 
     fun mediaFileNaming(): String {
         val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-        val imageFileName = "JPEG_" + timeStamp + "_"
+        val imageFileName = timeStamp + "_"
         return imageFileName
     }
 

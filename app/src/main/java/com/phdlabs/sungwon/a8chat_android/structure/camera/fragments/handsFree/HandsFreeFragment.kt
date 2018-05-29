@@ -1,5 +1,6 @@
 package com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.handsFree
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import android.widget.RelativeLayout
@@ -7,6 +8,8 @@ import com.otaliastudios.cameraview.*
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.CameraBaseFragment
 import com.phdlabs.sungwon.a8chat_android.structure.camera.result.ResultHolder
+import com.phdlabs.sungwon.a8chat_android.structure.camera.videoPreview.VideoPreviewActivity
+import com.phdlabs.sungwon.a8chat_android.utility.Constants
 import com.phdlabs.sungwon.a8chat_android.utility.camera.ImageUtils
 import java.io.File
 
@@ -17,10 +20,10 @@ import java.io.File
 class HandsFreeFragment : CameraBaseFragment() {
 
     /*Required*/
-    override fun cameraLayoutId(): Int = R.layout.fragment_cameraview
+    override fun cameraLayoutId(): Int = R.layout.fragment_camera_handsfree
 
     /*Properties*/
-    private var handsFreeCamera: CameraView? = null
+    var handsFreeCamera: CameraView? = null
     private lateinit var mTempFile: File
     private var mRelativeLayout: RelativeLayout? = null
     private var wasVideoTaken: Boolean = false
@@ -50,30 +53,40 @@ class HandsFreeFragment : CameraBaseFragment() {
 
     override fun inOnCreateView(root: View?, container: ViewGroup?, savedInstanceState: Bundle?) {
         //If something needs to be added to the custom layout
-        mRelativeLayout = root!!.findViewById(R.id.cameraViewRelativeLayout)
+        mRelativeLayout = root!!.findViewById(R.id.fch_camera_view_container)
     }
 
+    /**
+     * [setVideoLayout]
+     * HandsFree camera setup , layout management & camera preview start
+     * */
     private fun setVideoLayout() {
         handsFreeCamera = activity?.mCameraView
-        handsFreeCamera?.layoutParams = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
+        handsFreeCamera?.layoutParams = RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.MATCH_PARENT,
                 RelativeLayout.LayoutParams.MATCH_PARENT)
         setupVideoRecording(handsFreeCamera)
+        if (handsFreeCamera?.parent != null) {
+            val viewGroup: ViewGroup = handsFreeCamera?.parent as ViewGroup
+            viewGroup.removeView(handsFreeCamera)
+        }
         mRelativeLayout?.addView(handsFreeCamera)
+        handsFreeCamera?.start()
     }
 
+    /**
+     * Should only show layout after fragment is visible
+     * Showing Surface Views if screen is not visible to the user
+     * consumes too much memory
+     * */
     override fun setMenuVisibility(menuVisible: Boolean) {
         super.setMenuVisibility(menuVisible)
         if (menuVisible && isResumed) {
             userVisibleHint = true
-            if (mRelativeLayout?.childCount == 0) {
-                setVideoLayout()
-                handsFreeCamera?.start()
-            }
+            setVideoLayout()
         } else {
             userVisibleHint = false
             handsFreeCamera?.stop()
-            mRelativeLayout?.removeAllViews()
-
         }
     }
 
@@ -82,10 +95,7 @@ class HandsFreeFragment : CameraBaseFragment() {
         if (!userVisibleHint) {
             return
         }
-        if (mRelativeLayout?.childCount == 0) {
-            setVideoLayout()
-            handsFreeCamera?.start()
-        }
+        setVideoLayout()
     }
 
     override fun onPause() {
@@ -94,10 +104,12 @@ class HandsFreeFragment : CameraBaseFragment() {
         wasVideoTaken = false
         //Camera View
         handsFreeCamera?.stop()
-        mRelativeLayout?.removeAllViews()
     }
 
-    /*Functionality*/
+    /**
+     * [setupVideoRecording]
+     * Setup [CameraView] for Video recording
+     * */
     private fun setupVideoRecording(cameraView: CameraView?) {
         //Camera Recording View setup
         cameraView?.keepScreenOn = true
@@ -109,9 +121,9 @@ class HandsFreeFragment : CameraBaseFragment() {
         cameraView?.hdr = Hdr.OFF
         cameraView?.playSounds = true
         cameraView?.sessionType = SessionType.VIDEO
-        cameraView?.videoCodec = VideoCodec.DEVICE_DEFAULT
+        cameraView?.videoCodec = VideoCodec.DEVICE_DEFAULT // Do not change
         cameraView?.videoMaxDuration = 720000 // 12 min
-        cameraView?.videoQuality = VideoQuality.MAX_2160P
+        cameraView?.videoQuality = VideoQuality.HIGHEST // Do not change
         cameraView?.whiteBalance = WhiteBalance.AUTO
         //Gesture Control
         cameraView?.mapGesture(Gesture.PINCH, GestureAction.ZOOM)
@@ -137,16 +149,20 @@ class HandsFreeFragment : CameraBaseFragment() {
     }
 
     fun videoCaptured(videoFile: File) {
+        /*Video Result*/
         val callbackTime = System.currentTimeMillis()
         ResultHolder.dispose()
         ResultHolder.setResultVideo(videoFile)
         ResultHolder.setResultTimeToCallback(callbackTime)
-        //TODO: Start video preview activity
-        println("Video file path: ${videoFile.absolutePath}")
+        ResultHolder.setResultVideo(videoFile)
+        /*Video Preview*/
+        activity?.let {
+            val intent = Intent(it, VideoPreviewActivity::class.java)
+            it.startActivityForResult(intent, Constants.RequestCodes.VIDEO_PREVIEW_REQ_CODE)
+        }
     }
 
     /*Camera Facing control*/
-    //FIXME Not working for Android 8+
     fun flipCamera() {
         if (handsFreeCamera?.facing == Facing.BACK) {
             handsFreeCamera?.facing = Facing.FRONT

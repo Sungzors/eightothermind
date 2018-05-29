@@ -1,18 +1,18 @@
 package com.phdlabs.sungwon.a8chat_android.structure.main.lobby
 
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.db.EightQueries
 import com.phdlabs.sungwon.a8chat_android.model.channel.Channel
+import com.phdlabs.sungwon.a8chat_android.model.event.EventsEight
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.phdlabs.sungwon.a8chat_android.structure.channel.mychannel.MyChannelActivity
 import com.phdlabs.sungwon.a8chat_android.structure.chat.ChatActivity
@@ -28,6 +28,7 @@ import com.phdlabs.sungwon.a8chat_android.utility.adapter.BaseViewHolder
 import com.phdlabs.sungwon.a8chat_android.utility.adapter.ViewMap
 import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform
 import com.squareup.picasso.Picasso
+import com.vicpin.krealmextensions.queryFirst
 import kotlinx.android.synthetic.main.fragment_lobby.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -36,16 +37,25 @@ import java.util.*
  * Created by SungWon on 10/17/2017.
  * Updated by JPAM on 03/09/2018
  */
+
 class LobbyFragment : CoreFragment(), LobbyContract.View {
 
     /*Controller*/
     override lateinit var controller: LobbyContract.Controller
 
     /*Adapters*/
+    //Channels
     private lateinit var mAdapterChannels: BaseRecyclerAdapter<Channel, BaseViewHolder>
-    private lateinit var mAdapterEvent: BaseRecyclerAdapter<Room, BaseViewHolder>
-    private var mAdapterChat: BaseRecyclerAdapter<Room, BaseViewHolder>? = null
+    private var mMyChannelsList: MutableList<Channel> = mutableListOf()
+    //Events
+    private lateinit var mAdapterEvent: BaseRecyclerAdapter<Pair<Room, EventsEight?>?, BaseViewHolder>
+    private var mEventsList: MutableList<Pair<Room, EventsEight?>> = mutableListOf()
+    //Private Chats
+    private lateinit var mAdapterChat: BaseRecyclerAdapter<Room, BaseViewHolder>
+    private var mChatsList: MutableList<Room> = mutableListOf()
 
+
+    //Channel separator
     private var separatorPosition: Int = -1
 
     /*Layout*/
@@ -57,21 +67,24 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
         /*Global control variable*/
         var refresh: Boolean = true
 
-        /**
-         * Default constructor
-         * Will not refreshChannels data from API
-         * */
-        fun newInstance(): LobbyFragment = LobbyFragment()
-
         fun newInstance(shouldUpdate: Boolean): LobbyFragment {
             this.refresh = shouldUpdate
             return LobbyFragment()
         }
     }
 
+    //Activity
+    override fun activity(): MainActivity = activity as MainActivity
+
+    /*LifeCycle*/
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         LobbyController(this, refresh)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        controller.onViewCreated()
     }
 
     override fun onStart() {
@@ -87,9 +100,6 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
     override fun onPause() {
         super.onPause()
         controller.pause()
-//        ChannelsManager.instance.disposable.clear()
-//        EventsManager.instance.disposable.clear()
-//        RoomManager.instance.disposable.clear()
     }
 
     override fun onStop() {
@@ -97,8 +107,9 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
         controller.stop()
     }
 
+    /**CHANNELS*/
     /*My Channels*/
-    override fun setUpChannelRecycler(myChannels: MutableList<Channel>) {
+    override fun setUpChannelRecycler() {
         mAdapterChannels = object : BaseRecyclerAdapter<Channel, BaseViewHolder>() {
             override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: Channel?, position: Int, type: Int) {
                 bindMyChannelViewHolder(viewHolder!!, data!!)
@@ -110,10 +121,10 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
                 }
             }
         }
-        mAdapterChannels.setItems(myChannels)
+        mAdapterChannels.setItems(mMyChannelsList)
         fl_channels_title.visibility = TextView.VISIBLE
         fl_channels_recycler.visibility = RecyclerView.VISIBLE
-        fl_channels_recycler.layoutManager = LinearLayoutManager(coreActivity.context, LinearLayoutManager.HORIZONTAL, false)
+        fl_channels_recycler.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
         fl_channels_recycler.adapter = mAdapterChannels
     }
 
@@ -130,8 +141,10 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
                 unreadChannelIndicator.background = activity?.getDrawable(R.drawable.bg_circle_white_lobby)
             }
         }
-        Picasso.with(coreActivity.context).load(data.avatar).placeholder(R.drawable.ic_launcher_round).transform(CircleTransform()).into(profilePic)
+
+        Picasso.with(context).load(data.avatar).placeholder(R.mipmap.ic_launcher_round).transform(CircleTransform()).into(profilePic)
         channelName.text = data.name
+
         profilePic.setOnClickListener {
             val intent = Intent(activity, MyChannelActivity::class.java)
             intent.putExtra(Constants.IntentKeys.CHANNEL_ID, data.id)
@@ -140,24 +153,20 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
             intent.putExtra(Constants.IntentKeys.OWNER_ID, data.user_creator_id!!.toInt())
             startActivity(intent)
         }
-        if(separatorPosition>-1){
+
+        if (separatorPosition > -1) {
             if (viewHolder.adapterPosition == separatorPosition) separator.visibility = ImageView.VISIBLE else separator.visibility = ImageView.GONE
         }
+
     }
 
-    /*Followed Channels*/
-    //TODO: Add separators after my channels -> Find suitable solution
-    override fun addFollowedChannels(followedChannels: MutableList<Channel>) {
-        mAdapterChannels.addAll(followedChannels)
-        mAdapterChannels.notifyDataSetChanged()
-    }
-
-
+    /**EVENTS*/
     /*Events*/
-    override fun setUpEventsRecycler(events: MutableList<Room>) {
-        mAdapterEvent = object : BaseRecyclerAdapter<Room, BaseViewHolder>() {
-            override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: Room?, position: Int, type: Int) {
+    override fun setUpEventsRecycler() {
+        mAdapterEvent = object : BaseRecyclerAdapter<Pair<Room, EventsEight?>?, BaseViewHolder>() {
+            override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: Pair<Room, EventsEight?>?, position: Int, type: Int) {
                 bindEventViewHolder(viewHolder!!, data!!)
+
             }
 
             override fun viewHolder(inflater: LayoutInflater?, parent: ViewGroup?, type: Int): BaseViewHolder {
@@ -165,51 +174,52 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
                     override fun addClicks(views: ViewMap?) {
                         views!!.click {
                             val data = getItem(adapterPosition)
+                            //TODO: Only Pass event id & room id
                             val intent = Intent(context, EventViewActivity::class.java)
-                            intent.putExtra(Constants.IntentKeys.EVENT_ID, data.events?.id)
-                            intent.putExtra(Constants.IntentKeys.EVENT_NAME, data.events?.name)
-                            intent.putExtra(Constants.IntentKeys.EVENT_LOCATION, data.events?.location_name)
-                            intent.putExtra(Constants.IntentKeys.ROOM_ID, data.id)
-                            startActivity(intent)
+                            intent.putExtra(Constants.IntentKeys.EVENT_ID, data?.second?.id)
+                            startActivityForResult(intent, Constants.RequestCodes.EVENT_CHAT_REQ_CODE)
                         }
                     }
                 }
             }
         }
-        mAdapterEvent.setItems(events)
+
+        mAdapterEvent.setItems(mEventsList)
         fl_events_title.visibility = TextView.VISIBLE
         fl_events_recycler.visibility = RecyclerView.VISIBLE
-        fl_events_recycler.layoutManager = LinearLayoutManager(coreActivity.context)
+        fl_events_recycler.layoutManager = LinearLayoutManager(context)
         fl_events_recycler.adapter = mAdapterEvent
     }
 
-    private fun bindEventViewHolder(viewHolder: BaseViewHolder, data: Room) {
+    //TODO: make this method more maintainable
+    private fun bindEventViewHolder(viewHolder: BaseViewHolder, data: Pair<Room, EventsEight?>) {
         val eventPic = viewHolder.get<ImageView>(R.id.cvle_picture_event)
         val eventIndicator = viewHolder.get<ImageView>(R.id.cvle_read_indicator)
         val title = viewHolder.get<TextView>(R.id.cvle_title)
         val message = viewHolder.get<TextView>(R.id.cvle_message)
         val time = viewHolder.get<TextView>(R.id.cvle_time)
-        val event = data.events
-        Picasso.with(coreActivity.context).load(event?.avatar).placeholder(R.drawable.ic_launcher_round).transform(CircleTransform()).into(eventPic)
+        val event = data.second
+        //Room Info
+        Picasso.with(context).load(event?.avatar).placeholder(R.mipmap.ic_launcher_round).transform(CircleTransform()).into(eventPic)
         title.text = event?.name
-        if (data.message != null) {
-            when (data.message!!.type) {
-                "string" -> message.text = data.message!!.message
+        if (data.first.message != null) {
+            when (data.first.message!!.type) {
+                "string" -> message.text = data.first.message!!.message
                 "media" -> message.text = "Picture posted"
-                "contact" -> message.text = data.message!!.contactInfo!!.first_name + " " + data.message!!.contactInfo!!.last_name
-                "channel" -> message.text = data.message!!.channelInfo!!.name
-                "location" -> message.text = data.message!!.locationInfo!!.streetAddress
+                "contact" -> message.text = data.first.message!!.contactInfo!!.first_name + " " + data.first.message!!.contactInfo!!.last_name
+                "channel" -> message.text = data.first.message!!.channelInfo!!.name
+                "location" -> message.text = data.first.message!!.locationInfo!!.streetAddress
             }
-            if (Date().time.minus(data.last_activity!!.time) >= 24 * 60 * 60 * 1000) {
-                time.text = SimpleDateFormat("EEE").format(data.last_activity)
+            if (Date().time.minus(data.first.last_activity!!.time) >= 24 * 60 * 60 * 1000) {
+                time.text = SimpleDateFormat("EEE").format(data.first.last_activity)
             } else {
-                time.text = SimpleDateFormat("h:mm aaa").format(data.last_activity)
+                time.text = SimpleDateFormat("h:mm aaa").format(data.first.last_activity)
             }
         } else {
             message.text = ""
             time.text = ""
         }
-        if (!data.isRead) {
+        if (!data.first.isRead) {
             eventIndicator.visibility = ImageView.VISIBLE
         } else {
             eventIndicator.visibility = ImageView.INVISIBLE
@@ -217,8 +227,9 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
 
     }
 
+    /**PRIVATE CHATS*/
     /*CHAT - Conversations*/
-    override fun setUpChatRecycler(chats: MutableList<Room>) {
+    override fun setUpChatRecycler() {
         mAdapterChat = object : BaseRecyclerAdapter<Room, BaseViewHolder>() {
             override fun onBindItemViewHolder(viewHolder: BaseViewHolder?, data: Room?, position: Int, type: Int) {
                 bindRoomViewHolder(viewHolder!!, data!!)
@@ -228,6 +239,9 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
                 return object : BaseViewHolder(R.layout.card_view_lobby_event, inflater!!, parent) {
                     override fun addClicks(views: ViewMap?) {
                         views?.click {
+
+                            //TODO: Avoid long press on Eight Contact
+
                             val room = getItem(adapterPosition)
                             if (room.chatType == "private") {
                                 val intent = Intent(context, ChatActivity::class.java)
@@ -241,9 +255,10 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
                                 val intent = Intent(context, GroupChatActivity::class.java)
                                 intent.putExtra(Constants.IntentKeys.CHAT_NAME, room.groupChatInfo?.name)
                                 intent.putExtra(Constants.IntentKeys.ROOM_ID, room.id)
-                                intent.putExtra(Constants.IntentKeys.CHAT_PIC, room.groupChatInfo?.avatar?: "")
+                                intent.putExtra(Constants.IntentKeys.CHAT_PIC, room.groupChatInfo?.avatar
+                                        ?: "")
                                 startActivity(intent)
-                            } else if (room.event!!){
+                            } else if (room.event!!) {
                                 val data = getItem(adapterPosition)
                                 val intent = Intent(context, EventViewActivity::class.java)
                                 intent.putExtra(Constants.IntentKeys.EVENT_ID, data.events?.id)
@@ -258,15 +273,18 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
                 }
             }
         }
-        mAdapterChat?.setItems(chats)
+
+        mAdapterChat?.setItems(mChatsList)
         mAdapterChat?.setSortComparator(EightQueries.Comparators.dateComparatorRooms)
         fl_chat_title.visibility = TextView.VISIBLE
         fl_chat_recycler.visibility = RecyclerView.VISIBLE
-        fl_chat_recycler.layoutManager = object : LinearLayoutManager(coreActivity.context) {
+        val linearLayoutManager = object : LinearLayoutManager(context) {
             override fun canScrollHorizontally(): Boolean = false
             override fun canScrollVertically(): Boolean = false
         }
+        fl_chat_recycler.layoutManager = linearLayoutManager
         fl_chat_recycler.adapter = mAdapterChat
+
     }
 
     private fun bindRoomViewHolder(viewHolder: BaseViewHolder, data: Room) {
@@ -276,9 +294,9 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
         val message = viewHolder.get<TextView>(R.id.cvle_message)
         val time = viewHolder.get<TextView>(R.id.cvle_time)
         if (data.chatType == "private") {
-            Picasso.with(context).load(data.user!!.avatar).placeholder(R.drawable.ic_launcher_round).transform(CircleTransform()).into(eventPic)
+            Picasso.with(context).load(data.user!!.avatar).placeholder(R.mipmap.ic_launcher_round).transform(CircleTransform()).into(eventPic)
             eventPic.setOnLongClickListener {
-                getActivityDirect().replaceFragment(R.id.overlay_content_frame, LobbyOverlayFragment.newInstance(data.id!!, data.user!!.first_name + " " + data.user!!.last_name, data.user!!.avatar!!, data.user!!.phone!!), true)
+                activity().replaceFragment(R.id.overlay_content_frame, LobbyOverlayFragment.newInstance(data.id!!, data.user!!.first_name + " " + data.user!!.last_name, data.user!!.avatar!!, data.user!!.phone!!), true, true)
                 true
             }
             title.text = data.user!!.first_name + " " + data.user!!.last_name
@@ -308,10 +326,10 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
                 eventIndicator.visibility = ImageView.INVISIBLE
             }
         } else if (data.chatType == "group") {
-            Picasso.with(context).load(data.groupChatInfo!!.avatar).placeholder(R.drawable.ic_launcher_round).transform(CircleTransform()).into(eventPic)
+            Picasso.with(context).load(data.groupChatInfo!!.avatar).placeholder(R.mipmap.ic_launcher_round).transform(CircleTransform()).into(eventPic)
             title.text = data.groupChatInfo!!.name
 //            eventPic.setOnLongClickListener {
-//                getActivityDirect().replaceFragment(R.id.overlay_content_frame, LobbyOverlayFragment.newInstance(data.id!!, data.groupChatInfo!!.name!!, data.groupChatInfo!!.avatar!!), true)
+//                activity().replaceFragment(R.id.overlay_content_frame, LobbyOverlayFragment.newInstance(data.id!!, data.groupChatInfo!!.name!!, data.groupChatInfo!!.avatar!!), true)
 //                true
 //            }
             if (data.message != null) {
@@ -338,58 +356,87 @@ class LobbyFragment : CoreFragment(), LobbyContract.View {
             } else {
                 eventIndicator.visibility = ImageView.INVISIBLE
             }
-        } else if (data.event!!){
-            val event = data.events
-            Picasso.with(coreActivity.context).load(event?.avatar).placeholder(R.drawable.ic_launcher_round).transform(CircleTransform()).into(eventPic)
-            title.text = event?.name
-            if (data.message != null) {
-                when (data.message!!.type) {
-                    "string" -> message.text = data.message!!.message
-                    "media" -> message.text = "Picture posted"
-                    "contact" -> message.text = data.message!!.contactInfo!!.first_name + " " + data.message!!.contactInfo!!.last_name
-                    "channel" -> message.text = data.message!!.channelInfo!!.name
-                    "location" -> message.text = data.message!!.locationInfo!!.streetAddress
-                }
-                if (Date().time.minus(data.last_activity!!.time) >= 24 * 60 * 60 * 1000) {
-                    time.text = SimpleDateFormat("EEE").format(data.last_activity)
+        } else if (data.event!!) {
+            EventsEight().queryFirst { equalTo("room_id", data.id) }.let {
+                Picasso.with(context).load(it?.avatar).placeholder(R.mipmap.ic_launcher_round).transform(CircleTransform()).into(eventPic)
+                title.text = it?.name
+                if (data.message != null) {
+                    when (data.message!!.type) {
+                        "string" -> message.text = data.message!!.message
+                        "media" -> message.text = "Picture posted"
+                        "contact" -> message.text = data.message!!.contactInfo!!.first_name + " " + data.message!!.contactInfo!!.last_name
+                        "channel" -> message.text = data.message!!.channelInfo!!.name
+                        "location" -> message.text = data.message!!.locationInfo!!.streetAddress
+                    }
+                    if (Date().time.minus(data.last_activity!!.time) >= 24 * 60 * 60 * 1000) {
+                        time.text = SimpleDateFormat("EEE").format(data.last_activity)
+                    } else {
+                        time.text = SimpleDateFormat("h:mm aaa").format(data.last_activity)
+                    }
                 } else {
-                    time.text = SimpleDateFormat("h:mm aaa").format(data.last_activity)
+                    message.text = ""
+                    time.text = ""
                 }
-            } else {
-                message.text = ""
-                time.text = ""
+                if (!data.isRead) {
+                    eventIndicator.visibility = ImageView.VISIBLE
+                } else {
+                    eventIndicator.visibility = ImageView.INVISIBLE
+                }
             }
-            if (!data.isRead) {
-                eventIndicator.visibility = ImageView.VISIBLE
-            } else {
-                eventIndicator.visibility = ImageView.INVISIBLE
-            }
-
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        if (requestCode == Constants.PermissionsReqCode.LOCATION_REQ_CODE) {
-            if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                controller.callForEvent()
+    /*Updates*/
+
+    override fun refreshMyChannels() {
+        //TODO: If there are no channels create a zero state
+        mAdapterChannels.setItems(controller.getMyChannels())
+        mAdapterChannels.notifyDataSetChanged()
+    }
+
+    override fun refreshFollowedChannels() {
+        mAdapterChannels.addAll(controller.getChannelsFollowed())
+        mAdapterChannels.notifyDataSetChanged()
+    }
+
+    override fun refreshEvents() {
+        /**
+         * Load events & begin object relationship with realm [Room] [EventsEight]
+         * */
+        val events = controller.getEvents()
+        val eventsList = mutableListOf<Pair<Room, EventsEight?>>()
+        for (event in events) {
+            EventsEight().queryFirst {
+                equalTo("room_id", event.id)
+            }.let {
+                eventsList.add(Pair(event, it))
             }
-        } else {
-            Toast.makeText(context, "Cannot retrieve location at this time", Toast.LENGTH_SHORT).show()
         }
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        //UI
+        if (eventsList.isEmpty()) {
+            fl_events_title.visibility = TextView.GONE
+        } else {
+            fl_events_title.visibility = TextView.VISIBLE
+        }
+        mAdapterEvent.clear()
+        mAdapterEvent.setItems(eventsList)
+        eventsList.clear()
+        mAdapterEvent.notifyDataSetChanged()
     }
 
     override fun refreshChat() {
-        if(mAdapterChat!= null){
-            mAdapterChat?.setItems(controller.getChat())
-            mAdapterChat?.setSortComparator(EightQueries.Comparators.dateComparatorRooms)
-            mAdapterChat?.notifyDataSetChanged()
-        }
+        //TODO: If there are not chats create a zero state
+        mChatsList.clear()
+        mChatsList.addAll(controller.getChat())
+        mAdapterChat.clear()
+        mAdapterChat.addAll(mChatsList)
+        mAdapterChat.setSortComparator(EightQueries.Comparators.dateComparatorRooms)
+        mAdapterChat.notifyDataSetChanged()
     }
 
+    /*Channel Separator*/
     override fun setSeparatorCounter(pos: Int) {
         separatorPosition = pos
     }
 
-    override fun getActivityDirect(): MainActivity = activity as MainActivity
 }

@@ -76,10 +76,7 @@ class ContactsAController(val mView: ContactsContract.EightFriends.View) :
         } else {  //Check for cached contacts
             val mEightFriends = Contact().queryAll()
             if (mEightFriends.count() > 0) {
-                mView.updateContactSelector(
-                        "Contacts (" + mEightFriends.count() + ")",
-                        mEightFriends.count()
-                )
+                mView.updateContactSelector("Contacts (" + mEightFriends.count() + ")", mEightFriends.count())
             } else { //Load contacts from API
                 //Load manager will inhibit if it's already going on
                 mView.showProgress()

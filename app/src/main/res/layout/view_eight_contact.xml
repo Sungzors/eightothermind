@@ -62,7 +62,7 @@
                         android:textSize="15sp" 
                         xmlns:tools="http://schemas.android.com/tools"
                         tools:ignore="MissingPrefix"
-                        fontPath="fonts/NunitoSans-Regular.ttf"/>
+                        fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
                 </RelativeLayout>
 
             </RelativeLayout>

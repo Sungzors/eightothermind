@@ -1,5 +1,6 @@
 package com.phdlabs.sungwon.a8chat_android.structure.event.create
 
+import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.view.View
@@ -163,12 +164,16 @@ class EventCreateActivity : CoreActivity(), EventContract.Create.View, View.OnCl
 
     /*Transition*/
     override fun onCreateEvent(event: EventsEight?) {
+        //Transition to Event activity
         val intent = Intent(this, EventViewActivity::class.java)
         intent.putExtra(Constants.IntentKeys.EVENT_ID, event?.id)
         intent.putExtra(Constants.IntentKeys.EVENT_NAME, event?.name)
         intent.putExtra(Constants.IntentKeys.EVENT_LOCATION, event?.location_name)
         intent.putExtra(Constants.IntentKeys.ROOM_ID, event?.room_id)
         startActivity(intent)
+        //Finish this activity
+        setResult(Activity.RESULT_OK)
+        finish()
     }
 
 }

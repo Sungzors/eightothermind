@@ -16,7 +16,7 @@ import java.util.*
  */
 
 @RealmClass
-open class EventsEight() : RealmObject() {
+open class EventsEight : RealmObject() {
 
     @PrimaryKey
     @SerializedName("id")
@@ -26,10 +26,6 @@ open class EventsEight() : RealmObject() {
     @SerializedName("name")
     @Expose
     var name: String? = null
-
-    @SerializedName("event_name")
-    @Expose
-    var event_name: String? = null
 
     @SerializedName("distribution")
     @Expose
@@ -95,6 +91,12 @@ open class EventsEight() : RealmObject() {
     @SerializedName("user_event_association")
     @Expose
     var association: String? = null
+
+    @SerializedName("active")
+    @Expose
+    var active: Boolean? = null
+
+
 
 
 }

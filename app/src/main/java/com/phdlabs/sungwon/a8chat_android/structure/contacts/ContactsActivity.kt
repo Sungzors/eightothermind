@@ -51,9 +51,9 @@ class ContactsActivity : CoreActivity(), ContactsContract.EightFriends.View, Vie
         super.onResume()
         controller.resume()
         if (ac_button_contacts.isChecked) {
-            replaceFragment(ContactsFragment(), false)
+            replaceFragment(ContactsFragment(), false, false)
         } else {
-            replaceFragment(ChannelsFragment(), false)
+            replaceFragment(ChannelsFragment(), false, true)
         }
     }
 
@@ -103,7 +103,7 @@ class ContactsActivity : CoreActivity(), ContactsContract.EightFriends.View, Vie
             //Update UI
             ac_button_contacts.text = string
             //Set contacts fragment
-            replaceFragment(ContactsFragment(), false)
+            replaceFragment(ContactsFragment(), false, false)
         } else {
             //Visible Container
             ac_fragment_container.visibility = View.VISIBLE
@@ -113,9 +113,11 @@ class ContactsActivity : CoreActivity(), ContactsContract.EightFriends.View, Vie
 
     override fun updateChannelsSelector(string: String, channelCount: Int) {
         //Visible Container
-        ac_fragment_container.visibility = View.VISIBLE
-        ac_button_channels.text = string
-        replaceFragment(ChannelsFragment(), false)
+        if (channelCount > 0) {
+            ac_fragment_container.visibility = View.VISIBLE
+            ac_button_channels.text = string
+            replaceFragment(ChannelsFragment(), false, true)
+        }
     }
 
     /*On Click*/

@@ -121,7 +121,7 @@ class ContactsFragment : CoreFragment() {
                                 .load(data?.avatar)
                                 .resize(45, 45)
                                 .centerCrop()
-                                .placeholder(R.drawable.ic_launcher_round)
+                                .placeholder(R.mipmap.ic_launcher_round)
                                 .transform(CircleTransform())
                                 .into(contactProfilePicture)
                         /*load name*/

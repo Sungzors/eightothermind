@@ -356,7 +356,7 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
                     if (mMessages[0].id != message.id) {
                         //Add message to Channel Feed
                         mMessages.add(0, message)
-                        //Current Broadcast message instance
+                        //Current Broadcast message INSTANCE
                         if (message.type == Constants.MessageTypes.BROADCAST) {
                             mBroadcastMessage = message
                         }
@@ -377,7 +377,7 @@ class MyChannelController(val mView: ChannelContract.MyChannel.View) : ChannelCo
                 if (mMessages[0].id == message.id) {
                     //Add message to channel feed
                     mMessages.removeAt(0)
-                    //Current Broadcast message instance deletion & Realm deletion
+                    //Current Broadcast message INSTANCE deletion & Realm deletion
                     Message().delete { equalTo("id", mBroadcastMessage?.id) }
                     mBroadcastMessage = null
                     mView.updateContentRecycler()

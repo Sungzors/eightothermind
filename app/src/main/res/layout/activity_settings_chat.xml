@@ -100,7 +100,7 @@
                                     android:padding="2dp"
                                     android:text="@string/first_name"
                                     android:textColor="@color/my_profile_name"
-                                    fontPath="fonts/NunitoSans-Regular.ttf" />
+                                    fontPath="fonts/AkzidenzGroteskBE-Regular.otf" />
 
                                 <!--Phone number-->
                                 <TextView
@@ -111,7 +111,7 @@
                                     android:text="@string/phone_number"
                                     android:textColor="@color/my_profile_name"
                                     android:textStyle="normal"
-                                    fontPath="fonts/NunitoSans-Regular.ttf" />
+                                    fontPath="fonts/AkzidenzGroteskBE-Regular.otf" />
 
                                 <!--Language-->
                                 <TextView
@@ -121,7 +121,7 @@
                                     android:padding="2dp"
                                     android:text="@string/my_language"
                                     android:textColor="@color/my_language_color"
-                                    fontPath="fonts/NunitoSans-Regular.ttf"/>
+                                    fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
 
 
                             </LinearLayout>
@@ -185,7 +185,7 @@
                                 android:text="@string/chat"
                                 android:textAlignment="center"
                                 android:textColor="@color/white"
-                                fontPath="fonts/NunitoSans-Light.ttf"/>
+                                fontPath="fonts/AkzidenzGroteskBE-Light.otf"/>
                         </LinearLayout>
 
                         <LinearLayout
@@ -215,7 +215,7 @@
                                 android:text="@string/call"
                                 android:textAlignment="center"
                                 android:textColor="@color/white"
-                                fontPath="fonts/NunitoSans-Light.ttf"/>
+                                fontPath="fonts/AkzidenzGroteskBE-Light.otf"/>
                         </LinearLayout>
 
                         <LinearLayout
@@ -245,7 +245,7 @@
                                 android:text="@string/video"
                                 android:textAlignment="center"
                                 android:textColor="@color/white"
-                                fontPath="fonts/NunitoSans-Light.ttf"/>
+                                fontPath="fonts/AkzidenzGroteskBE-Light.otf"/>
                         </LinearLayout>
 
                     </LinearLayout>
@@ -285,7 +285,7 @@
                             android:layout_toEndOf="@id/asc_notif_icon"
                             android:text="@string/notification"
                             tools:ignore="RelativeOverlap"
-                            fontPath="fonts/NunitoSans-Regular.ttf"/>
+                            fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
 
                         <Switch
                             android:id="@+id/asc_notif_switch"
@@ -325,7 +325,7 @@
                             android:drawableEnd="@drawable/ic_keyboard_arrow_right_black_24dp"
                             android:text="@string/send_money"
                             tools:ignore="RelativeOverlap"
-                            fontPath="fonts/NunitoSans-Regular.ttf"/>
+                            fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
 
                     </RelativeLayout>
 
@@ -358,7 +358,7 @@
                             android:layout_toEndOf="@id/asc_favemsg_icon"
                             android:drawableEnd="@drawable/ic_keyboard_arrow_right_black_24dp"
                             android:text="@string/fave_messages"
-                            fontPath="fonts/NunitoSans-Regular.ttf"/>
+                            fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
 
                     </RelativeLayout>
                 </LinearLayout>
@@ -394,7 +394,7 @@
                             android:layout_margin="20dp"
                             android:layout_toEndOf="@id/asc_share_icon"
                             android:text="@string/share"
-                            fontPath="fonts/NunitoSans-Regular.ttf"/>
+                            fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
                     </RelativeLayout>
 
                     <View
@@ -424,7 +424,7 @@
                             android:layout_margin="20dp"
                             android:layout_toEndOf="@id/asc_close_icon"
                             android:text="@string/clear_conversation"
-                            fontPath="fonts/NunitoSans-Regular.ttf"/>
+                            fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
 
                     </RelativeLayout>
 
@@ -455,7 +455,7 @@
                             android:layout_margin="20dp"
                             android:layout_toEndOf="@id/acs_block_icon"
                             android:text="@string/block_contact"
-                            fontPath="fonts/NunitoSans-Regular.ttf"/>
+                            fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
                     </RelativeLayout>
                 </LinearLayout>
             </android.support.v7.widget.CardView>
@@ -478,7 +478,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    fontPath="fonts/NunitoSans-Regular.ttf"/>
+                    fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
 
                 <!--Files-->
                 <RadioButton
@@ -487,7 +487,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    fontPath="fonts/NunitoSans-Regular.ttf"/>
+                    fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
             </info.hoang8f.android.segmented.SegmentedGroup>
 
             <!--Media & Files Frag Container-->

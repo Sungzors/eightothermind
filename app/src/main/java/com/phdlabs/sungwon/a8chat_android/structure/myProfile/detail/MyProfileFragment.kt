@@ -42,7 +42,7 @@ class MyProfileFragment : CoreFragment(), View.OnClickListener {
     }
 
     /*User Info -> Top card*/
-    private fun displayUserInfo() {
+    fun displayUserInfo() {
         //Display cached info
         UserManager.instance.getCurrentUser { success, user, _ ->
             if (success) {

@@ -22,6 +22,7 @@ import com.phdlabs.sungwon.a8chat_android.api.response.contacts.ContactsPostResp
 import com.phdlabs.sungwon.a8chat_android.api.response.contacts.UserFriendsResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.createChannel.ChannelResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.createEvent.EventPostResponse
+import com.phdlabs.sungwon.a8chat_android.api.response.eightEvents.EventResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.eightEvents.EventRetrievalResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.favorite.PrivateChatFavoriteResponse
 import com.phdlabs.sungwon.a8chat_android.api.response.media.FileResponse
@@ -115,7 +116,7 @@ interface CallerRx {
     fun getRoomFaveMsg(@Header(TOKEN) token: String, @Path("roomId") roomId: Int, @Path("userId") userId: Int): Observable<FavoriteMessageResponse>
 
     @GET("/users/{userId}/messages/favorite")
-    fun getUserFaveMsg(@Header(TOKEN) token: String, @Path("userId") userId: Int) : Observable<FavoriteSelfMessageResponse>
+    fun getUserFaveMsg(@Header(TOKEN) token: String, @Path("userId") userId: Int): Observable<FavoriteSelfMessageResponse>
 
     /*CHANNEL*/
     //Create new channel
@@ -198,7 +199,7 @@ interface CallerRx {
      * - Connects the Sockets update-chat-broadcast for commenting on the live feed
      * */
     @POST("/messages/broadcast/start")
-    fun startBroadcast(@Header(TOKEN) token: String, @Body broadcastData: BroadcastData , @Query("post") post: Boolean): Observable<StartBroadcastResponse>
+    fun startBroadcast(@Header(TOKEN) token: String, @Body broadcastData: BroadcastData, @Query("post") post: Boolean): Observable<StartBroadcastResponse>
 
     /**
      * [finishBroadcast]
@@ -216,16 +217,17 @@ interface CallerRx {
     @POST("/events")
     fun postEvents(@Header(TOKEN) token: String, @Body eventPostData: EventPostData): Observable<EventPostResponse>
 
-//    /**
-//     * [getUserEventsWithFlags]
-//     * @Get current user's events with flags
-//     * @created -> User created the event
-//     * @fullParticipant ->  User is able to send messages
-//     * @readOnly -> User can only read the event
-//     * */
-//    @GET("/users/{userId}/events/with_flags")
-//    fun getUserEventsWithFlags(@Header(TOKEN) token: String, @Path("userId") userId: Int): Observable<EventRetrievalResponse>
+    /**
+     * [getEvents]
+     * @Get all events to classify them locally
+     * */
+    @GET("/events")
+    fun getEvents(@Header(TOKEN) token: String): Observable<EventResponse>
 
+    /**
+     * [getUserEvents]
+     * @Get retrieves user created events
+     * */
     @GET("/users/{userId}/events")
     fun getUserEvents(@Header(TOKEN) token: String,
                       @Path("userId") userId: Int,
@@ -235,7 +237,7 @@ interface CallerRx {
                       @Query("lat") lat: Double,
                       @Query("lng") lng: Double): Observable<EventRetrievalResponse>
 
-
+/*NOT WORKING ON BACKEND*/
 //    @GET("/events/nearby/{userId}/user")
 //    fun getNearbyEvents(@Header(TOKEN) token: String, @Path("userId") userId: Int, @Query("lat") lat: Long, @Query("lng") lng: Long): Observable<EventNearbyResponse>
 
@@ -369,4 +371,9 @@ interface CallerRx {
     @PATCH("users/{userId}/leave/{roomId}")
     fun leaveRoom(@Header(TOKEN) token: String, @Path("userId") userId: Int,
                   @Path("roomId") roomId: Int): Observable<EnterLeaveRoomResponse>
+
+
+    @GET("/users/{userId}/{roomId}/twilio/video/auth")
+    fun getAccessTokenTwilio(@Header(TOKEN) token: String, @Path("userId") userId: Int,
+                             @Path("roomId") roomId: Int): Observable<UserDataResponse>
 }

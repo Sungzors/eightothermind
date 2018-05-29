@@ -4,56 +4,46 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/gradient_45degree"
     tools:ignore="MissingPrefix">
 
     <View
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:text="@string/welcome_to"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        android:textColor="@color/black"
-        fontPath="fonts/NunitoSans-SemiBold.ttf"/>
     <ImageView
         android:id="@+id/al_eight_logo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="160dp"
+        android:layout_height="200dp"
         android:layout_gravity="center"
         android:layout_marginTop="20dp"
         android:background="@drawable/blue_logo"
         android:contentDescription="@string/logo_of_8"/>
-    <TextView
+
+    <View
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="@string/infinite_possibilities"
-        android:textAlignment="center"
-        android:textColor="@color/colorAccent"
-        fontPath="fonts/NunitoSans-Regular.ttf"/>
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
     <Button
         android:id="@+id/al_login_button"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_marginTop="50dp"
         android:layout_marginStart="25dp"
         android:layout_marginEnd="25dp"
-        android:background="@drawable/gradient_eightchatblue"
+        android:layout_marginBottom="30dp"
+        android:layout_gravity="bottom"
+        android:background="@drawable/button_create_your_account"
         android:text="@string/create_your_account"
-        android:textColor="@color/white"
-        fontPath="fonts/NunitoSans-Regular.ttf"/>
+        android:textColor="@color/gradientLeft"
+        fontPath="fonts/AkzidenzGroteskBE-Bold.otf"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="75dp"
         android:text="@string/alredyhesaccutn"
         android:textAlignment="center"
-        fontPath="fonts/NunitoSans-Regular.ttf"/>
+        android:textColor="@color/white"
+        fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
 
     <TextView
         android:id="@+id/al_signin_button"
@@ -62,14 +52,11 @@
         android:layout_marginTop="5dp"
         android:paddingStart="25dp"
         android:paddingEnd="25dp"
-        android:layout_gravity="center"
+        android:layout_marginBottom="30dp"
+        android:layout_gravity="bottom|center"
         android:text="@string/sign_in"
-        android:textColor="@color/colorAccent"
+        android:textColor="@color/white"
         android:textSize="16sp"
-        fontPath="fonts/NunitoSans-Regular.ttf"/>
+        fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"/>
 </LinearLayout>

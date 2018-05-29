@@ -74,7 +74,7 @@
 
                         <TextView
                             android:id="@+id/asg_group_name"
-                            fontPath="fonts/NunitoSans-Regular.ttf"
+                            fontPath="fonts/AkzidenzGroteskBE-Regular.otf"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/group_name"
@@ -87,7 +87,7 @@
 
                         <TextView
                             android:id="@+id/asg_language"
-                            fontPath="fonts/NunitoSans-Regular.ttf"
+                            fontPath="fonts/AkzidenzGroteskBE-Regular.otf"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text=""
@@ -137,7 +137,7 @@
                             android:src="@drawable/ic_setting_notif" />
 
                         <TextView
-                            fontPath="fonts/NunitoSans-Regular.ttf"
+                            fontPath="fonts/AkzidenzGroteskBE-Regular.otf"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_margin="20dp"
@@ -174,7 +174,7 @@
                             android:src="@drawable/ic_setting_money" />
 
                         <TextView
-                            fontPath="fonts/NunitoSans-Regular.ttf"
+                            fontPath="fonts/AkzidenzGroteskBE-Regular.otf"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_margin="20dp"
@@ -206,7 +206,7 @@
 
                         <TextView
                             android:id="@+id/asc_favemsg_tv"
-                            fontPath="fonts/NunitoSans-Regular.ttf"
+                            fontPath="fonts/AkzidenzGroteskBE-Regular.otf"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_margin="20dp"
@@ -257,7 +257,7 @@
                             android:layout_margin="20dp"
                             android:layout_toEndOf="@id/asc_share_icon"
                             android:text="@string/share"
-                            fontPath="fonts/NunitoSans-Regular.ttf"/>
+                            fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
                     </RelativeLayout>
 
                     <View
@@ -286,7 +286,7 @@
                             android:layout_margin="20dp"
                             android:layout_toEndOf="@id/asc_close_icon"
                             android:text="@string/clear_conversation"
-                            fontPath="fonts/NunitoSans-Regular.ttf"/>
+                            fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
 
                     </RelativeLayout>
 
@@ -316,7 +316,7 @@
                             android:layout_margin="20dp"
                             android:layout_toEndOf="@id/asc_block_icon"
                             android:text="@string/block_contact"
-                            fontPath="fonts/NunitoSans-Regular.ttf"/>
+                            fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
 
                         <TextView
                             android:layout_width="wrap_content"

@@ -180,7 +180,7 @@ class ChannelsFragment : CoreFragment(), ContactsContract.ChannelSearch.View {
                         .load(data?.avatar)
                         .resize(70, 70)
                         .centerCrop()
-                        .placeholder(R.drawable.ic_launcher_round)
+                        .placeholder(R.mipmap.ic_launcher_round)
                         .transform(CircleTransform())
                         .into(channelImage)
                 channelName?.text = data?.name

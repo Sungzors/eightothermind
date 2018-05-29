@@ -54,7 +54,7 @@
                     android:text="@string/name_your_group"
                     android:textAllCaps="true"
                     android:textSize="12sp"
-                    fontPath="fonts/NunitoSans-Bold.ttf"/>
+                    fontPath="fonts/AkzidenzGroteskBE-Medium.otf"/>
 
                 <EditText
                     android:id="@+id/agc_group_name"
@@ -67,7 +67,7 @@
                     android:imeOptions="actionNext"
                     android:inputType="textCapSentences"
                     android:labelFor="@id/agc_name_your_group"
-                    fontPath="fonts/NunitoSans-Regular.ttf"/>
+                    fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
 
 
 
@@ -105,7 +105,7 @@
                         android:text="@string/add_people"
                         android:drawableStart="@drawable/ic_add_blue_nobg"
                         android:drawablePadding="10dp"
-                        fontPath="fonts/NunitoSans-Regular.ttf"/>
+                        fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
 
 
                 </RelativeLayout>

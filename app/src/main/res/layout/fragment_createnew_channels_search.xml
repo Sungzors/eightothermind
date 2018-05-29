@@ -35,7 +35,7 @@
                         android:text="@string/channels"
                         xmlns:tools="http://schemas.android.com/tools"
                         tools:ignore="MissingPrefix"
-                        fontPath="fonts/NunitoSans-Bold.ttf"/>
+                        fontPath="fonts/AkzidenzGroteskBE-Medium.otf"/>
 
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/fcncs_channels_recycler"

@@ -4,10 +4,12 @@ import android.content.Intent
 import android.support.design.widget.TabLayout
 import android.support.v4.view.ViewPager
 import android.view.View
+import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.normal.NormalFragment
 import com.phdlabs.sungwon.a8chat_android.structure.camera.editing.EditingActivity
 import com.phdlabs.sungwon.a8chat_android.structure.camera.fragments.handsFree.HandsFreeFragment
 import com.phdlabs.sungwon.a8chat_android.utility.Constants
+import kotlinx.android.synthetic.main.view_camera_control_tabs.view.*
 
 /**
  * Created by JPAM on 12/28/17.
@@ -19,7 +21,7 @@ class CameraAController(val mView: CameraContract.Camera.View) : CameraContract.
 
     /*Properties*/
     private var isFlashOn: Boolean = false
-    private var isRecording: Boolean = false
+    private var isHandsFreeRecording: Boolean = false
 
     /*Initialization*/
     init {
@@ -51,29 +53,28 @@ class CameraAController(val mView: CameraContract.Camera.View) : CameraContract.
     /*Tab selected visibility*/
     override fun onTabSelected(tab: TabLayout.Tab?, viewPager: ViewPager) {
         tab?.let {
-            /*View pager item position*/
-            viewPager.currentItem = it.position
-            /*Show || Hide Camera Controls depending on tab*/
-            if (it.position == Constants.CameraPager.NORMAL ||
-                    it.position == Constants.CameraPager.HANDS_FREE) {
-                mView.getCameraControl().visibility = View.VISIBLE
-            } else {
-                mView.getCameraControl().visibility = View.GONE
-            }
-            /**
-             * Hide close controls in the [CameraRollFragment] as they are embedded
-             * within the toolbar
-             * */
-            if (it.position == Constants.CameraPager.CAMERA_ROLL) {
-                mView.getCameraCloseControl().visibility = View.GONE
-            } else {
-                mView.getCameraCloseControl().visibility = View.VISIBLE
+
+            when (viewPager.currentItem) {
+                Constants.CameraPager.NORMAL -> {
+                    mView.getCameraControl().visibility = View.VISIBLE
+                    mView.getCameraCloseControl().visibility = View.VISIBLE
+                }
+
+                Constants.CameraPager.HANDS_FREE -> {
+                    mView.getCameraControl().visibility = View.VISIBLE
+                    mView.getCameraCloseControl().visibility = View.VISIBLE
+                }
+
+                Constants.CameraPager.CAMERA_ROLL -> {
+                    mView.getCameraControl().visibility = View.GONE
+                    mView.getCameraCloseControl().visibility = View.GONE
+                }
+
             }
         }
     }
 
     /*Take picture*/
-    //TODO: Switch to camera kit functionality
     override fun takePhoto(viewPager: ViewPager) {
 
         when (viewPager.currentItem) {
@@ -88,6 +89,14 @@ class CameraAController(val mView: CameraContract.Camera.View) : CameraContract.
                 mView.hideProgress()
                 val handsFreeFragment = viewPager.adapter?.instantiateItem(viewPager, Constants.CameraPager.HANDS_FREE) as HandsFreeFragment
                 handsFreeFragment.startVideoRecording()
+                //UI
+                isHandsFreeRecording = if (!isHandsFreeRecording) {
+                    mView.getCameraControl().iv_camera_action.setImageResource(R.drawable.snap_stop)
+                    true
+                } else {
+                    mView.getCameraControl().iv_camera_action.setImageResource(R.drawable.snap)
+                    false
+                }
             }
 
         }
@@ -130,10 +139,10 @@ class CameraAController(val mView: CameraContract.Camera.View) : CameraContract.
     }
 
     /*Start EditingActivity*/
-    override fun startPreviewActivity(imageFilePath: String?) {
+    override fun startPreviewActivity(imageFilePath: String?, isFromCameraRoll: Boolean) {
         val intent = Intent(mView.getContext(), EditingActivity::class.java)
         intent.putExtra(Constants.CameraIntents.IMAGE_FILE_PATH, imageFilePath)
-        intent.putExtra(Constants.CameraIntents.IS_FROM_CAMERA_ROLL, false)
+        intent.putExtra(Constants.CameraIntents.IS_FROM_CAMERA_ROLL, isFromCameraRoll)
         mView.activity.startActivityForResult(intent, Constants.CameraIntents.EDITING_REQUEST_CODE)
     }
 

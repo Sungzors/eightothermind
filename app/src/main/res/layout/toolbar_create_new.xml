@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/toolbar"
     android:layout_width="match_parent"
     android:layout_height="60dp"
-    android:background="@drawable/gradient_eightchatlessblue_updown"
+    android:background="@drawable/gradient_eightchatblue"
     tools:ignore="MissingPrefix">
 
     <LinearLayout
@@ -44,7 +43,7 @@
             android:text="Cancel"
             android:textColor="@color/white"
             android:textSize="18sp"
-            fontPath="fonts/NunitoSans-Regular.ttf"  />
+            fontPath="fonts/AkzidenzGroteskBE-Regular.otf"  />
     </LinearLayout>
 
 

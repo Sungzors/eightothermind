@@ -2,6 +2,8 @@ package com.phdlabs.sungwon.a8chat_android.structure.core;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Application;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
@@ -16,10 +18,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
 import com.phdlabs.sungwon.a8chat_android.BuildConfig;
 import com.phdlabs.sungwon.a8chat_android.R;
+
+import java.util.Objects;
 
 /**
  * Created by SungWon on 9/20/2017.
@@ -187,5 +193,41 @@ public abstract class CoreFragment extends Fragment implements CoreActivity.OnBa
     @SuppressWarnings("unchecked")
     public <V extends View> V findById(@NonNull View view, @IdRes int id) {
         return (V) view.findViewById(id);
+    }
+
+    public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
+        Animation animation = super.onCreateAnimation(transit, enter, nextAnim);
+
+        // HW layer support only exists on API 11+
+        if (animation == null && nextAnim != 0) {
+            animation = AnimationUtils.loadAnimation(getCoreActivity(), nextAnim);
+        }
+
+        if (animation != null) {
+
+            Objects.requireNonNull(getView()).setLayerType(View.LAYER_TYPE_HARDWARE, null);
+
+            animation.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+
+                }
+
+                public void onAnimationEnd(Animation animation) {
+                    if (getView() != null) {
+                        getView().setLayerType(View.LAYER_TYPE_NONE, null);
+                    }
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+
+                }
+
+                // ...other AnimationListener methods go here...
+            });
+        }
+
+        return animation;
     }
 }

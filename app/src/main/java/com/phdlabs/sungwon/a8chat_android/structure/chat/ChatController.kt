@@ -193,7 +193,7 @@ class ChatController(val mView: ChatContract.View) : ChatContract.Controller {
 
 //        getUserId { id ->
 //            id?.let {
-//                UserManager.instance.getCurrentUser { success, _, token ->
+//                UserManager.INSTANCE.getCurrentUser { success, _, token ->
 //                    if (success) {
 //                        val call = mCaller.getMessageHistory(
 //                                token?.token,

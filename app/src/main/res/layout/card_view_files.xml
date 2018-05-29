@@ -50,7 +50,7 @@
                 android:text="@string/file_name"
                 android:textColor="@color/blue_color_picker"
                 android:textSize="15sp"
-                fontPath="fonts/NunitoSans-Regular.ttf"/>
+                fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
 
         </LinearLayout>
 
@@ -75,7 +75,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/name"
                 android:textColor="@color/black"
-                fontPath="fonts/NunitoSans-Regular.ttf"/>
+                fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
 
             <View
                 android:layout_width="match_parent"
@@ -87,7 +87,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/date"
-                fontPath="fonts/NunitoSans-Regular.ttf"/>
+                fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
 
             <View
                 android:layout_width="match_parent"

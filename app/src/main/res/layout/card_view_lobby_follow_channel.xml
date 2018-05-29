@@ -46,7 +46,7 @@
         android:textSize="12sp"
         android:textStyle="normal"
         android:textColor="@color/black"
-        fontPath="fonts/NunitoSans-Regular.ttf"/>
+        fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
 
 
 </RelativeLayout>

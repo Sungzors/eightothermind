@@ -13,7 +13,7 @@ import com.phdlabs.sungwon.a8chat_android.model.message.Message
 import com.phdlabs.sungwon.a8chat_android.model.room.Room
 import com.vicpin.krealmextensions.*
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import okhttp3.MultipartBody
 
@@ -33,7 +33,32 @@ class ChannelsManager {
         val instance: ChannelsManager by lazy { Holder.instance }
     }
 
-    val disposable = CompositeDisposable()
+
+    /*Properties*/
+    private var mUserManager: UserManager
+
+    init {
+        mUserManager = UserManager.instance
+    }
+
+    /**
+     * [disposables]
+     * List of disposables used for memory management during user navigation
+     * */
+    val disposables: MutableList<Disposable> = mutableListOf()
+
+    /**
+     * [clearDisposables]
+     * Release API RX Call resources for memory management
+     * */
+    fun clearDisposables() {
+        for (disposable in disposables) {
+            if (!disposable.isDisposed) {
+                disposable.dispose()
+            }
+        }
+        disposables.clear()
+    }
 
     /**
      * [getUserChannels]
@@ -45,7 +70,7 @@ class ChannelsManager {
      *     @see MyChannels, ErrorMessage
      * */
     fun getUserChannels(userId: Int?, refresh: Boolean, callback: (Pair<List<Channel>?, String?>) -> Unit) {
-        UserManager.instance.getCurrentUser { isSuccess, user, token ->
+        mUserManager.getCurrentUser { isSuccess, user, token ->
             if (isSuccess) {
                 user?.let {
                     if (refresh) { //API Query & caching
@@ -60,7 +85,7 @@ class ChannelsManager {
                             }
                             //Call
                             val call = Rest.getInstance().getmCallerRx().getUserChannels(token.token!!, userInfoId)
-                            disposable.add(call.subscribeOn(Schedulers.io())
+                            disposables.add(call.subscribeOn(Schedulers.io())
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .subscribe({ response ->
                                         if (response.isSuccess) {
@@ -83,11 +108,9 @@ class ChannelsManager {
                                             }
                                         } else if (response.isError) {
                                             callback(Pair(null, "could not download channels"))
-                                            disposable.clear()
                                         }
                                     }, { throwable ->
                                         callback(Pair(null, throwable.localizedMessage))
-                                        disposable.clear()
                                     }))
                         }
                     } else { //Local query
@@ -104,6 +127,7 @@ class ChannelsManager {
                 }
             }
         }
+        mUserManager.clearDisposables()
     }
 
     /**
@@ -122,13 +146,13 @@ class ChannelsManager {
      * WARNING: Currently not working with backend
      * */
     fun getMyFollowedChannelsWithFlags(refresh: Boolean, callback: (List<Channel>?, Pair<List<Channel>?, List<Channel>?>?, String?) -> Unit) {
-        UserManager.instance.getCurrentUser { isSuccess, user, token ->
+        mUserManager.getCurrentUser { isSuccess, user, token ->
             if (isSuccess) {
                 user?.let {
                     if (refresh) { //API Query & caching
                         token?.token?.let {
                             val call = Rest.getInstance().getmCallerRx().getMyFollowedChannels(it, user.id!!)
-                            disposable.add(call.subscribeOn(Schedulers.io())
+                            disposables.add(call.subscribeOn(Schedulers.io())
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .subscribe({ response ->
                                         if (response.isSuccess) {
@@ -163,10 +187,8 @@ class ChannelsManager {
                                         } else if (response.isError) {
                                             callback(null, null, "could not download favorite channels")
                                         }
-                                        disposable.clear()
                                     }, { throwable ->
                                         callback(null, null, throwable.localizedMessage)
-                                        disposable.clear()
                                     }))
                         }
                     } else { //Local Query
@@ -179,6 +201,7 @@ class ChannelsManager {
                 }
             }
         }
+        mUserManager.clearDisposables()
     }
 
 
@@ -189,7 +212,7 @@ class ChannelsManager {
      * @see Realm
      * */
     fun getChannelPosts(refresh: Boolean, roomId: Int, query: String?, callback: (Pair<List<Message>?, String?>) -> Unit) {
-        UserManager.instance.getCurrentUser { isSuccess, user, token ->
+        mUserManager.getCurrentUser { isSuccess, user, token ->
             if (isSuccess) {
                 user?.let {
                     token?.token?.let {
@@ -199,7 +222,7 @@ class ChannelsManager {
                                     roomId, user.id!!,
                                     query ?: ""
                             )
-                            disposable.add(call.subscribeOn(Schedulers.io())
+                            disposables.add(call.subscribeOn(Schedulers.io())
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .subscribe({ response ->
                                         if (response.isSuccess) { //Success
@@ -210,10 +233,8 @@ class ChannelsManager {
                                         } else if (response.isError) { //Error
                                             callback(Pair(null, "No posts found"))
                                         }
-                                        disposable.clear()
                                     }, { throwable ->
                                         callback(Pair(null, throwable.localizedMessage))
-                                        disposable.clear()
                                     }))
                         } else {
                             //Local Query
@@ -223,6 +244,7 @@ class ChannelsManager {
                 }
             }
         }
+        mUserManager.clearDisposables()
     }
 
     /**
@@ -232,22 +254,20 @@ class ChannelsManager {
      * @callback Pair(Channels?, ErrorMessage?)
      * */
     fun searchChannels(query: String?, callback: (Pair<List<Channel>?, String?>) -> Unit) {
-        UserManager.instance.getCurrentUser { success, user, token ->
+        mUserManager.getCurrentUser { success, user, token ->
             if (success) {
                 user?.let {
                     token?.token?.let {
                         val call = Rest.getInstance().getmCallerRx().searchChannel(it, query)
-                        disposable.add(call.subscribeOn(Schedulers.io())
+                        disposables.add(call.subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({ response ->
                                     if (response.isSuccess) {
                                         response.channels?.let {
                                             callback(Pair(it.toList(), null))
                                         }
-                                        disposable.clear()
                                     } else if (response.isError) {
                                         callback(Pair(null, "No Channels for query"))
-                                        disposable.clear()
                                     }
                                 }, { throwable ->
                                     callback(Pair(null, throwable.localizedMessage))
@@ -256,6 +276,7 @@ class ChannelsManager {
                 }
             }
         }
+        mUserManager.clearDisposables()
     }
 
     /**
@@ -265,23 +286,20 @@ class ChannelsManager {
      * @see Realm
      * */
     fun getPostComments(messageId: Int, callback: (Pair<List<Comment>?, String?>) -> Unit) {
-        UserManager.instance.getCurrentUser { success, user, token ->
+        mUserManager.getCurrentUser { success, user, token ->
             if (success) {
                 user?.let {
                     token?.token?.let {
                         val call = Rest.getInstance().getmCallerRx().getPostComments(it, messageId, user.id!!, "")
-                        disposable.add(call.subscribeOn(Schedulers.io())
+                        disposables.add(call.subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({ response ->
                                     if (response.isSuccess) {
                                         response.comments?.let {
                                             callback(Pair(it.toList(), null))
                                         }
-
-                                        disposable.clear()
                                     } else if (response.isError) {
                                         callback(Pair(null, "Could not download comments"))
-                                        disposable.clear()
                                     }
                                 }, { throwable ->
                                     callback(Pair(null, throwable.localizedMessage))
@@ -291,6 +309,7 @@ class ChannelsManager {
             }
 
         }
+        mUserManager.clearDisposables()
     }
 
     /**
@@ -299,7 +318,7 @@ class ChannelsManager {
      * This API call is used inside the [ChannelPostShowController] with the Socket channel function
      * */
     fun commentOnChannelsPost(messageId: String, comment: String, callback: (Pair<NewlyCreatedComment?, String?>) -> Unit) {
-        UserManager.instance.getCurrentUser { success, user, token ->
+        mUserManager.getCurrentUser { success, user, token ->
             if (success) {
                 user?.let {
                     token?.token?.let {
@@ -307,7 +326,7 @@ class ChannelsManager {
                                 it, messageId,
                                 CommentPostData(user.id.toString(), comment)
                         )
-                        disposable.add(call.subscribeOn(Schedulers.io())
+                        disposables.add(call.subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({ response ->
                                     if (response.isSuccess) {
@@ -315,8 +334,6 @@ class ChannelsManager {
                                     } else if (response.isError) {
                                         callback(Pair(null, "Could not download comments"))
                                     }
-
-                                    disposable.clear()
                                 }, { throwable ->
                                     throwable.printStackTrace()
                                     callback(Pair(null, "You have to follow the channel to be able to comment"))
@@ -325,7 +342,7 @@ class ChannelsManager {
                 }
             }
         }
-
+        mUserManager.clearDisposables()
     }
 
     /**
@@ -336,13 +353,13 @@ class ChannelsManager {
      * @Query Boolean to indicate like || unlike
      * */
     fun likeUnlikePost(messageId: Int, unlike: Boolean) {
-        UserManager.instance.getCurrentUser { success, user, token ->
+        mUserManager.getCurrentUser { success, user, token ->
             if (success) {
                 user?.let {
                     token?.token?.let {
                         if (unlike) {
                             val call = Rest.getInstance().getmCallerRx().likePost(it, messageId, user.id!!, unlike)
-                            disposable.add(call.subscribeOn(Schedulers.io())
+                            disposables.add(call.subscribeOn(Schedulers.io())
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .subscribe({ response ->
                                         if (response.success == true) {
@@ -354,7 +371,7 @@ class ChannelsManager {
                                     }))
                         } else {
                             val call = Rest.getInstance().getmCallerRx().likePost(it, messageId, user.id!!, null)
-                            disposable.add(call.subscribeOn(Schedulers.io())
+                            disposables.add(call.subscribeOn(Schedulers.io())
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .subscribe({ response ->
                                         if (response.success == true) {
@@ -365,11 +382,12 @@ class ChannelsManager {
                                         println("Error liking messsage: " + it.localizedMessage)
                                     }))
                         }
-                        disposable.clear()
+                        disposables.clear()
                     }
                 }
             }
         }
+        mUserManager.clearDisposables()
     }
 
     /**
@@ -379,12 +397,12 @@ class ChannelsManager {
      * This behaviour handles multiple liking on a Live Broadcast & will produce continuous animation
      * */
     fun likeBroadcastPost(messageId: Int) {
-        UserManager.instance.getCurrentUser { success, user, token ->
+        mUserManager.getCurrentUser { success, user, token ->
             if (success) {
                 user?.let {
                     token?.token?.let {
                         val call = Rest.getInstance().getmCallerRx().likePost(it, messageId, user.id!!, null)
-                        call.subscribeOn(Schedulers.io())
+                        disposables.add(call.subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({ response ->
                                     if (response.success == true) {
@@ -395,10 +413,12 @@ class ChannelsManager {
                                 }, {
                                     println("Error liking messsage: " + it.localizedMessage)
                                 })
+                        )
                     }
                 }
             }
         }
+        mUserManager.clearDisposables()
     }
 
 
@@ -412,7 +432,7 @@ class ChannelsManager {
      * @callback success -> Will return a success or error Boolean value of the transaction
      * */
     fun followChannel(channelId: Int, participantId: Int, callback: (String) -> Unit) {
-        UserManager.instance.getCurrentUser { success, user, token ->
+        mUserManager.getCurrentUser { success, user, token ->
             if (success) {
                 user?.let {
                     token?.token?.let {
@@ -424,7 +444,7 @@ class ChannelsManager {
                                 .addPart(multipartBodyPart)
                                 .build()
                         val call = Rest.getInstance().getmCallerRx().followChannel(it, channelId, multipartForm)
-                        disposable.add(call.subscribeOn(Schedulers.io())
+                        disposables.add(call.subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({
                                     if (it.isSuccess) {
@@ -435,7 +455,6 @@ class ChannelsManager {
                                     } else if (it.isError) {
                                         callback("Could not follow channel at this time")
                                     }
-                                    disposable.clear()
                                 }, { throwable ->
                                     callback(throwable.localizedMessage)
                                 }))
@@ -443,6 +462,7 @@ class ChannelsManager {
                 }
             }
         }
+        mUserManager.clearDisposables()
     }
 
     /**
@@ -454,12 +474,12 @@ class ChannelsManager {
      * @return message: String? of currently un-followed channel
      * */
     fun unfollowChannel(roomId: Int, callback: (String?) -> Unit) {
-        UserManager.instance.getCurrentUser { success, user, token ->
+        mUserManager.getCurrentUser { success, user, token ->
             if (success) {
                 user?.let {
                     token?.token?.let {
                         val call = Rest.getInstance().getmCallerRx().unfollowChannel(it, roomId, user.id!!)
-                        disposable.add(call.subscribeOn(Schedulers.io())
+                        disposables.add(call.subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({ response ->
                                     if (response.isSuccess) {
@@ -481,7 +501,6 @@ class ChannelsManager {
                                     } else if (response.isError) {
                                         callback("Could not un-follow channel")
                                     }
-                                    disposable.clear()
                                 }, { throwable ->
                                     callback(throwable.localizedMessage)
                                 }))
@@ -489,6 +508,7 @@ class ChannelsManager {
                 }
             }
         }
+        mUserManager.clearDisposables()
     }
 
     /**
@@ -499,13 +519,13 @@ class ChannelsManager {
      * @callback Pair<[Message] [ErrorMessage]> with information about the current live broadcast access
      * */
     fun startBroadcast(roomId: Int, callback: (Pair<Message?, String?>) -> Unit) {
-        UserManager.instance.getCurrentUser { success, user, token ->
+        mUserManager.getCurrentUser { success, user, token ->
             if (success) {
                 user?.let {
                     token?.token?.let {
                         val call = Rest.getInstance().getmCallerRx()
                                 .startBroadcast(it, BroadcastData(user.id!!, roomId), true)
-                        val disposable = call.subscribeOn(Schedulers.io())
+                        disposables.add(call.subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({
                                     if (it.isSuccess) {
@@ -516,11 +536,12 @@ class ChannelsManager {
                                 }, { throwable ->
                                     callback(Pair(null, throwable.localizedMessage))
                                 })
-                        //disposable.dispose() //TODO: Test disposable to see how it works
+                        )
                     }
                 }
             }
         }
+        mUserManager.clearDisposables()
     }
 
     /**
@@ -530,13 +551,13 @@ class ChannelsManager {
      * @callback Pair<[Message] [ErrorMessage]> with information about the finished live broadcast
      * */
     fun finishBroadcast(roomId: Int, messageId: Int, callback: (Pair<Message?, String?>) -> Unit) {
-        UserManager.instance.getCurrentUser { success, user, token ->
+        mUserManager.getCurrentUser { success, user, token ->
             if (success) {
                 user?.let {
                     token?.token?.let {
                         val call = Rest.getInstance().getmCallerRx()
                                 .finishBroadcast(it, messageId.toString(), BroadcastData(user.id!!, roomId))
-                        val disposable = call.subscribeOn(Schedulers.io())
+                        disposables.add(call.subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({
                                     if (it.isSuccess) {
@@ -547,11 +568,12 @@ class ChannelsManager {
                                 }, { throwable ->
                                     callback(Pair(null, throwable.localizedMessage))
                                 })
-                        //disposable.dispose() // TODO: Test disposable to see how it works
+                        )
                     }
                 }
             }
         }
+        mUserManager.clearDisposables()
     }
 
     /**
@@ -563,12 +585,12 @@ class ChannelsManager {
      *     TODO: REFACTOR -> It's not working properly
      * */
     fun updateChannel(channelId: Int, channelPostData: ChannelPostData, callback: (Pair<Channel?, String?>) -> Unit) {
-        UserManager.instance.getCurrentUser { success, user, token ->
+        mUserManager.getCurrentUser { success, user, token ->
             if (success) {
                 user?.let {
                     token?.token?.let {
                         val call = Rest.getInstance().getmCallerRx().updateChannel(it, channelId, channelPostData)
-                        disposable.add(call.subscribeOn(Schedulers.io())
+                        disposables.add(call.subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({ response ->
                                     if (response.isSuccess) {
@@ -579,7 +601,6 @@ class ChannelsManager {
                                     } else if (response.isError) {
                                         callback(Pair(null, "Could not update channel"))
                                     }
-                                    disposable.clear()
                                 }, { throwable ->
                                     callback(Pair(null, throwable.localizedMessage))
                                 }))
@@ -587,6 +608,7 @@ class ChannelsManager {
                 }
             }
         }
+        mUserManager.clearDisposables()
     }
 
     /**
@@ -595,12 +617,12 @@ class ChannelsManager {
      * @param channelId [Int]
      * */
     fun deleteChannel(channelId: Int, callback: (String?) -> Unit) {
-        UserManager.instance.getCurrentUser { success, user, token ->
+        mUserManager.getCurrentUser { success, user, token ->
             if (success) {
                 user?.let {
                     token?.token?.let {
                         val call = Rest.getInstance().getmCallerRx().deleteChannel(it, channelId)
-                        disposable.add(call.subscribeOn(Schedulers.io())
+                        disposables.add(call.subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({ response ->
                                     if (response.isSuccess) {
@@ -608,7 +630,6 @@ class ChannelsManager {
                                     } else if (response.isError) {
                                         callback("Could not delete Channel")
                                     }
-                                    disposable.clear()
                                 }, { throwable ->
                                     callback(throwable.localizedMessage)
                                 }))
@@ -616,6 +637,7 @@ class ChannelsManager {
                 }
             }
         }
+        mUserManager.clearDisposables()
     }
 
     /**
@@ -731,6 +753,7 @@ class ChannelsManager {
      * */
     fun querySingleChannelWithChannelId(channelId: Int): Channel? =
             Channel().queryFirst { equalTo("id", channelId) }
+
     fun querySingleChannelWithRoomId(roomId: Int): Channel? =
             Channel().queryFirst { equalTo("room_id", roomId) }
 

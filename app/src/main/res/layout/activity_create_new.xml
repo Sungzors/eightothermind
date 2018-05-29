@@ -60,7 +60,7 @@
                         android:textAlignment="center"
                         android:textColor="@color/white"
                         android:textSize="12sp"
-                        fontPath="fonts/NunitoSans-Light.ttf"/>
+                        fontPath="fonts/AkzidenzGroteskBE-Light.otf"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -90,7 +90,7 @@
                         android:textAlignment="center"
                         android:textColor="@color/white"
                         android:textSize="12sp"
-                        fontPath="fonts/NunitoSans-Light.ttf"/>
+                        fontPath="fonts/AkzidenzGroteskBE-Light.otf"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -119,7 +119,7 @@
                         android:textAlignment="center"
                         android:textColor="@color/white"
                         android:textSize="12sp"
-                        fontPath="fonts/NunitoSans-Light.ttf"/>
+                        fontPath="fonts/AkzidenzGroteskBE-Light.otf"/>
                 </LinearLayout>
             </LinearLayout>
 

@@ -28,7 +28,7 @@
                     android:layout_marginStart="15dp"
                     android:layout_marginTop="15dp"
                     android:text="@string/lobby_channels"
-                    fontPath="fonts/NunitoSans-Bold.ttf"
+                    fontPath="fonts/AkzidenzGroteskBE-Medium.otf"
                     android:visibility="gone" />
             </RelativeLayout>
 
@@ -54,7 +54,7 @@
                     android:layout_marginStart="15dp"
                     android:layout_marginTop="10dp"
                     android:text="@string/events"
-                    fontPath="fonts/NunitoSans-Bold.ttf"
+                    fontPath="fonts/AkzidenzGroteskBE-Medium.otf"
                     android:visibility="gone" />
 
 
@@ -80,7 +80,7 @@
                     android:layout_marginStart="15dp"
                     android:layout_marginTop="10dp"
                     android:text="@string/conversations"
-                    fontPath="fonts/NunitoSans-Bold.ttf"
+                    fontPath="fonts/AkzidenzGroteskBE-Medium.otf"
                     android:visibility="gone" />
 
                 <android.support.v7.widget.RecyclerView

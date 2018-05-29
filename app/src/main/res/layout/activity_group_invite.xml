@@ -33,7 +33,7 @@
                 android:maxLines="1"
                 android:imeOptions="actionSearch"
                 android:onClick="searchClicked"
-                fontPath="fonts/NunitoSans-Regular.ttf"/>
+                fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
 
         </LinearLayout>
 

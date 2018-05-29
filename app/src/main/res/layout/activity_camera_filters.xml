@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".structure.camera.filters.ImageFilterActivity">
+
+    <!--Selected Filter-->
+    <RelativeLayout
+        android:id="@+id/acf_selectedFilter_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/acf_controls_container"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true">
+
+        <ImageView
+            android:id="@+id/acf_photo_iv"
+            android:layout_width="match_parent"
+            android:layout_height="440sp"
+            android:layout_alignParentTop="true"
+            android:layout_centerInParent="true"
+            android:adjustViewBounds="true"
+            android:background="@color/transparent"
+            android:cropToPadding="true"
+            android:padding="10sp"
+            android:scaleType="centerInside" />
+
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/acf_filter_rv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="center"
+            android:background="@color/dark_black_transparent"
+            android:orientation="horizontal"
+            android:paddingTop="10sp" />
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/acf_controls_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:background="@color/dark_black_transparent"
+        android:orientation="horizontal">
+
+
+        <!--Save control-->
+        <com.phdlabs.sungwon.a8chat_android.structure.camera.cameraControls.CameraFilterView
+            android:id="@+id/cam_save_control"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:visibility="visible" />
+
+
+    </RelativeLayout>
+
+</RelativeLayout>

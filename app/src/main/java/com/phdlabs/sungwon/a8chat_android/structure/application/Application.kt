@@ -5,8 +5,6 @@ import com.github.nkzawa.socketio.client.IO
 import com.github.nkzawa.socketio.client.Socket
 import com.phdlabs.sungwon.a8chat_android.R
 import com.phdlabs.sungwon.a8chat_android.structure.channel.broadcast.model.WorkerThread
-import com.squareup.picasso.OkHttpDownloader
-import com.squareup.picasso.Picasso
 import io.realm.Realm
 import io.realm.RealmConfiguration
 import io.realm.rx.RealmObservableFactory
@@ -37,12 +35,12 @@ class Application : Application() {
         //DEV
         print("REALM PATH: " + realmConfig.path) //Path for realm browser
 
-        val picasso: Picasso.Builder = Picasso.Builder(this)
-        picasso.downloader(OkHttpDownloader(this, Long.MAX_VALUE))
-        val built = picasso.build()
-        built.setIndicatorsEnabled(true)
-        built.isLoggingEnabled = true
-        Picasso.setSingletonInstance(built)
+//        val picasso: Picasso.Builder = Picasso.Builder(this)
+//        picasso.downloader(OkHttp3Downloader(this, Long.MAX_VALUE))
+//        val built = picasso.build()
+//        built.setIndicatorsEnabled(true)
+//        built.isLoggingEnabled = true
+//        Picasso.setSingletonInstance(built)
 
         /*Sockets*/
         try {

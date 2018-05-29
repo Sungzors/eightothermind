@@ -135,6 +135,10 @@ open class User() : RealmObject() {
     @Expose
     var fcm_token: String? = null
 
+    @SerializedName("jwt_twilio_video_calling_access_token")
+    @Expose
+    var jwt_twilio_video_calling_access_token: String? = null
+
 
     /**
      * [hasFullName]

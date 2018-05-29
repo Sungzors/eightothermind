@@ -34,7 +34,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                fontPath="fonts/NunitoSans-Regular.ttf"/>
+                fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
 
             <!--Channels-->
             <RadioButton
@@ -43,7 +43,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                fontPath="fonts/NunitoSans-Regular.ttf"/>
+                fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
         </info.hoang8f.android.segmented.SegmentedGroup>
 
         <!--Search Bar-->
@@ -65,7 +65,7 @@
                 android:layout_gravity="start"
                 android:imeOptions="actionSearch"
                 android:inputType="text"
-                fontPath="fonts/NunitoSans-Regular.ttf"
+                fontPath="fonts/AkzidenzGroteskBE-Regular.otf"
                 android:maxLines="1" />
 
         </LinearLayout>

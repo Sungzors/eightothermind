@@ -342,7 +342,7 @@ public class ViewDragHelper {
      *
      * @param forParent Parent view to monitor
      * @param cb Callback to provide information and receive events
-     * @return a new ViewDragHelper instance
+     * @return a new ViewDragHelper INSTANCE
      */
     public static ViewDragHelper create(ViewGroup forParent, Callback cb) {
         return new ViewDragHelper(forParent.getContext(), forParent, cb);
@@ -355,7 +355,7 @@ public class ViewDragHelper {
      * @param sensitivity Multiplier for how sensitive the helper should be about detecting
      *                    the start of a drag. Larger values are more sensitive. 1.0f is normal.
      * @param cb Callback to provide information and receive events
-     * @return a new ViewDragHelper instance
+     * @return a new ViewDragHelper INSTANCE
      */
     public static ViewDragHelper create(ViewGroup forParent, float sensitivity, Callback cb) {
         final ViewDragHelper helper = create(forParent, cb);
@@ -364,7 +364,7 @@ public class ViewDragHelper {
     }
 
     /**
-     * Apps should use ViewDragHelper.newInstanceChannelRoom() to get a new instance.
+     * Apps should use ViewDragHelper.newInstanceChannelRoom() to get a new INSTANCE.
      * This will allow VDH to use internal compatibility implementations for different
      * platform versions.
      *

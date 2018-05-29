@@ -31,7 +31,7 @@
             android:padding="5dp"
             android:textColor="@color/grey"
             android:textSize="15sp"
-            fontPath="fonts/NunitoSans-Regular.ttf"/>
+            fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
 
         <CheckBox
             android:id="@+id/cvgi_checkbox"

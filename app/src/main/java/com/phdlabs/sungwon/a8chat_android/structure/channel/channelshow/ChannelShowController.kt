@@ -46,7 +46,7 @@ class ChannelShowController(val mView : ChannelContract.ChannelShow.View): Chann
 
     private fun loadChannels(){
         //TODO: Replace with manager
-//        UserManager.instance.getCurrentUser { success, user, token ->
+//        UserManager.INSTANCE.getCurrentUser { success, user, token ->
 //            if (success) {
 //                mView.showProgress()
 //                val call = mCaller.getAssociatedChannels(token?.token, user?.id!!)
@@ -61,7 +61,7 @@ class ChannelShowController(val mView : ChannelContract.ChannelShow.View): Chann
     }
 
     override fun loadChannel(roomID: Int) {
-//        UserManager.instance.getCurrentUser { success, user, token ->
+//        UserManager.INSTANCE.getCurrentUser { success, user, token ->
 //            if (success) {
 //                mView.showProgress()
 //                val call = mCaller.getChannelPosts(token?.token, roomID, user?.id!!, null)
@@ -77,7 +77,7 @@ class ChannelShowController(val mView : ChannelContract.ChannelShow.View): Chann
 
     override fun likePost(messageId: Int?) {
 //        messageId?.let {
-//            UserManager.instance.getCurrentUser { success, user, token ->
+//            UserManager.INSTANCE.getCurrentUser { success, user, token ->
 //                if (success) {
 //                    val call = mCaller.likePost(token?.token, messageId, user?.id!!)
 //                    call.enqueue(object : Callback8<ErrorResponse, PostLikeEvent>(mEventBus) {
