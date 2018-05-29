@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fc_selectable_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:id="@+id/fc_all_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/fc_selected_iv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/fc_card_container"
+                android:layout_alignEnd="@id/fc_card_container"
+                android:layout_alignStart="@id/fc_card_container"
+                android:layout_alignTop="@id/fc_card_container"
+                android:background="@color/green_color_picker"
+                android:visibility="gone" />
+
+
+            <RelativeLayout
+                android:id="@+id/fc_card_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/transparent">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="2sp"
+                    android:background="@color/white">
+
+                    <!--Friend Profile picture-->
+                    <ImageView
+                        android:id="@+id/fc_friend_profile_picture"
+                        android:layout_width="45sp"
+                        android:layout_height="45dp"
+                        android:layout_margin="10dp"
+                        android:contentDescription="@string/friend_profile_picture"
+                        android:src="@drawable/addphoto" />
+
+                    <!--Friend Full Name-->
+                    <TextView
+                        android:id="@+id/fc_friend_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="15dp"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginTop="15dp"
+                        android:layout_toRightOf="@+id/fc_friend_profile_picture"
+                        android:padding="5dp"
+                        android:textColor="@color/black"
+                        android:textSize="15sp" 
+                        xmlns:tools="http://schemas.android.com/tools"
+                        tools:ignore="MissingPrefix"
+                        fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+        <!--Separator-->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginStart="20dp"
+            android:background="@color/separator" />
+
+    </LinearLayout>
+
+</LinearLayout>

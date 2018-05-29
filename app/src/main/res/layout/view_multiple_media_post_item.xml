@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="false"
+    android:focusable="false"
+    android:gravity="center">
+
+
+    <!--Camera Roll Image View-->
+    <ImageView
+        android:id="@+id/vmpi_imageView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:adjustViewBounds="true"
+        android:background="@drawable/photo_frame_unselected"
+        android:contentDescription="@string/camerarollimage"
+        android:maxHeight="400sp"
+        android:maxWidth="400sp"
+        android:src="@drawable/addphoto" />
+
+
+</RelativeLayout>

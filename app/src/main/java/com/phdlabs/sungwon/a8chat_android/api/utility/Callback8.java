@@ -29,8 +29,8 @@ public abstract class Callback8<Result, EventClass extends Event> implements Cal
     }
 
     @SuppressWarnings({"unchecked", "TryWithIdenticalCatches"})
-    void initParameter() {
-        // Get the class name of this instance's type.
+    private void initParameter() {
+        // Get the class name of this INSTANCE's type.
         ParameterizedType pt = (ParameterizedType) getClass().getGenericSuperclass();
         // You may need this split or not, use logging to check
         String parameterClassName = pt.getActualTypeArguments()[1].toString().split("\\s")[1];
@@ -78,10 +78,10 @@ public abstract class Callback8<Result, EventClass extends Event> implements Cal
     }
 
     private void postErrorMessage(String message) {
-        if (eventClass == null) {
-            initParameter();
-        }
-        eventClass.setErrorMessage(message);
-        eventBus.post(eventClass);
+//        if (eventClass == null) {
+//            initParameter();
+//        }
+//        eventClass.setErrorMessage(message);
+//        eventBus.post(eventClass);
     }
 }

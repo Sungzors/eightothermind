@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="5dp"
+    android:layout_marginStart="5dp"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingPrefix">
+
+    <RelativeLayout
+        android:id="@+id/cvlc_main_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:id="@+id/cvlc_my_channel_pic_profile_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:elevation="6dp">
+
+            <ImageView
+                android:id="@+id/cvlc_background_unread"
+                android:layout_width="65dp"
+                android:layout_height="65dp"
+                android:layout_centerInParent="true"
+                android:background="@drawable/bg_circle_white_lobby"
+                android:visibility="visible" />
+
+            <ImageView
+                android:id="@+id/cvlc_background_selected"
+                android:layout_width="65dp"
+                android:layout_height="65dp"
+                android:layout_centerInParent="true"
+                android:background="@drawable/bg_circle_green_lobby"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/cvlc_picture_profile"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_centerInParent="true"
+                android:layout_marginBottom="10sp"
+                android:elevation="4dp"
+                android:padding="3sp"
+                android:src="@drawable/addphoto" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/cvlc_name_channel"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/cvlc_my_channel_pic_profile_container"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="15dp"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:textAlignment="center"
+            android:textSize="12sp"
+            android:textStyle="normal" 
+            fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
+
+
+
+    </RelativeLayout>
+    <ImageView
+        android:id="@+id/cvlc_separator"
+        android:layout_width="1dp"
+        android:layout_height="72dp"
+        android:layout_toEndOf="@+id/cvlc_main_content"
+        android:layout_marginTop="23dp"
+        android:layout_marginBottom="3dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="7dp"
+        android:background="@color/searchGrey" />
+
+</RelativeLayout>

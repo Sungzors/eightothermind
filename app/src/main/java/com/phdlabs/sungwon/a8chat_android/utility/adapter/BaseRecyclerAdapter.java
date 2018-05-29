@@ -5,6 +5,8 @@ import android.support.annotation.NonNull;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -14,8 +16,6 @@ import android.view.ViewGroup;
 import android.widget.Checkable;
 import android.widget.Filter;
 import android.widget.Filterable;
-
-import com.phdlabs.sungwon.a8chat_android.utility.Function;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -27,11 +27,13 @@ import java.util.List;
 
 /**
  * Created by SungWon on 10/9/2017.
+ * Updated by JPAM on 2/25/2018
  */
 
 public abstract class BaseRecyclerAdapter<T, VH extends RecyclerView.ViewHolder>
         extends RecyclerView.Adapter<VH>
-        implements Filterable{
+        implements Filterable {
+
     //TAG
     private static final String TAG = "BaseRecyclerAdapter";
 
@@ -129,36 +131,39 @@ public abstract class BaseRecyclerAdapter<T, VH extends RecyclerView.ViewHolder>
         //Tap Gesture
         gestureDetector = new GestureDetectorCompat(recyclerView.getContext(), new GestureListener(recyclerView));
         recyclerView.setOnTouchListener(new ItemTouchListener());
+
         //Delete Gesture
 //        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
 //        itemTouchHelper.attachToRecyclerView(recyclerView);
 
     }
 
-//    /**
-//     * Delete Callback
-//     * Left swipe action
-//     */
-//    ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
-//        @Override
-//        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-//            return false;
-//        }
-//
-//        @Override
-//        public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-//            if(direction == ItemTouchHelper.LEFT){
-//                Log.i(TAG, "onSwiped: " + viewHolder.getAdapterPosition());
-//                //Broadcast the swiped position
-//                //notifyItemChanged(viewHolder.getAdapterPosition());
-//                notifyItemRemoved(viewHolder.getAdapterPosition());
-//            }
-//        }
-//    };
+    /**
+     * Delete Callback
+     * Left swipe action
+     */
+    ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+        @Override
+        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+            return false;
+        }
+
+
+
+        @Override
+        public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+            if(direction == ItemTouchHelper.LEFT){
+                Log.i(TAG, "onSwiped: " + viewHolder.getAdapterPosition());
+                //Broadcast the swiped position
+                //notifyItemChanged(viewHolder.getAdapterPosition());
+                notifyItemRemoved(viewHolder.getAdapterPosition());
+            }
+        }
+    };
 
     private class GestureListener implements GestureDetector.OnGestureListener {
 
-        public GestureListener(RecyclerView recyclerView) {
+        private GestureListener(RecyclerView recyclerView) {
             this.recyclerView = recyclerView;
         }
 
@@ -205,13 +210,21 @@ public abstract class BaseRecyclerAdapter<T, VH extends RecyclerView.ViewHolder>
 
         @Override
         public void onLongPress(MotionEvent e) {
-
+            View view = recyclerView.findChildViewUnder(e.getX(), e.getY());
+            if(view != null){
+                int position = recyclerView.getChildAdapterPosition(view);
+                onLongPressItem(e, position);
+            }
         }
 
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
             return false;
         }
+
+    }
+
+    public void onLongPressItem(MotionEvent e, int position){
 
     }
 
@@ -252,7 +265,7 @@ public abstract class BaseRecyclerAdapter<T, VH extends RecyclerView.ViewHolder>
         notifyItemChanged(pos);
     }
 
-    public void clearSelections() {
+    private void clearSelections() {
         selectedItems.clear();
         notifyDataSetChanged();
     }
@@ -394,7 +407,9 @@ public abstract class BaseRecyclerAdapter<T, VH extends RecyclerView.ViewHolder>
             protected void publishResults(CharSequence constraint, FilterResults results) {
 
                 mFilteredValues.clear();
-                mFilteredValues.addAll((Collection<? extends T>) results.values);
+                if (results.values != null) {
+                    mFilteredValues.addAll((Collection<? extends T>) results.values);
+                }
                 notifyDataSetChanged();
 
             }

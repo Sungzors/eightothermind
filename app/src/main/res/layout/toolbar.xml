@@ -1,23 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.Toolbar
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/toolbar"
     android:layout_width="match_parent"
-    android:layout_height="?attr/actionBarSize"
-    android:background="?attr/colorPrimary"
+    android:layout_height="40dp"
+    android:background="@color/halftransparent"
     tools:ignore="MissingPrefix">
 
     <!--Profile Picture View-->
-    <ImageView
-        android:contentDescription="@string/contacts_button"
-        android:id="@+id/left_action"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginEnd="15dp"
-        android:layout_marginStart="24dp"
-        android:textColor="@color/white"/>
+
+    <LinearLayout
+        android:id="@+id/toolbar_left_action_container"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="15dp">
+
+        <ImageView
+            android:id="@+id/toolbar_leftoolbart_action"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="15dp"
+            android:scaleType="center"
+            android:layout_gravity="center"/>
+    </LinearLayout>
 
     <!--Toolbar title-->
     <TextView
@@ -25,10 +31,68 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:textColor="@color/white"
-        android:textSize="24sp"
+        android:text="Title"
         android:textAlignment="center"
-        android:text="Title"/>
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        fontPath="fonts/AkzidenzGroteskBE-Regular.otf" />
 
+
+    <LinearLayout
+        android:id="@+id/toolbar_title_double_container"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/toolbar_title_double_top"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="asdfasdf"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            fontPath="fonts/AkzidenzGroteskBE-Regular.otf" />
+
+        <TextView
+            android:id="@+id/toolbar_title_double_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="asdfasdfasdfasdf"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="10sp"
+            fontPath="fonts/AkzidenzGroteskBE-Light.otf" />
+    </LinearLayout>
+
+    <!--<LinearLayout-->
+        <!--android:id="@+id/toolbar_right_container"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_gravity="center_vertical|end"-->
+        <!--android:orientation="vertical"-->
+        <!--android:visibility="visible">-->
+
+        <TextView
+            android:id="@+id/toolbar_right_text"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center|end"
+            android:layout_marginEnd="15dp"
+            android:gravity="center|end"
+            android:textColor="@color/black"
+            android:visibility="gone"
+            fontPath="fonts/AkzidenzGroteskBE-Regular.otf" />
+
+        <ImageView
+            android:id="@+id/toolbar_right_picture"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center_vertical|end"
+            android:layout_marginEnd="15dp"
+            android:visibility="gone" />
 
 </android.support.v7.widget.Toolbar>

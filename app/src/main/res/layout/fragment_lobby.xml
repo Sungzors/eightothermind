@@ -1,114 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingPrefix">
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <RelativeLayout
+        android:layout_height="wrap_content">
+        <!--My Channels & Followed Channels-->
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_marginStart="15dp"
-                android:layout_marginBottom="20dp"
-                android:text="@string/my_channels"/>
-            <ImageView
-                android:id="@+id/fl_my_channels_button"
-                android:layout_width="15dp"
-                android:layout_height="15dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="15dp"
-                android:layout_alignParentEnd="true"/>
-        </RelativeLayout>
+                android:descendantFocusability="blocksDescendants">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/fl_my_channels_recycler"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+                <TextView
+                    android:id="@+id/fl_channels_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="15dp"
+                    android:text="@string/lobby_channels"
+                    fontPath="fonts/AkzidenzGroteskBE-Medium.otf"
+                    android:visibility="gone" />
+            </RelativeLayout>
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:layout_width="wrap_content"
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/fl_channels_recycler"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_marginStart="15dp"
-                android:layout_marginBottom="20dp"
-                android:text="@string/channels"/>
-            <ImageView
-                android:id="@+id/fl_channels_button"
-                android:layout_width="15dp"
-                android:layout_height="15dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="15dp"
-                android:layout_alignParentEnd="true"/>
-        </RelativeLayout>
+                android:layout_marginStart="10sp"
+                android:nestedScrollingEnabled="true"
+                android:visibility="gone" />
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/fl_channels_recycler"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            <!--Events-->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-            <TextView
-                android:layout_width="wrap_content"
+                <TextView
+                    android:id="@+id/fl_events_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/events"
+                    fontPath="fonts/AkzidenzGroteskBE-Medium.otf"
+                    android:visibility="gone" />
+
+
+            </RelativeLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/fl_events_recycler"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_marginStart="15dp"
-                android:layout_marginBottom="20dp"
-                android:text="@string/events"/>
+                android:visibility="gone" />
 
-            <ImageView
-                android:id="@+id/fl_events_button"
-                android:layout_width="15dp"
-                android:layout_height="15dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="15dp"
-                android:layout_alignParentEnd="true"/>
-
-        </RelativeLayout>
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/fl_events_recycler"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <TextView
-                android:layout_width="wrap_content"
+            <!--Chats-->
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_marginStart="15dp"
-                android:layout_marginBottom="20dp"
-                android:text="@string/channels_i_follow"/>
+                android:descendantFocusability="blocksDescendants">
 
-            <ImageView
-                android:id="@+id/fl_channels_follow_button"
-                android:layout_width="15dp"
-                android:layout_height="15dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="15dp"
-                android:layout_alignParentEnd="true"/>
-        </RelativeLayout>
+                <TextView
+                    android:id="@+id/fl_chat_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/conversations"
+                    fontPath="fonts/AkzidenzGroteskBE-Medium.otf"
+                    android:visibility="gone" />
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/fl_follow_recycler"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/fl_chat_recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:layout_below="@+id/fl_chat_title"/>
+            </RelativeLayout>
 
-        
-    </LinearLayout>
+
+        </LinearLayout>
+
+        <include layout="@layout/progress_view" />
+
+    </FrameLayout>
+
+
 
 </ScrollView>

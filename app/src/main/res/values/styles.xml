@@ -4,8 +4,67 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimaryDark">@color/eight_status_bar</item>
         <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppTheme.AppBarWhite" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/white</item>
+        <item name="colorPrimaryDark">@color/white</item>
+        <item name="colorAccent">@color/white</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat">
+        <item name="android:itemBackground">@color/white</item>
+        <item name="android:background">@color/halftransparent</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+        <!--<item name="fontPath">fonts/avenir-light-webfont.ttf</item>-->
+    </style>
+
+    <style name="CardView.SettingCards">
+        <item name="android:layout_marginTop">20dp</item>
+        <item name="android:layout_marginStart">15dp</item>
+        <item name="android:layout_marginEnd">15dp</item>
+        <item name="android:layout_marginBottom">10dp</item>
+        <item name="cardElevation">3dp</item>
+        <item name="contentPadding">0dp</item>
+        <item name="cardCornerRadius">3dp</item>
+    </style>
+
+    <!--Camera-->
+    <style name="Camera" parent="AppTheme">
+        <item name="android:windowTranslucentStatus">true</item>
+    </style>
+
+    <!--Camera Add Text-->
+    <style name="EditText">
+        <item name="android:singleLine">true</item>
+        <item name="colorControlNormal">#FFFFFF</item>
+        <item name="colorControlActivated">#FFFFFF</item>
+        <item name="android:textColorPrimary">#FFFFFF</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <!--Louvre-->
+    <style name="AppTheme.Louvre.Light" parent="Louvre.Theme.Light">
+        <item name="colorPrimary">@color/white_smoke</item>
+        <item name="colorPrimaryDark">@color/eight_status_bar</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppTheme.Louvre.Preview" parent="Louvre.Theme.Preview">
+        <item name="colorAccent">@color/eight_status_bar</item>
+    </style>
+
+    <!--Splash Screen-->
+    <style name="SplashTheme" parent="AppTheme">
+        <item name="android:windowBackground">@drawable/splash_screen_background</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowTranslucentStatus">true</item>
     </style>
 
 </resources>

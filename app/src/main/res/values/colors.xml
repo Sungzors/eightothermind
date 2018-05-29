@@ -2,16 +2,61 @@
 <resources>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
+    <color name="status_bar">#009df5</color>
     <color name="colorAccent">#4786ff</color>
     <color name="tabunselect">#616161</color>
     <color name="tabselect">#4dd0e1</color>
     <color name="confirmText">#4a90e2</color>
-    <color name="gradientLeft">#495fff</color>
-    <color name="gradientRight">#0ccafe</color>
+    <color name="hangupgradientLeft">#ffab66</color>
+    <color name="hangupgradientRight">#ff5799</color>
+    <color name="largergradientLeft">#3f42ff</color>
+    <color name="largergradientRight">#e91e63</color>
+    <color name="gradientLeft">#009dff</color>
+    <color name="gradientLeftOpaque">#55009dff</color>
+    <color name="gradientRight">#f41caf</color>
+    <color name="gradientRightOpaque">#55f41caf</color>
+    <color name="gradientUp">#357fff</color>
+    <color name="gradientDown">#08a4ff</color>
+    <color name="settingBlue">#08a4ff</color>
+    <color name="settingLime">#7ed321</color>
+    <color name="settingPurple">#9013fe</color>
+    <color name="orange">#ffa336</color>
     <color name="unselectGrey">#40cfcfcf</color>
     <color name="unselectfullGrey">#cfcfcf</color>
     <color name="tabbg">#e0e0e0</color>
-    <color name="white">#FFFFFF</color>
+    <color name="whiteTransparent">#BBFFFFFF</color>
+    <color name="whitethreequartertransparent">#e6ffffff</color>
+    <color name="halftransparent">#84ffffff</color>
+    <color name="cameraBlurView">#58e4e4e4</color>
+    <color name="transparent">#00ffffff</color>
     <color name="grey">#bdbdbd</color>
+    <color name="searchGrey">#ebeef2</color>
+    <color name="activityBackgroundGrey">#f9f9f9</color>
+    <color name="my_profile_name">#233b5a</color>
+    <color name="my_language_color">#8b95a0</color>
+    <color name="my_profile_settings_text">#112c4c</color>
+    <color name="separator">#f1f2f5</color>
+    <color name="white_smoke">#F5F5F5</color>
+    <color name="blue_transparent">#224786ff</color>
+    <color name="eight_status_bar">#4786ff</color>
+    <color name="call_layer1">#92CEFE</color>
+    <color name="call_layer2">#C9E4FE</color>
+
+    <!--Camera Editing Colors-->
     <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="blue_color_picker">#0066FF</color>
+    <color name="brown_color_picker">#AF593E</color>
+    <color name="green_color_picker">#01A368</color>
+    <color name="orange_color_picker">#FF861F</color>
+    <color name="red_color_picker">#ED0A3F</color>
+    <color name="red_orange_color_picker">#FF3F34</color>
+    <color name="sky_blue_color_picker">#76D7EA</color>
+    <color name="violet_color_picker">#8359A3</color>
+    <color name="yellow_color_picker">#FBE870</color>
+    <color name="yellow_green_color_picker">#C5E17A</color>
+    <color name="hint_text">#b9c1ca</color>
+    <color name="dark_black">#CC262626</color>
+    <color name="dark_black_transparent">#22262626</color>
+
 </resources>

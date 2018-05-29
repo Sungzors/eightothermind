@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/cvf_file_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/cvf_poster_pic"
+    android:layout_centerInParent="true"
+    android:layout_marginBottom="15sp"
+    android:layout_marginEnd="10sp"
+    android:layout_marginStart="20sp"
+    android:layout_marginTop="10sp"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/vfi_file_ic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/share_file"
+        android:scaleType="centerCrop"
+        android:src="@drawable/drawer_file" />
+
+    <TextView
+        android:id="@+id/vfi_file_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginEnd="10sp"
+        android:layout_marginStart="10sp"
+        android:text="@string/file_name"
+        android:textColor="@color/blue_color_picker"
+        android:textSize="15sp"
+        xmlns:tools="http://schemas.android.com/tools"
+        tools:ignore="MissingPrefix"
+        fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
+
+</LinearLayout>

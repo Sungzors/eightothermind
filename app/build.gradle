@@ -1,18 +1,32 @@
+//Plugin
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'realm-android'
+apply plugin: 'kotlin-kapt'
+
+repositories {
+    jcenter()
+}
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion '26.0.2'
+    compileSdkVersion Integer.parseInt(project.ANDROID_BUILD_SDK_VERSION)
+
     defaultConfig {
         applicationId "com.phdlabs.sungwon.a8chat_android"
-        minSdkVersion 17
-        targetSdkVersion 25
-        versionCode 1
-        versionName "1.0"
+        minSdkVersion Integer.parseInt(project.ANDROID_BUILD_MIN_SDK_VERSION)
+        targetSdkVersion Integer.parseInt(project.ANDROID_BUILD_TARGET_SDK_VERSION)
+        versionCode Integer.parseInt(project.VERSION_CODE)
+        versionName project.VERSION_NAME
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        renderscriptSupportModeEnabled true
+        multiDexEnabled true
+
+        ndk {
+            abiFilters "armeabi-v7a", "x86" // DO NOT MODIFY THIS LINE, IT'S UPDATED BY BUILD MACHINE AUTOMATICALLY.
+        }
     }
+
     buildTypes {
         debug {
             buildConfigField("String", "BASE_URL", '"https://eight-backend.herokuapp.com"')
@@ -23,32 +37,151 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    dataBinding {
+        enabled = true
+    }
+    buildToolsVersion '27.0.3'
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    testCompile 'junit:junit:4.12'
-    compile "com.android.support:support-annotations:${rootProject.ext.supportLibVersion}"
-    compile "com.android.support:design:${rootProject.ext.supportLibVersion}"
-    compile "com.android.support:gridlayout-v7:${rootProject.ext.supportLibVersion}"
-    compile "com.android.support:recyclerview-v7:${rootProject.ext.supportLibVersion}"
-    compile "com.android.support:cardview-v7:${rootProject.ext.supportLibVersion}"
-    compile "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
-    compile 'com.google.code.gson:gson:2.7'
-    compile 'com.squareup.okhttp3:okhttp:3.7.0'
-    compile 'com.squareup.okhttp3:logging-interceptor:3.7.0'
-    compile 'org.greenrobot:eventbus:3.0.0'
-    compile 'com.squareup.retrofit2:retrofit:2.0.0'
-    compile 'com.squareup.retrofit2:converter-gson:2.0.0'
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    compile 'uk.co.chrisjenx:calligraphy:2.3.0'
-    compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'com.hbb20:ccp:1.7.4'
-    compile 'com.github.glomadrian:CodeInput:1.1@aar'
-    compile ('com.github.nkzawa:socket.io-client:0.4.1') {
+    testImplementation 'junit:junit:4.12'
+    implementation "com.android.support:multidex:1.0.3"
+
+    //Kotlin
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+
+    //Android support libraries
+    implementation "com.android.support:support-annotations:${rootProject.ext.supportLibVersion}"
+    implementation "com.android.support:design:${rootProject.ext.supportLibVersion}"
+    implementation "com.android.support:gridlayout-v7:${rootProject.ext.supportLibVersion}"
+    implementation "com.android.support:recyclerview-v7:${rootProject.ext.supportLibVersion}"
+    implementation "com.android.support:cardview-v7:${rootProject.ext.supportLibVersion}"
+    implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
+    implementation "com.android.support:support-v13:${rootProject.ext.supportLibVersion}"
+
+    //Firebase
+    implementation 'com.google.firebase:firebase-core:15.0.2'
+    implementation 'com.google.firebase:firebase-messaging:15.0.2'
+    implementation "com.android.support:support-compat:${rootProject.ext.supportLibVersion}"
+
+    //Fonts
+    api 'uk.co.chrisjenx:calligraphy:2.3.0'
+
+    //Blur View
+    implementation 'com.eightbitlab:blurview:1.3.4'
+    implementation 'com.eightbitlab:supportrenderscriptblur:1.0.1'
+
+    //Sliding up panel
+    api 'com.sothree.slidinguppanel:library:3.4.0'
+
+    //Animations
+    api 'com.andkulikov:transitionseverywhere:1.7.8'
+
+    //Segmented Control
+    api 'info.hoang8f:android-segmented:1.0.6'
+
+    //Country code picker
+    api 'com.hbb20:ccp:1.7.4'
+
+    //Registration code input
+    api 'com.github.glomadrian:CodeInput:1.1@aar'
+
+    //Location
+    implementation 'com.google.android.gms:play-services-location:15.0.1'
+
+    //JSON parsing
+    implementation 'com.google.code.gson:gson:2.8.1'
+
+    //OkHttp
+    implementation 'com.squareup.okhttp3:okhttp:3.8.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.7.0'
+
+    //EventBus
+    api 'org.greenrobot:eventbus:3.0.0'
+
+    //RX
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.7'
+
+    //Retrofit2 + Rx
+    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
+
+    //RX Binding
+    implementation 'com.jakewharton.rxbinding2:rxbinding:2.0.0'
+
+    //Realm Annotations
+    kapt "io.realm:realm-annotations:4.3.1"
+    kapt "io.realm:realm-annotations-processor:4.3.1"
+
+    //Realm Kotlin Extensions
+    api 'com.github.vicpinm:krealmextensions:2.1.0'
+
+    //Picasso (Img loading)
+    implementation 'com.squareup.picasso:picasso:2.5.2'
+
+    //Socket i/o client
+    implementation('com.github.nkzawa:socket.io-client:0.4.1') {
         exclude group: 'org.json', module: 'json'
     }
+
+    //Camera
+    compile 'com.otaliastudios:cameraview:1.5.0'
+    compile 'fr.avianey.com.viewpagerindicator:library:2.4.1@aar'
+    compile 'com.theartofdev.edmodo:android-image-cropper:2.6.0'
+    compile project(':photoeditorsdk')
+
+    //Photo Filters
+    compile 'net.alhazmy13.ImageFilters:library:0.1.2-beta'
+
+    //Video Playback
+    api 'net.protyposis.android.mediaplayer:mediaplayer:4.4.0'
+
+    //Video Broadcasting
+    api 'io.agora.rtc:full-sdk:2.1.2'
+    api 'org.slf4j:slf4j-api:1.7.21'
+    api 'com.github.tony19:logback-android-core:1.1.1-4'
+    api('com.github.tony19:logback-android-classic:1.1.1-4') {
+        // workaround issue #73
+        exclude group: 'com.google.android', module: 'android'
+    }
+    implementation project(':heartanimation')
+
+    //stetho-realm-windows
+    implementation 'com.facebook.stetho:stetho:1.5.0'
+    implementation 'com.uphyca:stetho_realm:2.1.0'
+
+    //Phone Number
+    api 'io.michaelrocks:libphonenumber-android:8.8.5'
+
+    //Image Picker
+    api 'com.github.andremion:louvre:1.2.3'
+
+    //Pager Indicator
+    api 'cz.intik:overflow-pager-indicator:1.2.1'
+
+    //AndroidActionSheet
+    api 'com.github.zongjingyao:actionsheet:0.1.3'
+
+    //File Dialog
+    implementation 'yogesh.firzen:FilesLister:1.0.1.g'
+    implementation 'yogesh.firzen:MukkiyaSevaigal:1.0.6.a'
+    implementation 'commons-io:commons-io:2.5'
+
+    api 'com.twilio:voice-android:2.0.7'
+    api 'com.koushikdutta.ion:ion:2.1.8'
+
 }
+
+//Realm Annotations
+kapt {
+    generateStubs = true
+}
+//Applied Plugins
+apply plugin: 'com.google.gms.google-services'

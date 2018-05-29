@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/dark_black_transparent"
+    android:orientation="vertical"
+    tools:ignore="MissingPrefix">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <!--Friend Profile picture-->
+        <ImageView
+            android:id="@+id/vlc_friend_profile_picture"
+            android:layout_width="45sp"
+            android:layout_height="45dp"
+            android:layout_margin="5dp"
+            android:contentDescription="@string/friend_profile_picture"
+            android:src="@mipmap/ic_launcher_round" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <!--Friend Full Name-->
+            <TextView
+                android:id="@+id/vlc_friend_name"
+                fontPath="fonts/AkzidenzGroteskBE-Regular.otf"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="15sp"
+                android:layout_marginStart="5sp"
+                android:layout_marginTop="5sp"
+                android:padding="5sp"
+                android:text="@string/name"
+                android:textColor="@color/grey"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+
+            <!--Comment-->
+            <TextView
+                android:id="@+id/vlc_comment"
+                fontPath="fonts/AkzidenzGroteskBE-Regular.otf"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5sp"
+                android:layout_marginEnd="15sp"
+                android:layout_marginStart="5sp"
+                android:layout_marginTop="5sp"
+                android:minLines="1"
+                android:text="@string/comment"
+                android:textAlignment="textStart"
+                android:textColor="@color/white"
+                android:textStyle="normal" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

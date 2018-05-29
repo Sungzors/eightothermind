@@ -1,0 +1,119 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:keepScreenOn="true"
+    tools:context=".structure.channel.broadcast.BroadcastActivity">
+
+    <!--Surface View Container-->
+    <com.phdlabs.sungwon.a8chat_android.structure.channel.broadcast.ui.GridVideoViewContainer
+        android:id="@+id/grid_video_view_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!--Small video dock not implemented-->
+    <ViewStub
+        android:id="@id/small_video_view_dock"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="60dp"
+        android:inflatedId="@id/small_video_view_dock"
+        android:layout="@layout/small_video_view_dock" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!--Heart animations-->
+        <com.demo.heartanimation.HeartLayout
+            android:id="@+id/heart_layout"
+            android:layout_width="80sp"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:layout_marginBottom="65sp"
+            android:layout_marginEnd="10sp"
+            android:layout_marginTop="25sp" />
+
+        <View
+            android:id="@+id/ab_bottom_dark_view"
+            android:layout_width="match_parent"
+            android:layout_height="69sp"
+            android:layout_alignParentBottom="true"
+            android:background="@color/dark_black_transparent"
+            android:visibility="gone" />
+
+        <!--Bottom Controls-->
+        <LinearLayout
+            android:id="@+id/bottom_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:orientation="vertical">
+
+            <!--Live Comments-->
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/ab_recycler_view_live_comments"
+                android:layout_width="match_parent"
+                android:layout_height="150sp"
+                android:layout_marginBottom="5sp"
+                android:background="@null" />
+
+            <!--Live Broadcast Controls-->
+            <com.phdlabs.sungwon.a8chat_android.structure.channel.broadcast.ui.AGLinearLayout
+                android:id="@+id/bottom_action_container"
+                android:layout_width="wrap_content"
+                android:layout_height="54dp"
+                android:layout_marginBottom="10sp"
+                android:background="@color/transparent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingEnd="10sp"
+                    android:paddingStart="10sp">
+
+                    <!--Microphone control-->
+                    <ImageView
+                        android:id="@+id/ab_mic_control"
+                        android:layout_width="54dp"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentTop="true"
+                        android:background="@drawable/bg_dark_buttons"
+                        android:src="@drawable/btn_mute" />
+
+                    <!--End broadcast-->
+                    <Button
+                        android:id="@+id/click_close"
+                        android:layout_width="200dp"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentTop="true"
+                        android:layout_centerInParent="true"
+                        android:background="@drawable/gradient_broadcast_end"
+                        android:scaleType="center"
+                        android:text="@string/end"
+                        android:textColor="@color/white" />
+
+                    <!--Flip camera-->
+                    <ImageView
+                        android:id="@+id/ab_flip_camera"
+                        android:layout_width="54dp"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentTop="true"
+                        android:background="@drawable/bg_dark_buttons"
+                        android:src="@drawable/btn_switch_camera" />
+
+                </RelativeLayout>
+
+            </com.phdlabs.sungwon.a8chat_android.structure.channel.broadcast.ui.AGLinearLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</FrameLayout>

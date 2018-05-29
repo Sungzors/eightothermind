@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "650865829339",
+    "firebase_url": "https://eight-1518196237827.firebaseio.com",
+    "project_id": "eight-1518196237827",
+    "storage_bucket": "eight-1518196237827.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:650865829339:android:9335c01566efed8c",
+        "android_client_info": {
+          "package_name": "com.phdlabs.sungwon.a8chat_android"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "650865829339-q3mosh043a2033mpgtfh5s4l9m0sntgi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAruueqQ-b1gFovI6xluj5FGoj5XNzmkaE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

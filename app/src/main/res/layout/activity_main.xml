@@ -2,12 +2,33 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/activityBackgroundGrey">
+
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+
+        <android.support.design.widget.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/AppTheme.AppBarWhite">
+
+            <!--Home Toolbar-->
+            <include layout="@layout/toolbar_main"
+                android:id="@+id/home_toolbar"
+                android:visibility="visible"/>
+
+            <!--Profile Toolbar-->
+            <include layout="@layout/toolbar"
+                android:id="@+id/profile_toolbar"
+                android:visibility="gone"/>
+
+        </android.support.design.widget.AppBarLayout>
+
+        <!--Fragment Container-->
         <FrameLayout
             android:id="@+id/am_content_frame"
             android:layout_width="match_parent"
@@ -17,12 +38,18 @@
             android:id="@+id/am_bottom_tab_nav"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginBottom="-15dp"
             app:itemIconTint="@drawable/tab_icon_selector"
             app:menu="@menu/menu_main_tab"
             android:background="@color/tabbg"/>
     </LinearLayout>
 
     <include layout="@layout/progress_view"/>
+
+
+    <FrameLayout
+        android:id="@+id/overlay_content_frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 </FrameLayout>

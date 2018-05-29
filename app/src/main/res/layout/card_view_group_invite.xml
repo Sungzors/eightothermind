@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingPrefix">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <!--Friend Profile picture-->
+        <ImageView
+            android:id="@+id/cvgi_friend_profile_picture"
+            android:layout_width="45sp"
+            android:layout_height="45dp"
+            android:layout_margin="10dp"
+            android:contentDescription="@string/friend_profile_picture" />
+
+        <!--Friend Full Name-->
+        <TextView
+            android:id="@+id/cvgi_friend_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="15dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="15dp"
+            android:layout_weight="1"
+            android:padding="5dp"
+            android:textColor="@color/grey"
+            android:textSize="15sp"
+            fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
+
+        <CheckBox
+            android:id="@+id/cvgi_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:layout_marginEnd="15dp"/>
+
+    </LinearLayout>
+
+    <!--Separator-->
+    <View
+        android:layout_height="1dp"
+        android:layout_width="match_parent"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:background="@color/separator" />
+
+</LinearLayout>

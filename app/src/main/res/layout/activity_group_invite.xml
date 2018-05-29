@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:ignore="MissingPrefix">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarWhite">
+
+        <include layout="@layout/toolbar" />
+
+        <!--Search Bar-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:padding="5sp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="10sp"
+            android:layout_marginBottom="6sp"
+            android:layout_gravity="start"
+            android:background="@drawable/bg_15dp_curve_shadow_greybg">
+            <android.support.v7.widget.SearchView
+                android:id="@+id/agi_searchView"
+                android:layout_gravity="start"
+                android:layout_width="match_parent"
+                android:layout_height="25sp"
+                android:inputType="text"
+                android:maxLines="1"
+                android:imeOptions="actionSearch"
+                android:onClick="searchClicked"
+                fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
+
+        </LinearLayout>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/agi_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="5dp"/>
+</LinearLayout>

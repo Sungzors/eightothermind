@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingPrefix">
+
+    <include layout="@layout/progress_view" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <android.support.design.widget.AppBarLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:theme="@style/AppTheme.AppBarWhite">
+
+                <include layout="@layout/toolbar" />
+            </android.support.design.widget.AppBarLayout>
+
+            <!--User Info Card-->
+            <android.support.v7.widget.CardView
+                style="@style/CardView.SettingCards"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/asg_group_picture"
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        android:layout_marginBottom="20dp"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="20dp"
+                        android:elevation="4sp"
+                        android:src="@drawable/addphoto" />
+
+                    <ImageButton
+                        android:id="@+id/asg_favorite_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="20dp"
+                        android:layout_marginTop="30dp"
+                        android:background="@color/transparent"
+                        android:src="@android:drawable/btn_star" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="20dp"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_toEndOf="@id/asg_group_picture"
+                        android:layout_toStartOf="@id/asg_favorite_button"
+                        android:orientation="vertical"
+                        android:paddingBottom="5dp"
+                        android:paddingTop="5dp">
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1" />
+
+                        <TextView
+                            android:id="@+id/asg_group_name"
+                            fontPath="fonts/AkzidenzGroteskBE-Regular.otf"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/group_name"
+                            android:textColor="@color/black" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1" />
+
+                        <TextView
+                            android:id="@+id/asg_language"
+                            fontPath="fonts/AkzidenzGroteskBE-Regular.otf"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:textColor="@color/black" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1" />
+
+                        <TextView
+                            android:id="@+id/asg_empty"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1" />
+                    </LinearLayout>
+
+                </RelativeLayout>
+            </android.support.v7.widget.CardView>
+
+            <!--User action card-->
+            <android.support.v7.widget.CardView
+                style="@style/CardView.SettingCards"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <!--Notification-->
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:id="@+id/asc_notif_icon"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_margin="20dp"
+                            android:src="@drawable/ic_setting_notif" />
+
+                        <TextView
+                            fontPath="fonts/AkzidenzGroteskBE-Regular.otf"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="20dp"
+                            android:layout_toEndOf="@id/asc_notif_icon"
+                            android:text="@string/notification" />
+
+                        <Switch
+                            android:id="@+id/asc_notif_switch"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginEnd="20dp" />
+                    </RelativeLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginEnd="20dp"
+                        android:layout_marginStart="20dp"
+                        android:background="@color/grey" />
+
+                    <!--Send Money-->
+                    <RelativeLayout
+                        android:id="@+id/asc_money_container"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:id="@+id/asc_money_icon"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_margin="20dp"
+                            android:src="@drawable/ic_setting_money" />
+
+                        <TextView
+                            fontPath="fonts/AkzidenzGroteskBE-Regular.otf"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="20dp"
+                            android:layout_toEndOf="@id/asc_money_icon"
+                            android:text="@string/send_money" />
+
+
+                    </RelativeLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginEnd="20dp"
+                        android:layout_marginStart="20dp"
+                        android:background="@color/grey" />
+
+                    <!--Favorite Message-->
+                    <RelativeLayout
+                        android:id="@+id/asc_favemsg_container"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:id="@+id/asc_favemsg_icon"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_margin="20dp"
+                            android:src="@drawable/ic_setting_favemsg" />
+
+                        <TextView
+                            android:id="@+id/asc_favemsg_tv"
+                            fontPath="fonts/AkzidenzGroteskBE-Regular.otf"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="20dp"
+                            android:layout_toEndOf="@id/asc_favemsg_icon"
+                            android:text="@string/fave_messages" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginEnd="20dp"
+                            android:scaleY="2"
+                            android:text="> "
+                            android:textAlignment="textEnd"
+                            android:textColor="@color/colorAccent"
+                            android:textSize="14sp" />
+                    </RelativeLayout>
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                style="@style/CardView.SettingCards"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <!--Share container-->
+                    <RelativeLayout
+                        android:id="@+id/asc_share_container"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:id="@+id/asc_share_icon"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_margin="20dp"
+                            android:src="@drawable/ic_setting_share" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="20dp"
+                            android:layout_toEndOf="@id/asc_share_icon"
+                            android:text="@string/share"
+                            fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
+                    </RelativeLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginEnd="20dp"
+                        android:layout_marginStart="20dp"
+                        android:background="@color/grey" />
+
+                    <!--Clear Conversation-->
+                    <RelativeLayout
+                        android:id="@+id/asc_clear_conversation"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:id="@+id/asc_close_icon"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_margin="20dp"
+                            android:src="@drawable/ic_setting_close" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="20dp"
+                            android:layout_toEndOf="@id/asc_close_icon"
+                            android:text="@string/clear_conversation"
+                            fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
+
+                    </RelativeLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginEnd="20dp"
+                        android:layout_marginStart="20dp"
+                        android:background="@color/grey" />
+
+                    <!--Block Contact-->
+                    <RelativeLayout
+                        android:id="@+id/asc_block_container"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:id="@+id/asc_block_icon"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_margin="20dp"
+                            android:src="@drawable/ic_setting_block" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="20dp"
+                            android:layout_toEndOf="@id/asc_block_icon"
+                            android:text="@string/block_contact"
+                            fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginEnd="20dp"
+                            android:scaleY="3"
+                            android:text=">"
+                            android:textColor="@color/colorAccent"
+                            android:textSize="14sp" />
+                    </RelativeLayout>
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+
+            <android.support.design.widget.BottomNavigationView
+                android:id="@+id/asc_bottomnav"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginStart="15dp"
+                app:itemBackground="@drawable/tab_bg_selector"
+                app:menu="@menu/menu_setting_tab" />
+
+            <RelativeLayout
+                android:id="@+id/asc_fragment_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </ScrollView>
+
+</FrameLayout>

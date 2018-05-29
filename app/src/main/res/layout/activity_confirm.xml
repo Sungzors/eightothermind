@@ -2,12 +2,21 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingPrefix">
+
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+        <android.support.design.widget.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/AppTheme.AppBarWhite">
+            <include layout="@layout/toolbar"/>
+        </android.support.design.widget.AppBarLayout>
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -33,7 +42,8 @@
                     app:text_color="@color/colorAccent"
                     app:hint_color="@color/colorAccent"
                     android:layout_margin="10dp"
-                    android:inputType="phone"/>
+                    android:inputType="phone"
+                    fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
             </RelativeLayout>
 
         </android.support.v7.widget.CardView>
@@ -47,17 +57,18 @@
             android:textSize="14sp"/>
 
         <Button
-            android:id="@+id/ac_button_create_profile"
+            android:id="@+id/ac_button_sign_in"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginStart="30dp"
             android:layout_marginEnd="30dp"
             android:layout_marginTop="15dp"
             android:layout_marginBottom="15dp"
-            android:background="@drawable/gradient_eightchatblue"
-            android:text="@string/create_profile"
+            android:background="@drawable/gradient_eightchatblue_opaque"
+            android:text="@string/sign_in"
             android:textColor="@color/white"
-            android:textSize="16sp"/>
+            android:textSize="16sp"
+            fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
 
         <TextView
             android:id="@+id/ac_textview_instruction"
@@ -65,7 +76,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:textAlignment="center"
-            android:textSize="14sp"/>
+            android:textSize="14sp"
+            fontPath="fonts/AkzidenzGroteskBE-Regular.otf"/>
 
     </LinearLayout>
 

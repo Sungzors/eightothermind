@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingPrefix">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <!--Friend Profile picture-->
+        <ImageView
+            android:id="@+id/vpc_friend_profile_picture"
+            android:layout_width="45sp"
+            android:layout_height="45dp"
+            android:layout_margin="15dp"
+            android:contentDescription="@string/friend_profile_picture"
+            android:src="@mipmap/ic_launcher_round"/>
+
+        <!--Friend Full Name-->
+        <TextView
+            android:id="@+id/vpc_friend_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="15dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="15dp"
+            android:padding="5dp"
+            android:textColor="@color/grey"
+            android:textSize="15sp"
+            fontPath="fonts/AkzidenzGroteskBE-Regular.otf"
+            android:text="@string/name"/>
+
+    </LinearLayout>
+
+    <!--Comment-->
+    <TextView
+        android:id="@+id/vpc_commment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="15dp"
+        android:layout_marginStart="15dp"
+        android:minLines="2"
+        android:textAlignment="textStart"
+        android:textStyle="normal"
+        fontPath="fonts/AkzidenzGroteskBE-Regular.otf"
+        android:text="@string/comment"/>
+
+    <!--Separator-->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:background="@color/separator" />
+
+</LinearLayout>

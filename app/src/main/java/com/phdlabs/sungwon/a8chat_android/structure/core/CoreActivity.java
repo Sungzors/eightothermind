@@ -18,23 +18,30 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.phdlabs.sungwon.a8chat_android.R;
+import com.phdlabs.sungwon.a8chat_android.utility.camera.CircleTransform;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+
 /**
  * Created by SungWon on 9/11/2017.
  * Base class for all Activities
- *
+ * <p>
  * All kotlin activities must import kotlinx.android.synthetic.main.activity_{name}.* in order to use the ids as the object
- *
+ * <p>
  * Any Activity/Fragment implementing controller should override onStart etc and call Controller's start etc
  */
 
-public abstract class CoreActivity extends AppCompatActivity{
+public abstract class CoreActivity extends AppCompatActivity {
     /*Properties*/
     //Back button listeners
     private List<OnBackPressListener> mOnBackPressListeners = new ArrayList<>();
@@ -58,7 +65,7 @@ public abstract class CoreActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(layoutId());
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar = findViewById(R.id.toolbar);
     }
 
     /*Toolbar*/
@@ -67,16 +74,56 @@ public abstract class CoreActivity extends AppCompatActivity{
     }
 
     public void setToolbarTitle(String title) {
+        LinearLayout doubleContainer = findById(R.id.toolbar_title_double_container);
         View view = findById(R.id.toolbar_title);
+        doubleContainer.setVisibility(LinearLayout.GONE);
+        view.setVisibility(TextView.VISIBLE);
         if (view != null) {
             ((TextView) view).setText(title);
         }
+    }
+
+    public void setDoubleToolbarTitle(String titleTop, String titleBottom) {
+        LinearLayout doubleContainer = findById(R.id.toolbar_title_double_container);
+        View singleTV = findById(R.id.toolbar_title);
+        doubleContainer.setVisibility(LinearLayout.VISIBLE);
+        singleTV.setVisibility(TextView.GONE);
+
+        TextView viewTop = findById(R.id.toolbar_title_double_top);
+        TextView viewBottom = findById(R.id.toolbar_title_double_bottom);
+
+        viewTop.setText(titleTop);
+        viewBottom.setText(titleBottom);
     }
 
     public void setToolbarColor(@ColorRes int color) {
         View view = findById(R.id.toolbar);
         if (view != null) {
             view.setBackgroundColor(ResourcesCompat.getColor(getResources(), color, null));
+        }
+    }
+
+    public void showRightTextToolbar(String text) {
+        TextView view = findById(R.id.toolbar_right_text);
+        if (view != null) {
+            view.setVisibility(TextView.VISIBLE);
+            view.setText(text);
+        }
+    }
+
+    public void showRightImageToolbar(int resId) {
+        ImageView view = findById(R.id.toolbar_right_picture);
+        view.setVisibility(ImageView.VISIBLE);
+        Picasso.with(this).load(resId).transform(new CircleTransform()).into(view);
+    }
+
+    public void showRightImageToolbar(String url) {
+        ImageView view = findById(R.id.toolbar_right_picture);
+        view.setVisibility(ImageView.VISIBLE);
+        if (!url.isEmpty()) {
+            Picasso.with(this).load(url).transform(new CircleTransform()).placeholder(R.mipmap.ic_launcher_round).into(view);
+        } else {
+            Picasso.with(this).load(R.mipmap.ic_launcher_round).transform(new CircleTransform()).into(view);
         }
     }
 
@@ -94,6 +141,20 @@ public abstract class CoreActivity extends AppCompatActivity{
                 onBackPressed();
             }
         });
+    }
+
+    public void showBackArrow(int icon, boolean finish) {
+        if (finish) {
+            mToolbar.setNavigationIcon(icon);
+            mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    finish();
+                }
+            });
+        } else {
+            showBackArrow(icon);
+        }
     }
 
     /*Progress Dialog*/
@@ -116,8 +177,8 @@ public abstract class CoreActivity extends AppCompatActivity{
         addFragment(contentContainerId(), fragment, addToBackStack);
     }
 
-    public void replaceFragment(@NonNull Fragment fragment, boolean addToBackStack) {
-        replaceFragment(contentContainerId(), fragment, addToBackStack);
+    public void replaceFragment(@NonNull CoreFragment fragment, boolean addToBackStack, boolean oppositeAnimation) {
+        replaceFragment(contentContainerId(), fragment, addToBackStack, oppositeAnimation);
     }
 
     /*Fragment transactions*/
@@ -132,11 +193,16 @@ public abstract class CoreActivity extends AppCompatActivity{
     }
 
     @SuppressLint("CommitTransaction")
-    public void replaceFragment(@IdRes int containerId, @NonNull Fragment fragment, boolean addToBackStack) {
+    public void replaceFragment(@IdRes int containerId, @NonNull CoreFragment fragment, boolean addToBackStack, boolean oppositeAnimation) {
         String name = fragment.getClass().getName();
-        FragmentTransaction replaceTransaction = getSupportFragmentManager().beginTransaction()
-                .replace(containerId, fragment, name);
-        if(addToBackStack){
+        FragmentTransaction replaceTransaction = getSupportFragmentManager().beginTransaction();
+        if (oppositeAnimation) {
+            replaceTransaction.setCustomAnimations(android.R.anim.fade_out, android.R.anim.slide_out_right);
+        } else {
+            replaceTransaction.setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+        }
+        replaceTransaction.replace(containerId, fragment, name);
+        if (addToBackStack) {
             replaceTransaction.addToBackStack(name);
         }
         replaceTransaction.commit();
@@ -144,11 +210,11 @@ public abstract class CoreActivity extends AppCompatActivity{
 
     //ListFragment
     @SuppressLint("CommitTransaction")
-    public void replaceFragment(@IdRes int containerId, @NonNull ListFragment fragment, boolean addToBackStack){
+    public void replaceFragment(@IdRes int containerId, @NonNull ListFragment fragment, boolean addToBackStack) {
         String name = fragment.getClass().getName();
-        android.app.FragmentTransaction replaceTransaction = getFragmentManager().beginTransaction().replace(containerId,fragment,name);
-        getFragmentManager().beginTransaction().replace(containerId,fragment,name);
-        if(addToBackStack){
+        android.app.FragmentTransaction replaceTransaction = getFragmentManager().beginTransaction().replace(containerId, fragment, name);
+        getFragmentManager().beginTransaction().replace(containerId, fragment, name);
+        if (addToBackStack) {
             replaceTransaction.addToBackStack(name);
         }
         replaceTransaction.commit();
@@ -178,12 +244,13 @@ public abstract class CoreActivity extends AppCompatActivity{
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = fragmentManager.findFragmentByTag(fragmentClass.getName());
         if (fragment != null) {
-            fragmentManager.beginTransaction().remove(fragment).commit();
+            fragmentManager.beginTransaction().setCustomAnimations(android.R.animator.fade_out, android.R.animator.fade_in).remove(fragment).commit();
         }
     }
 
     public void popFragment() {
-        getSupportFragmentManager().popBackStack();
+        FragmentManager fm = getSupportFragmentManager();
+        fm.popBackStack();
     }
 
     public void closeFromChild() {
@@ -195,7 +262,8 @@ public abstract class CoreActivity extends AppCompatActivity{
     }
 
     /*Navigation - Back Button*/
-    @Override public void onBackPressed() {
+    @Override
+    public void onBackPressed() {
         if (interruptedByListener()) {
             //noinspection UnnecessaryReturnStatement
             return;
@@ -209,7 +277,7 @@ public abstract class CoreActivity extends AppCompatActivity{
     private boolean interruptedByListener() {
         boolean interrupt = false;
         for (OnBackPressListener listener : mOnBackPressListeners) {
-            if(listener.onBackPressed()){
+            if (listener.onBackPressed()) {
                 interrupt = true;
             }
         }
@@ -220,6 +288,11 @@ public abstract class CoreActivity extends AppCompatActivity{
     public void showError(String errorMessage) {
         new AlertDialog.Builder(this).setMessage(errorMessage)
                 .setPositiveButton(android.R.string.ok, null).show();
+    }
+
+    /*Info feedback*/
+    public void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     public void addOnBackPressListener(OnBackPressListener listener) {
@@ -237,6 +310,11 @@ public abstract class CoreActivity extends AppCompatActivity{
         boolean onBackPressed();
     }
 
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+
     public void close() {
         finishAffinity();
     }
@@ -244,6 +322,6 @@ public abstract class CoreActivity extends AppCompatActivity{
     /*View*/
     @SuppressWarnings("unchecked")
     public <V extends View> V findById(@IdRes int id) {
-        return (V)  findViewById(id);
+        return (V) findViewById(id);
     }
 }

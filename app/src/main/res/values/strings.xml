@@ -13,17 +13,180 @@
     <string name="send_confirm_code">Send Confirmation Code</string>
     <string name="resend_code">Resend Code</string>
     <string name="create_profile">Create Profile</string>
+    <string name="login_profile">Log In</string>
     <string name="enter_confirmation_code">ENTER CONFIRMATION CODE</string>
-    <string name="send_1">We send a confirmation code to\n%1$s. You should get it in\na few seconds.</string>
+    <string name="send_1">We sent a confirmation code to\n%1$s. You should get it in\na few seconds.</string>
     <string name="your_name">YOUR NAME</string>
     <string name="first_name">First Name</string>
     <string name="last_name">Last Name</string>
     <string name="what_languages_do_you_speak">WHAT LANGUAGES DO YOU SPEAK?</string>
-    <string name="starto">Get Started</string>
+    <string name="get_started">Get Started</string>
     <string name="english">English</string>
     <string name="channels">Channels</string>
     <string name="events">Events</string>
     <string name="channels_i_follow">Channels I follow</string>
     <string name="my_channels">My Channels</string>
-    <string name="type_something">Type Something...</string>
+    <string name="type_something">Type Something…</string>
+    <string name="fave_messages">Favorite Messages (%1$s)</string>
+    <string name="medianum">Media (%1$s)</string>
+    <string name="filenum">File (%1$s)</string>
+    <string name="channel_followers"> %1$s Followers</string>
+
+    <!--Camera Control-->
+    <string name="pick_image_intent_text">Choose an image</string>
+    <string name="profile_image">Profile Image</string>
+    <string name="profile_image_circle">Profile image circle</string>
+    <string name="camera_permission_request">Eight needs permission for camera and audio recording.</string>
+    <string name="stop">Stop</string>
+    <string name="record">Record</string>
+
+    <!--Camera-->
+    <string name="camera_left_tab">Camera Roll</string>
+    <string name="camera_center_tab">Normal</string>
+    <string name="camera_right_tab">Hands Free</string>
+    <string name="request_camera_permission">Camera permission needed</string>
+    <string name="request_write_external_permission">Storage permission needed</string>
+    <string name="request_read_external_permission">Read storage permission needed</string>
+    <string name="request_read_contacts_permissions">Reading contacts permission needed</string>
+    <string name="camera_error">This device doesn\'t support Camera</string>
+    <string name="camera_action">camera_action</string>
+    <string name="camera_flash">camera_flash</string>
+    <string name="camera_flip">camera_flip</string>
+    <string name="camera_preview">cameraPreview</string>
+    <string name="camera_save">cameraSave</string>
+    <string name="camera_send">cameraSend</string>
+    <string name="camerarollimage">CameraRollImage</string>
+    <string name="cameraroll_saved_photo">Saved to gallery</string>
+    <string name="normal">normal</string>
+    <!--Camera Editing-->
+    <string name="photo_editing">photo editing</string>
+    <string name="done">Done</string>
+    <string name="erase">Erase</string>
+    <string name="close">Close</string>
+    <string name="camera_clear">cameraClear</string>
+    <string name="ic_clear_all">"\ue947"</string>
+    <string name="ic_delete">"\ue92c"</string>
+    <string name="clear_all">Clear All</string>
+    <string name="save">Save</string>
+    <string name="undo">Undo</string>
+
+    <string name="share_media">Share Media</string>
+    <string name="share_contact">Share Contact</string>
+    <string name="share_location">Share Location</string>
+    <string name="share_file">Share File</string>
+    <string name="share_channel">Share Channel</string>
+    <string name="share_money">Share Money</string>
+    <string name="accept">Accept</string>
+    <string name="decline">Decline</string>
+    <string name="conversations">Conversations</string>
+    <string name="name_your_channel">Name your channel</string>
+    <string name="unique_id">Unique ID</string>
+    <string name="short_description">Short Description</string>
+    <string name="add_to_profile">Add to Profile</string>
+    <string name="search_channel">Search Channel</string>
+    <string name="create_post">Create Post</string>
+    <string name="live_braodcast">Live Broadcast</string>
+    <string name="name_your_event">Name Your Event</string>
+    <string name="location">Location</string>
+    <string name="friends_of_friends">Friends of Friends</string>
+    <string name="only_friends">Only Friends</string>
+    <string name="lock_after_24_hours">Lock after 24 hours</string>
+
+    <string-array name="language_array">
+        <item>English</item>
+        <item>Spanish</item>
+        <item>Arabic</item>
+        <item>Portuguese</item>
+        <item>French</item>
+    </string-array>
+
+    <!--Realm-->
+    <string name="realm_path">8_realm</string>
+    <string name="chat">Chat</string>
+    <string name="call">Call</string>
+    <string name="video">Video</string>
+    <string name="notification">Notification</string>
+    <string name="send_money">Send Money</string>
+    <string name="clear_conversation">Clear Conversation</string>
+    <string name="block_contact">Block Contact</string>
+    <string name="share">Share</string>
+    <string name="channel_image">channelImage</string>
+    <string name="create_a_channel">Create a Channel</string>
+    <string name="edit_channel">Edit Channel</string>
+    <string name="create">Create</string>
+    <string name="incomplete_information">Incomplete information</string>
+    <string name="add_channel_photo">Add channel photo</string>
+    <string name="add_event_photo">Add event photo</string>
+    <string name="create_event">Create an Event</string>
+    <string name="create_group">Create a Group Chat</string>
+    <string name="next">Next</string>
+    <string name="new_group">New Group</string>
+    <string name="new_channel">New Channel</string>
+    <string name="new_event">New Event</string>
+    <string name="favorites">Favorites</string>
+    <string name="all_contacts">All Contacts</string>
+    <string name="searchcontacthint">Search by Contact</string>
+    <string name="my_contacts">My Contacts</string>
+    <string name="contacts">Contacts</string>
+    <string name="friend_profile_picture">Friend Profile Picture</string>
+    <string name="no_contacts">No Contacts</string>
+    <string name="contacts_selector_default_text">Contacts</string>
+    <string name="channels_selector_default_text">Channels</string>
+    <string name="my_language">Current language</string>
+    <string name="my_calendars">Calendars</string>
+    <string name="detail_view"><![CDATA[>]]></string>
+    <string name="payments">Payments</string>
+    <string name="notification_settings">Notification Settings</string>
+    <string name="my_account">Account</string>
+    <string name="terms_support">Terms and Support</string>
+    <string name="invite_friends">Invite Friends</string>
+    <string name="my_profile">My Profile</string>
+    <string name="my_profile_edit">Edit</string>
+    <string name="update_profile">Update</string>
+    <string name="invite_contacts">Invite your friends to join 8</string>
+    <string name="invite_button">Invite</string>
+    <string name="contact_name">Contact Name</string>
+    <string name="group_name">Group name</string>
+    <string name="name_your_group">name your group</string>
+    <string name="add_people">  Add People</string>
+    <string name="popular_channels">Popular Channels</string>
+    <string name="channel_name">Channel Name</string>
+    <string name="add_photos_or_videos">+ Add Photos or Videos</string>
+    <string name="post">Post</string>
+    <string name="remove_media">Remove media</string>
+    <string name="create_a_post">Create a Post</string>
+    <string name="name">Name</string>
+    <string name="date">Date</string>
+    <string name="comment">comment...</string>
+    <string name="cancel">cancel</string>
+    <string name="file_name">File Name</string>
+    <string name="follow">Follow</string>
+    <string name="unfollow">Unfollow</string>
+    <string name="channel_description">Channel Description</string>
+    <string name="report_channel">Report Channel</string>
+    <string name="delete_channel">Delete Channel</string>
+    <string name="confirm_channel_deletion">Are you sure you want to delete this channel?</string>
+    <string name="delete">Delete</string>
+    <string name="msg_notif">Message notifications</string>
+    <string name="comment_notifications">Comment notifications</string>
+    <string name="invited_notifications">Invited Notifications</string>
+    <string name="write_a_comment">Write a comment</string>
+    <string name="lobby_channels">Channels</string>
+    <string name="email_address">Email Address</string>
+    <string name="your_email">YOUR EMAIL ADDRESS</string>
+    <string name="disclosure">Please review and accept the Terms and Conditions, and Privacy Policy
+    before using this application as it describes how we use your data</string>
+    <string name="terms_and_conditions">Terms and Conditions</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="i_agree_to_the_terms_and_conditions">I agree to the terms and conditions</string>
+    <string name="i_agree_to_the_privacy_policy">I agree to the Privacy Policy</string>
+    <string name="view_now">View Now</string>
+
+    <!--Broadcast-->
+    <string name="live_broadcast">%1$s is Live!</string>
+    <string name="end">End</string>
+    <string name="leave_broadcast">Leave</string>
+    <string name="camera_filter">Camera Filter</string>
+    <string name="back">back</string>
+
 </resources>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="75dp"
+    android:layout_gravity="end|top"
+    android:orientation="horizontal"
+    tools:background="@android:color/transparent">
+
+    <!--Filter-->
+    <LinearLayout
+        android:id="@+id/ll_camera_filter"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_marginEnd="15dp"
+        android:layout_marginStart="30dp">
+        <!--Edit-->
+        <ImageView
+            android:id="@+id/iv_camera_filter"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center"
+
+            android:background="@color/transparent"
+            android:contentDescription="@string/camera_flash"
+            android:src="@drawable/filter" />
+    </LinearLayout>
+
+    <!--Text-->
+    <LinearLayout
+        android:id="@+id/ll_camera_text"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_marginStart="15dp">
+        <!--Text-->
+        <ImageView
+            android:id="@+id/iv_camera_text"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_gravity="center"
+            android:background="@color/transparent"
+            android:contentDescription="@string/camera_flash"
+            android:src="@drawable/t" />
+    </LinearLayout>
+
+    <!--Crop-->
+    <LinearLayout
+        android:id="@+id/ll_camera_crop"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_marginStart="30dp">
+        <!--Crop-->
+        <ImageView
+            android:id="@+id/iv_camera_crop"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_gravity="center"
+            android:background="@color/transparent"
+            android:contentDescription="@string/camera_flash"
+            android:src="@drawable/crop_edit" />
+    </LinearLayout>
+
+    <!--Draw-->
+    <LinearLayout
+        android:id="@+id/ll_camera_draw"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_marginEnd="15dp"
+        android:layout_marginStart="30dp">
+        <!--Edit-->
+        <ImageView
+            android:id="@+id/iv_camera_draw"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_gravity="center"
+
+            android:background="@color/transparent"
+            android:contentDescription="@string/camera_flash"
+            android:src="@drawable/camera_edit" />
+    </LinearLayout>
+
+
+</LinearLayout>

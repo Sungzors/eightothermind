@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:background="@drawable/gradient_eightchatblue"
+    tools:ignore="MissingPrefix">
+
+    <!--Profile Picture View-->
+    <ImageView
+        android:id="@+id/toolbar_left_action"
+        android:layout_width="28dp"
+        android:layout_height="16dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:src="@drawable/toolbar_left"/>
+
+    <!--Toolbar title-->
+    <ImageView
+        android:id="@+id/debug_access"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_gravity="center"
+        android:background="@drawable/white_logo" />
+
+
+    <LinearLayout
+        android:id="@+id/toolbar_title_double_container"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/toolbar_title_double_top"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="asdfasdf"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/toolbar_title_double_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="asdfasdfasdfasdf"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="10sp" />
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/toolbar_right_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|end"
+        android:layout_marginEnd="15dp"
+        android:textColor="@color/colorPrimary"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/toolbar_right_picture"
+        android:layout_width="24dp"
+        android:layout_height="19dp"
+        android:layout_gravity="center_vertical|end"
+        android:layout_marginEnd="15dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="5dp"
+        android:src="@drawable/toolbar_right"/>
+
+
+</android.support.v7.widget.Toolbar>

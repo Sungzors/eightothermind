@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingPrefix">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <!--Loading-->
+            <include layout="@layout/progress_view" />
+
+            <!--Channels I Follow-->
+            <RelativeLayout
+                android:id="@+id/fc_followed_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/activityBackgroundGrey"
+                android:paddingEnd="10dp"
+                android:paddingStart="10dp"
+                android:paddingTop="20dp">
+                <!--Title-->
+                <TextView
+                    android:id="@+id/fc_channels_i_follow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="15dp"
+                    android:paddingEnd="10dp"
+                    android:paddingStart="10dp"
+                    android:text="@string/channels_i_follow"
+                    fontPath="fonts/AkzidenzGroteskBE-Medium.otf"
+                    />
+                <!--Channels I follow recycler view-->
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/cf_channels_i_follow_recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/fc_channels_i_follow"
+                    android:paddingEnd="10dp"
+                    android:paddingStart="10dp" />
+            </RelativeLayout>
+
+            <!--Popular Channels-->
+            <RelativeLayout
+                android:id="@+id/fc_popular_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/fc_followed_container"
+                android:background="@color/activityBackgroundGrey"
+                android:orientation="vertical"
+                android:paddingEnd="10dp"
+                android:paddingStart="10dp"
+                android:paddingTop="20dp">
+
+                <TextView
+                    android:id="@+id/fc_channels_popular"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="15dp"
+                    android:paddingEnd="10dp"
+                    android:paddingStart="10dp"
+                    android:text="@string/popular_channels"
+                    fontPath="fonts/AkzidenzGroteskBE-Medium.otf" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/cf_channels_popular_recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/fc_channels_popular"
+                    android:paddingEnd="10dp"
+                    android:paddingStart="10dp" />
+            </RelativeLayout>
+
+            <!--All Channels -> Used for queries with search bar-->
+            <RelativeLayout
+                android:id="@+id/fc_all_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/fc_popular_container"
+                android:background="@color/activityBackgroundGrey"
+                android:descendantFocusability="blocksDescendants"
+                android:orientation="vertical"
+                android:paddingEnd="10dp"
+                android:paddingStart="10dp"
+                android:paddingTop="20dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/fc_channels_all"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="15dp"
+                    android:paddingEnd="10dp"
+                    android:paddingStart="10dp"
+                    android:text="@string/channels"
+                    fontPath="fonts/AkzidenzGroteskBE-Medium.otf"/>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/cf_channels_all_recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/fc_channels_all"
+                    android:paddingEnd="10dp"
+                    android:paddingStart="10dp" />
+            </RelativeLayout>
+
+
+            <!--Empty Background-->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/activityBackgroundGrey" />
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+</LinearLayout>

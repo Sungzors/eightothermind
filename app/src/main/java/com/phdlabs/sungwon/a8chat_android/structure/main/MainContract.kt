@@ -1,5 +1,7 @@
 package com.phdlabs.sungwon.a8chat_android.structure.main
 
+import android.location.Location
+import com.phdlabs.sungwon.a8chat_android.structure.application.Application
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseController
 import com.phdlabs.sungwon.a8chat_android.structure.core.BaseView
 
@@ -8,13 +10,32 @@ import com.phdlabs.sungwon.a8chat_android.structure.core.BaseView
  */
 interface MainContract {
 
-    interface View: BaseView<Controller>{
-
+    interface View : BaseView<Controller> {
+        val activity: MainActivity
+        fun getEventsWithLocation(location: Location)
     }
 
-    interface Controller: BaseController{
+    interface Controller : BaseController {
+        /*LifeCycle*/
+        fun onCreate()
+
         fun showHome()
         fun showCamera()
-        fun showProfile()
+        fun getUserId(callback: (Int?) -> Unit)
+        /*Firebase & Dwolla Tokens*/
+        fun updateTokens()
+
+        /*Notifications*/
+        fun updateNotificationBadges()
+
+        /*Global Settings*/
+        fun readGlobalSettings()
+
+        /*Location*/
+        fun requestLocationPermissions()
+        fun updateLocationForEvents()
+
+        /*Contacts*/
+        fun initContactsLoader()
     }
 }

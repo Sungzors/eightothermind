@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <!--Loading-->
+    <include layout="@layout/progress_view" />
+
+    <!--Toolbar+Search-Bar-->
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarWhite">
+
+        <include layout="@layout/toolbar_create_new" />
+    </android.support.design.widget.AppBarLayout>
+
+    <!--Scrollable Content-->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:layout_weight="1">
+
+        <!--Content-->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10sp">
+
+            <!--Media thumbnail & comment-->
+            <FrameLayout
+                android:id="@+id/asc_thumbnail_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <!--Channels selection-->
+            <FrameLayout
+                android:id="@+id/asc_channels_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/asc_thumbnail_container" />
+
+            <!--Events selection-->
+            <FrameLayout
+                android:id="@+id/asc_events_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/asc_channels_container" />
+
+            <!--Contacts selection-->
+            <FrameLayout
+                android:id="@+id/asc_contacts_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/asc_events_container" />
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+    <!--Share Button-->
+    <LinearLayout
+        android:id="@+id/asc_animation_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="bottom"
+        android:orientation="vertical"
+        android:visibility="visible">
+
+        <Button
+            android:id="@+id/asc_share_button"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/gradient_invite_button"
+            android:text="@string/share"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:visibility="visible" />
+
+    </LinearLayout>
+
+</LinearLayout>

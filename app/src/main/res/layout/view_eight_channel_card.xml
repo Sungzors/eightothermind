@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp"
+    android:background="@color/transparent"
+    android:orientation="vertical">
+
+    <!--Container-->
+    <LinearLayout
+        android:id="@+id/vech_channel_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_shadow_curve_box_white"
+        android:orientation="vertical">
+
+        <!--Channel Image-->
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:elevation="6dp"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:layout_centerInParent="true"
+                android:layout_marginBottom="20dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/bg_circle_white_profile"
+                android:contentDescription="@string/profile_image_circle" />
+
+            <ImageView
+                android:id="@+id/vech_channel_image"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_centerInParent="true"
+                android:layout_margin="10dp"
+                android:contentDescription="@string/channel_image"
+                android:elevation="4dp"
+                android:padding="3sp"
+                android:src="@drawable/addphoto" />
+
+        </RelativeLayout>
+
+        <!--Channel Title-->
+        <TextView
+            android:id="@+id/vech_channel_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="15dp"
+            android:text="@string/channel_name"
+            android:textAlignment="center"
+            xmlns:tools="http://schemas.android.com/tools"
+            tools:ignore="MissingPrefix"
+            fontPath="fonts/AkzidenzGroteskBE-Medium.otf"/>
+
+    </LinearLayout>
+
+</LinearLayout>
